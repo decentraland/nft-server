@@ -1,6 +1,6 @@
 # NFT Server
 
-Server for browsing NFTs.
+This server is meant to aggregate data from different subgraphs under a single API.
 
 # Run the project
 
@@ -18,4 +18,4 @@ npm run start:watch # will watch for changes
 
 # Endpoints
 
-Check [`./src/adapters/routes.ts`](https://github.com/decentraland/nft-server/blob/master/src/adapters/routes.ts) for an up to date list of all the endpoints. The most important ones are:
+Check [`./src/adapters/routes.ts`](https://github.com/decentraland/nft-server/blob/master/src/adapters/routes.ts) for an up to date list of all the endpoints.

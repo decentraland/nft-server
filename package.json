@@ -1,7 +1,7 @@
 {
-  "name": "transactions-server",
+  "name": "nft-server",
   "version": "1.0.0",
-  "description": "Transactions server",
+  "description": "NFT server",
   "main": "dist/index.js",
   "scripts": {
     "lint": "tslint -p tsconfig.json",
