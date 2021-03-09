@@ -1,0 +1,3 @@
+name: services-nft-server
+runtime: nodejs
+description: Build + Server

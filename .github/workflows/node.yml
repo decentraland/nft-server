@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - name: install
+        run: npm ci
+      - name: build
+        run: npm run build
+      - name: linter
+        run: npm run lint
+        if: ${{ always() }}
+      - name: test
+        run: npm run test
+        if: ${{ always() }}
