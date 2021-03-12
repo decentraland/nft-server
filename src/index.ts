@@ -43,7 +43,7 @@ async function initComponents(): Promise<AppComponents> {
     config,
     logs,
     server,
-    fetcher
+    fetcher,
   }
 }
 
