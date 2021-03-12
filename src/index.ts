@@ -5,6 +5,7 @@ import { createLogComponent } from '@well-known-components/logger'
 import { Lifecycle } from '@well-known-components/interfaces'
 import { setupRoutes } from './adapters/routes'
 import { AppComponents, AppConfig, GlobalContext } from './types'
+import { createFetchComponent } from './ports/fetch'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -36,11 +37,13 @@ async function initComponents(): Promise<AppComponents> {
     { config, logs },
     { cors, compression: {} }
   )
+  const fetcher = await createFetchComponent()
 
   return {
     config,
     logs,
     server,
+    fetcher
   }
 }
 

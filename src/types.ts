@@ -1,4 +1,7 @@
-import { RoutedContext } from '@well-known-components/http-server'
+import {
+  IFetchComponent,
+  RoutedContext,
+} from '@well-known-components/http-server'
 import type {
   IConfigComponent,
   ILoggerComponent,
@@ -19,6 +22,7 @@ export type AppComponents = {
   config: IConfigComponent
   logs: ILoggerComponent
   server: IHttpServerComponent<GlobalContext>
+  fetcher: IFetchComponent
 }
 
 export type Context<Path extends string = any> = RoutedContext<
