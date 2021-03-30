@@ -33,10 +33,10 @@ function sort(nfts: SortableNFT[], sortBy?: SortBy) {
   })
 }
 
-// function removeSortData(sortable: SortableNFT): NFT {
-//   const { sort: _, ...nft } = sortable
-//   return nft
-// }
+function removeSortData(sortable: SortableNFT): NFT {
+  const { sort: _, ...nft } = sortable
+  return nft
+}
 
 function filterByNetwork(network: Network) {
   return (nft: NFT) => nft.network.toLowerCase() === network.toLowerCase()
@@ -58,7 +58,7 @@ export function createNFTComponent(components: NFTComponents): INFTComponent {
       const sorted = sort(
         results.reduce((nfts, all) => all.concat(nfts)),
         options.sortBy
-      ) //.map(removeSortData) // remove data needed for sort purposes
+      ).map(removeSortData) // remove data needed for sort purposes
 
       // if necessary filter by network filter
       const shouldFilterNetwork = Object.values(Network)
