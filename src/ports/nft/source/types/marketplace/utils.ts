@@ -1,8 +1,8 @@
 import { Network } from '@dcl/schemas'
 import { gql } from 'apollo-boost'
 import { NFTFragmet, nftFragment } from './fragment'
-import { NFTOptions, SortBy, SortableNFT, WearableGender } from '../../types'
-import { fromNumber, fromWei } from '../../utils'
+import { NFTOptions, SortBy, SortableNFT, WearableGender } from '../../../types'
+import { fromNumber, fromWei } from '../../../utils'
 
 const NFTS_FILTERS = `
   $first: Int

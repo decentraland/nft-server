@@ -7,8 +7,8 @@ import {
   SortBy,
   SortableNFT,
   WearableGender,
-} from '../../types'
-import { fromNumber, fromWei } from '../../utils'
+} from '../../../types'
+import { fromNumber, fromWei } from '../../../utils'
 
 const NFTS_FILTERS = `
   $first: Int

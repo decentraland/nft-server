@@ -159,10 +159,6 @@ export type SortableNFT = NFT & {
   }
 }
 
-export interface INFTSourceComponent {
-  fetch(options: NFTOptions): Promise<SortableNFT[]>
-}
-
 export interface INFTComponent {
   fetch(options: NFTOptions): Promise<NFT[]>
 }

@@ -1,6 +1,6 @@
 import { Network } from '@dcl/schemas'
-import { createCollectionsComponent } from './sources/collections/component'
-import { createMarketplaceComponent } from './sources/marketplace/component'
+import { createCollectionsComponent } from './source/types/collections/component'
+import { createMarketplaceComponent } from './source/types/marketplace/component'
 import {
   INFTComponent,
   NFTOptions,
