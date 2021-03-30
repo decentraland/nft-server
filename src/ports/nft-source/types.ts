@@ -1,5 +1,5 @@
 import { Network } from '@dcl/schemas'
-import { DocumentNode } from 'graphql'
+import { DocumentNode } from 'apollo-link'
 import { ISubgraphComponent } from '../subgraph/types'
 
 export enum SortBy {
@@ -166,7 +166,9 @@ export interface INFTSourceComponent {
 
 export type NFTSourceOptions<T> = {
   subgraph: ISubgraphComponent
-  getQuery(options: NFTOptions, isCount?: boolean): DocumentNode
-  getOrderBy(sortBy?: SortBy | undefined): string
+  fragmentName: string
+  getFragment: () => DocumentNode
   fromFragment(fragment: T): SortableNFT
+  getOrderBy(sortBy?: SortBy): keyof T
+  getExtraWhere?: (options: NFTOptions) => string[]
 }

@@ -1,15 +1,15 @@
 import { createNFTAggregatorComponent } from '../nft-aggregator/component'
 import { createNFTSourceComponent } from '../nft-source/component'
 import {
-  fromFragment as fromCollectionsFragment,
-  getQuery as getCollectionsQuery,
-  getOrderBy as getCollectionsOrderBy,
-} from './sources/collections/utils'
+  getCollectionsFragment,
+  fromCollectionsFragment,
+  getCollectionsOrderBy,
+} from './sources/collections'
 import {
-  fromFragment as fromMarketplaceFragment,
-  getQuery as getMarketplaceQuery,
-  getOrderBy as getMarketplaceOrderBy,
-} from './sources/marketplace/utils'
+  fromMarketplaceFragment,
+  getMarketplaceFragment,
+  getMarketplaceOrderBy,
+} from './sources/marketplace'
 import { BrowseComponents } from './types'
 
 export function createBrowseComponent(components: BrowseComponents) {
@@ -17,18 +17,26 @@ export function createBrowseComponent(components: BrowseComponents) {
 
   const collectionsSource = createNFTSourceComponent({
     subgraph: collectionsSubgraph,
-    getQuery: getCollectionsQuery,
-    getOrderBy: getCollectionsOrderBy,
+    fragmentName: 'collectionsFragment',
+    getFragment: getCollectionsFragment,
     fromFragment: fromCollectionsFragment,
+    getOrderBy: getCollectionsOrderBy,
   })
+
   const marketplaceSource = createNFTSourceComponent({
     subgraph: marketplaceSubgraph,
-    getQuery: getMarketplaceQuery,
-    getOrderBy: getMarketplaceOrderBy,
+    fragmentName: 'marketplaceFragment',
+    getFragment: getMarketplaceFragment,
     fromFragment: fromMarketplaceFragment,
+    getOrderBy: getMarketplaceOrderBy,
+    getExtraWhere: (options) => [
+      'searchEstateSize_gt: 0',
+      'searchParcelIsInBounds: true',
+      options.category ? `category: ${options.category}` : '',
+    ],
   })
 
   return createNFTAggregatorComponent({
-    sources: [marketplaceSource, collectionsSource],
+    sources: [collectionsSource, marketplaceSource],
   })
 }
