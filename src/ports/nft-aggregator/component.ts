@@ -1,16 +1,13 @@
 import { Network } from '@dcl/schemas'
-import { createCollectionsComponent } from './source/types/collections/component'
-import { createMarketplaceComponent } from './source/types/marketplace/component'
 import {
-  INFTComponent,
-  NFTOptions,
-  NFTComponents,
-  SortBy,
-  SortableNFT,
-  NFT,
   DEFAULT_SORT_BY,
-} from './types'
-import { getOrderDirection } from './utils'
+  NFT,
+  NFTOptions,
+  SortableNFT,
+  SortBy,
+} from '../nft-source/types'
+import { getOrderDirection } from '../nft-source/utils'
+import { INFTAggregatorComponent, NFTAggregatorOptions } from './types'
 
 function sort(nfts: SortableNFT[], sortBy?: SortBy) {
   const sortDirection = getOrderDirection(sortBy)
@@ -42,17 +39,17 @@ function filterByNetwork(network: Network) {
   return (nft: NFT) => nft.network.toLowerCase() === network.toLowerCase()
 }
 
-export function createNFTComponent(components: NFTComponents): INFTComponent {
-  const marketplace = createMarketplaceComponent(components)
-  const collections = createCollectionsComponent(components)
+export function createNFTAggregatorComponent(
+  options: NFTAggregatorOptions
+): INFTAggregatorComponent {
+  const { sources } = options
 
   return {
     fetch: async (options: NFTOptions) => {
       // gather results from all the sources
-      const results = await Promise.all([
-        marketplace.fetch(options),
-        collections.fetch(options),
-      ])
+      const results = await Promise.all(
+        sources.map((source) => source.fetch(options))
+      )
 
       // sort results
       const sorted = sort(

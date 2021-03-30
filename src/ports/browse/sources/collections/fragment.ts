@@ -1,5 +1,5 @@
 import { gql } from 'apollo-boost'
-import { NFT, Order, WearableData } from '../../../types'
+import { NFT, Order, WearableData } from '../../../nft-source/types'
 
 export type OrderFields = Omit<Order, 'nftId' | 'category'>
 export const orderFields = () => gql`

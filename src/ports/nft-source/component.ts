@@ -1,6 +1,5 @@
-import { NFTOptions } from '../types'
-import { getVariables } from '../utils'
-import { INFTSourceComponent, NFTSourceOptions } from './types'
+import { INFTSourceComponent, NFTOptions, NFTSourceOptions } from './types'
+import { getVariables } from './utils'
 
 export function createNFTSourceComponent<T>(
   options: NFTSourceOptions<T>

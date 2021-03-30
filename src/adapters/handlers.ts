@@ -7,7 +7,7 @@ import {
   WearableCategory,
   WearableGender,
   WearableRarity,
-} from '../ports/nft/types'
+} from '../ports/nft-source/types'
 import { AppComponents, Context } from '../types'
 
 function buildParams(params: URLSearchParams) {

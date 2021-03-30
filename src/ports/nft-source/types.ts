@@ -1,4 +1,5 @@
 import { Network } from '@dcl/schemas'
+import { DocumentNode } from 'graphql'
 import { ISubgraphComponent } from '../subgraph/types'
 
 export enum SortBy {
@@ -159,11 +160,13 @@ export type SortableNFT = NFT & {
   }
 }
 
-export interface INFTComponent {
-  fetch(options: NFTOptions): Promise<NFT[]>
+export interface INFTSourceComponent {
+  fetch(options: NFTOptions): Promise<SortableNFT[]>
 }
 
-export type NFTComponents = {
-  marketplaceSubgraph: ISubgraphComponent
-  collectionsSubgraph: ISubgraphComponent
+export type NFTSourceOptions<T> = {
+  subgraph: ISubgraphComponent
+  getQuery(options: NFTOptions, isCount?: boolean): DocumentNode
+  getOrderBy(sortBy?: SortBy | undefined): string
+  fromFragment(fragment: T): SortableNFT
 }

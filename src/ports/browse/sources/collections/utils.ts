@@ -1,8 +1,14 @@
 import { Network } from '@dcl/schemas'
 import { gql } from 'apollo-boost'
+import {
+  NFTCategory,
+  NFTOptions,
+  SortableNFT,
+  SortBy,
+  WearableGender,
+} from '../../../nft-source/types'
+import { fromNumber, fromWei } from '../../../nft-source/utils'
 import { NFTFragmet, nftFragment } from './fragment'
-import { NFTOptions, SortBy, SortableNFT, WearableGender } from '../../../types'
-import { fromNumber, fromWei } from '../../../utils'
 
 const NFTS_FILTERS = `
   $first: Int
@@ -11,9 +17,7 @@ const NFTS_FILTERS = `
   $orderDirection: String
   $expiresAt: String
   $address: String
-  $category: Category
-  $wearableCategory: WearableCategory
-  $isLand: Boolean
+  $wearableCategory: String
   $isWearableHead: Boolean
   $isWearableAccessory: Boolean
 `
@@ -30,10 +34,6 @@ export function getQuery(options: NFTOptions, isCount = false) {
 
   if (options.address) {
     extraWhere.push('owner: $address')
-  }
-
-  if (options.category) {
-    extraWhere.push('category: $category')
   }
 
   if (
@@ -53,10 +53,6 @@ export function getQuery(options: NFTOptions, isCount = false) {
 
   if (options.wearableCategory) {
     extraWhere.push('searchWearableCategory: $wearableCategory')
-  }
-
-  if (options.isLand) {
-    extraWhere.push('searchIsLand: $isLand')
   }
 
   if (options.isWearableHead) {
@@ -97,16 +93,14 @@ export function getQuery(options: NFTOptions, isCount = false) {
         .join(', ')}]`
     )
   }
+
   return gql`
     query NFTs(${NFTS_FILTERS}) {
       nfts(
         where: {
-          searchEstateSize_gt: 0
-          searchParcelIsInBounds: true
           ${extraWhere.join('\n')}
-        }
-        ${NFTS_ARGUMENTS}
-      ) {
+        }${NFTS_ARGUMENTS}) 
+      {
         ${isCount ? 'id' : '...nftFragment'}
       }
     }
@@ -114,12 +108,12 @@ export function getQuery(options: NFTOptions, isCount = false) {
   `
 }
 
-export function getOrderBy(sortBy?: SortBy): keyof NFTFragmet {
-  switch (sortBy) {
+export function getOrderBy(orderBy?: SortBy): keyof NFTFragmet {
+  switch (orderBy) {
     case SortBy.BIRTH:
       return 'createdAt'
     case SortBy.NAME:
-      return 'name'
+      return 'searchText'
     case SortBy.RECENTLY_LISTED:
       return 'searchOrderCreatedAt'
     case SortBy.PRICE:
@@ -134,56 +128,27 @@ export function fromFragment(fragment: NFTFragmet): SortableNFT {
     id: fragment.id,
     tokenId: fragment.tokenId,
     contractAddress: fragment.contractAddress,
-    activeOrderId: '',
+    activeOrderId: fragment.activeOrder ? fragment.activeOrder.id : null,
     owner: fragment.owner.address.toLowerCase(),
-    name: fragment.name,
+    name: fragment.metadata.wearable.name,
     image: fragment.image,
     url: `/contracts/${fragment.contractAddress}/tokens/${fragment.tokenId}`,
     data: {
-      parcel: fragment.parcel
-        ? {
-            description:
-              (fragment.parcel.data && fragment.parcel.data.description) ||
-              null,
-            x: fragment.parcel.x,
-            y: fragment.parcel.y,
-          }
-        : undefined,
-      estate: fragment.estate
-        ? {
-            description:
-              (fragment.estate.data && fragment.estate.data.description) ||
-              null,
-            size: fragment.estate.size,
-            parcels: fragment.estate.parcels.map(({ x, y }) => ({ x, y })),
-          }
-        : undefined,
-      wearable: fragment.wearable
-        ? {
-            bodyShapes: fragment.wearable.bodyShapes,
-            category: fragment.wearable.category,
-            description: fragment.wearable.description,
-            rarity: fragment.wearable.rarity,
-          }
-        : undefined,
-      ens: fragment.ens ? { subdomain: fragment.ens.subdomain } : undefined,
+      wearable: {
+        bodyShapes: fragment.metadata.wearable.bodyShapes,
+        category: fragment.metadata.wearable.category,
+        description: fragment.metadata.wearable.description,
+        rarity: fragment.metadata.wearable.rarity,
+      },
     },
-    category: fragment.category,
-    network: Network.ETHEREUM,
+    category: NFTCategory.WEARABLE,
+    network: Network.MATIC,
     sort: {
       [SortBy.BIRTH]: fromNumber(fragment.createdAt),
-      [SortBy.NAME]: fragment.name,
+      [SortBy.NAME]: fragment.metadata.wearable.name,
       [SortBy.RECENTLY_LISTED]: fromNumber(fragment.searchOrderCreatedAt),
       [SortBy.PRICE]: fromWei(fragment.searchOrderPrice),
     },
-  }
-
-  // remove undefined data
-  for (const property of Object.keys(result.data)) {
-    const key = property as keyof typeof result.data
-    if (!result.data[key]) {
-      delete result.data[key]
-    }
   }
 
   return result

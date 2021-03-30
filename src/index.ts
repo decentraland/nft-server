@@ -6,7 +6,7 @@ import { Lifecycle } from '@well-known-components/interfaces'
 import { setupRoutes } from './adapters/routes'
 import { AppComponents, AppConfig, GlobalContext } from './types'
 import { createSubgraphComponent } from './ports/subgraph/component'
-import { createNFTComponent } from './ports/nft/component'
+import { createBrowseComponent } from './ports/browse/component'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -47,7 +47,10 @@ async function initComponents(): Promise<AppComponents> {
     await config.requireString('COLLECTIONS_SUBGRAPH_URL')
   )
 
-  const nft = createNFTComponent({ marketplaceSubgraph, collectionsSubgraph })
+  const nft = createBrowseComponent({
+    marketplaceSubgraph,
+    collectionsSubgraph,
+  })
 
   return {
     config,
