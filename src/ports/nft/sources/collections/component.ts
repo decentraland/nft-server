@@ -1,6 +1,7 @@
 import { INFTSourceComponent, NFTComponents, NFTOptions } from '../../types'
+import { getVariables } from '../../utils'
 import { NFTFragmet } from './fragment'
-import { fromFragment, getQuery, getVariables } from './utils'
+import { fromFragment, getOrderBy, getQuery } from './utils'
 
 export function createCollectionsComponent(
   components: Pick<NFTComponents, 'collectionsSubgraph'>
@@ -9,7 +10,7 @@ export function createCollectionsComponent(
   return {
     fetch: async (options: NFTOptions) => {
       const query = getQuery(options)
-      const variables = getVariables(options)
+      const variables = getVariables(options, getOrderBy)
       const { nfts: fragments } = await collectionsSubgraph.query<{
         nfts: NFTFragmet[]
       }>(query, variables)

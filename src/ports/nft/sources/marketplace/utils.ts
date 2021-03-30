@@ -1,13 +1,7 @@
 import { Network } from '@dcl/schemas'
 import { gql } from 'apollo-boost'
-import { NFTFragmet as NFTFragmet, nftFragment } from './fragment'
-import {
-  NFTOptions,
-  SortBy,
-  OrderBy,
-  SortableNFT,
-  WearableGender,
-} from '../../types'
+import { NFTFragmet, nftFragment } from './fragment'
+import { NFTOptions, SortBy, SortableNFT, WearableGender } from '../../types'
 import { fromNumber, fromWei } from '../../utils'
 
 const NFTS_FILTERS = `
@@ -120,40 +114,16 @@ export function getQuery(options: NFTOptions, isCount = false) {
   `
 }
 
-// TODO: repeated code
-export function getVariables(options: NFTOptions) {
-  const { sortBy, ...variables } = options
-  const { orderBy, orderDirection } = getOrderBy(sortBy)
-  return {
-    ...variables,
-    orderBy,
-    orderDirection,
-    expiresAt: Date.now().toString(),
-  }
-}
-
-export function getOrderBy(sortBy?: SortBy): OrderBy {
+export function getOrderBy(sortBy?: SortBy): keyof NFTFragmet {
   switch (sortBy) {
     case SortBy.BIRTH:
-      return {
-        orderBy: 'createdAt',
-        orderDirection: 'desc',
-      }
+      return 'createdAt'
     case SortBy.NAME:
-      return {
-        orderBy: 'name',
-        orderDirection: 'asc',
-      }
+      return 'name'
     case SortBy.RECENTLY_LISTED:
-      return {
-        orderBy: 'searchOrderCreatedAt',
-        orderDirection: 'desc',
-      }
+      return 'searchOrderCreatedAt'
     case SortBy.PRICE:
-      return {
-        orderBy: 'searchOrderPrice',
-        orderDirection: 'asc',
-      }
+      return 'searchOrderPrice'
     default:
       return getOrderBy(SortBy.BIRTH)
   }

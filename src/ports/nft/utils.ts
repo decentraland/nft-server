@@ -1,28 +1,36 @@
-import { SortBy, SortDirection, DEFAULT_SORT_BY, SortType } from './types'
+import {
+  SortBy,
+  OrderDirection,
+  DEFAULT_SORT_BY,
+  NFTOptions,
+  NFTVariables,
+} from './types'
 
-export function getSortDirection(orderBy?: SortBy): SortDirection {
+export function getOrderDirection(orderBy?: SortBy): OrderDirection {
   switch (orderBy) {
     case SortBy.BIRTH:
     case SortBy.RECENTLY_LISTED:
-      return SortDirection.DESC
+      return OrderDirection.DESC
     case SortBy.NAME:
     case SortBy.PRICE:
-      return SortDirection.ASC
+      return OrderDirection.ASC
     default:
-      return getSortDirection(DEFAULT_SORT_BY)
+      return getOrderDirection(DEFAULT_SORT_BY)
   }
 }
 
-export function getSortType(orderBy?: SortBy): SortType {
-  switch (orderBy) {
-    case SortBy.BIRTH:
-    case SortBy.RECENTLY_LISTED:
-    case SortBy.PRICE:
-      return SortType.NUMERIC
-    case SortBy.NAME:
-      return SortType.TEXT
-    default:
-      return getSortType(DEFAULT_SORT_BY)
+export function getVariables(
+  options: NFTOptions,
+  getOrderBy: (sortBy?: SortBy) => string
+): NFTVariables {
+  const { sortBy, ...variables } = options
+  const orderBy = getOrderBy(sortBy)
+  const orderDirection = getOrderDirection(sortBy)
+  return {
+    ...variables,
+    orderBy,
+    orderDirection,
+    expiresAt: Date.now().toString(),
   }
 }
 

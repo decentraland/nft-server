@@ -1,7 +1,7 @@
-import { NFTFragmet } from './fragment'
 import { INFTSourceComponent, NFTComponents, NFTOptions } from '../../types'
-import { fromFragment, getQuery } from './utils'
-import { getVariables } from '../collections/utils'
+import { getVariables } from '../../utils'
+import { NFTFragmet } from './fragment'
+import { fromFragment, getOrderBy, getQuery } from './utils'
 
 export function createMarketplaceComponent(
   components: Pick<NFTComponents, 'marketplaceSubgraph'>
@@ -11,7 +11,7 @@ export function createMarketplaceComponent(
   return {
     fetch: async (options: NFTOptions) => {
       const query = getQuery(options)
-      const variables = getVariables(options)
+      const variables = getVariables(options, getOrderBy)
       const { nfts: fragments } = await marketplaceSubgraph.query<{
         nfts: NFTFragmet[]
       }>(query, variables)

@@ -10,14 +10,9 @@ export enum SortBy {
 
 export const DEFAULT_SORT_BY = SortBy.BIRTH
 
-export enum SortDirection {
+export enum OrderDirection {
   ASC = 'asc',
   DESC = 'desc',
-}
-
-export enum SortType {
-  TEXT = 'text',
-  NUMERIC = 'numeric',
 }
 
 export enum NFTCategory {
@@ -113,9 +108,10 @@ export type NFTOptions = {
   network?: Network
 }
 
-export type OrderBy = {
+export type NFTVariables = Omit<NFTOptions, 'sortBy'> & {
   orderBy: string
-  orderDirection: 'asc' | 'desc'
+  orderDirection: OrderDirection
+  expiresAt: string
 }
 
 export type NFT = {
@@ -155,7 +151,12 @@ export type Order = {
 }
 
 export type SortableNFT = NFT & {
-  sort: Record<SortBy, string | number | null>
+  sort: {
+    [SortBy.BIRTH]: number | null
+    [SortBy.NAME]: string
+    [SortBy.PRICE]: number | null
+    [SortBy.RECENTLY_LISTED]: number | null
+  }
 }
 
 export interface INFTSourceComponent {

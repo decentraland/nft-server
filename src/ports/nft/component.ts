@@ -10,10 +10,10 @@ import {
   NFT,
   DEFAULT_SORT_BY,
 } from './types'
-import { getSortDirection } from './utils'
+import { getOrderDirection } from './utils'
 
 function sort(nfts: SortableNFT[], sortBy?: SortBy) {
-  const sortDirection = getSortDirection(sortBy)
+  const sortDirection = getOrderDirection(sortBy)
   const isAsc = sortDirection === 'asc'
   return nfts.sort((a, b) => {
     const up = isAsc ? -1 : 1

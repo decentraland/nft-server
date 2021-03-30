@@ -5,7 +5,6 @@ import {
   NFTCategory,
   NFTOptions,
   SortBy,
-  OrderBy,
   SortableNFT,
   WearableGender,
 } from '../../types'
@@ -31,7 +30,6 @@ const NFTS_ARGUMENTS = `
 `
 
 export function getQuery(options: NFTOptions, isCount = false) {
-  const { orderBy } = getOrderBy(options.sortBy)
   let extraWhere: string[] = []
 
   if (options.address) {
@@ -40,8 +38,8 @@ export function getQuery(options: NFTOptions, isCount = false) {
 
   if (
     options.isOnSale ||
-    orderBy === SortBy.PRICE ||
-    orderBy === SortBy.RECENTLY_LISTED
+    options.sortBy === SortBy.PRICE ||
+    options.sortBy === SortBy.RECENTLY_LISTED
   ) {
     extraWhere.push('searchOrderStatus: open')
     extraWhere.push('searchOrderExpiresAt_gt: $expiresAt')
@@ -110,28 +108,16 @@ export function getQuery(options: NFTOptions, isCount = false) {
   `
 }
 
-// TODO: repeated code
-export function getVariables(options: NFTOptions) {
-  const { sortBy, ...variables } = options
-  const { orderBy, orderDirection } = getOrderBy(sortBy)
-  return {
-    ...variables,
-    orderBy,
-    orderDirection,
-    expiresAt: Date.now().toString(),
-  }
-}
-
-export function getOrderBy(orderBy?: SortBy): OrderBy {
+export function getOrderBy(orderBy?: SortBy): keyof NFTFragmet {
   switch (orderBy) {
     case SortBy.BIRTH:
-      return { orderBy: 'createdAt', orderDirection: 'desc' }
+      return 'createdAt'
     case SortBy.NAME:
-      return { orderBy: 'searchText', orderDirection: 'asc' }
+      return 'searchText'
     case SortBy.RECENTLY_LISTED:
-      return { orderBy: 'searchOrderCreatedAt', orderDirection: 'desc' }
+      return 'searchOrderCreatedAt'
     case SortBy.PRICE:
-      return { orderBy: 'searchOrderPrice', orderDirection: 'asc' }
+      return 'searchOrderPrice'
     default:
       return getOrderBy(SortBy.BIRTH)
   }
