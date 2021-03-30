@@ -25,13 +25,20 @@
     "printWidth": 80
   },
   "dependencies": {
+    "@dcl/schemas": "^1.1.0",
     "@types/sqlite3": "^3.1.7",
     "@well-known-components/env-config-provider": "^1.0.0",
     "@well-known-components/http-server": "^1.0.0",
     "@well-known-components/interfaces": "^1.0.0",
     "@well-known-components/logger": "^1.0.0",
     "ajv": "^7.1.1",
+    "apollo-boost": "^0.4.9",
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-link-http": "^1.5.17",
     "dotenv": "^8.2.0",
+    "fp-future": "^1.0.1",
+    "graphql": "^15.5.0",
+    "isomorphic-fetch": "^3.0.0",
     "node-fetch": "^2.6.1",
     "sql-template-strings": "^2.2.2",
     "sqlite": "^4.0.19",
@@ -42,6 +49,7 @@
   "devDependencies": {
     "@types/compression": "^1.7.0",
     "@types/cors": "^2.8.10",
+    "@types/isomorphic-fetch": "0.0.35",
     "@types/node": "^14.14.28",
     "dcl-tslint-config-standard": "^2.0.0",
     "nodemon": "^2.0.7",

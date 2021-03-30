@@ -5,6 +5,8 @@ import { createLogComponent } from '@well-known-components/logger'
 import { Lifecycle } from '@well-known-components/interfaces'
 import { setupRoutes } from './adapters/routes'
 import { AppComponents, AppConfig, GlobalContext } from './types'
+import { createSubgraphComponent } from './ports/subgraph/component'
+import { createNFTComponent } from './ports/nft/component'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -37,10 +39,23 @@ async function initComponents(): Promise<AppComponents> {
     { cors, compression: {} }
   )
 
+  const marketplaceSubgraph = createSubgraphComponent(
+    await config.requireString('MARKETPLACE_SUBGRAPH_URL')
+  )
+
+  const collectionsSubgraph = createSubgraphComponent(
+    await config.requireString('COLLECTIONS_SUBGRAPH_URL')
+  )
+
+  const nft = createNFTComponent({ marketplaceSubgraph, collectionsSubgraph })
+
   return {
     config,
     logs,
     server,
+    marketplaceSubgraph,
+    collectionsSubgraph,
+    nft,
   }
 }
 

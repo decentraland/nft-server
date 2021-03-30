@@ -4,6 +4,8 @@ import type {
   ILoggerComponent,
   IHttpServerComponent,
 } from '@well-known-components/interfaces'
+import { INFTComponent } from './ports/nft/types'
+import { ISubgraphComponent } from './ports/subgraph/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -19,6 +21,9 @@ export type AppComponents = {
   config: IConfigComponent
   logs: ILoggerComponent
   server: IHttpServerComponent<GlobalContext>
+  marketplaceSubgraph: ISubgraphComponent
+  collectionsSubgraph: ISubgraphComponent
+  nft: INFTComponent
 }
 
 export type Context<Path extends string = any> = RoutedContext<
