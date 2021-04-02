@@ -29,10 +29,11 @@ export function createBrowseComponent(components: BrowseComponents) {
     getFragment: getMarketplaceFragment,
     fromFragment: fromMarketplaceFragment,
     getOrderBy: getMarketplaceOrderBy,
-    getExtraWhere: (options) => [
+    getExtraVariables: () => [`$category: Category`],
+    getExtraWhere: () => [
       'searchEstateSize_gt: 0',
       'searchParcelIsInBounds: true',
-      options.category ? `category: ${options.category}` : '',
+      'category: $category',
     ],
   })
 

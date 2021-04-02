@@ -9,13 +9,20 @@ export function createNFTSourceComponent<T>(
     fragmentName,
     getFragment,
     getExtraWhere,
+    getExtraVariables,
     getOrderBy,
     fromFragment: fromFragment,
   } = options
   return {
     fetch: async (options: NFTOptions) => {
       console.log(fragmentName)
-      const query = getQuery(options, fragmentName, getFragment, getExtraWhere)
+      const query = getQuery(
+        options,
+        fragmentName,
+        getFragment,
+        getExtraVariables,
+        getExtraWhere
+      )
       const variables = getVariables(options, getOrderBy)
       console.log(variables)
       console.log('\n\n-----\n\n')

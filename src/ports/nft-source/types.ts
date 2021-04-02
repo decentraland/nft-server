@@ -170,5 +170,6 @@ export type NFTSourceOptions<T> = {
   getFragment: () => DocumentNode
   fromFragment(fragment: T): SortableNFT
   getOrderBy(sortBy?: SortBy): keyof T
+  getExtraVariables?: (options: NFTOptions) => string[]
   getExtraWhere?: (options: NFTOptions) => string[]
 }

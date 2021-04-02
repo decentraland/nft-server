@@ -44,6 +44,7 @@ export function getQuery(
   options: NFTOptions,
   fragmentName: string,
   getNFTFragment: () => DocumentNode,
+  getExtraVariables?: (options: NFTOptions) => string[],
   getExtraWhere?: (options: NFTOptions) => string[],
   isCount = false
 ) {
@@ -107,7 +108,10 @@ export function getQuery(
     )
   }
 
-  const query = `query NFTs(${NFTS_FILTERS}) {
+  const query = `query NFTs(
+    ${NFTS_FILTERS}
+    ${getExtraVariables ? getExtraVariables(options).join('\n') : ''}
+    ) {
     nfts(
       where: {
         ${where.join('\n')}
