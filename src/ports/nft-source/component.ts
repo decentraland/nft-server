@@ -15,7 +15,6 @@ export function createNFTSourceComponent<T>(
   } = options
   return {
     fetch: async (options: NFTOptions) => {
-      console.log(fragmentName)
       const query = getQuery(
         options,
         fragmentName,
@@ -24,8 +23,6 @@ export function createNFTSourceComponent<T>(
         getExtraWhere
       )
       const variables = getVariables(options, getOrderBy)
-      console.log(variables)
-      console.log('\n\n-----\n\n')
       const { nfts: fragments } = await subgraph.query<{
         nfts: T[]
       }>(query, variables)

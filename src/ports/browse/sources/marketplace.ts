@@ -1,8 +1,14 @@
 import { gql } from 'apollo-boost'
 import { Network } from '@dcl/schemas'
-import { SortableNFT, SortBy } from '../../nft-source/types'
+import {
+  SortableNFT,
+  SortBy,
+  EnsData,
+  NFT,
+  Order,
+  WearableData,
+} from '../../nft-source/types'
 import { fromNumber, fromWei } from '../../nft-source/utils'
-import { EnsData, NFT, Order, WearableData } from '../../nft-source/types'
 
 export type MarketplaceOrderFields = Omit<Order, 'nftId'>
 export const getMarketplaceOrderFields = () => gql`

@@ -5,9 +5,11 @@ import {
   NFTCategory,
   SortableNFT,
   SortBy,
+  NFT,
+  Order,
+  WearableData,
 } from '../../nft-source/types'
 import { fromNumber, fromWei } from '../../nft-source/utils'
-import { NFT, Order, WearableData } from '../../nft-source/types'
 
 export type CollectionsOrderFields = Omit<Order, 'nftId' | 'category'>
 export const getCollectionsOrderFields = () => gql`

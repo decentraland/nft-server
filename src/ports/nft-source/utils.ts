@@ -116,13 +116,11 @@ export function getQuery(
       where: {
         ${where.join('\n')}
         ${getExtraWhere ? getExtraWhere(options).join('\n') : ''}
-      }${NFTS_ARGUMENTS}) 
+      }${NFTS_ARGUMENTS})
     {
       ${isCount ? 'id' : `...${fragmentName}`}
     }
   }`
-
-  console.log(query)
 
   return gql`
     ${query}
