@@ -2,7 +2,7 @@ import { Network } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import {
   NFTCategory,
-  NFTOptions,
+  Options,
   SortBy,
   WearableCategory,
   WearableGender,
@@ -44,13 +44,13 @@ function buildParams(params: URLSearchParams) {
 }
 
 export function createBrowseHandler(
-  components: Pick<AppComponents, 'logs' | 'nft'>
+  components: Pick<AppComponents, 'logs' | 'browse'>
 ): IHttpServerComponent.IRequestHandler<Context<'/browse'>> {
-  const { nft } = components
+  const { browse } = components
 
   return async (context) => {
     const params = buildParams(context.url.searchParams)
-    const options: NFTOptions = {
+    const options: Options = {
       first: params.getNumber('first', 100)!,
       skip: params.getNumber('skip', 0)!,
       sortBy: params.getValue<SortBy>('sortBy'),
@@ -68,10 +68,10 @@ export function createBrowseHandler(
       network: params.getValue<Network>('network'),
     }
 
-    const nfts = await nft.fetch(options)
+    const results = await browse.fetch(options)
     return {
       status: 200,
-      body: nfts,
+      body: results,
     }
   }
 }

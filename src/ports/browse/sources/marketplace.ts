@@ -1,16 +1,29 @@
 import { gql } from 'apollo-boost'
 import { Network } from '@dcl/schemas'
 import {
-  SortableNFT,
+  SourceResult,
   SortBy,
   EnsData,
   NFT,
-  Order,
   WearableData,
+  NFTCategory,
+  OrderStatus,
 } from '../../nft-source/types'
 import { fromNumber, fromWei } from '../../nft-source/utils'
+import { isExpired } from '../utils'
 
-export type MarketplaceOrderFields = Omit<Order, 'nftId'>
+export type MarketplaceOrderFields = {
+  id: string
+  category: NFTCategory
+  nftAddress: string
+  owner: string
+  buyer: string | null
+  price: string
+  status: OrderStatus
+  expiresAt: string
+  createdAt: string
+  updatedAt: string
+}
 export const getMarketplaceOrderFields = () => gql`
   fragment marketplaceOrderFields on Order {
     id
@@ -137,47 +150,68 @@ export function getMarketplaceOrderBy(
 
 export function fromMarketplaceFragment(
   fragment: MarketplaceFragment
-): SortableNFT {
-  const result: SortableNFT = {
-    id: fragment.id,
-    tokenId: fragment.tokenId,
-    contractAddress: fragment.contractAddress,
-    activeOrderId: '',
-    owner: fragment.owner.address.toLowerCase(),
-    name: fragment.name,
-    image: fragment.image,
-    url: `/contracts/${fragment.contractAddress}/tokens/${fragment.tokenId}`,
-    data: {
-      parcel: fragment.parcel
-        ? {
-            description:
-              (fragment.parcel.data && fragment.parcel.data.description) ||
-              null,
-            x: fragment.parcel.x,
-            y: fragment.parcel.y,
-          }
-        : undefined,
-      estate: fragment.estate
-        ? {
-            description:
-              (fragment.estate.data && fragment.estate.data.description) ||
-              null,
-            size: fragment.estate.size,
-            parcels: fragment.estate.parcels.map(({ x, y }) => ({ x, y })),
-          }
-        : undefined,
-      wearable: fragment.wearable
-        ? {
-            bodyShapes: fragment.wearable.bodyShapes,
-            category: fragment.wearable.category,
-            description: fragment.wearable.description,
-            rarity: fragment.wearable.rarity,
-          }
-        : undefined,
-      ens: fragment.ens ? { subdomain: fragment.ens.subdomain } : undefined,
+): SourceResult {
+  const result: SourceResult = {
+    nft: {
+      id: fragment.id,
+      tokenId: fragment.tokenId,
+      contractAddress: fragment.contractAddress,
+      activeOrderId:
+        fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
+          ? fragment.activeOrder.id
+          : null,
+      owner: fragment.owner.address.toLowerCase(),
+      name: fragment.name,
+      image: fragment.image,
+      url: `/contracts/${fragment.contractAddress}/tokens/${fragment.tokenId}`,
+      data: {
+        parcel: fragment.parcel
+          ? {
+              description:
+                (fragment.parcel.data && fragment.parcel.data.description) ||
+                null,
+              x: fragment.parcel.x,
+              y: fragment.parcel.y,
+            }
+          : undefined,
+        estate: fragment.estate
+          ? {
+              description:
+                (fragment.estate.data && fragment.estate.data.description) ||
+                null,
+              size: fragment.estate.size,
+              parcels: fragment.estate.parcels.map(({ x, y }) => ({ x, y })),
+            }
+          : undefined,
+        wearable: fragment.wearable
+          ? {
+              bodyShapes: fragment.wearable.bodyShapes,
+              category: fragment.wearable.category,
+              description: fragment.wearable.description,
+              rarity: fragment.wearable.rarity,
+            }
+          : undefined,
+        ens: fragment.ens ? { subdomain: fragment.ens.subdomain } : undefined,
+      },
+      category: fragment.category,
+      network: Network.ETHEREUM,
     },
-    category: fragment.category,
-    network: Network.ETHEREUM,
+    order:
+      fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
+        ? {
+            id: fragment.activeOrder.id,
+            nftId: fragment.id,
+            nftAddress: fragment.activeOrder.nftAddress,
+            category: fragment.activeOrder.category,
+            owner: fragment.activeOrder.owner,
+            buyer: fragment.activeOrder.buyer,
+            price: fragment.activeOrder.price,
+            status: fragment.activeOrder.status,
+            expiresAt: +fragment.activeOrder.expiresAt,
+            createdAt: +fragment.activeOrder.createdAt * 1000,
+            updatedAt: +fragment.activeOrder.updatedAt * 1000,
+          }
+        : null,
     sort: {
       [SortBy.BIRTH]: fromNumber(fragment.createdAt),
       [SortBy.NAME]: fragment.name,
@@ -187,10 +221,10 @@ export function fromMarketplaceFragment(
   }
 
   // remove undefined data
-  for (const property of Object.keys(result.data)) {
-    const key = property as keyof typeof result.data
-    if (!result.data[key]) {
-      delete result.data[key]
+  for (const property of Object.keys(result.nft.data)) {
+    const key = property as keyof typeof result.nft.data
+    if (!result.nft.data[key]) {
+      delete result.nft.data[key]
     }
   }
 

@@ -1,7 +1,15 @@
-import { INFTAggregatorComponent } from '../nft-aggregator/types'
+import { NFT, Options, Order } from '../nft-source/types'
 import { ISubgraphComponent } from '../subgraph/types'
 
-export interface IBrowseComponent extends INFTAggregatorComponent {}
+export type BrowseResult = {
+  nfts: NFT[]
+  orders: Order[]
+  total: number
+}
+
+export interface IBrowseComponent {
+  fetch: (options: Options) => Promise<BrowseResult>
+}
 
 export type BrowseComponents = {
   marketplaceSubgraph: ISubgraphComponent

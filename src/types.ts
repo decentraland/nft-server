@@ -23,7 +23,7 @@ export type AppComponents = {
   server: IHttpServerComponent<GlobalContext>
   marketplaceSubgraph: ISubgraphComponent
   collectionsSubgraph: ISubgraphComponent
-  nft: IBrowseComponent
+  browse: IBrowseComponent
 }
 
 export type Context<Path extends string = any> = RoutedContext<

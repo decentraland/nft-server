@@ -1,9 +1,9 @@
-import { INFTSourceComponent, NFTOptions, NFTSourceOptions } from './types'
+import { ISourceComponent, Options, SourceOptions } from './types'
 import { getQuery, getVariables } from './utils'
 
 export function createNFTSourceComponent<T>(
-  options: NFTSourceOptions<T>
-): INFTSourceComponent {
+  options: SourceOptions<T>
+): ISourceComponent {
   const {
     subgraph,
     fragmentName,
@@ -11,23 +11,38 @@ export function createNFTSourceComponent<T>(
     getExtraWhere,
     getExtraVariables,
     getOrderBy,
-    fromFragment: fromFragment,
+    fromFragment,
   } = options
-  return {
-    fetch: async (options: NFTOptions) => {
+
+  function getFragmentFetcher(options: Options) {
+    return async (isCount?: boolean) => {
       const query = getQuery(
         options,
         fragmentName,
         getFragment,
         getExtraVariables,
-        getExtraWhere
+        getExtraWhere,
+        isCount
       )
       const variables = getVariables(options, getOrderBy)
       const { nfts: fragments } = await subgraph.query<{
         nfts: T[]
       }>(query, variables)
+      return fragments
+    }
+  }
+
+  return {
+    fetch: async (options: Options) => {
+      const fetchFragments = getFragmentFetcher(options)
+      const fragments = await fetchFragments()
       const nfts = fragments.map(fromFragment)
       return nfts
+    },
+    count: async (options: Options) => {
+      const fetchFragments = getFragmentFetcher(options)
+      const fragments = await fetchFragments()
+      return fragments.length
     },
   }
 }

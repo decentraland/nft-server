@@ -1,15 +1,14 @@
 import { Network } from '@dcl/schemas'
 import {
   DEFAULT_SORT_BY,
-  NFT,
-  NFTOptions,
-  SortableNFT,
+  Options,
+  SourceResult,
   SortBy,
 } from '../nft-source/types'
-import { getOrderDirection } from '../nft-source/utils'
-import { INFTAggregatorComponent, NFTAggregatorOptions } from './types'
+import { getOrderDirection, MAX_RESULTS } from '../nft-source/utils'
+import { IAggregatorComponent, AggregatorOptions } from './types'
 
-function sort(nfts: SortableNFT[], sortBy?: SortBy) {
+function sort(nfts: SourceResult[], sortBy?: SortBy) {
   const sortDirection = getOrderDirection(sortBy)
   const isAsc = sortDirection === 'asc'
   return nfts.sort((a, b) => {
@@ -30,22 +29,18 @@ function sort(nfts: SortableNFT[], sortBy?: SortBy) {
   })
 }
 
-function removeSortData(sortable: SortableNFT): NFT {
-  const { sort: _, ...nft } = sortable
-  return nft
-}
-
 function filterByNetwork(network: Network) {
-  return (nft: NFT) => nft.network.toLowerCase() === network.toLowerCase()
+  return (result: SourceResult) =>
+    result.nft.network.toLowerCase() === network.toLowerCase()
 }
 
 export function createNFTAggregatorComponent(
-  options: NFTAggregatorOptions
-): INFTAggregatorComponent {
+  options: AggregatorOptions
+): IAggregatorComponent {
   const { sources } = options
 
   return {
-    fetch: async (options: NFTOptions) => {
+    fetch: async (options: Options) => {
       // gather results from all the sources
       const results = await Promise.all(
         sources.map((source) => source.fetch(options))
@@ -55,7 +50,7 @@ export function createNFTAggregatorComponent(
       const sorted = sort(
         results.reduce((nfts, all) => all.concat(nfts)),
         options.sortBy
-      ).map(removeSortData) // remove data needed for sort purposes
+      ) //.map(removeSortData) // remove data needed for sort purposes
 
       // if necessary filter by network filter
       const shouldFilterNetwork = Object.values(Network)
@@ -67,6 +62,17 @@ export function createNFTAggregatorComponent(
 
       // return the limit of results
       return filtered.slice(options.skip, options.first + options.skip)
+    },
+    count: async (options: Options) => {
+      // gather counts from all the sources
+      const counts = await Promise.all(
+        sources.map((source) => source.count(options))
+      )
+
+      // TODO: filter results by network
+      const total = counts.reduce((total, count) => total + count, 0)
+
+      return Math.min(total, MAX_RESULTS)
     },
   }
 }

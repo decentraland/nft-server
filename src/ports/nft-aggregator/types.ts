@@ -1,8 +1,9 @@
-import { INFTSourceComponent, NFT, NFTOptions } from '../nft-source/types'
+import { ISourceComponent, Options, SourceResult } from '../nft-source/types'
 
-export interface INFTAggregatorComponent {
-  fetch(options: NFTOptions): Promise<NFT[]>
+export interface IAggregatorComponent {
+  fetch(options: Options): Promise<SourceResult[]>
+  count(options: Options): Promise<number>
 }
-export type NFTAggregatorOptions = {
-  sources: INFTSourceComponent[]
+export type AggregatorOptions = {
+  sources: ISourceComponent[]
 }

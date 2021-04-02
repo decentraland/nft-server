@@ -91,7 +91,7 @@ export type Data = {
   ens?: EnsData
 }
 
-export type NFTOptions = {
+export type Options = {
   first: number
   skip: number
   sortBy?: SortBy
@@ -109,7 +109,7 @@ export type NFTOptions = {
   network?: Network
 }
 
-export type NFTVariables = Omit<NFTOptions, 'sortBy'> & {
+export type Variables = Omit<Options, 'sortBy'> & {
   orderBy: string
   orderDirection: OrderDirection
   expiresAt: string
@@ -140,18 +140,18 @@ export type Order = {
   nftId: string
   category: NFTCategory
   nftAddress: string
-  marketAddress: string
   owner: string
   buyer: string | null
   price: string
-  ethPrice?: string
   status: OrderStatus
-  expiresAt?: string
-  createdAt: string
-  updatedAt: string
+  expiresAt: number
+  createdAt: number
+  updatedAt: number
 }
 
-export type SortableNFT = NFT & {
+export type SourceResult = {
+  nft: NFT
+  order: Order | null
   sort: {
     [SortBy.BIRTH]: number | null
     [SortBy.NAME]: string
@@ -160,16 +160,17 @@ export type SortableNFT = NFT & {
   }
 }
 
-export interface INFTSourceComponent {
-  fetch(options: NFTOptions): Promise<SortableNFT[]>
+export interface ISourceComponent {
+  fetch(options: Options): Promise<SourceResult[]>
+  count(options: Options): Promise<number>
 }
 
-export type NFTSourceOptions<T> = {
+export type SourceOptions<T> = {
   subgraph: ISubgraphComponent
   fragmentName: string
   getFragment: () => DocumentNode
-  fromFragment(fragment: T): SortableNFT
+  fromFragment(fragment: T): SourceResult
   getOrderBy(sortBy?: SortBy): keyof T
-  getExtraVariables?: (options: NFTOptions) => string[]
-  getExtraWhere?: (options: NFTOptions) => string[]
+  getExtraVariables?: (options: Options) => string[]
+  getExtraWhere?: (options: Options) => string[]
 }

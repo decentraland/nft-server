@@ -3,10 +3,12 @@ import {
   SortBy,
   OrderDirection,
   DEFAULT_SORT_BY,
-  NFTOptions,
-  NFTVariables,
+  Options,
+  Variables,
   WearableGender,
 } from './types'
+
+export const MAX_RESULTS = 1000 // This is a limitation due to theGraph
 
 const NFTS_FILTERS = `
   $first: Int
@@ -21,7 +23,7 @@ const NFTS_FILTERS = `
 `
 
 const NFTS_ARGUMENTS = `
-  first: 1000
+  first: ${MAX_RESULTS}
   skip: 0
   orderBy: $orderBy
   orderDirection: $orderDirection
@@ -41,11 +43,11 @@ export function getOrderDirection(orderBy?: SortBy): OrderDirection {
 }
 
 export function getQuery(
-  options: NFTOptions,
+  options: Options,
   fragmentName: string,
   getNFTFragment: () => DocumentNode,
-  getExtraVariables?: (options: NFTOptions) => string[],
-  getExtraWhere?: (options: NFTOptions) => string[],
+  getExtraVariables?: (options: Options) => string[],
+  getExtraWhere?: (options: Options) => string[],
   isCount = false
 ) {
   const where: string[] = []
@@ -129,9 +131,9 @@ export function getQuery(
 }
 
 export function getVariables<T>(
-  options: NFTOptions,
+  options: Options,
   getOrderBy: (sortBy?: SortBy) => keyof T
-): NFTVariables {
+): Variables {
   const { sortBy, ...variables } = options
   const orderBy = getOrderBy(sortBy) as string
   const orderDirection = getOrderDirection(sortBy)

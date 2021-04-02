@@ -47,7 +47,7 @@ async function initComponents(): Promise<AppComponents> {
     await config.requireString('COLLECTIONS_SUBGRAPH_URL')
   )
 
-  const nft = createBrowseComponent({
+  const browse = createBrowseComponent({
     marketplaceSubgraph,
     collectionsSubgraph,
   })
@@ -58,7 +58,7 @@ async function initComponents(): Promise<AppComponents> {
     server,
     marketplaceSubgraph,
     collectionsSubgraph,
-    nft,
+    browse,
   }
 }
 
