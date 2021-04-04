@@ -161,11 +161,13 @@ export type SourceResult = {
 }
 
 export interface ISourceComponent {
+  network: Network
   fetch(options: Options): Promise<SourceResult[]>
   count(options: Options): Promise<number>
 }
 
 export type SourceOptions<T> = {
+  network: Network
   subgraph: ISubgraphComponent
   fragmentName: string
   getFragment: () => DocumentNode

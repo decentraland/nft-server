@@ -66,10 +66,13 @@ export function createNFTAggregatorComponent(
     count: async (options: Options) => {
       // gather counts from all the sources
       const counts = await Promise.all(
-        sources.map((source) => source.count(options))
+        sources
+          .filter(
+            (source) => !options.network || options.network === source.network
+          )
+          .map((source) => source.count(options))
       )
 
-      // TODO: filter results by network
       const total = counts.reduce((total, count) => total + count, 0)
 
       return Math.min(total, MAX_RESULTS)

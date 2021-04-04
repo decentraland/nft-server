@@ -1,3 +1,4 @@
+import { Network } from '@dcl/schemas'
 import { createNFTAggregatorComponent } from '../nft-aggregator/component'
 import { createNFTSourceComponent } from '../nft-source/component'
 import { NFT, Options, Order } from '../nft-source/types'
@@ -19,6 +20,7 @@ export function createBrowseComponent(
   const { collectionsSubgraph, marketplaceSubgraph } = components
 
   const collectionsSource = createNFTSourceComponent({
+    network: Network.MATIC,
     subgraph: collectionsSubgraph,
     fragmentName: 'collectionsFragment',
     getFragment: getCollectionsFragment,
@@ -27,6 +29,7 @@ export function createBrowseComponent(
   })
 
   const marketplaceSource = createNFTSourceComponent({
+    network: Network.ETHEREUM,
     subgraph: marketplaceSubgraph,
     fragmentName: 'marketplaceFragment',
     getFragment: getMarketplaceFragment,
