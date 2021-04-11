@@ -1,7 +1,13 @@
 import { Network } from '@dcl/schemas'
 import { createNFTAggregatorComponent } from '../nft-aggregator/component'
 import { createNFTSourceComponent } from '../nft-source/component'
-import { NFT, Options, Order } from '../nft-source/types'
+import {
+  NFT,
+  NFTCategory,
+  Options,
+  Order,
+  WearableGender,
+} from '../nft-source/types'
 import {
   getCollectionsFragment,
   fromCollectionsFragment,
@@ -20,27 +26,96 @@ export function createBrowseComponent(
   const { collectionsSubgraph, marketplaceSubgraph } = components
 
   const collectionsSource = createNFTSourceComponent({
-    network: Network.MATIC,
+    check: (options) => {
+      if (options.isLand) {
+        return false
+      } else if (
+        options.category &&
+        options.category !== NFTCategory.WEARABLE
+      ) {
+        return false
+      } else if (options.network && options.network !== Network.MATIC) {
+        return false
+      } else {
+        return true
+      }
+    },
     subgraph: collectionsSubgraph,
     fragmentName: 'collectionsFragment',
     getFragment: getCollectionsFragment,
     fromFragment: fromCollectionsFragment,
     getOrderBy: getCollectionsOrderBy,
+    getExtraWhere: (options) => {
+      const extraWhere: string[] = []
+      if (options.wearableGenders && options.wearableGenders.length > 0) {
+        const hasMale = options.wearableGenders.includes(WearableGender.MALE)
+        const hasFemale = options.wearableGenders.includes(
+          WearableGender.FEMALE
+        )
+
+        if (hasMale && !hasFemale) {
+          extraWhere.push(`searchWearableBodyShapes: ["BaseMale"]`)
+        } else if (hasFemale && !hasMale) {
+          extraWhere.push(`searchWearableBodyShapes: ["BaseFemale"]`)
+        } else if (hasMale && hasFemale) {
+          extraWhere.push(
+            `searchWearableBodyShapes_contains: ["BaseMale", "BaseFemale"]`
+          )
+        }
+      }
+      return extraWhere
+    },
   })
 
   const marketplaceSource = createNFTSourceComponent({
-    network: Network.ETHEREUM,
+    check: (options) => {
+      if (options.network && options.network !== Network.ETHEREUM) {
+        return false
+      } else {
+        return true
+      }
+    },
     subgraph: marketplaceSubgraph,
     fragmentName: 'marketplaceFragment',
     getFragment: getMarketplaceFragment,
     fromFragment: fromMarketplaceFragment,
     getOrderBy: getMarketplaceOrderBy,
-    getExtraVariables: () => [`$category: Category`],
-    getExtraWhere: () => [
-      'searchEstateSize_gt: 0',
-      'searchParcelIsInBounds: true',
-      'category: $category',
-    ],
+    getExtraVariables: (options) => {
+      const extraVariables: string[] = []
+      if (options.category) {
+        extraVariables.push('$category: Category')
+      }
+      return extraVariables
+    },
+    getExtraWhere: (options) => {
+      const extraWhere = [
+        'searchEstateSize_gt: 0',
+        'searchParcelIsInBounds: true',
+      ]
+      if (options.category) {
+        extraWhere.push('category: $category')
+      }
+      if (options.isLand) {
+        extraWhere.push('searchIsLand: true')
+      }
+      if (options.wearableGenders && options.wearableGenders.length > 0) {
+        const hasMale = options.wearableGenders.includes(WearableGender.MALE)
+        const hasFemale = options.wearableGenders.includes(
+          WearableGender.FEMALE
+        )
+
+        if (hasMale && !hasFemale) {
+          extraWhere.push(`searchWearableBodyShapes: [BaseMale]`)
+        } else if (hasFemale && !hasMale) {
+          extraWhere.push(`searchWearableBodyShapes: [BaseFemale]`)
+        } else if (hasMale && hasFemale) {
+          extraWhere.push(
+            `searchWearableBodyShapes_contains: [BaseMale, BaseFemale]`
+          )
+        }
+      }
+      return extraWhere
+    },
   })
 
   const aggregator = createNFTAggregatorComponent({

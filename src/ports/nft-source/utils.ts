@@ -31,11 +31,11 @@ const NFTS_ARGUMENTS = `
 
 export function getOrderDirection(orderBy?: SortBy): OrderDirection {
   switch (orderBy) {
-    case SortBy.BIRTH:
+    case SortBy.NEWEST:
     case SortBy.RECENTLY_LISTED:
       return OrderDirection.DESC
     case SortBy.NAME:
-    case SortBy.PRICE:
+    case SortBy.CHEAPEST:
       return OrderDirection.ASC
     default:
       return getOrderDirection(DEFAULT_SORT_BY)
@@ -58,7 +58,7 @@ export function getQuery(
 
   if (
     options.isOnSale ||
-    options.sortBy === SortBy.PRICE ||
+    options.sortBy === SortBy.CHEAPEST ||
     options.sortBy === SortBy.RECENTLY_LISTED
   ) {
     where.push('searchOrderStatus: open')

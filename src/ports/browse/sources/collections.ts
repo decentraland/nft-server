@@ -104,13 +104,13 @@ export function getCollectionsOrderBy(
   orderBy?: SortBy
 ): keyof CollectionsFragment {
   switch (orderBy) {
-    case SortBy.BIRTH:
+    case SortBy.NEWEST:
       return 'createdAt'
     case SortBy.NAME:
       return 'searchText'
     case SortBy.RECENTLY_LISTED:
       return 'searchOrderCreatedAt'
-    case SortBy.PRICE:
+    case SortBy.CHEAPEST:
       return 'searchOrderPrice'
     default:
       return getCollectionsOrderBy(DEFAULT_SORT_BY)
@@ -161,10 +161,10 @@ export function fromCollectionsFragment(
           }
         : null,
     sort: {
-      [SortBy.BIRTH]: fromNumber(fragment.createdAt),
+      [SortBy.NEWEST]: fromNumber(fragment.createdAt),
       [SortBy.NAME]: fragment.metadata.wearable.name,
       [SortBy.RECENTLY_LISTED]: fromNumber(fragment.searchOrderCreatedAt),
-      [SortBy.PRICE]: fromWei(fragment.searchOrderPrice),
+      [SortBy.CHEAPEST]: fromWei(fragment.searchOrderPrice),
     },
   }
 

@@ -4,12 +4,12 @@ import { ISubgraphComponent } from '../subgraph/types'
 
 export enum SortBy {
   NAME = 'name',
-  BIRTH = 'birth',
+  NEWEST = 'newest',
   RECENTLY_LISTED = 'recently_listed',
-  PRICE = 'price',
+  CHEAPEST = 'cheapest',
 }
 
-export const DEFAULT_SORT_BY = SortBy.BIRTH
+export const DEFAULT_SORT_BY = SortBy.NEWEST
 
 export enum OrderDirection {
   ASC = 'asc',
@@ -153,26 +153,26 @@ export type SourceResult = {
   nft: NFT
   order: Order | null
   sort: {
-    [SortBy.BIRTH]: number | null
+    [SortBy.NEWEST]: number | null
     [SortBy.NAME]: string
-    [SortBy.PRICE]: number | null
+    [SortBy.CHEAPEST]: number | null
     [SortBy.RECENTLY_LISTED]: number | null
   }
 }
 
 export interface ISourceComponent {
-  network: Network
+  check?(options: Options): boolean
   fetch(options: Options): Promise<SourceResult[]>
   count(options: Options): Promise<number>
 }
 
 export type SourceOptions<T> = {
-  network: Network
   subgraph: ISubgraphComponent
   fragmentName: string
   getFragment: () => DocumentNode
   fromFragment(fragment: T): SourceResult
   getOrderBy(sortBy?: SortBy): keyof T
+  check?(options: Options): boolean
   getExtraVariables?: (options: Options) => string[]
   getExtraWhere?: (options: Options) => string[]
 }

@@ -16,8 +16,11 @@ function buildParams(params: URLSearchParams) {
       const value = params.get(key)
       return value === null ? defaultValue : value
     },
-    getList<T extends string = string>(key: string) {
-      return params.getAll(key) as T[]
+    getList<T extends string = string>(key: string, validValues: T[] = []) {
+      const list = params.getAll(key) as T[]
+      return validValues.length > 0
+        ? list.filter((value) => validValues.includes(value))
+        : list
     },
     getNumber(key: string, defaultValue?: number) {
       const value = params.get(key)
@@ -33,10 +36,16 @@ function buildParams(params: URLSearchParams) {
       const value = params.get(key)
       return value !== null
     },
-    getValue<T extends string>(key: string, defaultValue?: T) {
+    getValue<T extends string>(
+      key: string,
+      validValues: T[] = [],
+      defaultValue?: T
+    ) {
       const value = this.getString(key, defaultValue)
       if (value) {
-        return value as T
+        if (validValues.length === 0 || validValues.includes(value as T)) {
+          return value as T
+        }
       }
       return defaultValue
     },
@@ -53,21 +62,40 @@ export function createBrowseHandler(
     const options: Options = {
       first: params.getNumber('first', 100)!,
       skip: params.getNumber('skip', 0)!,
-      sortBy: params.getValue<SortBy>('sortBy'),
-      category: params.getValue<NFTCategory>('category'),
+      sortBy: params.getValue<SortBy>('sortBy', Object.values(SortBy)),
+      category: params.getValue<NFTCategory>(
+        'category',
+        Object.values(NFTCategory)
+      ),
       address: params.getString('address'),
       isOnSale: params.getBoolean('isOnSale'),
       search: params.getString('search'),
       isLand: params.getBoolean('isLand'),
       isWearableHead: params.getBoolean('isWearableHead'),
       isWearableAccessory: params.getBoolean('isWearableAccessory'),
-      wearableCategory: params.getValue<WearableCategory>('wearableCategory'),
-      wearableRarities: params.getList<WearableRarity>('wearableRarity'),
-      wearableGenders: params.getList<WearableGender>('wearableGender'),
+      wearableCategory: params.getValue<WearableCategory>(
+        'wearableCategory',
+        Object.values(WearableCategory)
+      ),
+      wearableRarities: params.getList<WearableRarity>(
+        'wearableRarity',
+        Object.values(WearableRarity)
+      ),
+      wearableGenders: params.getList<WearableGender>(
+        'wearableGender',
+        Object.values(WearableGender)
+      ),
       contracts: params.getList('contracts'),
-      network: params.getValue<Network>('network'),
+      network: params.getValue<Network>(
+        'network',
+        Object.values(Network).filter(
+          (value) => typeof value === 'string'
+        ) as Network[]
+      ),
     }
-
+    console.log('-------------')
+    console.log(context.url.searchParams.toString())
+    console.log(options)
     const results = await browse.fetch(options)
     return {
       status: 200,

@@ -1,9 +1,9 @@
-import { Network } from '@dcl/schemas'
 import {
   DEFAULT_SORT_BY,
   Options,
   SourceResult,
   SortBy,
+  ISourceComponent,
 } from '../nft-source/types'
 import { getOrderDirection, MAX_RESULTS } from '../nft-source/utils'
 import { IAggregatorComponent, AggregatorOptions } from './types'
@@ -29,9 +29,10 @@ function sort(nfts: SourceResult[], sortBy?: SortBy) {
   })
 }
 
-function filterByNetwork(network: Network) {
-  return (result: SourceResult) =>
-    result.nft.network.toLowerCase() === network.toLowerCase()
+function getSourceFilter(options: Options) {
+  return function sourceFilter(source: ISourceComponent) {
+    return !source.check || source.check(options)
+  }
 }
 
 export function createNFTAggregatorComponent(
@@ -42,35 +43,25 @@ export function createNFTAggregatorComponent(
   return {
     fetch: async (options: Options) => {
       // gather results from all the sources
+      const filter = getSourceFilter(options)
       const results = await Promise.all(
-        sources.map((source) => source.fetch(options))
+        sources.filter(filter).map((source) => source.fetch(options))
       )
 
       // sort results
       const sorted = sort(
         results.reduce((nfts, all) => all.concat(nfts)),
         options.sortBy
-      ) //.map(removeSortData) // remove data needed for sort purposes
-
-      // if necessary filter by network filter
-      const shouldFilterNetwork = Object.values(Network)
-        .map((network) => network.toString().toLowerCase())
-        .includes(options.network!)
-      const filtered = shouldFilterNetwork
-        ? sorted.filter(filterByNetwork(options.network!))
-        : sorted
+      )
 
       // return the limit of results
-      return filtered.slice(options.skip, options.first + options.skip)
+      return sorted.slice(options.skip, options.first + options.skip)
     },
     count: async (options: Options) => {
       // gather counts from all the sources
+      const filter = getSourceFilter(options)
       const counts = await Promise.all(
-        sources
-          .filter(
-            (source) => !options.network || options.network === source.network
-          )
-          .map((source) => source.count(options))
+        sources.filter(filter).map((source) => source.count(options))
       )
 
       const total = counts.reduce((total, count) => total + count, 0)

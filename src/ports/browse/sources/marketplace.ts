@@ -135,16 +135,16 @@ export function getMarketplaceOrderBy(
   sortBy?: SortBy
 ): keyof MarketplaceFragment {
   switch (sortBy) {
-    case SortBy.BIRTH:
+    case SortBy.NEWEST:
       return 'createdAt'
     case SortBy.NAME:
       return 'name'
     case SortBy.RECENTLY_LISTED:
       return 'searchOrderCreatedAt'
-    case SortBy.PRICE:
+    case SortBy.CHEAPEST:
       return 'searchOrderPrice'
     default:
-      return getMarketplaceOrderBy(SortBy.BIRTH)
+      return getMarketplaceOrderBy(SortBy.NEWEST)
   }
 }
 
@@ -213,10 +213,10 @@ export function fromMarketplaceFragment(
           }
         : null,
     sort: {
-      [SortBy.BIRTH]: fromNumber(fragment.createdAt),
+      [SortBy.NEWEST]: fromNumber(fragment.createdAt),
       [SortBy.NAME]: fragment.name,
       [SortBy.RECENTLY_LISTED]: fromNumber(fragment.searchOrderCreatedAt),
-      [SortBy.PRICE]: fromWei(fragment.searchOrderPrice),
+      [SortBy.CHEAPEST]: fromWei(fragment.searchOrderPrice),
     },
   }
 

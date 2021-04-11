@@ -5,7 +5,7 @@ export function createNFTSourceComponent<T>(
   options: SourceOptions<T>
 ): ISourceComponent {
   const {
-    network,
+    check,
     subgraph,
     fragmentName,
     getFragment,
@@ -34,7 +34,7 @@ export function createNFTSourceComponent<T>(
   }
 
   return {
-    network,
+    check,
     fetch: async (options: Options) => {
       const fetchFragments = getFragmentFetcher(options)
       const fragments = await fetchFragments()
