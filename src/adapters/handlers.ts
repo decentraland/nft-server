@@ -96,10 +96,37 @@ export function createBrowseHandler(
     console.log('-------------')
     console.log(context.url.searchParams.toString())
     console.log(options)
-    const results = await browse.fetch(options)
-    return {
-      status: 200,
-      body: results,
+    try {
+      const results = await browse.fetch(options)
+      return {
+        status: 200,
+        body: results,
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        body: error.message,
+      }
+    }
+  }
+}
+
+export function createCollectionsHandler(
+  components: Pick<AppComponents, 'logs' | 'browse'>
+): IHttpServerComponent.IRequestHandler<Context<'/collections'>> {
+  const { browse } = components
+  return async () => {
+    try {
+      const result = await browse.collections()
+      return {
+        status: 200,
+        body: result,
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        body: error.message,
+      }
     }
   }
 }

@@ -4,6 +4,7 @@ import {
   SourceResult,
   SortBy,
   ISourceComponent,
+  Collection,
 } from '../nft-source/types'
 import { getOrderDirection, MAX_RESULTS } from '../nft-source/utils'
 import { IAggregatorComponent, AggregatorOptions } from './types'
@@ -67,6 +68,22 @@ export function createNFTAggregatorComponent(
       const total = counts.reduce((total, count) => total + count, 0)
 
       return Math.min(total, MAX_RESULTS)
+    },
+    collections: async () => {
+      const results = await Promise.all(
+        sources.map((source) => source.collections())
+      )
+
+      const collections = results.reduce<Collection[]>(
+        (result, collections) => collections.concat(result),
+        []
+      )
+
+      collections.sort((a, b) =>
+        a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
+      )
+
+      return collections
     },
   }
 }

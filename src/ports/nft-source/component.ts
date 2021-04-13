@@ -13,6 +13,7 @@ export function createNFTSourceComponent<T>(
     getExtraVariables,
     getOrderBy,
     fromFragment,
+    getCollections,
   } = options
 
   function getFragmentFetcher(options: Options) {
@@ -34,6 +35,7 @@ export function createNFTSourceComponent<T>(
   }
 
   return {
+    subgraph,
     check,
     fetch: async (options: Options) => {
       const fetchFragments = getFragmentFetcher(options)
@@ -46,5 +48,6 @@ export function createNFTSourceComponent<T>(
       const fragments = await fetchFragments()
       return fragments.length
     },
+    collections: () => getCollections(subgraph),
   }
 }

@@ -12,11 +12,13 @@ import {
   getCollectionsFragment,
   fromCollectionsFragment,
   getCollectionsOrderBy,
+  getCollections,
 } from './sources/collections'
 import {
   fromMarketplaceFragment,
   getMarketplaceFragment,
   getMarketplaceOrderBy,
+  getLegacyCollections,
 } from './sources/marketplace'
 import { BrowseComponents, IBrowseComponent } from './types'
 
@@ -65,6 +67,7 @@ export function createBrowseComponent(
       }
       return extraWhere
     },
+    getCollections: (subgraph) => getCollections(subgraph, Network.MATIC),
   })
 
   const marketplaceSource = createNFTSourceComponent({
@@ -116,6 +119,7 @@ export function createBrowseComponent(
       }
       return extraWhere
     },
+    getCollections: getLegacyCollections,
   })
 
   const aggregator = createNFTAggregatorComponent({
@@ -142,6 +146,10 @@ export function createBrowseComponent(
         orders,
         total,
       }
+    },
+    collections: async () => {
+      const collections = await aggregator.collections()
+      return collections
     },
   }
 }

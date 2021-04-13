@@ -8,9 +8,11 @@ import {
   NFT,
   WearableData,
   OrderStatus,
+  Collection,
 } from '../../nft-source/types'
 import { fromNumber, fromWei } from '../../nft-source/utils'
 import { isExpired } from '../utils'
+import { ISubgraphComponent } from '../../subgraph/types'
 
 export type CollectionsOrderFields = {
   id: string
@@ -169,4 +171,31 @@ export function fromCollectionsFragment(
   }
 
   return result
+}
+
+const getCollectionsQuery = gql`
+  query getCollections {
+    collections(first: 1000) {
+      name
+      id
+    }
+  }
+`
+
+export async function getCollections(
+  subgraph: ISubgraphComponent,
+  network: Network
+) {
+  const { collections } = await subgraph.query<{
+    collections: { id: string; name: string }[]
+  }>(getCollectionsQuery)
+
+  return collections.map(
+    ({ id: address, name }) =>
+      ({
+        name,
+        address,
+        network,
+      } as Collection)
+  )
 }

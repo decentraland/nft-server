@@ -1,6 +1,6 @@
 import { Router } from '@well-known-components/http-server'
 import { GlobalContext } from '../types'
-import { createBrowseHandler } from './handlers'
+import { createBrowseHandler, createCollectionsHandler } from './handlers'
 
 export async function setupRoutes(globalContext: GlobalContext) {
   const { components } = globalContext
@@ -13,6 +13,7 @@ export async function setupRoutes(globalContext: GlobalContext) {
   router.prefix(`/${apiVersion}`)
 
   router.get('/browse', createBrowseHandler(components))
+  router.get('/collections', createCollectionsHandler(components))
 
   server.use(router.middleware())
 }

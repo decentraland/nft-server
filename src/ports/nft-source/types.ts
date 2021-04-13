@@ -149,6 +149,12 @@ export type Order = {
   updatedAt: number
 }
 
+export type Collection = {
+  name: string
+  address: string
+  network: Network
+}
+
 export type SourceResult = {
   nft: NFT
   order: Order | null
@@ -161,9 +167,11 @@ export type SourceResult = {
 }
 
 export interface ISourceComponent {
+  subgraph: ISubgraphComponent
   check?(options: Options): boolean
   fetch(options: Options): Promise<SourceResult[]>
   count(options: Options): Promise<number>
+  collections: () => Promise<Collection[]>
 }
 
 export type SourceOptions<T> = {
@@ -175,4 +183,5 @@ export type SourceOptions<T> = {
   check?(options: Options): boolean
   getExtraVariables?: (options: Options) => string[]
   getExtraWhere?: (options: Options) => string[]
+  getCollections: (subgraph: ISubgraphComponent) => Promise<Collection[]>
 }
