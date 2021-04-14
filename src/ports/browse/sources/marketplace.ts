@@ -6,47 +6,16 @@ import {
   EnsData,
   NFT,
   WearableData,
-  NFTCategory,
-  OrderStatus,
   Collection,
+  OrderFragment,
 } from '../../source/types'
-import { fromNumber, fromWei } from '../../source/utils'
+import {
+  fromNumber,
+  fromOrderFragment,
+  fromWei,
+  getOrderFields,
+} from '../../source/utils'
 import { isExpired } from '../utils'
-
-export type MarketplaceOrderFields = {
-  id: string
-  category: NFTCategory
-  nftAddress: string
-  owner: string
-  buyer: string | null
-  price: string
-  status: OrderStatus
-  expiresAt: string
-  createdAt: string
-  updatedAt: string
-}
-export const getMarketplaceOrderFields = () => gql`
-  fragment marketplaceOrderFields on Order {
-    id
-    category
-    nftAddress
-    owner
-    buyer
-    price
-    status
-    expiresAt
-    createdAt
-    updatedAt
-  }
-`
-
-export type MarketplaceOrderFragment = MarketplaceOrderFields
-export const getMarketplaceOrderFragment = () => gql`
-  fragment marketplaceOrderFragment on Order {
-    ...marketplaceOrderFields
-  }
-  ${getMarketplaceOrderFields()}
-`
 
 export const getMarketplaceFields = () => gql`
   fragment marketplaceFields on NFT {
@@ -95,11 +64,11 @@ export const getMarketplaceFragment = () => gql`
   fragment marketplaceFragment on NFT {
     ...marketplaceFields
     activeOrder {
-      ...marketplaceOrderFields
+      ...orderFields
     }
   }
   ${getMarketplaceFields()}
-  ${getMarketplaceOrderFields()}
+  ${getOrderFields()}
 `
 
 export type MarketplaceFields = Omit<
@@ -129,7 +98,7 @@ export type MarketplaceFields = Omit<
 }
 
 export type MarketplaceFragment = MarketplaceFields & {
-  activeOrder: MarketplaceOrderFields | null
+  activeOrder: OrderFragment | null
 }
 
 export function getMarketplaceOrderBy(
@@ -199,19 +168,7 @@ export function fromMarketplaceFragment(
     },
     order:
       fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
-        ? {
-            id: fragment.activeOrder.id,
-            nftId: fragment.id,
-            nftAddress: fragment.activeOrder.nftAddress,
-            category: fragment.activeOrder.category,
-            owner: fragment.activeOrder.owner,
-            buyer: fragment.activeOrder.buyer,
-            price: fragment.activeOrder.price,
-            status: fragment.activeOrder.status,
-            expiresAt: +fragment.activeOrder.expiresAt,
-            createdAt: +fragment.activeOrder.createdAt * 1000,
-            updatedAt: +fragment.activeOrder.updatedAt * 1000,
-          }
+        ? fromOrderFragment(fragment.activeOrder)
         : null,
     sort: {
       [SortBy.NEWEST]: fromNumber(fragment.createdAt),

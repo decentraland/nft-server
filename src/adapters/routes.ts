@@ -3,6 +3,7 @@ import { GlobalContext } from '../types'
 import {
   createBrowseHandler,
   createCollectionsHandler,
+  createHistoryHandler,
   createNFTHandler,
 } from './handlers'
 
@@ -21,6 +22,10 @@ export async function setupRoutes(globalContext: GlobalContext) {
   router.get(
     '/contracts/:contractAddress/tokens/:tokenId',
     createNFTHandler(components)
+  )
+  router.get(
+    '/contracts/:contractAddress/tokens/:tokenId/history',
+    createHistoryHandler(components)
   )
 
   server.use(router.middleware())

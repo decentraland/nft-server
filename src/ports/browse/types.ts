@@ -7,9 +7,15 @@ export type BrowseResult = {
   total: number
 }
 
+export type NFTResult = {
+  nft: NFT
+  order: Order | null
+}
+
 export interface IBrowseComponent {
   fetch: (options: Options) => Promise<BrowseResult>
-  nft: (contractAddress: string, tokenId: string) => Promise<NFT | null>
+  nft: (contractAddress: string, tokenId: string) => Promise<NFTResult | null>
+  history: (contractAddress: string, tokenId: string) => Promise<Order[]>
   collections: () => Promise<Collection[]>
 }
 

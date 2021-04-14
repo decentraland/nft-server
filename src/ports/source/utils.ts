@@ -6,6 +6,8 @@ import {
   Options,
   Variables,
   WearableGender,
+  OrderFragment,
+  Order,
 } from './types'
 
 export const MAX_RESULTS = 1000 // This is a limitation due to theGraph
@@ -27,6 +29,29 @@ const NFTS_ARGUMENTS = `
   skip: 0
   orderBy: $orderBy
   orderDirection: $orderDirection
+`
+
+export const getOrderFields = () => gql`
+  fragment orderFields on Order {
+    id
+    nftAddress
+    owner
+    buyer
+    price
+    status
+    expiresAt
+    createdAt
+    updatedAt
+    nft {
+      id
+    }
+  }
+`
+export const getOrderFragment = () => gql`
+  fragment orderFragment on Order {
+    ...orderFields
+  }
+  ${getOrderFields()}
 `
 
 export function getOrderDirection(orderBy?: SortBy): OrderDirection {
@@ -147,6 +172,21 @@ export function getFetchOneQuery(
   `
 }
 
+export function getHistoryQuery() {
+  return gql`
+    query NFTOrders($nftId: String!) {
+      orders(
+        where: { nft: $nftId, status: sold }
+        orderBy: createdAt
+        orderDirection: desc
+      ) {
+        ...orderFragment
+      }
+    }
+    ${getOrderFragment()}
+  `
+}
+
 export function getVariables<T>(
   options: Options,
   getOrderBy: (sortBy?: SortBy) => keyof T
@@ -160,6 +200,23 @@ export function getVariables<T>(
     orderDirection,
     expiresAt: Date.now().toString(),
   }
+}
+
+export function fromOrderFragment(fragment: OrderFragment) {
+  const order: Order = {
+    id: fragment.id,
+    nftAddress: fragment.nftAddress,
+    nftId: fragment.nft.id,
+    owner: fragment.owner,
+    buyer: fragment.buyer,
+    price: fragment.price,
+    status: fragment.status,
+    expiresAt: +fragment.expiresAt,
+    createdAt: +fragment.createdAt * 1000,
+    updatedAt: +fragment.updatedAt * 1000,
+  }
+
+  return order
 }
 
 export function fromNumber(input: string | null) {

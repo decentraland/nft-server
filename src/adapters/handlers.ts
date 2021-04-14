@@ -158,3 +158,26 @@ export function createNFTHandler(
     }
   }
 }
+
+export function createHistoryHandler(
+  components: Pick<AppComponents, 'logs' | 'browse'>
+): IHttpServerComponent.IRequestHandler<
+  Context<'/contracts/:contractAddress/tokens/:tokenId/history'>
+> {
+  const { browse } = components
+  return async (context) => {
+    const { contractAddress, tokenId } = context.params
+    try {
+      const history = await browse.history(contractAddress, tokenId)
+      return {
+        status: 200,
+        body: history,
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        body: error.message,
+      }
+    }
+  }
+}

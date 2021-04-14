@@ -135,10 +135,24 @@ export enum OrderStatus {
   CANCELLED = 'cancelled',
 }
 
+export type OrderFragment = {
+  id: string
+  nftAddress: string
+  owner: string
+  buyer: string | null
+  price: string
+  status: OrderStatus
+  expiresAt: string
+  createdAt: string
+  updatedAt: string
+  nft: {
+    id: string
+  }
+}
+
 export type Order = {
   id: string
   nftId: string
-  category: NFTCategory
   nftAddress: string
   owner: string
   buyer: string | null
@@ -170,8 +184,9 @@ export interface ISourceComponent {
   subgraph: ISubgraphComponent
   check?(options: Options): boolean
   fetch(options: Options): Promise<SourceResult[]>
-  nft(contractAddress: string, tokenId: string): Promise<NFT | null>
   count(options: Options): Promise<number>
+  nft(contractAddress: string, tokenId: string): Promise<SourceResult | null>
+  history(contractAddress: string, tokenId: string): Promise<Order[]>
   collections: () => Promise<Collection[]>
 }
 

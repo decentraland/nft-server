@@ -126,34 +126,46 @@ export function createBrowseComponent(
     sources: [collectionsSource, marketplaceSource],
   })
 
-  return {
-    async fetch(options: Options) {
-      const [results, total] = await Promise.all([
-        aggregator.fetch(options),
-        aggregator.count(options),
-      ])
-      const nfts: NFT[] = []
-      const orders: Order[] = []
-      for (const result of results) {
-        nfts.push(result.nft)
-        if (result.order) {
-          orders.push(result.order)
-        }
+  async function fetch(options: Options) {
+    const [results, total] = await Promise.all([
+      aggregator.fetch(options),
+      aggregator.count(options),
+    ])
+    const nfts: NFT[] = []
+    const orders: Order[] = []
+    for (const result of results) {
+      nfts.push(result.nft)
+      if (result.order) {
+        orders.push(result.order)
       }
+    }
 
-      return {
-        nfts,
-        orders,
-        total,
-      }
-    },
-    nft: async (contractAddress: string, tokenId: string) => {
-      const nft = aggregator.nft(contractAddress, tokenId)
-      return nft
-    },
-    collections: async () => {
-      const collections = await aggregator.collections()
-      return collections
-    },
+    return {
+      nfts,
+      orders,
+      total,
+    }
+  }
+
+  async function nft(contractAddress: string, tokenId: string) {
+    const result = await aggregator.nft(contractAddress, tokenId)
+    return result ? { nft: result.nft, order: result.order } : null
+  }
+
+  async function history(contractAddress: string, tokenId: string) {
+    const result = await aggregator.history(contractAddress, tokenId)
+    return result
+  }
+
+  async function collections() {
+    const collections = await aggregator.collections()
+    return collections
+  }
+
+  return {
+    fetch,
+    nft,
+    history,
+    collections,
   }
 }

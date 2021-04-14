@@ -7,45 +7,17 @@ import {
   SortBy,
   NFT,
   WearableData,
-  OrderStatus,
   Collection,
+  OrderFragment,
 } from '../../source/types'
-import { fromNumber, fromWei } from '../../source/utils'
+import {
+  fromNumber,
+  fromOrderFragment,
+  fromWei,
+  getOrderFields,
+} from '../../source/utils'
 import { isExpired } from '../utils'
 import { ISubgraphComponent } from '../../subgraph/types'
-
-export type CollectionsOrderFields = {
-  id: string
-  nftAddress: string
-  owner: string
-  buyer: string | null
-  price: string
-  status: OrderStatus
-  expiresAt: string
-  createdAt: string
-  updatedAt: string
-}
-export const getCollectionsOrderFields = () => gql`
-  fragment collectionsOrderFields on Order {
-    id
-    nftAddress
-    owner
-    buyer
-    price
-    status
-    expiresAt
-    createdAt
-    updatedAt
-  }
-`
-
-export type CollectionsOrderFragment = CollectionsOrderFields
-export const getCollectionsOrderFragment = () => gql`
-  fragment collectionsOrderFragment on Order {
-    ...collectionsOrderFields
-  }
-  ${getCollectionsOrderFields()}
-`
 
 export const getCollectionsFields = () => gql`
   fragment collectionsFields on NFT {
@@ -75,11 +47,11 @@ export const getCollectionsFragment = () => gql`
   fragment collectionsFragment on NFT {
     ...collectionsFields
     activeOrder {
-      ...collectionsOrderFields
+      ...orderFields
     }
   }
   ${getCollectionsFields()}
-  ${getCollectionsOrderFields()}
+  ${getOrderFields()}
 `
 
 export type CollectionsFields = Omit<
@@ -99,7 +71,7 @@ export type CollectionsFields = Omit<
 }
 
 export type CollectionsFragment = CollectionsFields & {
-  activeOrder: CollectionsOrderFields | null
+  activeOrder: OrderFragment | null
 }
 
 export function getCollectionsOrderBy(
@@ -148,19 +120,7 @@ export function fromCollectionsFragment(
     },
     order:
       fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
-        ? {
-            id: fragment.activeOrder.id,
-            nftId: fragment.id,
-            nftAddress: fragment.activeOrder.nftAddress,
-            category: NFTCategory.WEARABLE,
-            owner: fragment.activeOrder.owner,
-            buyer: fragment.activeOrder.buyer,
-            price: fragment.activeOrder.price,
-            status: fragment.activeOrder.status,
-            expiresAt: +fragment.activeOrder.expiresAt,
-            createdAt: +fragment.activeOrder.createdAt * 1000,
-            updatedAt: +fragment.activeOrder.updatedAt * 1000,
-          }
+        ? fromOrderFragment(fragment.activeOrder)
         : null,
     sort: {
       [SortBy.NEWEST]: fromNumber(fragment.createdAt),
