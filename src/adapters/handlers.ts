@@ -7,7 +7,7 @@ import {
   WearableCategory,
   WearableGender,
   WearableRarity,
-} from '../ports/nft-source/types'
+} from '../ports/source/types'
 import { AppComponents, Context } from '../types'
 
 function buildParams(params: URLSearchParams) {
@@ -122,6 +122,34 @@ export function createCollectionsHandler(
         status: 200,
         body: result,
       }
+    } catch (error) {
+      return {
+        status: 500,
+        body: error.message,
+      }
+    }
+  }
+}
+
+export function createNFTHandler(
+  components: Pick<AppComponents, 'logs' | 'browse'>
+): IHttpServerComponent.IRequestHandler<
+  Context<'/contracts/:contractAddress/tokens/:tokenId'>
+> {
+  const { browse } = components
+  return async (context) => {
+    const { contractAddress, tokenId } = context.params
+    try {
+      const result = await browse.nft(contractAddress, tokenId)
+      return result !== null
+        ? {
+            status: 200,
+            body: result,
+          }
+        : {
+            status: 404,
+            body: 'Not found',
+          }
     } catch (error) {
       return {
         status: 500,

@@ -1,13 +1,13 @@
 import { Network } from '@dcl/schemas'
-import { createNFTAggregatorComponent } from '../nft-aggregator/component'
-import { createNFTSourceComponent } from '../nft-source/component'
+import { createAggregatorComponent } from '../aggregator/component'
+import { createSourceComponent } from '../source/component'
 import {
   NFT,
   NFTCategory,
   Options,
   Order,
   WearableGender,
-} from '../nft-source/types'
+} from '../source/types'
 import {
   getCollectionsFragment,
   fromCollectionsFragment,
@@ -27,7 +27,7 @@ export function createBrowseComponent(
 ): IBrowseComponent {
   const { collectionsSubgraph, marketplaceSubgraph } = components
 
-  const collectionsSource = createNFTSourceComponent({
+  const collectionsSource = createSourceComponent({
     check: (options) => {
       if (options.isLand) {
         return false
@@ -70,7 +70,7 @@ export function createBrowseComponent(
     getCollections: (subgraph) => getCollections(subgraph, Network.MATIC),
   })
 
-  const marketplaceSource = createNFTSourceComponent({
+  const marketplaceSource = createSourceComponent({
     check: (options) => {
       if (options.network && options.network !== Network.ETHEREUM) {
         return false
@@ -122,7 +122,7 @@ export function createBrowseComponent(
     getCollections: getLegacyCollections,
   })
 
-  const aggregator = createNFTAggregatorComponent({
+  const aggregator = createAggregatorComponent({
     sources: [collectionsSource, marketplaceSource],
   })
 
@@ -146,6 +146,10 @@ export function createBrowseComponent(
         orders,
         total,
       }
+    },
+    nft: async (contractAddress: string, tokenId: string) => {
+      const nft = aggregator.nft(contractAddress, tokenId)
+      return nft
     },
     collections: async () => {
       const collections = await aggregator.collections()

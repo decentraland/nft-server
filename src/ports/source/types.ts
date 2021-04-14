@@ -170,6 +170,7 @@ export interface ISourceComponent {
   subgraph: ISubgraphComponent
   check?(options: Options): boolean
   fetch(options: Options): Promise<SourceResult[]>
+  nft(contractAddress: string, tokenId: string): Promise<NFT | null>
   count(options: Options): Promise<number>
   collections: () => Promise<Collection[]>
 }
@@ -179,8 +180,8 @@ export type SourceOptions<T> = {
   fragmentName: string
   getFragment: () => DocumentNode
   fromFragment(fragment: T): SourceResult
-  getOrderBy(sortBy?: SortBy): keyof T
   check?(options: Options): boolean
+  getOrderBy(sortBy?: SortBy): keyof T
   getExtraVariables?: (options: Options) => string[]
   getExtraWhere?: (options: Options) => string[]
   getCollections: (subgraph: ISubgraphComponent) => Promise<Collection[]>

@@ -1,7 +1,7 @@
 import { ISourceComponent, Options, SourceOptions } from './types'
-import { getQuery, getVariables } from './utils'
+import { getFetchOneQuery, getFetchQuery, getVariables } from './utils'
 
-export function createNFTSourceComponent<T>(
+export function createSourceComponent<T>(
   options: SourceOptions<T>
 ): ISourceComponent {
   const {
@@ -18,7 +18,7 @@ export function createNFTSourceComponent<T>(
 
   function getFragmentFetcher(options: Options) {
     return async (isCount?: boolean) => {
-      const query = getQuery(
+      const query = getFetchQuery(
         options,
         fragmentName,
         getFragment,
@@ -47,6 +47,22 @@ export function createNFTSourceComponent<T>(
       const fetchFragments = getFragmentFetcher(options)
       const fragments = await fetchFragments()
       return fragments.length
+    },
+    nft: async (contractAddress: string, tokenId: string) => {
+      const query = getFetchOneQuery(fragmentName, getFragment)
+      const variables = {
+        contractAddress,
+        tokenId,
+      }
+      const { nfts: fragments } = await subgraph.query<{
+        nfts: T[]
+      }>(query, variables)
+      if (fragments.length === 0) {
+        return null
+      } else {
+        const { nft } = fromFragment(fragments[0])
+        return nft
+      }
     },
     collections: () => getCollections(subgraph),
   }

@@ -42,7 +42,7 @@ export function getOrderDirection(orderBy?: SortBy): OrderDirection {
   }
 }
 
-export function getQuery(
+export function getFetchQuery(
   options: Options,
   fragmentName: string,
   getNFTFragment: () => DocumentNode,
@@ -127,6 +127,23 @@ export function getQuery(
   return gql`
     ${query}
     ${isCount ? '' : getNFTFragment()}
+  `
+}
+
+export function getFetchOneQuery(
+  fragmentName: string,
+  getFragment: () => DocumentNode
+) {
+  return gql`
+    query NFTByTokenId($contractAddress: String, $tokenId: String) {
+      nfts(
+        where: { contractAddress: $contractAddress, tokenId: $tokenId }
+        first: 1
+      ) {
+        ...${fragmentName}
+      }
+    }
+    ${getFragment()}
   `
 }
 

@@ -5,8 +5,8 @@ import {
   SortBy,
   ISourceComponent,
   Collection,
-} from '../nft-source/types'
-import { getOrderDirection, MAX_RESULTS } from '../nft-source/utils'
+} from '../source/types'
+import { getOrderDirection, MAX_RESULTS } from '../source/utils'
 import { IAggregatorComponent, AggregatorOptions } from './types'
 
 function sort(nfts: SourceResult[], sortBy?: SortBy) {
@@ -36,7 +36,7 @@ function getSourceFilter(options: Options) {
   }
 }
 
-export function createNFTAggregatorComponent(
+export function createAggregatorComponent(
   options: AggregatorOptions
 ): IAggregatorComponent {
   const { sources } = options
@@ -68,6 +68,13 @@ export function createNFTAggregatorComponent(
       const total = counts.reduce((total, count) => total + count, 0)
 
       return Math.min(total, MAX_RESULTS)
+    },
+    nft: async (contractAddress: string, tokenId: string) => {
+      const results = await Promise.all(
+        sources.map((source) => source.nft(contractAddress, tokenId))
+      )
+      const nft = results.find((nft) => nft !== null) || null
+      return nft
     },
     collections: async () => {
       const results = await Promise.all(

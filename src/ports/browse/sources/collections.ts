@@ -9,8 +9,8 @@ import {
   WearableData,
   OrderStatus,
   Collection,
-} from '../../nft-source/types'
-import { fromNumber, fromWei } from '../../nft-source/utils'
+} from '../../source/types'
+import { fromNumber, fromWei } from '../../source/utils'
 import { isExpired } from '../utils'
 import { ISubgraphComponent } from '../../subgraph/types'
 
