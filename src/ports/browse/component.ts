@@ -4,7 +4,7 @@ import { createSourceComponent } from '../source/component'
 import {
   NFT,
   NFTCategory,
-  Options,
+  FetchOptions,
   Order,
   WearableGender,
 } from '../source/types'
@@ -126,7 +126,7 @@ export function createBrowseComponent(
     sources: [collectionsSource, marketplaceSource],
   })
 
-  async function fetch(options: Options) {
+  async function fetch(options: FetchOptions) {
     const [results, total] = await Promise.all([
       aggregator.fetch(options),
       aggregator.count(options),

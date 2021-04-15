@@ -91,7 +91,7 @@ export type Data = {
   ens?: EnsData
 }
 
-export type Options = {
+export type FetchOptions = {
   first: number
   skip: number
   sortBy?: SortBy
@@ -109,7 +109,7 @@ export type Options = {
   network?: Network
 }
 
-export type Variables = Omit<Options, 'sortBy'> & {
+export type Variables = Omit<FetchOptions, 'sortBy'> & {
   orderBy: string
   orderDirection: OrderDirection
   expiresAt: string
@@ -182,9 +182,9 @@ export type SourceResult = {
 
 export interface ISourceComponent {
   subgraph: ISubgraphComponent
-  check?(options: Options): boolean
-  fetch(options: Options): Promise<SourceResult[]>
-  count(options: Options): Promise<number>
+  check?(options: FetchOptions): boolean
+  fetch(options: FetchOptions): Promise<SourceResult[]>
+  count(options: FetchOptions): Promise<number>
   nft(contractAddress: string, tokenId: string): Promise<SourceResult | null>
   history(contractAddress: string, tokenId: string): Promise<Order[]>
   collections: () => Promise<Collection[]>
@@ -195,9 +195,9 @@ export type SourceOptions<T> = {
   fragmentName: string
   getFragment: () => DocumentNode
   fromFragment(fragment: T): SourceResult
-  check?(options: Options): boolean
+  check?(options: FetchOptions): boolean
   getOrderBy(sortBy?: SortBy): keyof T
-  getExtraVariables?: (options: Options) => string[]
-  getExtraWhere?: (options: Options) => string[]
+  getExtraVariables?: (options: FetchOptions) => string[]
+  getExtraWhere?: (options: FetchOptions) => string[]
   getCollections: (subgraph: ISubgraphComponent) => Promise<Collection[]>
 }

@@ -1,4 +1,4 @@
-import { Collection, NFT, Options, Order } from '../source/types'
+import { Collection, NFT, FetchOptions, Order } from '../source/types'
 import { ISubgraphComponent } from '../subgraph/types'
 
 export type BrowseResult = {
@@ -13,7 +13,7 @@ export type NFTResult = {
 }
 
 export interface IBrowseComponent {
-  fetch: (options: Options) => Promise<BrowseResult>
+  fetch: (options: FetchOptions) => Promise<BrowseResult>
   nft: (contractAddress: string, tokenId: string) => Promise<NFTResult | null>
   history: (contractAddress: string, tokenId: string) => Promise<Order[]>
   collections: () => Promise<Collection[]>

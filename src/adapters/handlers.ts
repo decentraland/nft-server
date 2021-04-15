@@ -1,8 +1,9 @@
 import { Network } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
+import { BidOptions, BidStatus } from '../ports/bids/types'
 import {
   NFTCategory,
-  Options,
+  FetchOptions,
   SortBy,
   WearableCategory,
   WearableGender,
@@ -59,7 +60,7 @@ export function createBrowseHandler(
 
   return async (context) => {
     const params = buildParams(context.url.searchParams)
-    const options: Options = {
+    const options: FetchOptions = {
       first: params.getNumber('first', 100)!,
       skip: params.getNumber('skip', 0)!,
       sortBy: params.getValue<SortBy>('sortBy', Object.values(SortBy)),
@@ -172,6 +173,40 @@ export function createHistoryHandler(
       return {
         status: 200,
         body: history,
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        body: error.message,
+      }
+    }
+  }
+}
+
+export function createBidsHandler(
+  components: Pick<AppComponents, 'logs' | 'bids'>
+): IHttpServerComponent.IRequestHandler<Context<'/bids'>> {
+  const { bids } = components
+
+  return async (context) => {
+    const { searchParams } = context.url
+    const bidder = searchParams.get('bidder')
+    const seller = searchParams.get('seller')
+    const nftId = searchParams.get('nftId')
+    const status = searchParams.get('status') as BidStatus | null
+
+    const options: BidOptions = {
+      bidder,
+      seller,
+      nftId,
+      status,
+    }
+
+    try {
+      const result = await bids.fetch(options)
+      return {
+        status: 200,
+        body: result,
       }
     } catch (error) {
       return {

@@ -1,6 +1,6 @@
 import {
   DEFAULT_SORT_BY,
-  Options,
+  FetchOptions,
   SourceResult,
   SortBy,
   ISourceComponent,
@@ -31,7 +31,7 @@ function sort(nfts: SourceResult[], sortBy?: SortBy) {
   })
 }
 
-function getSourceFilter(options: Options) {
+function getSourceFilter(options: FetchOptions) {
   return function sourceFilter(source: ISourceComponent) {
     return !source.check || source.check(options)
   }
@@ -42,7 +42,7 @@ export function createAggregatorComponent(
 ): IAggregatorComponent {
   const { sources } = options
 
-  async function fetch(options: Options) {
+  async function fetch(options: FetchOptions) {
     // gather results from all the sources
     const filter = getSourceFilter(options)
     const results = await Promise.all(
@@ -59,7 +59,7 @@ export function createAggregatorComponent(
     return sorted.slice(options.skip, options.first + options.skip)
   }
 
-  async function count(options: Options) {
+  async function count(options: FetchOptions) {
     // gather counts from all the sources
     const filter = getSourceFilter(options)
     const counts = await Promise.all(

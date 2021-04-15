@@ -4,6 +4,7 @@ import type {
   ILoggerComponent,
   IHttpServerComponent,
 } from '@well-known-components/interfaces'
+import { IBidsComponent } from './ports/bids/types'
 import { IBrowseComponent } from './ports/browse/types'
 import { ISubgraphComponent } from './ports/subgraph/types'
 
@@ -24,6 +25,7 @@ export type AppComponents = {
   marketplaceSubgraph: ISubgraphComponent
   collectionsSubgraph: ISubgraphComponent
   browse: IBrowseComponent
+  bids: IBidsComponent
 }
 
 export type Context<Path extends string = any> = RoutedContext<

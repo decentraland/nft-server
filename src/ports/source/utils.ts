@@ -3,7 +3,7 @@ import {
   SortBy,
   OrderDirection,
   DEFAULT_SORT_BY,
-  Options,
+  FetchOptions,
   Variables,
   WearableGender,
   OrderFragment,
@@ -68,11 +68,11 @@ export function getOrderDirection(orderBy?: SortBy): OrderDirection {
 }
 
 export function getFetchQuery(
-  options: Options,
+  options: FetchOptions,
   fragmentName: string,
   getNFTFragment: () => DocumentNode,
-  getExtraVariables?: (options: Options) => string[],
-  getExtraWhere?: (options: Options) => string[],
+  getExtraVariables?: (options: FetchOptions) => string[],
+  getExtraWhere?: (options: FetchOptions) => string[],
   isCount = false
 ) {
   const where: string[] = []
@@ -160,16 +160,16 @@ export function getFetchOneQuery(
   getFragment: () => DocumentNode
 ) {
   return gql`
-    query NFTByTokenId($contractAddress: String, $tokenId: String) {
-      nfts(
-        where: { contractAddress: $contractAddress, tokenId: $tokenId }
-        first: 1
+  query NFTByTokenId($contractAddress: String, $tokenId: String) {
+    nfts(
+      where: { contractAddress: $contractAddress, tokenId: $tokenId }
+      first: 1
       ) {
         ...${fragmentName}
       }
     }
     ${getFragment()}
-  `
+    `
 }
 
 export function getHistoryQuery() {
@@ -188,7 +188,7 @@ export function getHistoryQuery() {
 }
 
 export function getVariables<T>(
-  options: Options,
+  options: FetchOptions,
   getOrderBy: (sortBy?: SortBy) => keyof T
 ): Variables {
   const { sortBy, ...variables } = options
@@ -202,7 +202,7 @@ export function getVariables<T>(
   }
 }
 
-export function fromOrderFragment(fragment: OrderFragment) {
+export function fromOrderFragment(fragment: OrderFragment): Order {
   const order: Order = {
     id: fragment.id,
     nftAddress: fragment.nftAddress,

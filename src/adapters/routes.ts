@@ -1,6 +1,7 @@
 import { Router } from '@well-known-components/http-server'
 import { GlobalContext } from '../types'
 import {
+  createBidsHandler,
   createBrowseHandler,
   createCollectionsHandler,
   createHistoryHandler,
@@ -27,6 +28,7 @@ export async function setupRoutes(globalContext: GlobalContext) {
     '/contracts/:contractAddress/tokens/:tokenId/history',
     createHistoryHandler(components)
   )
+  router.get('/bids', createBidsHandler(components))
 
   server.use(router.middleware())
 }

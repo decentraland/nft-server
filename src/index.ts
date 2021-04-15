@@ -7,6 +7,7 @@ import { setupRoutes } from './adapters/routes'
 import { AppComponents, AppConfig, GlobalContext } from './types'
 import { createSubgraphComponent } from './ports/subgraph/component'
 import { createBrowseComponent } from './ports/browse/component'
+import { createBidsComponent } from './ports/bids/component'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -52,6 +53,8 @@ async function initComponents(): Promise<AppComponents> {
     collectionsSubgraph,
   })
 
+  const bids = createBidsComponent({ subgraph: marketplaceSubgraph })
+
   return {
     config,
     logs,
@@ -59,6 +62,7 @@ async function initComponents(): Promise<AppComponents> {
     marketplaceSubgraph,
     collectionsSubgraph,
     browse,
+    bids,
   }
 }
 

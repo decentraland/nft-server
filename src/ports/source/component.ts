@@ -1,6 +1,6 @@
 import {
   ISourceComponent,
-  Options,
+  FetchOptions,
   OrderFragment,
   SourceOptions,
 } from './types'
@@ -27,7 +27,7 @@ export function createSourceComponent<T>(
     getCollections,
   } = options
 
-  function getFragmentFetcher(options: Options) {
+  function getFragmentFetcher(options: FetchOptions) {
     return async (isCount?: boolean) => {
       const query = getFetchQuery(
         options,
@@ -45,14 +45,14 @@ export function createSourceComponent<T>(
     }
   }
 
-  async function fetch(options: Options) {
+  async function fetch(options: FetchOptions) {
     const fetchFragments = getFragmentFetcher(options)
     const fragments = await fetchFragments()
     const nfts = fragments.map(fromFragment)
     return nfts
   }
 
-  async function count(options: Options) {
+  async function count(options: FetchOptions) {
     const fetchFragments = getFragmentFetcher(options)
     const fragments = await fetchFragments()
     return fragments.length
