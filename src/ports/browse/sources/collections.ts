@@ -96,7 +96,7 @@ export function fromCollectionsFragment(
 ): SourceResult {
   const result: SourceResult = {
     nft: {
-      id: fragment.id,
+      id: NFTCategory.WEARABLE + '-' + fragment.id,
       tokenId: fragment.tokenId,
       contractAddress: fragment.contractAddress,
       activeOrderId:
