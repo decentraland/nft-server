@@ -1,10 +1,7 @@
-import * as aws from '@pulumi/aws'
-import * as pulumi from '@pulumi/pulumi'
 import { createFargateTask } from 'dcl-ops-lib/createFargateTask'
 import { env, envTLD } from 'dcl-ops-lib/domain'
 
 export = async function main() {
-  const config = new pulumi.Config()
   const revision = process.env['CI_COMMIT_SHA']
   const image = `${process.env['CI_REGISTRY_REPOSITORY_AWS']}/nft-server:${revision}`
 
@@ -22,18 +19,19 @@ export = async function main() {
       { name: 'SERVER_PORT', value: '5000' },
       { name: 'CORS_ORIGIN', value: '*' },
       { name: 'CORS_METHOD', value: '*' },
-      { name: 'MAX_nft_PER_DAY', value: '1000' },
+      {
+        name: 'MARKETPLACE_SUBGRAPH_URL',
+        value:
+          env === 'prd' || env === 'stg'
+            ? 'https://api.thegraph.com/subgraphs/name/decentraland/marketplace'
+            : 'https://api.thegraph.com/subgraphs/name/decentraland/marketplace-ropsten',
+      },
       {
         name: 'BICONOMY_API_URL',
-        value: 'https://api.biconomy.io/api/v2/meta-tx/native',
-      },
-      {
-        name: 'BICONOMY_API_KEY',
-        value: config.requireSecret('BICONOMY_API_KEY'),
-      },
-      {
-        name: 'BICONOMY_API_ID',
-        value: config.requireSecret('BICONOMY_API_ID'),
+        value:
+          env === 'prd' || env === 'stg'
+            ? 'https://api.thegraph.com/subgraphs/name/decentraland/collections-matic-mainnet'
+            : 'https://api.thegraph.com/subgraphs/name/decentraland/collections-matic-mumbai',
       },
     ],
     hostname,
