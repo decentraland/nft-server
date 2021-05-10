@@ -75,9 +75,9 @@ export type CollectionsFragment = CollectionsFields & {
 }
 
 export function getCollectionsOrderBy(
-  orderBy?: SortBy
+  sortBy?: SortBy
 ): keyof CollectionsFragment {
-  switch (orderBy) {
+  switch (sortBy) {
     case SortBy.NEWEST:
       return 'createdAt'
     case SortBy.NAME:

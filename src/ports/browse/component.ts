@@ -1,13 +1,7 @@
 import { Network } from '@dcl/schemas'
 import { createAggregatorComponent } from '../aggregator/component'
 import { createSourceComponent } from '../source/component'
-import {
-  NFT,
-  NFTCategory,
-  FetchOptions,
-  Order,
-  WearableGender,
-} from '../source/types'
+import { NFT, NFTCategory, FetchOptions, Order } from '../source/types'
 import {
   getCollectionsFragment,
   fromCollectionsFragment,
@@ -47,26 +41,6 @@ export function createBrowseComponent(
     getFragment: getCollectionsFragment,
     fromFragment: fromCollectionsFragment,
     getOrderBy: getCollectionsOrderBy,
-    getExtraWhere: (options) => {
-      const extraWhere: string[] = []
-      if (options.wearableGenders && options.wearableGenders.length > 0) {
-        const hasMale = options.wearableGenders.includes(WearableGender.MALE)
-        const hasFemale = options.wearableGenders.includes(
-          WearableGender.FEMALE
-        )
-
-        if (hasMale && !hasFemale) {
-          extraWhere.push(`searchWearableBodyShapes: ["BaseMale"]`)
-        } else if (hasFemale && !hasMale) {
-          extraWhere.push(`searchWearableBodyShapes: ["BaseFemale"]`)
-        } else if (hasMale && hasFemale) {
-          extraWhere.push(
-            `searchWearableBodyShapes_contains: ["BaseMale", "BaseFemale"]`
-          )
-        }
-      }
-      return extraWhere
-    },
     getCollections: (subgraph) => getCollections(subgraph, Network.MATIC),
   })
 
@@ -100,22 +74,6 @@ export function createBrowseComponent(
       }
       if (options.isLand) {
         extraWhere.push('searchIsLand: true')
-      }
-      if (options.wearableGenders && options.wearableGenders.length > 0) {
-        const hasMale = options.wearableGenders.includes(WearableGender.MALE)
-        const hasFemale = options.wearableGenders.includes(
-          WearableGender.FEMALE
-        )
-
-        if (hasMale && !hasFemale) {
-          extraWhere.push(`searchWearableBodyShapes: [BaseMale]`)
-        } else if (hasFemale && !hasMale) {
-          extraWhere.push(`searchWearableBodyShapes: [BaseFemale]`)
-        } else if (hasMale && hasFemale) {
-          extraWhere.push(
-            `searchWearableBodyShapes_contains: [BaseMale, BaseFemale]`
-          )
-        }
       }
       return extraWhere
     },
