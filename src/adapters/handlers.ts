@@ -3,7 +3,7 @@ import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { BidOptions, BidStatus } from '../ports/bids/types'
 import {
   NFTCategory,
-  FetchOptions,
+  Options,
   SortBy,
   WearableCategory,
   WearableGender,
@@ -60,7 +60,7 @@ export function createBrowseHandler(
 
   return async (context) => {
     const params = buildParams(context.url.searchParams)
-    const options: FetchOptions = {
+    const options: Options = {
       first: params.getNumber('first', 100)!,
       skip: params.getNumber('skip', 0)!,
       sortBy: params.getValue<SortBy>('sortBy', Object.values(SortBy)),
@@ -94,9 +94,7 @@ export function createBrowseHandler(
         ) as Network[]
       ),
     }
-    console.log('-------------')
-    console.log(context.url.searchParams.toString())
-    console.log(options)
+
     try {
       const results = await browse.fetch(options)
       return {
@@ -112,13 +110,13 @@ export function createBrowseHandler(
   }
 }
 
-export function createCollectionsHandler(
+export function createContractsHandler(
   components: Pick<AppComponents, 'logs' | 'browse'>
-): IHttpServerComponent.IRequestHandler<Context<'/collections'>> {
+): IHttpServerComponent.IRequestHandler<Context<'/contracts'>> {
   const { browse } = components
   return async () => {
     try {
-      const result = await browse.collections()
+      const result = await browse.getContracts()
       return {
         status: 200,
         body: result,
@@ -141,7 +139,7 @@ export function createNFTHandler(
   return async (context) => {
     const { contractAddress, tokenId } = context.params
     try {
-      const result = await browse.nft(contractAddress, tokenId)
+      const result = await browse.getNFT(contractAddress, tokenId)
       return result !== null
         ? {
             status: 200,
@@ -169,7 +167,7 @@ export function createHistoryHandler(
   return async (context) => {
     const { contractAddress, tokenId } = context.params
     try {
-      const history = await browse.history(contractAddress, tokenId)
+      const history = await browse.getHistory(contractAddress, tokenId)
       return {
         status: 200,
         body: history,

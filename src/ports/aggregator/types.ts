@@ -1,17 +1,17 @@
 import {
-  Collection,
+  Contract,
   ISourceComponent,
-  FetchOptions,
+  Options,
   Order,
-  SourceResult,
+  Result,
 } from '../source/types'
 
 export interface IAggregatorComponent {
-  fetch(options: FetchOptions): Promise<SourceResult[]>
-  count(options: FetchOptions): Promise<number>
-  nft(contractAddress: string, tokenId: string): Promise<SourceResult | null>
-  history(contractAddress: string, tokenId: string): Promise<Order[]>
-  collections: () => Promise<Collection[]>
+  fetch(options: Options): Promise<Result[]>
+  count(options: Options): Promise<number>
+  getNFT(contractAddress: string, tokenId: string): Promise<Result | null>
+  getHistory(contractAddress: string, tokenId: string): Promise<Order[]>
+  getContracts: () => Promise<Contract[]>
 }
 export type AggregatorOptions = {
   sources: ISourceComponent[]

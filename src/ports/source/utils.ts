@@ -3,7 +3,7 @@ import {
   SortBy,
   OrderDirection,
   DEFAULT_SORT_BY,
-  FetchOptions,
+  Options,
   Variables,
   WearableGender,
   OrderFragment,
@@ -68,11 +68,11 @@ export function getOrderDirection(orderBy?: SortBy): OrderDirection {
 }
 
 export function getFetchQuery(
-  options: FetchOptions,
+  options: Options,
   fragmentName: string,
   getNFTFragment: () => DocumentNode,
-  getExtraVariables?: (options: FetchOptions) => string[],
-  getExtraWhere?: (options: FetchOptions) => string[],
+  getExtraVariables?: (options: Options) => string[],
+  getExtraWhere?: (options: Options) => string[],
   isCount = false
 ) {
   const where: string[] = []
@@ -188,7 +188,7 @@ export function getHistoryQuery() {
 }
 
 export function getVariables<T>(
-  options: FetchOptions,
+  options: Options,
   getOrderBy: (sortBy?: SortBy) => keyof T
 ): Variables {
   const { sortBy, ...variables } = options

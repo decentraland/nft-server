@@ -1,6 +1,6 @@
 import {
   ISourceComponent,
-  FetchOptions,
+  Options,
   OrderFragment,
   SourceOptions,
 } from './types'
@@ -16,18 +16,18 @@ export function createSourceComponent<T>(
   options: SourceOptions<T>
 ): ISourceComponent {
   const {
-    check,
+    hasResults,
     subgraph,
     fragmentName,
     getFragment,
     getExtraWhere,
     getExtraVariables,
-    getOrderBy,
+    getSortByProp,
     fromFragment,
-    getCollections,
+    getContracts,
   } = options
 
-  function getFragmentFetcher(options: FetchOptions) {
+  function getFragmentFetcher(options: Options) {
     return async (isCount?: boolean) => {
       const query = getFetchQuery(
         options,
@@ -37,7 +37,7 @@ export function createSourceComponent<T>(
         getExtraWhere,
         isCount
       )
-      const variables = getVariables(options, getOrderBy)
+      const variables = getVariables(options, getSortByProp)
       const { nfts: fragments } = await subgraph.query<{
         nfts: T[]
       }>(query, variables)
@@ -45,20 +45,20 @@ export function createSourceComponent<T>(
     }
   }
 
-  async function fetch(options: FetchOptions) {
+  async function fetch(options: Options) {
     const fetchFragments = getFragmentFetcher(options)
     const fragments = await fetchFragments()
     const nfts = fragments.map(fromFragment)
     return nfts
   }
 
-  async function count(options: FetchOptions) {
+  async function count(options: Options) {
     const fetchFragments = getFragmentFetcher(options)
     const fragments = await fetchFragments()
     return fragments.length
   }
 
-  async function nft(contractAddress: string, tokenId: string) {
+  async function getNFT(contractAddress: string, tokenId: string) {
     const query = getFetchOneQuery(fragmentName, getFragment)
     const variables = {
       contractAddress,
@@ -74,8 +74,8 @@ export function createSourceComponent<T>(
     }
   }
 
-  async function history(contractAddress: string, tokenId: string) {
-    const result = await nft(contractAddress, tokenId)
+  async function getHistory(contractAddress: string, tokenId: string) {
+    const result = await getNFT(contractAddress, tokenId)
     if (result) {
       const query = getHistoryQuery()
       const variables = {
@@ -91,17 +91,13 @@ export function createSourceComponent<T>(
     }
   }
 
-  async function collections() {
-    return getCollections(subgraph)
-  }
-
   return {
     subgraph,
-    check,
+    hasResults,
     fetch,
     count,
-    nft,
-    history,
-    collections,
+    getNFT,
+    getHistory,
+    getContracts: () => getContracts(subgraph),
   }
 }

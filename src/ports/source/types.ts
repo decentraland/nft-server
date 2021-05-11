@@ -1,4 +1,4 @@
-import { Network } from '@dcl/schemas'
+import { ChainId, Network } from '@dcl/schemas'
 import { DocumentNode } from 'apollo-link'
 import { ISubgraphComponent } from '../subgraph/types'
 
@@ -91,7 +91,7 @@ export type Data = {
   ens?: EnsData
 }
 
-export type FetchOptions = {
+export type Options = {
   first: number
   skip: number
   sortBy?: SortBy
@@ -109,7 +109,7 @@ export type FetchOptions = {
   network?: Network
 }
 
-export type Variables = Omit<FetchOptions, 'sortBy'> & {
+export type Variables = Omit<Options, 'sortBy'> & {
   orderBy: string
   orderDirection: OrderDirection
   expiresAt: string
@@ -126,6 +126,7 @@ export type NFT = {
   image: string
   url: string
   network: Network
+  chainId: ChainId
   data: Data
 }
 
@@ -163,13 +164,15 @@ export type Order = {
   updatedAt: number
 }
 
-export type Collection = {
+export type Contract = {
   name: string
   address: string
+  category: NFTCategory
   network: Network
+  chainId: ChainId
 }
 
-export type SourceResult = {
+export type Result = {
   nft: NFT
   order: Order | null
   sort: {
@@ -182,22 +185,22 @@ export type SourceResult = {
 
 export interface ISourceComponent {
   subgraph: ISubgraphComponent
-  check?(options: FetchOptions): boolean
-  fetch(options: FetchOptions): Promise<SourceResult[]>
-  count(options: FetchOptions): Promise<number>
-  nft(contractAddress: string, tokenId: string): Promise<SourceResult | null>
-  history(contractAddress: string, tokenId: string): Promise<Order[]>
-  collections: () => Promise<Collection[]>
+  hasResults?(options: Options): boolean
+  fetch(options: Options): Promise<Result[]>
+  count(options: Options): Promise<number>
+  getNFT(contractAddress: string, tokenId: string): Promise<Result | null>
+  getHistory(contractAddress: string, tokenId: string): Promise<Order[]>
+  getContracts: () => Promise<Contract[]>
 }
 
 export type SourceOptions<T> = {
   subgraph: ISubgraphComponent
   fragmentName: string
   getFragment: () => DocumentNode
-  fromFragment(fragment: T): SourceResult
-  check?(options: FetchOptions): boolean
-  getOrderBy(sortBy?: SortBy): keyof T
-  getExtraVariables?: (options: FetchOptions) => string[]
-  getExtraWhere?: (options: FetchOptions) => string[]
-  getCollections: (subgraph: ISubgraphComponent) => Promise<Collection[]>
+  fromFragment(fragment: T): Result
+  getSortByProp(sortBy?: SortBy): keyof T
+  getContracts: (subgraph: ISubgraphComponent) => Promise<Contract[]>
+  hasResults?(options: Options): boolean
+  getExtraVariables?: (options: Options) => string[]
+  getExtraWhere?: (options: Options) => string[]
 }

@@ -1,16 +1,16 @@
 import {
   DEFAULT_SORT_BY,
-  FetchOptions,
-  SourceResult,
+  Options,
+  Result,
   SortBy,
   ISourceComponent,
-  Collection,
+  Contract,
   Order,
 } from '../source/types'
 import { getOrderDirection, MAX_RESULTS } from '../source/utils'
 import { IAggregatorComponent, AggregatorOptions } from './types'
 
-function sort(nfts: SourceResult[], sortBy?: SortBy) {
+function sort(nfts: Result[], sortBy?: SortBy) {
   const sortDirection = getOrderDirection(sortBy)
   const isAsc = sortDirection === 'asc'
   return nfts.sort((a, b) => {
@@ -31,9 +31,9 @@ function sort(nfts: SourceResult[], sortBy?: SortBy) {
   })
 }
 
-function getSourceFilter(options: FetchOptions) {
+function getSourceFilter(options: Options) {
   return function sourceFilter(source: ISourceComponent) {
-    return !source.check || source.check(options)
+    return !source.hasResults || source.hasResults(options)
   }
 }
 
@@ -42,7 +42,7 @@ export function createAggregatorComponent(
 ): IAggregatorComponent {
   const { sources } = options
 
-  async function fetch(options: FetchOptions) {
+  async function fetch(options: Options) {
     // gather results from all the sources
     const filter = getSourceFilter(options)
     const results = await Promise.all(
@@ -59,7 +59,7 @@ export function createAggregatorComponent(
     return sorted.slice(options.skip, options.first + options.skip)
   }
 
-  async function count(options: FetchOptions) {
+  async function count(options: Options) {
     // gather counts from all the sources
     const filter = getSourceFilter(options)
     const counts = await Promise.all(
@@ -71,17 +71,17 @@ export function createAggregatorComponent(
     return Math.min(total, MAX_RESULTS)
   }
 
-  async function nft(contractAddress: string, tokenId: string) {
+  async function getNFT(contractAddress: string, tokenId: string) {
     const results = await Promise.all(
-      sources.map((source) => source.nft(contractAddress, tokenId))
+      sources.map((source) => source.getNFT(contractAddress, tokenId))
     )
     const nft = results.find((nft) => nft !== null) || null
     return nft
   }
 
-  async function history(contractAddress: string, tokenId: string) {
+  async function getHistory(contractAddress: string, tokenId: string) {
     const results = await Promise.all(
-      sources.map((source) => source.history(contractAddress, tokenId))
+      sources.map((source) => source.getHistory(contractAddress, tokenId))
     )
     const orders = results.reduce<Order[]>(
       (result, orders) => orders.concat(result),
@@ -91,28 +91,28 @@ export function createAggregatorComponent(
     return orders
   }
 
-  async function collections() {
+  async function getContracts() {
     const results = await Promise.all(
-      sources.map((source) => source.collections())
+      sources.map((source) => source.getContracts())
     )
 
-    const collections = results.reduce<Collection[]>(
-      (result, collections) => collections.concat(result),
+    const contracts = results.reduce<Contract[]>(
+      (result, contracts) => contracts.concat(result),
       []
     )
 
-    collections.sort((a, b) =>
+    contracts.sort((a, b) =>
       a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
     )
 
-    return collections
+    return contracts
   }
 
   return {
     fetch,
     count,
-    nft,
-    history,
-    collections,
+    getNFT,
+    getHistory,
+    getContracts,
   }
 }

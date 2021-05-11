@@ -1,13 +1,13 @@
 import { gql } from 'apollo-boost'
-import { Network } from '@dcl/schemas'
+import { ChainId, Network } from '@dcl/schemas'
 import {
   DEFAULT_SORT_BY,
   NFTCategory,
-  SourceResult,
+  Result,
   SortBy,
   NFT,
   WearableData,
-  Collection,
+  Contract,
   OrderFragment,
 } from '../../source/types'
 import {
@@ -18,6 +18,11 @@ import {
 } from '../../source/utils'
 import { isExpired } from '../utils'
 import { ISubgraphComponent } from '../../subgraph/types'
+
+export const getCollectionsChainId = () =>
+  parseInt(
+    process.env.COLLECTIONS_CHAIN_ID || ChainId.ETHEREUM_MAINNET.toString()
+  ) as ChainId
 
 export const getCollectionsFields = () => gql`
   fragment collectionsFields on NFT {
@@ -91,10 +96,8 @@ export function getCollectionsOrderBy(
   }
 }
 
-export function fromCollectionsFragment(
-  fragment: CollectionsFragment
-): SourceResult {
-  const result: SourceResult = {
+export function fromCollectionsFragment(fragment: CollectionsFragment): Result {
+  const result: Result = {
     nft: {
       id: NFTCategory.WEARABLE + '-' + fragment.id,
       tokenId: fragment.tokenId,
@@ -117,6 +120,7 @@ export function fromCollectionsFragment(
       },
       category: NFTCategory.WEARABLE,
       network: Network.MATIC,
+      chainId: getCollectionsChainId(),
     },
     order:
       fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
@@ -142,20 +146,18 @@ const getCollectionsQuery = gql`
   }
 `
 
-export async function getCollections(
-  subgraph: ISubgraphComponent,
-  network: Network
-) {
+export async function getCollectionsContracts(
+  subgraph: ISubgraphComponent
+): Promise<Contract[]> {
   const { collections } = await subgraph.query<{
     collections: { id: string; name: string }[]
   }>(getCollectionsQuery)
 
-  return collections.map(
-    ({ id: address, name }) =>
-      ({
-        name,
-        address,
-        network,
-      } as Collection)
-  )
+  return collections.map(({ id: address, name }) => ({
+    name,
+    address,
+    category: NFTCategory.WEARABLE,
+    network: Network.MATIC,
+    chainId: getCollectionsChainId(),
+  }))
 }

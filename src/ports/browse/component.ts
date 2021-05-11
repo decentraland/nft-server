@@ -1,18 +1,18 @@
 import { Network } from '@dcl/schemas'
 import { createAggregatorComponent } from '../aggregator/component'
 import { createSourceComponent } from '../source/component'
-import { NFT, NFTCategory, FetchOptions, Order } from '../source/types'
+import { NFT, NFTCategory, Options, Order } from '../source/types'
 import {
   getCollectionsFragment,
   fromCollectionsFragment,
   getCollectionsOrderBy,
-  getCollections,
+  getCollectionsContracts,
 } from './sources/collections'
 import {
   fromMarketplaceFragment,
   getMarketplaceFragment,
   getMarketplaceOrderBy,
-  getLegacyCollections,
+  getMarketplaceContracts,
 } from './sources/marketplace'
 import { BrowseComponents, IBrowseComponent } from './types'
 
@@ -22,7 +22,7 @@ export function createBrowseComponent(
   const { collectionsSubgraph, marketplaceSubgraph } = components
 
   const collectionsSource = createSourceComponent({
-    check: (options) => {
+    hasResults: (options) => {
       if (options.isLand) {
         return false
       } else if (
@@ -40,12 +40,12 @@ export function createBrowseComponent(
     fragmentName: 'collectionsFragment',
     getFragment: getCollectionsFragment,
     fromFragment: fromCollectionsFragment,
-    getOrderBy: getCollectionsOrderBy,
-    getCollections: (subgraph) => getCollections(subgraph, Network.MATIC),
+    getSortByProp: getCollectionsOrderBy,
+    getContracts: (subgraph) => getCollectionsContracts(subgraph),
   })
 
   const marketplaceSource = createSourceComponent({
-    check: (options) => {
+    hasResults: (options) => {
       if (options.network && options.network !== Network.ETHEREUM) {
         return false
       } else {
@@ -56,7 +56,7 @@ export function createBrowseComponent(
     fragmentName: 'marketplaceFragment',
     getFragment: getMarketplaceFragment,
     fromFragment: fromMarketplaceFragment,
-    getOrderBy: getMarketplaceOrderBy,
+    getSortByProp: getMarketplaceOrderBy,
     getExtraVariables: (options) => {
       const extraVariables: string[] = []
       if (options.category) {
@@ -77,14 +77,14 @@ export function createBrowseComponent(
       }
       return extraWhere
     },
-    getCollections: getLegacyCollections,
+    getContracts: getMarketplaceContracts,
   })
 
   const aggregator = createAggregatorComponent({
     sources: [collectionsSource, marketplaceSource],
   })
 
-  async function fetch(options: FetchOptions) {
+  async function fetch(options: Options) {
     const [results, total] = await Promise.all([
       aggregator.fetch(options),
       aggregator.count(options),
@@ -105,25 +105,25 @@ export function createBrowseComponent(
     }
   }
 
-  async function nft(contractAddress: string, tokenId: string) {
-    const result = await aggregator.nft(contractAddress, tokenId)
+  async function getNFT(contractAddress: string, tokenId: string) {
+    const result = await aggregator.getNFT(contractAddress, tokenId)
     return result ? { nft: result.nft, order: result.order } : null
   }
 
-  async function history(contractAddress: string, tokenId: string) {
-    const result = await aggregator.history(contractAddress, tokenId)
+  async function getHistory(contractAddress: string, tokenId: string) {
+    const result = await aggregator.getHistory(contractAddress, tokenId)
     return result
   }
 
-  async function collections() {
-    const collections = await aggregator.collections()
-    return collections
+  async function getContracts() {
+    const contracts = await aggregator.getContracts()
+    return contracts
   }
 
   return {
     fetch,
-    nft,
-    history,
-    collections,
+    getNFT,
+    getHistory,
+    getContracts,
   }
 }
