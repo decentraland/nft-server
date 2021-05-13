@@ -7,7 +7,7 @@ const prometheusStack = new pulumi.StackReference(`prometheus-${env}`)
 
 export = async function main() {
   const revision = process.env['CI_COMMIT_SHA']
-  const image = `${process.env['CI_REGISTRY_REPOSITORY_AWS']}/nft-server:${revision}`
+  const image = `decentraland/nft-server:${revision}`
 
   const hostname = 'nft-api.decentraland.' + envTLD
 
