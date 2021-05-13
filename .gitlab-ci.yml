@@ -4,20 +4,17 @@ services:
   - docker:dind
 
 docker-build:
-  image: decentraland/ci-node:latest
+  image: docker:latest
   stage: build
   services:
     - docker:dind
   before_script:
-    - source dcl-env
-    - pip install awscli
-    - export AWS_REGION="$CI_REGISTRY_REGION"
-    - aws ecr get-login-password --region "$CI_REGISTRY_REGION" | docker login --username AWS --password-stdin "$CI_REGISTRY_REPOSITORY_AWS"
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
-    - docker build --pull -t "$CI_REGISTRY_REPOSITORY_AWS/nft-server:$CI_COMMIT_SHA" .
-    - docker build --pull -t "$CI_REGISTRY_REPOSITORY_AWS/nft-server:$CI_COMMIT_REF_SLUG" .
-    - docker push "$CI_REGISTRY_REPOSITORY_AWS/nft-server:$CI_COMMIT_SHA"
-    - docker push "$CI_REGISTRY_REPOSITORY_AWS/nft-server:$CI_COMMIT_REF_SLUG"
+    - docker build --pull -t "decentraland/nft-server:$CI_COMMIT_SHA" .
+    - docker build --pull -t "decentraland/nft-server:$CI_COMMIT_REF_SLUG" .
+    - docker push "decentraland/nft-server:$CI_COMMIT_SHA"
+    - docker push "decentraland/nft-server:$CI_COMMIT_REF_SLUG"
 
 deploy-infra:
   stage: deploy
@@ -28,7 +25,7 @@ deploy-infra:
     - release
   script:
     - dcl-lock-sync
-    - cd .ci && npm install && cd node_modules/dcl-ops-lib && dcl-up services-nft-server
+    - cd .ci && npm install && cd node_modules/dcl-ops-lib && dcl-up nft-server
     - cd ..
     - dcl-sync-release
     - dcl-announce-docker-build
