@@ -1,3 +1,4 @@
+import * as pulumi from '@pulumi/pulumi'
 import { createFargateTask } from 'dcl-ops-lib/createFargateTask'
 import { env, envTLD } from 'dcl-ops-lib/domain'
 
