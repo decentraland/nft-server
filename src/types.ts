@@ -3,6 +3,7 @@ import type {
   IConfigComponent,
   ILoggerComponent,
   IHttpServerComponent,
+  IMetricsComponent
 } from '@well-known-components/interfaces'
 import { IBidsComponent } from './ports/bids/types'
 import { IBrowseComponent } from './ports/browse/types'
@@ -22,6 +23,7 @@ export type AppComponents = {
   config: IConfigComponent
   logs: ILoggerComponent
   server: IHttpServerComponent<GlobalContext>
+  metrics: IMetricsComponent<any>
   marketplaceSubgraph: ISubgraphComponent
   collectionsSubgraph: ISubgraphComponent
   browse: IBrowseComponent
