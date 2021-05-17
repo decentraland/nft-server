@@ -14,6 +14,7 @@ import {
   fromNumber,
   fromOrderFragment,
   fromWei,
+  getId,
   getOrderFields,
 } from '../../source/utils'
 import { isExpired } from '../utils'
@@ -99,7 +100,7 @@ export function getCollectionsOrderBy(
 export function fromCollectionsFragment(fragment: CollectionsFragment): Result {
   const result: Result = {
     nft: {
-      id: NFTCategory.WEARABLE + '-' + fragment.id,
+      id: getId(fragment.contractAddress, fragment.tokenId),
       tokenId: fragment.tokenId,
       contractAddress: fragment.contractAddress,
       activeOrderId:

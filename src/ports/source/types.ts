@@ -147,7 +147,7 @@ export type OrderFragment = {
   createdAt: string
   updatedAt: string
   nft: {
-    id: string
+    tokenId: string
   }
 }
 

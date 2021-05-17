@@ -14,6 +14,7 @@ import {
   fromNumber,
   fromOrderFragment,
   fromWei,
+  getId,
   getOrderFields,
 } from '../../source/utils'
 import { isExpired } from '../utils'
@@ -127,7 +128,7 @@ export function getMarketplaceOrderBy(
 export function fromMarketplaceFragment(fragment: MarketplaceFragment): Result {
   const result: Result = {
     nft: {
-      id: fragment.id,
+      id: getId(fragment.contractAddress, fragment.tokenId),
       tokenId: fragment.tokenId,
       contractAddress: fragment.contractAddress,
       activeOrderId:
@@ -511,6 +512,27 @@ export async function getMarketplaceContracts(): Promise<Contract[]> {
     }
     case ChainId.ETHEREUM_ROPSTEN: {
       return [
+        {
+          name: 'LAND',
+          address: '0x7a73483784ab79257bb11b96fd62a2c3ae4fb75b',
+          category: NFTCategory.PARCEL,
+          network: Network.ETHEREUM,
+          chainId: ChainId.ETHEREUM_ROPSTEN,
+        },
+        {
+          name: 'Estates',
+          address: '0x124bf28a423b2ca80b3846c3aa0eb944fe7ebb95',
+          category: NFTCategory.ESTATE,
+          network: Network.ETHEREUM,
+          chainId: ChainId.ETHEREUM_ROPSTEN,
+        },
+        {
+          name: 'Names',
+          address: '0xeb6f5d94d79f0750781cc962908b161b95192f53',
+          category: NFTCategory.ENS,
+          network: Network.ETHEREUM,
+          chainId: ChainId.ETHEREUM_ROPSTEN,
+        },
         {
           name: 'Exclusive Masks',
           address: '0x30ae57840b0e9b8ea55334083d53d80b2cfe80e0',

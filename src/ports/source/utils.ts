@@ -43,7 +43,7 @@ export const getOrderFields = () => gql`
     createdAt
     updatedAt
     nft {
-      id
+      tokenId
     }
   }
 `
@@ -202,11 +202,15 @@ export function getVariables<T>(
   }
 }
 
+export function getId(contractAddress: string, tokenId: string) {
+  return `${contractAddress}-${tokenId}`
+}
+
 export function fromOrderFragment(fragment: OrderFragment): Order {
   const order: Order = {
     id: fragment.id,
     nftAddress: fragment.nftAddress,
-    nftId: fragment.nft.id,
+    nftId: getId(fragment.nftAddress, fragment.nft.tokenId),
     owner: fragment.owner,
     buyer: fragment.buyer,
     price: fragment.price,
