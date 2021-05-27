@@ -3,6 +3,7 @@ import { createConfigComponent } from '@well-known-components/env-config-provide
 import { createServerComponent } from '@well-known-components/http-server'
 import { createLogComponent } from '@well-known-components/logger'
 import { Lifecycle } from '@well-known-components/interfaces'
+import { createMetricsComponent } from '@well-known-components/metrics'
 import { setupRoutes } from './adapters/routes'
 import { AppComponents, AppConfig, GlobalContext } from './types'
 import { createSubgraphComponent } from './ports/subgraph/component'
@@ -40,6 +41,11 @@ async function initComponents(): Promise<AppComponents> {
     { cors, compression: {} }
   )
 
+  const metrics = await createMetricsComponent({}, {
+    server,
+    config,
+  })
+
   const marketplaceSubgraph = createSubgraphComponent(
     await config.requireString('MARKETPLACE_SUBGRAPH_URL')
   )
@@ -59,6 +65,7 @@ async function initComponents(): Promise<AppComponents> {
     config,
     logs,
     server,
+    metrics,
     marketplaceSubgraph,
     collectionsSubgraph,
     browse,
