@@ -1,6 +1,6 @@
 import { config as configDotEnvFile } from 'dotenv'
 import { createConfigComponent } from '@well-known-components/env-config-provider'
-import { createServerComponent } from '@well-known-components/http-server'
+import { createServerComponent, createStatusCheckComponent } from '@well-known-components/http-server'
 import { createLogComponent } from '@well-known-components/logger'
 import { Lifecycle } from '@well-known-components/interfaces'
 import { createMetricsComponent } from '@well-known-components/metrics'
@@ -41,6 +41,8 @@ async function initComponents(): Promise<AppComponents> {
     { cors, compression: {} }
   )
 
+  const statusChecks = await createStatusCheckComponent({ server })
+
   const metrics = await createMetricsComponent({}, {
     server,
     config,
@@ -65,6 +67,7 @@ async function initComponents(): Promise<AppComponents> {
     config,
     logs,
     server,
+    statusChecks,
     metrics,
     marketplaceSubgraph,
     collectionsSubgraph,
