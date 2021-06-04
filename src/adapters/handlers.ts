@@ -86,7 +86,7 @@ export function createBrowseHandler(
         'wearableGender',
         Object.values(WearableGender)
       ),
-      contracts: params.getList('contracts'),
+      contracts: params.getList('contract'),
       network: params.getValue<Network>(
         'network',
         Object.values(Network).filter(
