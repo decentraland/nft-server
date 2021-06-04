@@ -37,11 +37,9 @@ export function createSubgraphComponent(url: string): ISubgraphComponent {
       setTimeout(
         () =>
           remainingAttempts > 0
-            ? query<T>(
-                graphqlQuery,
-                variables,
-                remainingAttempts - 1
-              ).then((result) => retry.resolve(result))
+            ? query<T>(graphqlQuery, variables, remainingAttempts - 1)
+                .then((result) => retry.resolve(result))
+                .catch((error) => retry.reject(error))
             : retry.reject(error),
         500
       )
