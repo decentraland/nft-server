@@ -2,8 +2,8 @@ import 'isomorphic-fetch'
 import { ApolloClient, DocumentNode } from 'apollo-boost'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
-import { future } from 'fp-future'
 import { ISubgraphComponent } from './types'
+import { sleep } from './utils'
 
 export function createSubgraphComponent(url: string): ISubgraphComponent {
   const link = new HttpLink({
@@ -24,7 +24,7 @@ export function createSubgraphComponent(url: string): ISubgraphComponent {
     graphqlQuery: DocumentNode,
     variables: Record<string, string | number | boolean> = {},
     remainingAttempts = 3
-  ) {
+  ): Promise<T> {
     try {
       const result = await client.query<T>({ query: graphqlQuery, variables })
       if (!result || !result.data || Object.keys(result.data).length === 0) {
@@ -32,18 +32,13 @@ export function createSubgraphComponent(url: string): ISubgraphComponent {
       }
       return result.data
     } catch (error) {
-      // retry
-      const retry = future<T>()
-      setTimeout(
-        () =>
-          remainingAttempts > 0
-            ? query<T>(graphqlQuery, variables, remainingAttempts - 1)
-                .then((result) => retry.resolve(result))
-                .catch((error) => retry.reject(error))
-            : retry.reject(error),
-        500
-      )
-      return retry
+      if (remainingAttempts > 0) {
+        // retry
+        await sleep(500)
+        return query<T>(graphqlQuery, variables, remainingAttempts - 1)
+      } else {
+        throw error // bubble up
+      }
     }
   }
 
