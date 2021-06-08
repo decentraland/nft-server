@@ -1,4 +1,3 @@
-import { gql } from 'apollo-boost'
 import { Bid, BidFragment } from './types'
 
 export function fromBidFragment(fragment: BidFragment): Bid {
@@ -21,7 +20,7 @@ export function fromBidFragment(fragment: BidFragment): Bid {
   return bid
 }
 
-export const getBidFields = () => gql`
+export const getBidFields = () => `
   fragment bidFields on Bid {
     id
     blockchainId
@@ -37,7 +36,7 @@ export const getBidFields = () => gql`
   }
 `
 
-export const getBidFragment = () => gql`
+export const getBidFragment = () => `
   fragment bidFragment on Bid {
     ...bidFields
     nft {
@@ -49,7 +48,7 @@ export const getBidFragment = () => gql`
 `
 
 export function getBidsQuery(where: string[]) {
-  return gql`
+  return `
     query Bids {
       bids(where: {
         ${where.join('\n')}

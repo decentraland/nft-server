@@ -1,5 +1,4 @@
 import { ChainId, Network } from '@dcl/schemas'
-import { DocumentNode } from 'apollo-link'
 import { ISubgraphComponent } from '../subgraph/types'
 
 export enum SortBy {
@@ -196,7 +195,7 @@ export interface ISourceComponent {
 export type SourceOptions<T> = {
   subgraph: ISubgraphComponent
   fragmentName: string
-  getFragment: () => DocumentNode
+  getFragment: () => string
   fromFragment(fragment: T): Result
   getSortByProp(sortBy?: SortBy): keyof T
   getContracts: (subgraph: ISubgraphComponent) => Promise<Contract[]>

@@ -1,4 +1,3 @@
-import { gql } from 'apollo-boost'
 import { ChainId, Network } from '@dcl/schemas'
 import {
   DEFAULT_SORT_BY,
@@ -25,7 +24,7 @@ export const getCollectionsChainId = () =>
     process.env.COLLECTIONS_CHAIN_ID || ChainId.ETHEREUM_MAINNET.toString()
   ) as ChainId
 
-export const getCollectionsFields = () => gql`
+export const getCollectionsFields = () => `
   fragment collectionsFields on NFT {
     id
     image
@@ -49,7 +48,7 @@ export const getCollectionsFields = () => gql`
   }
 `
 
-export const getCollectionsFragment = () => gql`
+export const getCollectionsFragment = () => `
   fragment collectionsFragment on NFT {
     ...collectionsFields
     activeOrder {
@@ -138,7 +137,7 @@ export function fromCollectionsFragment(fragment: CollectionsFragment): Result {
   return result
 }
 
-const getCollectionsQuery = gql`
+const getCollectionsQuery = `
   query getCollections {
     collections(first: 1000) {
       name

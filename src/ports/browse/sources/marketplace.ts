@@ -1,4 +1,3 @@
-import { gql } from 'apollo-boost'
 import { ChainId, Network } from '@dcl/schemas'
 import {
   Result,
@@ -24,7 +23,7 @@ export const getMarketplaceChainId = () =>
     process.env.MARKETPLACE_CHAIN_ID || ChainId.ETHEREUM_MAINNET.toString()
   ) as ChainId
 
-export const getMarketplaceFields = () => gql`
+export const getMarketplaceFields = () => `
   fragment marketplaceFields on NFT {
     id
     name
@@ -67,7 +66,7 @@ export const getMarketplaceFields = () => gql`
   }
 `
 
-export const getMarketplaceFragment = () => gql`
+export const getMarketplaceFragment = () => `
   fragment marketplaceFragment on NFT {
     ...marketplaceFields
     activeOrder {

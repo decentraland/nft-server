@@ -1,10 +1,10 @@
-import { DocumentNode } from 'graphql'
-import { OperationVariables } from 'apollo-boost'
-
 export interface ISubgraphComponent {
   query: <T>(
-    query: DocumentNode,
-    variables?: OperationVariables,
+    query: string,
+    variables?: Record<
+      string,
+      string[] | string | number | boolean | undefined
+    >,
     attempts?: number
   ) => Promise<T>
 }

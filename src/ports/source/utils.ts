@@ -1,4 +1,3 @@
-import { DocumentNode, gql } from 'apollo-boost'
 import {
   SortBy,
   OrderDirection,
@@ -31,7 +30,7 @@ const NFTS_ARGUMENTS = `
   orderDirection: $orderDirection
 `
 
-export const getOrderFields = () => gql`
+export const getOrderFields = () => `
   fragment orderFields on Order {
     id
     nftAddress
@@ -47,7 +46,7 @@ export const getOrderFields = () => gql`
     }
   }
 `
-export const getOrderFragment = () => gql`
+export const getOrderFragment = () => `
   fragment orderFragment on Order {
     ...orderFields
   }
@@ -70,7 +69,7 @@ export function getOrderDirection(orderBy?: SortBy): OrderDirection {
 export function getFetchQuery(
   options: Options,
   fragmentName: string,
-  getNFTFragment: () => DocumentNode,
+  getNFTFragment: () => string,
   getExtraVariables?: (options: Options) => string[],
   getExtraWhere?: (options: Options) => string[],
   isCount = false
@@ -149,7 +148,7 @@ export function getFetchQuery(
     }
   }`
 
-  return gql`
+  return `
     ${query}
     ${isCount ? '' : getNFTFragment()}
   `
@@ -157,9 +156,9 @@ export function getFetchQuery(
 
 export function getFetchOneQuery(
   fragmentName: string,
-  getFragment: () => DocumentNode
+  getFragment: () => string
 ) {
-  return gql`
+  return `
   query NFTByTokenId($contractAddress: String, $tokenId: String) {
     nfts(
       where: { contractAddress: $contractAddress, tokenId: $tokenId }
@@ -173,7 +172,7 @@ export function getFetchOneQuery(
 }
 
 export function getHistoryQuery() {
-  return gql`
+  return `
     query NFTOrders($nftId: String!) {
       orders(
         where: { nft: $nftId, status: sold }
