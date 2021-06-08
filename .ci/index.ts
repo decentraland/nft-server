@@ -4,7 +4,6 @@ import { env, envTLD } from 'dcl-ops-lib/domain'
 
 const prometheusStack = new pulumi.StackReference(`prometheus-${env}`)
 
-
 export = async function main() {
   const revision = process.env['CI_COMMIT_SHA']
   const image = `decentraland/nft-server:${revision}`
@@ -23,8 +22,14 @@ export = async function main() {
       { name: 'SERVER_PORT', value: '5000' },
       { name: 'CORS_ORIGIN', value: '*' },
       { name: 'CORS_METHOD', value: '*' },
-      { name: 'MARKETPLACE_CHAIN_ID', value: env === 'prd' || env === 'stg' ? '1' : '3' },
-      { name: 'COLLECTIONS_CHAIN_ID', value: env === 'prd' || env === 'stg' ? '137' : '80001' },
+      {
+        name: 'MARKETPLACE_CHAIN_ID',
+        value: env === 'prd' || env === 'stg' ? '1' : '3',
+      },
+      {
+        name: 'COLLECTIONS_CHAIN_ID',
+        value: env === 'prd' || env === 'stg' ? '137' : '80001',
+      },
       {
         name: 'MARKETPLACE_SUBGRAPH_URL',
         value:
@@ -39,11 +44,14 @@ export = async function main() {
             ? 'https://api.thegraph.com/subgraphs/name/decentraland/collections-matic-mainnet'
             : 'https://api.thegraph.com/subgraphs/name/decentraland/collections-matic-mumbai',
       },
-      { name: 'WKC_METRICS_BEARER_TOKEN', value: prometheusStack.getOutput('serviceMetricsBearerToken') },
+      {
+        name: 'WKC_METRICS_BEARER_TOKEN',
+        value: prometheusStack.getOutput('serviceMetricsBearerToken'),
+      },
     ],
     hostname,
     {
-      // @ts-ignore
+      team: 'dapps',
       healthCheck: {
         path: '/health/ready',
         interval: 60,
