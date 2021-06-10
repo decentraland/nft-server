@@ -68,7 +68,7 @@ export function createBrowseHandler(
         'category',
         Object.values(NFTCategory)
       ),
-      address: params.getString('address'),
+      address: params.getString('address')?.toLowerCase(),
       isOnSale: params.getBoolean('isOnSale'),
       search: params.getString('search'),
       isLand: params.getBoolean('isLand'),
@@ -86,7 +86,9 @@ export function createBrowseHandler(
         'wearableGender',
         Object.values(WearableGender)
       ),
-      contracts: params.getList('contract'),
+      contracts: params
+        .getList('contract')
+        .map((contract) => contract.toLowerCase()),
       network: params.getValue<Network>(
         'network',
         Object.values(Network).filter(
