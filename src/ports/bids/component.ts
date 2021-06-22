@@ -1,6 +1,6 @@
 import { ISubgraphComponent } from '../subgraph/types'
 import { BidFragment, BidOptions, IBidsComponent } from './types'
-import { fromBidFragment, getBidsQuery } from './utils'
+import { fromBidFragment, getBidsQuery, getIdQuery } from './utils'
 
 export function createBidsComponent(options: {
   subgraph: ISubgraphComponent
@@ -8,10 +8,28 @@ export function createBidsComponent(options: {
   const { subgraph } = options
 
   async function fetch(options: BidOptions) {
-    const { nftId, bidder, seller, status } = options
+    const { contractAddress, tokenId, bidder, seller, status } = options
     const where: string[] = [`expiresAt_gt: "${Date.now()}"`]
-    if (nftId) {
-      where.push(`nft: "${nftId}"`)
+
+    if (contractAddress && tokenId) {
+      const query = getIdQuery(contractAddress, tokenId)
+      const { nfts: fragments } = await subgraph.query<{
+        nfts: { id: string }[]
+      }>(query)
+      if (fragments.length > 0) {
+        const { id } = fragments[0]
+        where.push(`nft: "${id}"`)
+      } else {
+        throw new Error(
+          `Could not find NFT for contractAddress="${contractAddress}" and tokenId="${tokenId}"`
+        )
+      }
+    } else if (contractAddress) {
+      where.push(`nftAddress: "${contractAddress}"`)
+    } else if (tokenId) {
+      throw new Error(
+        'You need to provide the "contractAddress" as well when filtering by "tokenId"'
+      )
     }
     if (bidder) {
       where.push(`bidder: "${bidder}"`)

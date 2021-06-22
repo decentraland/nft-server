@@ -192,13 +192,15 @@ export function createBidsHandler(
     const { searchParams } = context.url
     const bidder = searchParams.get('bidder')
     const seller = searchParams.get('seller')
-    const nftId = searchParams.get('nftId')
+    const contractAddress = searchParams.get('contractAddress')
+    const tokenId = searchParams.get('tokenId')
     const status = searchParams.get('status') as BidStatus | null
 
     const options: BidOptions = {
       bidder,
       seller,
-      nftId,
+      contractAddress,
+      tokenId,
       status,
     }
 

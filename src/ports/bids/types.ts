@@ -11,7 +11,8 @@ export enum BidStatus {
 export type BidOptions = {
   bidder: string | null
   seller: string | null
-  nftId: string | null
+  contractAddress: string | null
+  tokenId: string | null
   status: BidStatus | null
 }
 
