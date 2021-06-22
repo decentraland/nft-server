@@ -12,7 +12,7 @@ import {
   getVariables,
 } from './utils'
 
-export function createSourceComponent<T>(
+export function createSourceComponent<T extends { id: string }>(
   options: SourceOptions<T>
 ): ISourceComponent {
   const {
@@ -58,7 +58,7 @@ export function createSourceComponent<T>(
     return fragments.length
   }
 
-  async function getNFT(contractAddress: string, tokenId: string) {
+  async function getNFTFragment(contractAddress: string, tokenId: string) {
     const query = getFetchOneQuery(fragmentName, getFragment)
     const variables = {
       contractAddress,
@@ -70,17 +70,25 @@ export function createSourceComponent<T>(
     if (fragments.length === 0) {
       return null
     } else {
-      return fromFragment(fragments[0])
+      return fragments[0]
     }
   }
 
+  async function getNFT(contractAddress: string, tokenId: string) {
+    const fragment = await getNFTFragment(contractAddress, tokenId)
+    return fragment ? fromFragment(fragment) : null
+  }
+
+  async function getNFTId(contractAddress: string, tokenId: string) {
+    const fragment = await getNFTFragment(contractAddress, tokenId)
+    return fragment ? fragment.id : null
+  }
+
   async function getHistory(contractAddress: string, tokenId: string) {
-    const result = await getNFT(contractAddress, tokenId)
-    if (result) {
+    const nftId = await getNFTId(contractAddress, tokenId)
+    if (nftId) {
       const query = getHistoryQuery()
-      const variables = {
-        nftId: result.nft.id,
-      }
+      const variables = { nftId }
       const { orders: fragments } = await subgraph.query<{
         orders: OrderFragment[]
       }>(query, variables)
