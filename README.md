@@ -19,3 +19,4 @@ npm run start:watch # will watch for changes
 # Endpoints
 
 Check [`./src/adapters/routes.ts`](https://github.com/decentraland/nft-server/blob/master/src/adapters/routes.ts) for an up to date list of all the endpoints.
+
