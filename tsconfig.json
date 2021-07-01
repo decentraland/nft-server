@@ -20,6 +20,6 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["jest"]
   },
-  "exclude": ["node_modules", "dist", "migrations"],
+  "exclude": ["node_modules", "dist", "migrations", "./**/*.spec.ts"],
   "include": ["./**/*"]
 }

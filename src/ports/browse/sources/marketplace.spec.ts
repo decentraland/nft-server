@@ -39,26 +39,26 @@ describe('when building a result from the marketplace fragment', () => {
     })
 
     it('should return a result containing a parcel with the estate', () => {
-      const result = fromMarketplaceFragment(marketplaceFragment);
-      const parcelEstate = result.nft.data.parcel!.estate;
+      const result = fromMarketplaceFragment(marketplaceFragment)
+      const parcelEstate = result.nft.data.parcel!.estate
 
       expect(parcelEstate).toEqual({
         tokenId: marketplaceFragment.parcel!.estate?.tokenId,
-        name: marketplaceFragment.parcel!.estate?.data.name
+        name: marketplaceFragment.parcel!.estate?.data.name,
       })
     })
   })
 
   describe("with a parcel that doesn't belong to an estate", () => {
     beforeEach(() => {
-      marketplaceFragment.parcel!.estate = null;
+      marketplaceFragment.parcel!.estate = null
     })
 
     it('should return a result containing a parcel with a null estate', () => {
-      const result = fromMarketplaceFragment(marketplaceFragment);
-      const parcelEstate = result.nft.data.parcel!.estate;
+      const result = fromMarketplaceFragment(marketplaceFragment)
+      const parcelEstate = result.nft.data.parcel!.estate
 
-      expect(parcelEstate).toBeNull();
+      expect(parcelEstate).toBeNull()
     })
   })
 })
