@@ -17,7 +17,8 @@
     "resolveJsonModule": true,
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": ["jest"]
   },
   "exclude": ["node_modules", "dist", "migrations"],
   "include": ["./**/*"]

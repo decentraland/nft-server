@@ -40,6 +40,12 @@ export const getMarketplaceFields = () => `
       data {
         description
       }
+      estate {
+        tokenId
+        data {
+          name
+        }
+      }
     }
     estate {
       size
@@ -79,7 +85,7 @@ export const getMarketplaceFragment = () => `
 
 export type MarketplaceFields = Omit<
   NFT,
-  'activeOrderId' | 'owner' | 'data'
+  'activeOrderId' | 'owner' | 'data' | 'chainId'
 > & {
   owner: { address: string }
   parcel?: {
@@ -87,6 +93,12 @@ export type MarketplaceFields = Omit<
     y: string
     data: {
       description: string
+    } | null
+    estate: {
+      tokenId: string,
+      data: {
+        name: string
+      }
     } | null
   }
   estate?: {
@@ -146,6 +158,10 @@ export function fromMarketplaceFragment(fragment: MarketplaceFragment): Result {
                 null,
               x: fragment.parcel.x,
               y: fragment.parcel.y,
+              estate: fragment.parcel.estate ? {
+                tokenId: fragment.parcel.estate.tokenId,
+                name: fragment.parcel.estate.data.name
+              } : null
             }
           : undefined,
         estate: fragment.estate
