@@ -12,7 +12,8 @@
     "debug": "npm run build && node --inspect ./dist",
     "start:watch": "nodemon src/index.ts",
     "migrate": "ts-node migrations/index.ts",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "keywords": [
     "decentraland"
