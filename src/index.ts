@@ -1,6 +1,10 @@
 import { config as configDotEnvFile } from 'dotenv'
+import { Network } from '@dcl/schemas'
 import { createConfigComponent } from '@well-known-components/env-config-provider'
-import { createServerComponent, createStatusCheckComponent } from '@well-known-components/http-server'
+import {
+  createServerComponent,
+  createStatusCheckComponent,
+} from '@well-known-components/http-server'
 import { createLogComponent } from '@well-known-components/logger'
 import { Lifecycle } from '@well-known-components/interfaces'
 import { createMetricsComponent } from '@well-known-components/metrics'
@@ -9,6 +13,9 @@ import { AppComponents, AppConfig, GlobalContext } from './types'
 import { createSubgraphComponent } from './ports/subgraph/component'
 import { createBrowseComponent } from './ports/browse/component'
 import { createBidsComponent } from './ports/bids/component'
+import { createOrdersComponent } from './ports/orders/component'
+import { getMarketplaceChainId } from './ports/browse/sources/marketplace'
+import { getCollectionsChainId } from './ports/browse/sources/collections'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -43,10 +50,13 @@ async function initComponents(): Promise<AppComponents> {
 
   const statusChecks = await createStatusCheckComponent({ server })
 
-  const metrics = await createMetricsComponent({}, {
-    server,
-    config,
-  })
+  const metrics = await createMetricsComponent(
+    {},
+    {
+      server,
+      config,
+    }
+  )
 
   const marketplaceSubgraph = createSubgraphComponent(
     await config.requireString('MARKETPLACE_SUBGRAPH_URL')
@@ -56,12 +66,24 @@ async function initComponents(): Promise<AppComponents> {
     await config.requireString('COLLECTIONS_SUBGRAPH_URL')
   )
 
+  const marketplaceOrders = createOrdersComponent({
+    subgraph: marketplaceSubgraph,
+    network: Network.ETHEREUM,
+    chainId: getMarketplaceChainId(),
+  })
+
+  const collectionsOrders = createOrdersComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.ETHEREUM,
+    chainId: getCollectionsChainId(),
+  })
+
   const browse = createBrowseComponent({
     marketplaceSubgraph,
     collectionsSubgraph,
   })
 
-  const bids = createBidsComponent({ subgraph: marketplaceSubgraph })
+  const marketplaceBids = createBidsComponent({ subgraph: marketplaceSubgraph })
 
   return {
     config,
@@ -71,8 +93,10 @@ async function initComponents(): Promise<AppComponents> {
     metrics,
     marketplaceSubgraph,
     collectionsSubgraph,
+    marketplaceOrders,
+    collectionsOrders,
     browse,
-    bids,
+    marketplaceBids,
   }
 }
 

@@ -1,4 +1,6 @@
 import { ChainId, Network } from '@dcl/schemas'
+import { OrderFragment } from '../../orders/types'
+import { fromOrderFragment, getOrderFields } from '../../orders/utils'
 import {
   Result,
   SortBy,
@@ -6,16 +8,9 @@ import {
   NFT,
   WearableData,
   Contract,
-  OrderFragment,
   NFTCategory,
 } from '../../source/types'
-import {
-  fromNumber,
-  fromOrderFragment,
-  fromWei,
-  getId,
-  getOrderFields,
-} from '../../source/utils'
+import { fromNumber, fromWei, getId } from '../../source/utils'
 import { isExpired } from '../utils'
 
 export const getMarketplaceChainId = () =>
@@ -124,7 +119,9 @@ export function getMarketplaceOrderBy(
   }
 }
 
-export function fromMarketplaceFragment(fragment: MarketplaceFragment): Result {
+export function fromMarketplaceNFTFragment(
+  fragment: MarketplaceFragment
+): Result {
   const result: Result = {
     nft: {
       id: getId(fragment.contractAddress, fragment.tokenId),
@@ -173,7 +170,7 @@ export function fromMarketplaceFragment(fragment: MarketplaceFragment): Result {
     },
     order:
       fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
-        ? fromOrderFragment(fragment.activeOrder)
+        ? fromMarketplaceOrderFragment(fragment.activeOrder)
         : null,
     sort: {
       [SortBy.NEWEST]: fromNumber(fragment.createdAt),
@@ -192,6 +189,10 @@ export function fromMarketplaceFragment(fragment: MarketplaceFragment): Result {
   }
 
   return result
+}
+
+export function fromMarketplaceOrderFragment(fragment: OrderFragment) {
+  return fromOrderFragment(fragment, Network.ETHEREUM, getMarketplaceChainId())
 }
 
 export async function getMarketplaceContracts(): Promise<Contract[]> {

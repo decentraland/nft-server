@@ -7,17 +7,12 @@ import {
   NFT,
   WearableData,
   Contract,
-  OrderFragment,
 } from '../../source/types'
-import {
-  fromNumber,
-  fromOrderFragment,
-  fromWei,
-  getId,
-  getOrderFields,
-} from '../../source/utils'
+import { fromNumber, fromWei, getId } from '../../source/utils'
 import { isExpired } from '../utils'
 import { ISubgraphComponent } from '../../subgraph/types'
+import { fromOrderFragment, getOrderFields } from '../../orders/utils'
+import { OrderFragment } from '../../orders/types'
 
 export const getCollectionsChainId = () =>
   parseInt(
@@ -124,7 +119,7 @@ export function fromCollectionsFragment(fragment: CollectionsFragment): Result {
     },
     order:
       fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
-        ? fromOrderFragment(fragment.activeOrder)
+        ? fromCollectionsOrderFragment(fragment.activeOrder)
         : null,
     sort: {
       [SortBy.NEWEST]: fromNumber(fragment.createdAt),
@@ -135,6 +130,10 @@ export function fromCollectionsFragment(fragment: CollectionsFragment): Result {
   }
 
   return result
+}
+
+export function fromCollectionsOrderFragment(fragment: OrderFragment) {
+  return fromOrderFragment(fragment, Network.MATIC, getCollectionsChainId())
 }
 
 const getCollectionsQuery = `

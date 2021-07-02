@@ -1,16 +1,5 @@
-import {
-  ISourceComponent,
-  Options,
-  OrderFragment,
-  SourceOptions,
-} from './types'
-import {
-  fromOrderFragment,
-  getFetchOneQuery,
-  getFetchQuery,
-  getHistoryQuery,
-  getVariables,
-} from './utils'
+import { ISourceComponent, Options, SourceOptions } from './types'
+import { getFetchOneQuery, getFetchQuery, getVariables } from './utils'
 
 export function createSourceComponent<T extends { id: string }>(
   options: SourceOptions<T>
@@ -79,33 +68,12 @@ export function createSourceComponent<T extends { id: string }>(
     return fragment ? fromFragment(fragment) : null
   }
 
-  async function getNFTId(contractAddress: string, tokenId: string) {
-    const fragment = await getNFTFragment(contractAddress, tokenId)
-    return fragment ? fragment.id : null
-  }
-
-  async function getHistory(contractAddress: string, tokenId: string) {
-    const nftId = await getNFTId(contractAddress, tokenId)
-    if (nftId) {
-      const query = getHistoryQuery()
-      const variables = { nftId }
-      const { orders: fragments } = await subgraph.query<{
-        orders: OrderFragment[]
-      }>(query, variables)
-
-      return fragments.map(fromOrderFragment)
-    } else {
-      return []
-    }
-  }
-
   return {
     subgraph,
     hasResults,
     fetch,
     count,
     getNFT,
-    getHistory,
     getContracts: () => getContracts(subgraph),
   }
 }

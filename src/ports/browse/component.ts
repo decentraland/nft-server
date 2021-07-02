@@ -1,7 +1,8 @@
 import { Network } from '@dcl/schemas'
 import { createAggregatorComponent } from '../aggregator/component'
+import { Order } from '../orders/types'
 import { createSourceComponent } from '../source/component'
-import { NFT, NFTCategory, Options, Order } from '../source/types'
+import { NFT, NFTCategory, Options } from '../source/types'
 import {
   getCollectionsFragment,
   fromCollectionsFragment,
@@ -9,7 +10,7 @@ import {
   getCollectionsContracts,
 } from './sources/collections'
 import {
-  fromMarketplaceFragment,
+  fromMarketplaceNFTFragment,
   getMarketplaceFragment,
   getMarketplaceOrderBy,
   getMarketplaceContracts,
@@ -55,7 +56,7 @@ export function createBrowseComponent(
     subgraph: marketplaceSubgraph,
     fragmentName: 'marketplaceFragment',
     getFragment: getMarketplaceFragment,
-    fromFragment: fromMarketplaceFragment,
+    fromFragment: fromMarketplaceNFTFragment,
     getSortByProp: getMarketplaceOrderBy,
     getExtraVariables: (options) => {
       const extraVariables: string[] = []

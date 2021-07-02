@@ -184,9 +184,9 @@ export function createHistoryHandler(
 }
 
 export function createBidsHandler(
-  components: Pick<AppComponents, 'logs' | 'bids'>
+  components: Pick<AppComponents, 'logs' | 'marketplaceBids'>
 ): IHttpServerComponent.IRequestHandler<Context<'/bids'>> {
-  const { bids } = components
+  const { marketplaceBids } = components
 
   return async (context) => {
     const { searchParams } = context.url
@@ -205,7 +205,7 @@ export function createBidsHandler(
     }
 
     try {
-      const result = await bids.fetch(options)
+      const result = await marketplaceBids.fetch(options)
       return {
         status: 200,
         body: result,

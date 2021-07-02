@@ -1,4 +1,5 @@
 import { ChainId, Network } from '@dcl/schemas'
+import { Order } from '../orders/types'
 import { ISubgraphComponent } from '../subgraph/types'
 
 export enum SortBy {
@@ -129,40 +130,6 @@ export type NFT = {
   data: Data
 }
 
-export enum OrderStatus {
-  OPEN = 'open',
-  SOLD = 'sold',
-  CANCELLED = 'cancelled',
-}
-
-export type OrderFragment = {
-  id: string
-  nftAddress: string
-  owner: string
-  buyer: string | null
-  price: string
-  status: OrderStatus
-  expiresAt: string
-  createdAt: string
-  updatedAt: string
-  nft: {
-    tokenId: string
-  }
-}
-
-export type Order = {
-  id: string
-  nftId: string
-  nftAddress: string
-  owner: string
-  buyer: string | null
-  price: string
-  status: OrderStatus
-  expiresAt: number
-  createdAt: number
-  updatedAt: number
-}
-
 export type Contract = {
   name: string
   address: string
@@ -188,7 +155,6 @@ export interface ISourceComponent {
   fetch(options: Options): Promise<Result[]>
   count(options: Options): Promise<number>
   getNFT(contractAddress: string, tokenId: string): Promise<Result | null>
-  getHistory(contractAddress: string, tokenId: string): Promise<Order[]>
   getContracts: () => Promise<Contract[]>
 }
 

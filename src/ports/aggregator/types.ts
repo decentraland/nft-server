@@ -1,10 +1,5 @@
-import {
-  Contract,
-  ISourceComponent,
-  Options,
-  Order,
-  Result,
-} from '../source/types'
+import { Order } from '../orders/types'
+import { Contract, ISourceComponent, Options, Result } from '../source/types'
 
 export interface IAggregatorComponent {
   fetch(options: Options): Promise<Result[]>

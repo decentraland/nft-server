@@ -4,10 +4,11 @@ import type {
   ILoggerComponent,
   IHttpServerComponent,
   IMetricsComponent,
-  IBaseComponent
+  IBaseComponent,
 } from '@well-known-components/interfaces'
 import { IBidsComponent } from './ports/bids/types'
 import { IBrowseComponent } from './ports/browse/types'
+import { IOrdersComponent } from './ports/orders/types'
 import { ISubgraphComponent } from './ports/subgraph/types'
 
 export type AppConfig = {
@@ -28,8 +29,10 @@ export type AppComponents = {
   metrics: IMetricsComponent<any>
   marketplaceSubgraph: ISubgraphComponent
   collectionsSubgraph: ISubgraphComponent
+  marketplaceOrders: IOrdersComponent
+  collectionsOrders: IOrdersComponent
   browse: IBrowseComponent
-  bids: IBidsComponent
+  marketplaceBids: IBidsComponent
 }
 
 export type Context<Path extends string = any> = RoutedContext<

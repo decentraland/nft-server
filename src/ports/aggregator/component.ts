@@ -1,3 +1,4 @@
+import { Order } from '../orders/types'
 import {
   DEFAULT_SORT_BY,
   Options,
@@ -5,7 +6,6 @@ import {
   SortBy,
   ISourceComponent,
   Contract,
-  Order,
 } from '../source/types'
 import { getOrderDirection, MAX_RESULTS } from '../source/utils'
 import { IAggregatorComponent, AggregatorOptions } from './types'

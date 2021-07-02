@@ -1,3 +1,4 @@
+import { getOrderFragment } from '../orders/utils'
 import {
   SortBy,
   OrderDirection,
@@ -5,8 +6,6 @@ import {
   Options,
   Variables,
   WearableGender,
-  OrderFragment,
-  Order,
 } from './types'
 
 export const MAX_RESULTS = 1000 // This is a limitation due to theGraph
@@ -28,29 +27,6 @@ const NFTS_ARGUMENTS = `
   skip: 0
   orderBy: $orderBy
   orderDirection: $orderDirection
-`
-
-export const getOrderFields = () => `
-  fragment orderFields on Order {
-    id
-    nftAddress
-    owner
-    buyer
-    price
-    status
-    expiresAt
-    createdAt
-    updatedAt
-    nft {
-      tokenId
-    }
-  }
-`
-export const getOrderFragment = () => `
-  fragment orderFragment on Order {
-    ...orderFields
-  }
-  ${getOrderFields()}
 `
 
 export function getOrderDirection(orderBy?: SortBy): OrderDirection {
@@ -203,23 +179,6 @@ export function getVariables<T>(
 
 export function getId(contractAddress: string, tokenId: string) {
   return `${contractAddress}-${tokenId}`
-}
-
-export function fromOrderFragment(fragment: OrderFragment): Order {
-  const order: Order = {
-    id: fragment.id,
-    nftAddress: fragment.nftAddress,
-    nftId: getId(fragment.nftAddress, fragment.nft.tokenId),
-    owner: fragment.owner,
-    buyer: fragment.buyer,
-    price: fragment.price,
-    status: fragment.status,
-    expiresAt: +fragment.expiresAt,
-    createdAt: +fragment.createdAt * 1000,
-    updatedAt: +fragment.updatedAt * 1000,
-  }
-
-  return order
 }
 
 export function fromNumber(input: string | null) {
