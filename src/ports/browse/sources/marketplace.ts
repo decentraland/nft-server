@@ -13,6 +13,8 @@ import {
 import { fromNumber, fromWei, getId } from '../../source/utils'
 import { isExpired } from '../utils'
 
+const PARCEL_ESTATE_NAME_DEFAULT_VALUE = 'Estate'
+
 export const getMarketplaceChainId = () =>
   parseInt(
     process.env.MARKETPLACE_CHAIN_ID || ChainId.ETHEREUM_MAINNET.toString()
@@ -34,6 +36,12 @@ export const getMarketplaceFields = () => `
       y
       data {
         description
+      }
+      estate {
+        tokenId
+        data {
+          name
+        }
       }
     }
     estate {
@@ -74,7 +82,7 @@ export const getMarketplaceFragment = () => `
 
 export type MarketplaceFields = Omit<
   NFT,
-  'activeOrderId' | 'owner' | 'data'
+  'activeOrderId' | 'owner' | 'data' | 'chainId'
 > & {
   owner: { address: string }
   parcel?: {
@@ -82,6 +90,12 @@ export type MarketplaceFields = Omit<
     y: string
     data: {
       description: string
+    } | null
+    estate: {
+      tokenId: string
+      data: {
+        name: string | null
+      } | null
     } | null
   }
   estate?: {
@@ -143,6 +157,15 @@ export function fromMarketplaceNFTFragment(
                 null,
               x: fragment.parcel.x,
               y: fragment.parcel.y,
+              estate: fragment.parcel.estate
+                ? {
+                    tokenId: fragment.parcel.estate.tokenId,
+                    name: fragment.parcel.estate.data
+                      ? fragment.parcel.estate.data.name ??
+                        PARCEL_ESTATE_NAME_DEFAULT_VALUE
+                      : PARCEL_ESTATE_NAME_DEFAULT_VALUE,
+                  }
+                : null,
             }
           : undefined,
         estate: fragment.estate
