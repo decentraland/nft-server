@@ -4,9 +4,11 @@
 node_modules
 dist
 
-*.js
+src/*.js
 
 .DS_Store
 TODO.md
 
 *.db
+
+coverage

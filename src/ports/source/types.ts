@@ -59,6 +59,10 @@ export type ParcelData = {
   x: string
   y: string
   description: string | null
+  estate: {
+    tokenId: string,
+    name: string
+  } | null
 }
 
 export type EstateData = {
