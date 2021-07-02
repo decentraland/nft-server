@@ -1,3 +1,3 @@
 #!/bin/sh
 
-npm run start || exit 1
+node dist/index.js || exit 1
