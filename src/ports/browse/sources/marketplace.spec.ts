@@ -32,21 +32,63 @@ describe('when building a result from the marketplace fragment', () => {
     beforeEach(() => {
       marketplaceFragment.parcel!.estate = {
         tokenId: 'string',
-        data: {
-          name: 'name',
-        },
+        data: null
       }
     })
 
-    it('should return a result containing a parcel with the estate', () => {
-      const result = fromMarketplaceFragment(marketplaceFragment)
-      const parcelEstate = result.nft.data.parcel!.estate
+    describe("with a estate that contains data", () => {
+      describe("without a null name", () => {
+        beforeEach(() => {
+          marketplaceFragment.parcel!.estate!.data = {
+            name: 'name',
+          }
+        });
 
-      expect(parcelEstate).toEqual({
-        tokenId: marketplaceFragment.parcel!.estate?.tokenId,
-        name: marketplaceFragment.parcel!.estate?.data.name,
+        it('should return a result containing a parcel with the estate, containing its name', () => {
+          const result = fromMarketplaceFragment(marketplaceFragment)
+          const parcelEstate = result.nft.data.parcel!.estate
+    
+          expect(parcelEstate).toEqual({
+            tokenId: marketplaceFragment.parcel!.estate!.tokenId,
+            name: marketplaceFragment.parcel!.estate!.data!.name,
+          })
+        })
       })
-    })
+
+      describe("with a null name", () => {
+        beforeEach(() => {
+          marketplaceFragment.parcel!.estate!.data = {
+            name: null,
+          }
+        });
+
+        it('should return a result containing a parcel with the estate, having its name as "Estate"', () => {
+          const result = fromMarketplaceFragment(marketplaceFragment)
+          const parcelEstate = result.nft.data.parcel!.estate
+    
+          expect(parcelEstate).toEqual({
+            tokenId: marketplaceFragment.parcel!.estate!.tokenId,
+            name: "Estate",
+          })
+        })
+      });
+    });
+
+    describe("with a estate that doesn't contain data", () => {
+      beforeEach(() => {
+        marketplaceFragment.parcel!.estate!.data = null;
+      });
+      
+      it('should return a result containing a parcel with the estate, having its name as "Estate"', () => {
+        const result = fromMarketplaceFragment(marketplaceFragment)
+        const parcelEstate = result.nft.data.parcel!.estate
+  
+        expect(parcelEstate).toEqual({
+          tokenId: marketplaceFragment.parcel!.estate!.tokenId,
+          name: "Estate",
+        })
+      })
+    });
   })
 
   describe("with a parcel that doesn't belong to an estate", () => {
