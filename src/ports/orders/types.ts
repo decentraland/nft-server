@@ -44,9 +44,10 @@ export type Order = {
   id: string
   nftId: string
   nftAddress: string
+  tokenId: string
   owner: string
   buyer: string | null
-  price: string
+  price: number
   status: OrderStatus
   expiresAt: number
   createdAt: number

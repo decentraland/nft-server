@@ -1,8 +1,7 @@
 import { ChainId, Network } from '@dcl/schemas'
-import { getIdQuery } from '../bids/utils'
 import { ISubgraphComponent } from '../subgraph/types'
 import { IOrdersComponent, OrderFragment, OrderOptions } from './types'
-import { fromOrderFragment, getOrdersQuery } from './utils'
+import { fromOrderFragment, getIdQuery, getOrdersQuery } from './utils'
 
 export function createOrdersComponent(options: {
   subgraph: ISubgraphComponent
@@ -22,16 +21,16 @@ export function createOrdersComponent(options: {
 
     if (contractAddress && tokenId) {
       const query = getIdQuery(contractAddress, tokenId)
+      console.log(query)
       const { nfts: fragments } = await subgraph.query<{
         nfts: { id: string }[]
       }>(query)
+      console.log(fragments)
       if (fragments.length > 0) {
         const { id } = fragments[0]
         where.push(`nft: "${id}"`)
       } else {
-        throw new Error(
-          `Could not find NFT for contractAddress="${contractAddress}" and tokenId="${tokenId}"`
-        )
+        return []
       }
     } else if (contractAddress) {
       where.push(`nftAddress: "${contractAddress}"`)
