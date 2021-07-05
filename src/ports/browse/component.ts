@@ -1,5 +1,4 @@
 import { Network } from '@dcl/schemas'
-import { createAggregatorComponent } from '../aggregator/component'
 import { Order } from '../orders/types'
 import { createSourceComponent } from '../source/component'
 import { NFT, NFTCategory, Options } from '../source/types'
@@ -9,18 +8,18 @@ import {
   getCollectionsOrderBy,
   getCollectionsContracts,
 } from './sources/collections'
-import {
-  fromMarketplaceNFTFragment,
-  getMarketplaceFragment,
-  getMarketplaceOrderBy,
-  getMarketplaceContracts,
-} from './sources/marketplace'
+// import {
+//   fromMarketplaceNFTFragment,
+//   getMarketplaceFragment,
+//   getMarketplaceOrderBy,
+//   getMarketplaceContracts,
+// } from './sources/marketplace'
 import { BrowseComponents, IBrowseComponent } from './types'
 
 export function createBrowseComponent(
   components: BrowseComponents
 ): IBrowseComponent {
-  const { collectionsSubgraph, marketplaceSubgraph } = components
+  const { collectionsSubgraph } = components
 
   const collectionsSource = createSourceComponent({
     hasResults: (options) => {
@@ -45,50 +44,46 @@ export function createBrowseComponent(
     getContracts: (subgraph) => getCollectionsContracts(subgraph),
   })
 
-  const marketplaceSource = createSourceComponent({
-    hasResults: (options) => {
-      if (options.network && options.network !== Network.ETHEREUM) {
-        return false
-      } else {
-        return true
-      }
-    },
-    subgraph: marketplaceSubgraph,
-    fragmentName: 'marketplaceFragment',
-    getFragment: getMarketplaceFragment,
-    fromFragment: fromMarketplaceNFTFragment,
-    getSortByProp: getMarketplaceOrderBy,
-    getExtraVariables: (options) => {
-      const extraVariables: string[] = []
-      if (options.category) {
-        extraVariables.push('$category: Category')
-      }
-      return extraVariables
-    },
-    getExtraWhere: (options) => {
-      const extraWhere = [
-        'searchEstateSize_gt: 0',
-        'searchParcelIsInBounds: true',
-      ]
-      if (options.category) {
-        extraWhere.push('category: $category')
-      }
-      if (options.isLand) {
-        extraWhere.push('searchIsLand: true')
-      }
-      return extraWhere
-    },
-    getContracts: getMarketplaceContracts,
-  })
-
-  const aggregator = createAggregatorComponent({
-    sources: [collectionsSource, marketplaceSource],
-  })
+  // const marketplaceSource = createSourceComponent({
+  //   hasResults: (options) => {
+  //     if (options.network && options.network !== Network.ETHEREUM) {
+  //       return false
+  //     } else {
+  //       return true
+  //     }
+  //   },
+  //   subgraph: marketplaceSubgraph,
+  //   fragmentName: 'marketplaceFragment',
+  //   getFragment: getMarketplaceFragment,
+  //   fromFragment: fromMarketplaceNFTFragment,
+  //   getSortByProp: getMarketplaceOrderBy,
+  //   getExtraVariables: (options) => {
+  //     const extraVariables: string[] = []
+  //     if (options.category) {
+  //       extraVariables.push('$category: Category')
+  //     }
+  //     return extraVariables
+  //   },
+  //   getExtraWhere: (options) => {
+  //     const extraWhere = [
+  //       'searchEstateSize_gt: 0',
+  //       'searchParcelIsInBounds: true',
+  //     ]
+  //     if (options.category) {
+  //       extraWhere.push('category: $category')
+  //     }
+  //     if (options.isLand) {
+  //       extraWhere.push('searchIsLand: true')
+  //     }
+  //     return extraWhere
+  //   },
+  //   getContracts: getMarketplaceContracts,
+  // })
 
   async function fetch(options: Options) {
     const [results, total] = await Promise.all([
-      aggregator.fetch(options),
-      aggregator.count(options),
+      collectionsSource.fetch(options),
+      collectionsSource.count(options),
     ])
     const nfts: NFT[] = []
     const orders: Order[] = []
@@ -107,24 +102,18 @@ export function createBrowseComponent(
   }
 
   async function getNFT(contractAddress: string, tokenId: string) {
-    const result = await aggregator.getNFT(contractAddress, tokenId)
+    const result = await collectionsSource.getNFT(contractAddress, tokenId)
     return result ? { nft: result.nft, order: result.order } : null
   }
 
-  async function getHistory(contractAddress: string, tokenId: string) {
-    const result = await aggregator.getHistory(contractAddress, tokenId)
-    return result
-  }
-
   async function getContracts() {
-    const contracts = await aggregator.getContracts()
+    const contracts = await collectionsSource.getContracts()
     return contracts
   }
 
   return {
     fetch,
     getNFT,
-    getHistory,
     getContracts,
   }
 }

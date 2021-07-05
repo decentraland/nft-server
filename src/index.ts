@@ -16,6 +16,10 @@ import { createBidsComponent } from './ports/bids/component'
 import { createOrdersComponent } from './ports/orders/component'
 import { getMarketplaceChainId } from './ports/browse/sources/marketplace'
 import { getCollectionsChainId } from './ports/browse/sources/collections'
+import { createOrdersSource } from './adapters/sources/orders'
+import { createMergerComponent } from './ports/merger/component'
+import { Order, OrderOptions, OrderSortBy } from './ports/orders/types'
+import { SortDirection } from './ports/merger/types'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -74,7 +78,7 @@ async function initComponents(): Promise<AppComponents> {
 
   const collectionsOrders = createOrdersComponent({
     subgraph: collectionsSubgraph,
-    network: Network.ETHEREUM,
+    network: Network.MATIC,
     chainId: getCollectionsChainId(),
   })
 
@@ -85,6 +89,20 @@ async function initComponents(): Promise<AppComponents> {
 
   const marketplaceBids = createBidsComponent({ subgraph: marketplaceSubgraph })
 
+  const orders = createMergerComponent<Order, OrderOptions, OrderSortBy>({
+    sources: [
+      createOrdersSource(marketplaceOrders),
+      createOrdersSource(collectionsOrders),
+    ],
+    defaultSortBy: OrderSortBy.RECENTLY_LISTED,
+    directions: {
+      [OrderSortBy.RECENTLY_LISTED]: SortDirection.DESC,
+      [OrderSortBy.RECENTLY_UPDATED]: SortDirection.DESC,
+      [OrderSortBy.CHEAPEST]: SortDirection.ASC,
+    },
+    maxCount: 1000,
+  })
+
   return {
     config,
     logs,
@@ -93,8 +111,7 @@ async function initComponents(): Promise<AppComponents> {
     metrics,
     marketplaceSubgraph,
     collectionsSubgraph,
-    marketplaceOrders,
-    collectionsOrders,
+    orders,
     browse,
     marketplaceBids,
   }

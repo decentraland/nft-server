@@ -4,9 +4,9 @@ import {
   createBidsHandler,
   createBrowseHandler,
   createContractsHandler,
-  createHistoryHandler,
   createNFTHandler,
-} from './handlers'
+} from './handlers/handlers'
+import { createOrdersHandler } from './handlers/orders'
 
 export async function setupRoutes(globalContext: GlobalContext) {
   const { components } = globalContext
@@ -24,11 +24,8 @@ export async function setupRoutes(globalContext: GlobalContext) {
     '/contracts/:contractAddress/tokens/:tokenId',
     createNFTHandler(components)
   )
-  router.get(
-    '/contracts/:contractAddress/tokens/:tokenId/history',
-    createHistoryHandler(components)
-  )
   router.get('/bids', createBidsHandler(components))
+  router.get('/orders', createOrdersHandler(components))
 
   server.use(router.middleware())
 }

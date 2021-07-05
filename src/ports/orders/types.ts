@@ -5,16 +5,17 @@ export interface IOrdersComponent {
 }
 
 export type OrderOptions = {
-  owner: string | null
-  buyer: string | null
-  contractAddress: string | null
-  tokenId: string | null
-  status: OrderStatus | null
-  network: Network | null
+  owner?: string
+  buyer?: string
+  contractAddress?: string
+  tokenId?: string
+  status?: OrderStatus
+  network?: Network
 }
 
 export enum OrderSortBy {
   RECENTLY_LISTED = 'recently_listed',
+  RECENTLY_UPDATED = 'recently_updated',
   CHEAPEST = 'cheapest',
 }
 

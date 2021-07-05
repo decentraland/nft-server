@@ -14,6 +14,10 @@ export function createOrdersComponent(options: {
   async function fetch(options: OrderOptions) {
     const { contractAddress, tokenId, buyer, owner, status } = options
 
+    if (options.network && options.network !== network) {
+      return []
+    }
+
     const where: string[] = [`expiresAt_gt: "${Date.now()}"`]
 
     if (contractAddress && tokenId) {

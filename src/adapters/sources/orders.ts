@@ -15,7 +15,8 @@ export function createOrdersSource(
       result,
       sort: {
         [OrderSortBy.RECENTLY_LISTED]: result.createdAt,
-        [OrderSortBy.CHEAPEST]: result.price,
+        [OrderSortBy.RECENTLY_UPDATED]: result.updatedAt,
+        [OrderSortBy.CHEAPEST]: +result.price,
       },
     }))
   }

@@ -2,9 +2,9 @@ export type FetchOptions<
   Options extends {},
   SortBy extends string
 > = Options & {
-  first: number | null
-  skip: number | null
-  sortBy: SortBy | null
+  first?: number
+  skip?: number
+  sortBy?: SortBy
 }
 
 export type Sortable<Result, SortBy extends string> = {
@@ -43,7 +43,7 @@ export type MergerOptions<
   SortBy extends string = ''
 > = {
   sources: Source<Result, Options, SortBy>[]
-  defaultSortBy?: SortBy
-  defaultSortDirection?: SortDirection
+  directions: Record<SortBy, SortDirection>
+  defaultSortBy: SortBy
   maxCount?: number
 }

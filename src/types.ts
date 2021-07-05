@@ -8,7 +8,8 @@ import type {
 } from '@well-known-components/interfaces'
 import { IBidsComponent } from './ports/bids/types'
 import { IBrowseComponent } from './ports/browse/types'
-import { IOrdersComponent } from './ports/orders/types'
+import { IMergerComponent } from './ports/merger/types'
+import { Order, OrderOptions, OrderSortBy } from './ports/orders/types'
 import { ISubgraphComponent } from './ports/subgraph/types'
 
 export type AppConfig = {
@@ -29,8 +30,7 @@ export type AppComponents = {
   metrics: IMetricsComponent<any>
   marketplaceSubgraph: ISubgraphComponent
   collectionsSubgraph: ISubgraphComponent
-  marketplaceOrders: IOrdersComponent
-  collectionsOrders: IOrdersComponent
+  orders: IMergerComponent<Order, OrderOptions, OrderSortBy>
   browse: IBrowseComponent
   marketplaceBids: IBidsComponent
 }

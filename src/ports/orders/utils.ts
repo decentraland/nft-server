@@ -28,10 +28,10 @@ export const getOrderFragment = () => `
 export const getOrdersQuery = (where: string[]) => {
   return `
     query Orders {
-      bids(where: {
+      orders(where: {
         ${where.join('\n')}
       }) {
-        ...bidFragment
+        ...orderFragment
       }
     }
     ${getOrderFragment()}
@@ -49,7 +49,7 @@ export function fromOrderFragment(
     nftId: getId(fragment.nftAddress, fragment.nft.tokenId),
     owner: fragment.owner,
     buyer: fragment.buyer,
-    price: fragment.price,
+    price: fragment.price.slice(0, -18),
     status: fragment.status,
     expiresAt: +fragment.expiresAt,
     createdAt: +fragment.createdAt * 1000,
