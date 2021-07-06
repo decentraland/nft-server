@@ -80,7 +80,7 @@ export const getMarketplaceFragment = () => `
   ${getOrderFields()}
 `
 
-export type MarketplaceFields = Omit<
+export type MarketplaceNFTFields = Omit<
   NFT,
   'activeOrderId' | 'owner' | 'data' | 'chainId'
 > & {
@@ -112,13 +112,13 @@ export type MarketplaceFields = Omit<
   searchOrderCreatedAt: string
 }
 
-export type MarketplaceFragment = MarketplaceFields & {
+export type MarketplaceNFTFragment = MarketplaceNFTFields & {
   activeOrder: OrderFragment | null
 }
 
 export function getMarketplaceOrderBy(
   sortBy?: SortBy
-): keyof MarketplaceFragment {
+): keyof MarketplaceNFTFragment {
   switch (sortBy) {
     case SortBy.NEWEST:
       return 'createdAt'
@@ -134,7 +134,7 @@ export function getMarketplaceOrderBy(
 }
 
 export function fromMarketplaceNFTFragment(
-  fragment: MarketplaceFragment
+  fragment: MarketplaceNFTFragment
 ): Result {
   const result: Result = {
     nft: {
