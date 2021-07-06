@@ -62,6 +62,7 @@ async function initComponents(): Promise<AppComponents> {
     }
   )
 
+  // subgraphs
   const marketplaceSubgraph = createSubgraphComponent(
     await config.requireString('MARKETPLACE_SUBGRAPH_URL')
   )
@@ -70,6 +71,7 @@ async function initComponents(): Promise<AppComponents> {
     await config.requireString('COLLECTIONS_SUBGRAPH_URL')
   )
 
+  // orders
   const marketplaceOrders = createOrdersComponent({
     subgraph: marketplaceSubgraph,
     network: Network.ETHEREUM,
@@ -81,13 +83,6 @@ async function initComponents(): Promise<AppComponents> {
     network: Network.MATIC,
     chainId: getCollectionsChainId(),
   })
-
-  const browse = createBrowseComponent({
-    marketplaceSubgraph,
-    collectionsSubgraph,
-  })
-
-  const marketplaceBids = createBidsComponent({ subgraph: marketplaceSubgraph })
 
   const orders = createMergerComponent<Order, OrderOptions, OrderSortBy>({
     sources: [
@@ -101,6 +96,15 @@ async function initComponents(): Promise<AppComponents> {
       [OrderSortBy.CHEAPEST]: SortDirection.ASC,
     },
     maxCount: 1000,
+  })
+
+  // bids
+  const marketplaceBids = createBidsComponent({ subgraph: marketplaceSubgraph })
+
+  // nfts
+  const browse = createBrowseComponent({
+    marketplaceSubgraph,
+    collectionsSubgraph,
   })
 
   return {
