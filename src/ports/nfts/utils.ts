@@ -1,6 +1,6 @@
 import { NFTSortBy, NFTOptions, WearableGender, QueryVariables } from './types'
 
-export const NFT_DEFAULT_SORT_BY = NFTSortBy.RECENTLY_LISTED
+export const NFT_DEFAULT_SORT_BY = NFTSortBy.NEWEST
 
 const NFTS_FILTERS = `
   $first: Int
@@ -8,14 +8,14 @@ const NFTS_FILTERS = `
   $orderBy: String
   $orderDirection: String
   $expiresAt: String
-  $address: String
+  $owner: String
   $wearableCategory: String
   $isWearableHead: Boolean
   $isWearableAccessory: Boolean
 `
 
-const NFTS_ARGUMENTS = `
-  first: 1000
+const getArguments = (total: number) => `
+  first: ${total}
   skip: 0
   orderBy: $orderBy
   orderDirection: $orderDirection
@@ -60,7 +60,7 @@ export function getFetchQuery(
   const where: string[] = []
 
   if (options.owner) {
-    where.push('owner: $address')
+    where.push('owner: $owner')
   }
 
   if (
@@ -117,6 +117,16 @@ export function getFetchQuery(
     )
   }
 
+  // Compute total nfts to query. If there's a "skip" we add it to the total, since we need all the prior results to later merge them in a single page. If nothing is provided we default to the max. When counting we also use the max.
+  const max = 1000
+  const total = isCount
+    ? max
+    : typeof options.first !== 'undefined'
+    ? typeof options.skip !== 'undefined'
+      ? options.skip + options.first
+      : options.first
+    : max
+
   const query = `query NFTs(
     ${NFTS_FILTERS}
     ${getExtraVariables ? getExtraVariables(options).join('\n') : ''}
@@ -125,7 +135,7 @@ export function getFetchQuery(
       where: {
         ${where.join('\n')}
         ${getExtraWhere ? getExtraWhere(options).join('\n') : ''}
-      }${NFTS_ARGUMENTS})
+      }${getArguments(total)})
     {
       ${isCount ? 'id' : `...${fragmentName}`}
     }

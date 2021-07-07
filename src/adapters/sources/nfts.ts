@@ -25,8 +25,7 @@ export function createNFTsSource(
   }
 
   async function count(options: FetchOptions<NFTOptions, NFTSortBy>) {
-    const results = await nfts.fetch(options)
-    return results.length
+    return nfts.count(options)
   }
 
   return {

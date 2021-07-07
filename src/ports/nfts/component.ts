@@ -61,6 +61,12 @@ export function createNFTComponent<T extends { id: string }>(options: {
     return nfts
   }
 
+  async function count(options: NFTOptions) {
+    const fetchFragments = getFragmentFetcher(options)
+    const fragments = await fetchFragments(true)
+    return fragments.length
+  }
+
   async function fetchOne(contractAddress: string, tokenId: string) {
     const query = getFetchOneQuery(fragmentName, getFragment)
     const variables = {
@@ -79,5 +85,6 @@ export function createNFTComponent<T extends { id: string }>(options: {
 
   return {
     fetch,
+    count,
   }
 }

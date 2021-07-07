@@ -135,4 +135,5 @@ export type QueryVariables = Omit<NFTOptions, 'sortBy'> & {
 
 export interface INFTComponent {
   fetch(options: NFTOptions): Promise<NFTResult[]>
+  count(options: NFTOptions): Promise<number>
 }
