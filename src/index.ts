@@ -20,6 +20,8 @@ import { createOrdersSource } from './adapters/sources/orders'
 import { createMergerComponent } from './ports/merger/component'
 import { Order, OrderOptions, OrderSortBy } from './ports/orders/types'
 import { SortDirection } from './ports/merger/types'
+import { Bid, BidOptions, BidSortBy } from './ports/bids/types'
+import { createBidsSource } from './adapters/sources/bids'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -99,7 +101,22 @@ async function initComponents(): Promise<AppComponents> {
   })
 
   // bids
-  const marketplaceBids = createBidsComponent({ subgraph: marketplaceSubgraph })
+  const marketplaceBids = createBidsComponent({
+    subgraph: marketplaceSubgraph,
+    network: Network.ETHEREUM,
+    chainId: getMarketplaceChainId(),
+  })
+
+  const bids = createMergerComponent<Bid, BidOptions, BidSortBy>({
+    sources: [createBidsSource(marketplaceBids)],
+    defaultSortBy: BidSortBy.RECENTLY_LISTED,
+    directions: {
+      [BidSortBy.RECENTLY_LISTED]: SortDirection.DESC,
+      [BidSortBy.RECENTLY_UPDATED]: SortDirection.DESC,
+      [BidSortBy.CHEAPEST]: SortDirection.ASC,
+    },
+    maxCount: 1000,
+  })
 
   // nfts
   const browse = createBrowseComponent({
@@ -116,8 +133,8 @@ async function initComponents(): Promise<AppComponents> {
     marketplaceSubgraph,
     collectionsSubgraph,
     orders,
+    bids,
     browse,
-    marketplaceBids,
   }
 }
 

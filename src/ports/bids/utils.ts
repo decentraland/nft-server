@@ -1,11 +1,16 @@
+import { ChainId, Network } from '@dcl/schemas'
 import { Bid, BidFragment } from './types'
 
-export function fromBidFragment(fragment: BidFragment): Bid {
+export function fromBidFragment(
+  fragment: BidFragment,
+  network: Network,
+  chainId: ChainId
+): Bid {
   const bid: Bid = {
     id: fragment.id,
     bidder: fragment.bidder,
     seller: fragment.seller,
-    price: fragment.price,
+    price: +(fragment.price.length > 18 ? fragment.price.slice(0, -18) : 0),
     fingerprint: fragment.fingerprint,
     status: fragment.status,
     blockchainId: fragment.blockchainId,
@@ -15,6 +20,8 @@ export function fromBidFragment(fragment: BidFragment): Bid {
     updatedAt: +fragment.updatedAt * 1000,
     contractAddress: fragment.nft.contractAddress,
     tokenId: fragment.nft.tokenId,
+    network,
+    chainId,
   }
 
   return bid

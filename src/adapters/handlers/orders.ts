@@ -34,8 +34,6 @@ export function createOrdersHandler(
       network,
     }
 
-    console.log(options)
-
     return json(() => orders.fetch(options))
   }
 }

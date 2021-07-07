@@ -1,11 +1,11 @@
 import { Router } from '@well-known-components/http-server'
 import { GlobalContext } from '../types'
 import {
-  createBidsHandler,
   createBrowseHandler,
   createContractsHandler,
   createNFTHandler,
 } from './handlers/handlers'
+import { createBidsHandler } from './handlers/bids'
 import { createOrdersHandler } from './handlers/orders'
 
 export async function setupRoutes(globalContext: GlobalContext) {

@@ -43,7 +43,7 @@ export type OrderFragment = {
 export type Order = {
   id: string
   nftId: string
-  nftAddress: string
+  contractAddress: string
   tokenId: string
   owner: string
   buyer: string | null

@@ -1,15 +1,22 @@
+import { ChainId, Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
 import { BidFragment, BidOptions, IBidsComponent } from './types'
 import { fromBidFragment, getBidsQuery, getIdQuery } from './utils'
 
 export function createBidsComponent(options: {
   subgraph: ISubgraphComponent
+  network: Network
+  chainId: ChainId
 }): IBidsComponent {
-  const { subgraph } = options
+  const { subgraph, network, chainId } = options
 
   async function fetch(options: BidOptions) {
     const { contractAddress, tokenId, bidder, seller, status } = options
     const where: string[] = [`expiresAt_gt: "${Date.now()}"`]
+
+    if (options.network && options.network !== network) {
+      return []
+    }
 
     if (contractAddress && tokenId) {
       const query = getIdQuery(contractAddress, tokenId)
@@ -20,9 +27,7 @@ export function createBidsComponent(options: {
         const { id } = fragments[0]
         where.push(`nft: "${id}"`)
       } else {
-        throw new Error(
-          `Could not find NFT for contractAddress="${contractAddress}" and tokenId="${tokenId}"`
-        )
+        return []
       }
     } else if (contractAddress) {
       where.push(`nftAddress: "${contractAddress}"`)
@@ -46,7 +51,10 @@ export function createBidsComponent(options: {
       bids: BidFragment[]
     }>(query)
 
-    const bids = fragments.map(fromBidFragment)
+    const bids = fragments.map((fragment) =>
+      fromBidFragment(fragment, network, chainId)
+    )
+
     return bids
   }
 

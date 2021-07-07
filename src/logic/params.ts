@@ -50,12 +50,12 @@ export class Params {
     return defaultValue
   }
 
-  getAddress(key: string, lowercase = true) {
+  getAddress(key: string, lowercase = true, defaultValue?: string) {
     const value = this.params.get(key)
     if (value && /^0x[a-fA-F0-9]{40}$/.test(value)) {
       return lowercase ? value.toLowerCase() : value
     }
-    return
+    return defaultValue
   }
 
   getAddressList(key: string, lowercase = true) {

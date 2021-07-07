@@ -1,3 +1,5 @@
+import { ChainId, Network } from '@dcl/schemas'
+
 export interface IBidsComponent {
   fetch(options: BidOptions): Promise<Bid[]>
 }
@@ -8,19 +10,26 @@ export enum BidStatus {
   CANCELLED = 'cancelled',
 }
 
+export enum BidSortBy {
+  RECENTLY_LISTED = 'recently_listed',
+  RECENTLY_UPDATED = 'recently_updated',
+  CHEAPEST = 'cheapest',
+}
+
 export type BidOptions = {
-  bidder: string | null
-  seller: string | null
-  contractAddress: string | null
-  tokenId: string | null
-  status: BidStatus | null
+  bidder?: string
+  seller?: string
+  contractAddress?: string
+  tokenId?: string
+  status?: BidStatus
+  network?: Network
 }
 
 export type Bid = {
   id: string
   bidder: string
   seller: string
-  price: string
+  price: number
   fingerprint: string
   status: BidStatus
   blockchainId: string
@@ -30,8 +39,11 @@ export type Bid = {
   updatedAt: number
   contractAddress: string
   tokenId: string
+  network: Network
+  chainId: ChainId
 }
 
-export type BidFragment = Omit<Bid, 'contractAddress' | 'tokenId'> & {
+export type BidFragment = Omit<Bid, 'contractAddress' | 'tokenId' | 'price'> & {
   nft: { contractAddress: string; tokenId: string }
+  price: string
 }

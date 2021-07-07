@@ -6,11 +6,11 @@ import type {
   IMetricsComponent,
   IBaseComponent,
 } from '@well-known-components/interfaces'
-import { IBidsComponent } from './ports/bids/types'
 import { IBrowseComponent } from './ports/browse/types'
-import { IMergerComponent } from './ports/merger/types'
-import { Order, OrderOptions, OrderSortBy } from './ports/orders/types'
 import { ISubgraphComponent } from './ports/subgraph/types'
+import { IMergerComponent } from './ports/merger/types'
+import { Bid, BidOptions, BidSortBy } from './ports/bids/types'
+import { Order, OrderOptions, OrderSortBy } from './ports/orders/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -32,7 +32,7 @@ export type AppComponents = {
   collectionsSubgraph: ISubgraphComponent
   orders: IMergerComponent<Order, OrderOptions, OrderSortBy>
   browse: IBrowseComponent
-  marketplaceBids: IBidsComponent
+  bids: IMergerComponent<Bid, BidOptions, BidSortBy>
 }
 
 export type Context<Path extends string = any> = RoutedContext<

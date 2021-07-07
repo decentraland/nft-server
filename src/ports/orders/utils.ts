@@ -58,12 +58,12 @@ export function fromOrderFragment(
 ): Order {
   const order: Order = {
     id: fragment.id,
-    nftAddress: fragment.nftAddress,
+    contractAddress: fragment.nftAddress,
     nftId: getId(fragment.nftAddress, fragment.nft.tokenId),
     tokenId: fragment.nft.tokenId,
     owner: fragment.owner,
     buyer: fragment.buyer,
-    price: +fragment.price.slice(0, -18) || 0,
+    price: +(fragment.price.length > 18 ? fragment.price.slice(0, -18) : 0),
     status: fragment.status,
     expiresAt: +fragment.expiresAt,
     createdAt: +fragment.createdAt * 1000,

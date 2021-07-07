@@ -1,7 +1,6 @@
 import { Network } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { Params } from '../../logic/params'
-import { BidOptions, BidStatus } from '../../ports/bids/types'
 import {
   NFTCategory,
   Options,
@@ -100,42 +99,6 @@ export function createNFTHandler(
             status: 404,
             body: 'Not found',
           }
-    } catch (error) {
-      return {
-        status: 500,
-        body: error.message,
-      }
-    }
-  }
-}
-
-export function createBidsHandler(
-  components: Pick<AppComponents, 'logs' | 'marketplaceBids'>
-): IHttpServerComponent.IRequestHandler<Context<'/bids'>> {
-  const { marketplaceBids } = components
-
-  return async (context) => {
-    const { searchParams } = context.url
-    const bidder = searchParams.get('bidder')
-    const seller = searchParams.get('seller')
-    const contractAddress = searchParams.get('contractAddress')
-    const tokenId = searchParams.get('tokenId')
-    const status = searchParams.get('status') as BidStatus | null
-
-    const options: BidOptions = {
-      bidder,
-      seller,
-      contractAddress,
-      tokenId,
-      status,
-    }
-
-    try {
-      const result = await marketplaceBids.fetch(options)
-      return {
-        status: 200,
-        body: result,
-      }
     } catch (error) {
       return {
         status: 500,
