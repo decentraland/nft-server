@@ -21,11 +21,9 @@ export function createOrdersComponent(options: {
 
     if (contractAddress && tokenId) {
       const query = getIdQuery(contractAddress, tokenId)
-      console.log(query)
       const { nfts: fragments } = await subgraph.query<{
         nfts: { id: string }[]
       }>(query)
-      console.log(fragments)
       if (fragments.length > 0) {
         const { id } = fragments[0]
         where.push(`nft: "${id}"`)

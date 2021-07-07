@@ -1,6 +1,8 @@
 import { FetchOptions, IMergerComponent, MergerOptions } from './types'
 import { sort } from './utils'
 
+export const DEFAULT_FIRST = 20
+
 export function createMergerComponent<
   Result,
   Options extends {} = {},
@@ -26,9 +28,15 @@ export function createMergerComponent<
     )
 
     // return the limit of results
-    const skip = options.skip || 0
-    const first = options.first || 20
-    return sorted.slice(skip, first + skip)
+    const skip =
+      typeof options.skip === 'undefined' ? 0 : Math.max(options.skip, 0)
+    const first =
+      typeof options.first === 'undefined'
+        ? DEFAULT_FIRST
+        : Math.max(options.first, 0)
+
+    // If first is 0, that means "all"
+    return first === 0 ? sorted.slice(skip) : sorted.slice(skip, first + skip)
   }
 
   async function count(options: FetchOptions<Options, SortBy>) {

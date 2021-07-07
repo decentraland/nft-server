@@ -1,4 +1,4 @@
-import { ChainId, Network } from '@dcl/schemas'
+import { Network } from '@dcl/schemas'
 import {
   DEFAULT_SORT_BY,
   NFTCategory,
@@ -13,11 +13,7 @@ import { isExpired } from '../utils'
 import { ISubgraphComponent } from '../../subgraph/types'
 import { fromOrderFragment, getOrderFields } from '../../orders/utils'
 import { OrderFragment } from '../../orders/types'
-
-export const getCollectionsChainId = () =>
-  parseInt(
-    process.env.COLLECTIONS_CHAIN_ID || ChainId.ETHEREUM_MAINNET.toString()
-  ) as ChainId
+import { getCollectionsChainId } from '../../../logic/chainIds'
 
 export const getCollectionsFields = () => `
   fragment collectionsFields on NFT {

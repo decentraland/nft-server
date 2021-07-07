@@ -68,7 +68,7 @@ export class Params {
 
   private getValidValues<T extends string>(values: Values = {}) {
     const validValues = Object.values(values).filter(
-      (value) => typeof value !== 'string'
+      (value) => typeof value === 'string'
     ) as T[]
     return validValues
   }

@@ -60,26 +60,6 @@ export function createBrowseHandler(
   }
 }
 
-export function createContractsHandler(
-  components: Pick<AppComponents, 'logs' | 'browse'>
-): IHttpServerComponent.IRequestHandler<Context<'/contracts'>> {
-  const { browse } = components
-  return async () => {
-    try {
-      const result = await browse.getContracts()
-      return {
-        status: 200,
-        body: result,
-      }
-    } catch (error) {
-      return {
-        status: 500,
-        body: error.message,
-      }
-    }
-  }
-}
-
 export function createNFTHandler(
   components: Pick<AppComponents, 'logs' | 'browse'>
 ): IHttpServerComponent.IRequestHandler<

@@ -11,6 +11,11 @@ import { ISubgraphComponent } from './ports/subgraph/types'
 import { IMergerComponent } from './ports/merger/types'
 import { Bid, BidOptions, BidSortBy } from './ports/bids/types'
 import { Order, OrderOptions, OrderSortBy } from './ports/orders/types'
+import {
+  Contract,
+  ContractOptions,
+  ContractSortBy,
+} from './ports/contracts/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -33,6 +38,7 @@ export type AppComponents = {
   orders: IMergerComponent<Order, OrderOptions, OrderSortBy>
   browse: IBrowseComponent
   bids: IMergerComponent<Bid, BidOptions, BidSortBy>
+  contracts: IMergerComponent<Contract, ContractOptions, ContractSortBy>
 }
 
 export type Context<Path extends string = any> = RoutedContext<

@@ -22,18 +22,18 @@ export function createOrdersHandler(
     const status = params.getValue<OrderStatus>('status', OrderStatus)
     const network = params.getValue<Network>('network', Network)
 
-    const options = {
-      first,
-      skip,
-      sortBy,
-      owner,
-      buyer,
-      contractAddress,
-      tokenId,
-      status,
-      network,
-    }
-
-    return json(() => orders.fetch(options))
+    return json(() =>
+      orders.fetch({
+        first,
+        skip,
+        sortBy,
+        owner,
+        buyer,
+        contractAddress,
+        tokenId,
+        status,
+        network,
+      })
+    )
   }
 }
