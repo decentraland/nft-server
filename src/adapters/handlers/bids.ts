@@ -1,7 +1,7 @@
 import { Network } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
-import { Params } from '../../logic/params'
-import { json } from '../../logic/response'
+import { Params } from '../../logic/http/params'
+import { json } from '../../logic/http/response'
 import { BidSortBy, BidStatus } from '../../ports/bids/types'
 import { AppComponents, Context } from '../../types'
 

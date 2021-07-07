@@ -1,3 +1,5 @@
+import { isAddress } from '../address'
+
 type Values = { [key: string]: string | Function | object }
 
 export class Params {
@@ -52,17 +54,14 @@ export class Params {
 
   getAddress(key: string, lowercase = true, defaultValue?: string) {
     const value = this.params.get(key)
-    if (value && /^0x[a-fA-F0-9]{40}$/.test(value)) {
-      return lowercase ? value.toLowerCase() : value
+    if (isAddress(value)) {
+      return lowercase ? value!.toLowerCase() : value!
     }
     return defaultValue
   }
 
   getAddressList(key: string, lowercase = true) {
-    const list = this.params
-      .getAll(key)
-      .filter((address) => /^0x[a-fA-F0-9]{40}$/.test(address))
-
+    const list = this.params.getAll(key).filter(isAddress)
     return lowercase ? list.map((address) => address.toLowerCase()) : list
   }
 

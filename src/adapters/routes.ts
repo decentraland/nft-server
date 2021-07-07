@@ -1,9 +1,10 @@
 import { Router } from '@well-known-components/http-server'
 import { GlobalContext } from '../types'
-import { createBrowseHandler, createNFTHandler } from './handlers/handlers'
+import { createBrowseHandler } from './handlers/handlers'
 import { createBidsHandler } from './handlers/bids'
 import { createOrdersHandler } from './handlers/orders'
 import { createContractsHandler } from './handlers/contracts'
+import { createNFTHandler, createNFTsHandler } from './handlers/nfts'
 
 export async function setupRoutes(globalContext: GlobalContext) {
   const { components } = globalContext
@@ -16,13 +17,14 @@ export async function setupRoutes(globalContext: GlobalContext) {
   router.prefix(`/${apiVersion}`)
 
   router.get('/browse', createBrowseHandler(components))
+  router.get('/bids', createBidsHandler(components))
+  router.get('/orders', createOrdersHandler(components))
+  router.get('/nfts', createNFTsHandler(components))
   router.get('/contracts', createContractsHandler(components))
   router.get(
     '/contracts/:contractAddress/tokens/:tokenId',
     createNFTHandler(components)
   )
-  router.get('/bids', createBidsHandler(components))
-  router.get('/orders', createOrdersHandler(components))
 
   server.use(router.middleware())
 }

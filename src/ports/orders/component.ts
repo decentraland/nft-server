@@ -34,7 +34,7 @@ export function createOrdersComponent(options: {
       where.push(`nftAddress: "${contractAddress}"`)
     } else if (tokenId) {
       throw new Error(
-        'You need to provide the "contractAddress" as well when filtering by "tokenId"'
+        'You need to provide a "contractAddress" as well when filtering by "tokenId"'
       )
     }
 

@@ -1,6 +1,6 @@
 import { Network } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
-import { Params } from '../../logic/params'
+import { Params } from '../../logic/http/params'
 import {
   NFTCategory,
   Options,
@@ -51,34 +51,6 @@ export function createBrowseHandler(
         status: 200,
         body: results,
       }
-    } catch (error) {
-      return {
-        status: 500,
-        body: error.message,
-      }
-    }
-  }
-}
-
-export function createNFTHandler(
-  components: Pick<AppComponents, 'logs' | 'browse'>
-): IHttpServerComponent.IRequestHandler<
-  Context<'/contracts/:contractAddress/tokens/:tokenId'>
-> {
-  const { browse } = components
-  return async (context) => {
-    const { contractAddress, tokenId } = context.params
-    try {
-      const result = await browse.getNFT(contractAddress, tokenId)
-      return result !== null
-        ? {
-            status: 200,
-            body: result,
-          }
-        : {
-            status: 404,
-            body: 'Not found',
-          }
     } catch (error) {
       return {
         status: 500,

@@ -2,8 +2,8 @@ import { Network } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { ContractSortBy } from '../../ports/contracts/types'
 import { AppComponents, Context } from '../../types'
-import { Params } from '../../logic/params'
-import { json } from '../../logic/response'
+import { Params } from '../../logic/http/params'
+import { json } from '../../logic/http/response'
 
 export function createContractsHandler(
   components: Pick<AppComponents, 'logs' | 'contracts'>

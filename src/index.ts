@@ -30,6 +30,25 @@ import {
   ContractSortBy,
 } from './ports/contracts/types'
 import { createContractsSource } from './adapters/sources/contracts'
+import { createNFTComponent } from './ports/nfts/component'
+import {
+  fromMarketplaceNFTFragment,
+  getMarketplaceExtraVariables,
+  getMarketplaceExtraWhere,
+  getMarketplaceFragment,
+  getMarketplaceOrderBy,
+  marketplaceShouldFetch,
+} from './logic/nfts/marketplace'
+import {
+  collectionsShouldFetch,
+  fromCollectionsFragment,
+  getCollectionsFragment,
+  getCollectionsOrderBy,
+} from './logic/nfts/collections'
+import { NFTResult } from './ports/browse/types'
+import { NFTOptions, NFTSortBy } from './ports/nfts/types'
+import { NFT_DEFAULT_SORT_BY } from './ports/nfts/utils'
+import { createNFTsSource } from './adapters/sources/nfts'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -157,6 +176,41 @@ async function initComponents(): Promise<AppComponents> {
   })
 
   // nfts
+  const marketplaceNFTs = createNFTComponent({
+    subgraph: marketplaceSubgraph,
+    shouldFetch: marketplaceShouldFetch,
+    fragmentName: 'marketplaceFragment',
+    getFragment: getMarketplaceFragment,
+    fromFragment: fromMarketplaceNFTFragment,
+    getSortByProp: getMarketplaceOrderBy,
+    getExtraVariables: getMarketplaceExtraVariables,
+    getExtraWhere: getMarketplaceExtraWhere,
+  })
+
+  const collectionsNFTs = createNFTComponent({
+    subgraph: collectionsSubgraph,
+    shouldFetch: collectionsShouldFetch,
+    fragmentName: 'collectionsFragment',
+    getFragment: getCollectionsFragment,
+    fromFragment: fromCollectionsFragment,
+    getSortByProp: getCollectionsOrderBy,
+  })
+
+  const nfts = createMergerComponent<NFTResult, NFTOptions, NFTSortBy>({
+    sources: [
+      createNFTsSource(marketplaceNFTs),
+      createNFTsSource(collectionsNFTs),
+    ],
+    defaultSortBy: NFT_DEFAULT_SORT_BY,
+    directions: {
+      [NFTSortBy.CHEAPEST]: SortDirection.ASC,
+      [NFTSortBy.NAME]: SortDirection.ASC,
+      [NFTSortBy.NEWEST]: SortDirection.DESC,
+      [NFTSortBy.RECENTLY_LISTED]: SortDirection.DESC,
+    },
+  })
+
+  // browse
   const browse = createBrowseComponent({
     marketplaceSubgraph,
     collectionsSubgraph,
@@ -173,6 +227,7 @@ async function initComponents(): Promise<AppComponents> {
     orders,
     bids,
     contracts,
+    nfts,
     browse,
   }
 }

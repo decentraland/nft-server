@@ -1,20 +1,5 @@
 import { ChainId, Network } from '@dcl/schemas'
 import { Order } from '../orders/types'
-import { ISubgraphComponent } from '../subgraph/types'
-
-export enum SortBy {
-  NAME = 'name',
-  NEWEST = 'newest',
-  RECENTLY_LISTED = 'recently_listed',
-  CHEAPEST = 'cheapest',
-}
-
-export const DEFAULT_SORT_BY = SortBy.NEWEST
-
-export enum OrderDirection {
-  ASC = 'asc',
-  DESC = 'desc',
-}
 
 export enum NFTCategory {
   PARCEL = 'parcel',
@@ -95,12 +80,12 @@ export type Data = {
   ens?: EnsData
 }
 
-export type Options = {
-  first: number
-  skip: number
-  sortBy?: SortBy
+export type NFTOptions = {
+  first?: number
+  skip?: number
+  sortBy?: NFTSortBy
   category?: NFTCategory
-  address?: string
+  owner?: string
   isOnSale?: boolean
   search?: string
   isLand?: boolean
@@ -109,14 +94,16 @@ export type Options = {
   wearableCategory?: WearableCategory
   wearableRarities?: WearableRarity[]
   wearableGenders?: WearableGender[]
-  contracts?: string[]
+  contractAddresses?: string[]
+  tokenId?: string
   network?: Network
 }
 
-export type Variables = Omit<Options, 'sortBy'> & {
-  orderBy: string
-  orderDirection: OrderDirection
-  expiresAt: string
+export enum NFTSortBy {
+  NAME = 'name',
+  NEWEST = 'newest',
+  RECENTLY_LISTED = 'recently_listed',
+  CHEAPEST = 'cheapest',
 }
 
 export type NFT = {
@@ -132,44 +119,20 @@ export type NFT = {
   network: Network
   chainId: ChainId
   data: Data
+  createdAt: number
 }
 
-export type Contract = {
-  name: string
-  address: string
-  category: NFTCategory
-  network: Network
-  chainId: ChainId
-}
-
-export type Result = {
+export type NFTResult = {
   nft: NFT
   order: Order | null
-  sort: {
-    [SortBy.NEWEST]: number | null
-    [SortBy.NAME]: string
-    [SortBy.CHEAPEST]: number | null
-    [SortBy.RECENTLY_LISTED]: number | null
-  }
 }
 
-export interface ISourceComponent {
-  subgraph: ISubgraphComponent
-  hasResults?(options: Options): boolean
-  fetch(options: Options): Promise<Result[]>
-  count(options: Options): Promise<number>
-  getNFT(contractAddress: string, tokenId: string): Promise<Result | null>
-  getContracts: () => Promise<Contract[]>
+export type QueryVariables = Omit<NFTOptions, 'sortBy'> & {
+  orderBy: string
+  orderDirection: 'asc' | 'desc'
+  expiresAt: string
 }
 
-export type SourceOptions<T> = {
-  subgraph: ISubgraphComponent
-  fragmentName: string
-  getFragment: () => string
-  fromFragment(fragment: T): Result
-  getSortByProp(sortBy?: SortBy): keyof T
-  getContracts: (subgraph: ISubgraphComponent) => Promise<Contract[]>
-  hasResults?(options: Options): boolean
-  getExtraVariables?: (options: Options) => string[]
-  getExtraWhere?: (options: Options) => string[]
+export interface INFTComponent {
+  fetch(options: NFTOptions): Promise<NFTResult[]>
 }
