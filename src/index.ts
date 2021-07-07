@@ -11,7 +11,6 @@ import { createMetricsComponent } from '@well-known-components/metrics'
 import { setupRoutes } from './adapters/routes'
 import { AppComponents, AppConfig, GlobalContext } from './types'
 import { createSubgraphComponent } from './ports/subgraph/component'
-import { createBrowseComponent } from './ports/browse/component'
 import { createBidsComponent } from './ports/bids/component'
 import { createOrdersComponent } from './ports/orders/component'
 import { createMergerComponent } from './ports/merger/component'
@@ -20,10 +19,8 @@ import { SortDirection } from './ports/merger/types'
 import { Bid, BidOptions, BidSortBy } from './ports/bids/types'
 import { getMarketplaceChainId, getCollectionsChainId } from './logic/chainIds'
 import { createOrdersSource } from './adapters/sources/orders'
-import { createBidsSource } from './adapters/sources/bids'
 import { createContractsComponent } from './ports/contracts/compontent'
-import { getMarketplaceContracts } from './ports/browse/sources/marketplace'
-import { getCollectionsContracts } from './ports/browse/sources/collections'
+import { createBidsSource } from './adapters/sources/bids'
 import {
   Contract,
   ContractOptions,
@@ -45,10 +42,13 @@ import {
   getCollectionsFragment,
   getCollectionsOrderBy,
 } from './logic/nfts/collections'
-import { NFTResult } from './ports/browse/types'
-import { NFTOptions, NFTSortBy } from './ports/nfts/types'
+import { NFTOptions, NFTResult, NFTSortBy } from './ports/nfts/types'
 import { NFT_DEFAULT_SORT_BY } from './ports/nfts/utils'
 import { createNFTsSource } from './adapters/sources/nfts'
+import {
+  getCollectionsContracts,
+  getMarketplaceContracts,
+} from './logic/contracts'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -151,12 +151,17 @@ async function initComponents(): Promise<AppComponents> {
 
   // contracts
   const marketplaceContracts = createContractsComponent({
-    getContracts: getMarketplaceContracts,
+    getContracts: () => getMarketplaceContracts(marketplaceChainId),
     network: Network.ETHEREUM,
   })
 
   const collectionsContracts = createContractsComponent({
-    getContracts: () => getCollectionsContracts(collectionsSubgraph),
+    getContracts: () =>
+      getCollectionsContracts(
+        collectionsSubgraph,
+        Network.MATIC,
+        collectionsChainId
+      ),
     network: Network.MATIC,
   })
 
@@ -210,25 +215,16 @@ async function initComponents(): Promise<AppComponents> {
     },
   })
 
-  // browse
-  const browse = createBrowseComponent({
-    marketplaceSubgraph,
-    collectionsSubgraph,
-  })
-
   return {
     config,
     logs,
     server,
     statusChecks,
     metrics,
-    marketplaceSubgraph,
-    collectionsSubgraph,
     orders,
     bids,
     contracts,
     nfts,
-    browse,
   }
 }
 

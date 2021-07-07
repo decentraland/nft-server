@@ -1,5 +1,5 @@
 import { ChainId, Network } from '@dcl/schemas'
-import { getId } from '../source/utils'
+import { getId } from '../nfts/utils'
 import { Order, OrderFragment } from './types'
 
 export const getOrderFields = () => `

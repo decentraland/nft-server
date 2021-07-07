@@ -2,6 +2,7 @@ import { Network } from '@dcl/schemas'
 import {
   EnsData,
   NFT,
+  NFTCategory,
   NFTOptions,
   NFTResult,
   NFTSortBy,
@@ -10,7 +11,6 @@ import {
 import { getId, NFT_DEFAULT_SORT_BY } from '../../ports/nfts/utils'
 import { OrderFragment } from '../../ports/orders/types'
 import { fromOrderFragment, getOrderFields } from '../../ports/orders/utils'
-import { NFTCategory } from '../../ports/source/types'
 import { getMarketplaceChainId } from '../chainIds'
 import { isExpired } from '../expiration'
 import { capitalize } from '../string'

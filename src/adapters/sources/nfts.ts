@@ -1,6 +1,10 @@
-import { NFTResult } from '../../ports/browse/types'
 import { FetchOptions, Source } from '../../ports/merger/types'
-import { INFTComponent, NFTOptions, NFTSortBy } from '../../ports/nfts/types'
+import {
+  INFTComponent,
+  NFTOptions,
+  NFTResult,
+  NFTSortBy,
+} from '../../ports/nfts/types'
 
 export function createNFTsSource(
   nfts: INFTComponent

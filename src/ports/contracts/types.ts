@@ -1,5 +1,5 @@
 import { ChainId, Network } from '@dcl/schemas'
-import { NFTCategory } from '../source/types'
+import { NFTCategory } from '../nfts/types'
 
 export type Contract = {
   name: string
