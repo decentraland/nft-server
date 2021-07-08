@@ -35,6 +35,9 @@ export interface IMergerComponent<
 > {
   fetch(options: FetchOptions<Options, SortBy>): Promise<Result[]>
   count(options: FetchOptions<Options, SortBy>): Promise<number>
+  fetchAndCount(
+    options: FetchOptions<Options, SortBy>
+  ): Promise<{ results: Result[]; total: number }>
 }
 
 export type MergerOptions<

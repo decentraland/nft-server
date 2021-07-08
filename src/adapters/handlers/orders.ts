@@ -23,7 +23,7 @@ export function createOrdersHandler(
     const network = params.getValue<Network>('network', Network)
 
     return json(() =>
-      orders.fetch({
+      orders.fetchAndCount({
         first,
         skip,
         sortBy,

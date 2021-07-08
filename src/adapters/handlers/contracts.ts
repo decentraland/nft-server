@@ -18,7 +18,7 @@ export function createContractsHandler(
     const network = params.getValue<Network>('network', Network)
 
     return json(() =>
-      contracts.fetch({
+      contracts.fetchAndCount({
         first,
         skip,
         sortBy,

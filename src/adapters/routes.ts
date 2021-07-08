@@ -4,7 +4,6 @@ import { createBidsHandler } from './handlers/bids'
 import { createOrdersHandler } from './handlers/orders'
 import { createContractsHandler } from './handlers/contracts'
 import { createNFTHandler, createNFTsHandler } from './handlers/nfts'
-import { createBrowseHandler } from './handlers/browse'
 
 export async function setupRoutes(globalContext: GlobalContext) {
   const { components } = globalContext
@@ -16,7 +15,6 @@ export async function setupRoutes(globalContext: GlobalContext) {
 
   router.prefix(`/${apiVersion}`)
 
-  router.get('/browse', createBrowseHandler(components))
   router.get('/bids', createBidsHandler(components))
   router.get('/orders', createOrdersHandler(components))
   router.get('/nfts', createNFTsHandler(components))

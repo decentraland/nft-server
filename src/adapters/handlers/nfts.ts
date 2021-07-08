@@ -45,7 +45,7 @@ export function createNFTsHandler(
     const network = params.getValue<Network>('network', Network)
 
     return json(() =>
-      nfts.fetch({
+      nfts.fetchAndCount({
         first,
         skip,
         sortBy,

@@ -213,6 +213,7 @@ async function initComponents(): Promise<AppComponents> {
       [NFTSortBy.NEWEST]: SortDirection.DESC,
       [NFTSortBy.RECENTLY_LISTED]: SortDirection.DESC,
     },
+    maxCount: 1000,
   })
 
   return {

@@ -59,8 +59,14 @@ export function createMergerComponent<
     return maxCount ? Math.min(total, maxCount) : total
   }
 
+  async function fetchAndCount(options: FetchOptions<Options, SortBy>) {
+    const [results, total] = await Promise.all([fetch(options), count(options)])
+    return { results, total }
+  }
+
   return {
     fetch,
     count,
+    fetchAndCount,
   }
 }

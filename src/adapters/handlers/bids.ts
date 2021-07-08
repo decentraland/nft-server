@@ -24,7 +24,7 @@ export function createBidsHandler(
     const network = params.getValue<Network>('network', Network)
 
     return json(() =>
-      bids.fetch({
+      bids.fetchAndCount({
         first,
         skip,
         sortBy,
