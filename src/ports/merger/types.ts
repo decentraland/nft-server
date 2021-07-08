@@ -23,9 +23,9 @@ export type Source<
   SortBy extends string = ''
 > = {
   fetch(
-    options: FetchOptions<Options, SortBy>
+    filters: FetchOptions<Options, SortBy>
   ): Promise<Sortable<Result, SortBy>[]>
-  count(options: FetchOptions<Options, SortBy>): Promise<number>
+  count(filters: FetchOptions<Options, SortBy>): Promise<number>
 }
 
 export interface IMergerComponent<
@@ -33,10 +33,10 @@ export interface IMergerComponent<
   Options extends {} = {},
   SortBy extends string = ''
 > {
-  fetch(options: FetchOptions<Options, SortBy>): Promise<Result[]>
-  count(options: FetchOptions<Options, SortBy>): Promise<number>
+  fetch(filters: FetchOptions<Options, SortBy>): Promise<Result[]>
+  count(filters: FetchOptions<Options, SortBy>): Promise<number>
   fetchAndCount(
-    options: FetchOptions<Options, SortBy>
+    filters: FetchOptions<Options, SortBy>
   ): Promise<{ results: Result[]; total: number }>
 }
 

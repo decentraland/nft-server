@@ -3,7 +3,7 @@ import {
   EnsData,
   NFT,
   NFTCategory,
-  NFTOptions,
+  NFTFilters,
   NFTResult,
   NFTSortBy,
   WearableData,
@@ -205,7 +205,7 @@ export function fromMarketplaceNFTFragment(
   return result
 }
 
-export function getMarketplaceExtraVariables(options: NFTOptions) {
+export function getMarketplaceExtraVariables(options: NFTFilters) {
   const extraVariables: string[] = []
   if (options.category) {
     extraVariables.push('$category: Category')
@@ -213,7 +213,7 @@ export function getMarketplaceExtraVariables(options: NFTOptions) {
   return extraVariables
 }
 
-export function getMarketplaceExtraWhere(options: NFTOptions) {
+export function getMarketplaceExtraWhere(options: NFTFilters) {
   const extraWhere = ['searchEstateSize_gt: 0', 'searchParcelIsInBounds: true']
   if (options.category) {
     extraWhere.push('category: $category')
@@ -228,8 +228,8 @@ export function fromMarketplaceOrderFragment(fragment: OrderFragment) {
   return fromOrderFragment(fragment, Network.ETHEREUM, getMarketplaceChainId())
 }
 
-export function marketplaceShouldFetch(options: NFTOptions) {
-  if (options.network && options.network !== Network.ETHEREUM) {
+export function marketplaceShouldFetch(filters: NFTFilters) {
+  if (filters.network && filters.network !== Network.ETHEREUM) {
     return false
   } else {
     return true

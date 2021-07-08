@@ -2,7 +2,7 @@ import { Network } from '@dcl/schemas'
 import {
   NFT,
   NFTCategory,
-  NFTOptions,
+  NFTFilters,
   NFTResult,
   NFTSortBy,
   WearableData,
@@ -127,12 +127,12 @@ export function fromCollectionsOrderFragment(fragment: OrderFragment) {
   return fromOrderFragment(fragment, Network.MATIC, getCollectionsChainId())
 }
 
-export function collectionsShouldFetch(options: NFTOptions) {
-  if (options.isLand) {
+export function collectionsShouldFetch(filters: NFTFilters) {
+  if (filters.isLand) {
     return false
-  } else if (options.category && options.category !== NFTCategory.WEARABLE) {
+  } else if (filters.category && filters.category !== NFTCategory.WEARABLE) {
     return false
-  } else if (options.network && options.network !== Network.MATIC) {
+  } else if (filters.network && filters.network !== Network.MATIC) {
     return false
   } else {
     return true

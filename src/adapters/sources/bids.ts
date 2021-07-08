@@ -1,16 +1,16 @@
 import { FetchOptions, Source } from '../../ports/merger/types'
 import {
   Bid,
-  BidOptions,
+  BidFilters,
   BidSortBy,
   IBidsComponent,
 } from '../../ports/bids/types'
 
 export function createBidsSource(
   bids: IBidsComponent
-): Source<Bid, BidOptions, BidSortBy> {
-  async function fetch(options: FetchOptions<BidOptions, BidSortBy>) {
-    const results = await bids.fetch(options)
+): Source<Bid, BidFilters, BidSortBy> {
+  async function fetch(filters: FetchOptions<BidFilters, BidSortBy>) {
+    const results = await bids.fetch(filters)
     return results.map((result) => ({
       result,
       sort: {
@@ -21,8 +21,8 @@ export function createBidsSource(
     }))
   }
 
-  async function count(options: FetchOptions<BidOptions, BidSortBy>) {
-    const results = await bids.fetch(options)
+  async function count(filters: FetchOptions<BidFilters, BidSortBy>) {
+    const results = await bids.fetch(filters)
     return results.length
   }
 

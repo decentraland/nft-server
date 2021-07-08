@@ -9,7 +9,7 @@ export type Contract = {
   chainId: ChainId
 }
 
-export type ContractOptions = {
+export type ContractFilters = {
   category?: NFTCategory
   network?: Network
 }
@@ -19,5 +19,5 @@ export enum ContractSortBy {
 }
 
 export interface IContractsComponent {
-  fetch(options: ContractOptions): Promise<Contract[]>
+  fetch(filters: ContractFilters): Promise<Contract[]>
 }

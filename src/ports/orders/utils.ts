@@ -63,7 +63,7 @@ export function fromOrderFragment(
     tokenId: fragment.nft.tokenId,
     owner: fragment.owner,
     buyer: fragment.buyer,
-    price: +(fragment.price.length > 18 ? fragment.price.slice(0, -18) : 0),
+    price: fragment.price,
     status: fragment.status,
     expiresAt: +fragment.expiresAt,
     createdAt: +fragment.createdAt * 1000,

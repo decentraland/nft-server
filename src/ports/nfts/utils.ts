@@ -1,4 +1,4 @@
-import { NFTSortBy, NFTOptions, WearableGender, QueryVariables } from './types'
+import { NFTSortBy, NFTFilters, WearableGender, QueryVariables } from './types'
 
 export const NFT_DEFAULT_SORT_BY = NFTSortBy.NEWEST
 
@@ -35,7 +35,7 @@ export function getOrderDirection(sortBy?: NFTSortBy): 'asc' | 'desc' {
 }
 
 export function getQueryVariables<T>(
-  options: NFTOptions,
+  options: NFTFilters,
   getOrderBy: (sortBy?: NFTSortBy) => keyof T
 ): QueryVariables {
   const { sortBy, ...variables } = options
@@ -50,55 +50,55 @@ export function getQueryVariables<T>(
 }
 
 export function getFetchQuery(
-  options: NFTOptions,
+  filters: NFTFilters,
   fragmentName: string,
   getNFTFragment: () => string,
-  getExtraVariables?: (options: NFTOptions) => string[],
-  getExtraWhere?: (options: NFTOptions) => string[],
+  getExtraVariables?: (options: NFTFilters) => string[],
+  getExtraWhere?: (options: NFTFilters) => string[],
   isCount = false
 ) {
   const where: string[] = []
 
-  if (options.owner) {
+  if (filters.owner) {
     where.push('owner: $owner')
   }
 
   if (
-    options.isOnSale ||
-    options.sortBy === NFTSortBy.CHEAPEST ||
-    options.sortBy === NFTSortBy.RECENTLY_LISTED
+    filters.isOnSale ||
+    filters.sortBy === NFTSortBy.CHEAPEST ||
+    filters.sortBy === NFTSortBy.RECENTLY_LISTED
   ) {
     where.push('searchOrderStatus: open')
     where.push('searchOrderExpiresAt_gt: $expiresAt')
   }
 
-  if (options.search) {
-    where.push(`searchText_contains: "${options.search.trim().toLowerCase()}"`)
+  if (filters.search) {
+    where.push(`searchText_contains: "${filters.search.trim().toLowerCase()}"`)
   }
 
-  if (options.wearableCategory) {
+  if (filters.wearableCategory) {
     where.push('searchWearableCategory: $wearableCategory')
   }
 
-  if (options.isWearableHead) {
+  if (filters.isWearableHead) {
     where.push('searchIsWearableHead: $isWearableHead')
   }
 
-  if (options.isWearableAccessory) {
+  if (filters.isWearableAccessory) {
     where.push('searchIsWearableAccessory: $isWearableAccessory')
   }
 
-  if (options.wearableRarities && options.wearableRarities.length > 0) {
+  if (filters.wearableRarities && filters.wearableRarities.length > 0) {
     where.push(
-      `searchWearableRarity_in: [${options.wearableRarities
+      `searchWearableRarity_in: [${filters.wearableRarities
         .map((rarity) => `"${rarity}"`)
         .join(',')}]`
     )
   }
 
-  if (options.wearableGenders && options.wearableGenders.length > 0) {
-    const hasMale = options.wearableGenders.includes(WearableGender.MALE)
-    const hasFemale = options.wearableGenders.includes(WearableGender.FEMALE)
+  if (filters.wearableGenders && filters.wearableGenders.length > 0) {
+    const hasMale = filters.wearableGenders.includes(WearableGender.MALE)
+    const hasFemale = filters.wearableGenders.includes(WearableGender.FEMALE)
 
     if (hasMale && !hasFemale) {
       where.push(`searchWearableBodyShapes: [BaseMale]`)
@@ -109,9 +109,9 @@ export function getFetchQuery(
     }
   }
 
-  if (options.contractAddresses && options.contractAddresses.length > 0) {
+  if (filters.contractAddresses && filters.contractAddresses.length > 0) {
     where.push(
-      `contractAddress_in: [${options.contractAddresses
+      `contractAddress_in: [${filters.contractAddresses
         .map((contract) => `"${contract}"`)
         .join(', ')}]`
     )
@@ -121,20 +121,20 @@ export function getFetchQuery(
   const max = 1000
   const total = isCount
     ? max
-    : typeof options.first !== 'undefined'
-    ? typeof options.skip !== 'undefined'
-      ? options.skip + options.first
-      : options.first
+    : typeof filters.first !== 'undefined'
+    ? typeof filters.skip !== 'undefined'
+      ? filters.skip + filters.first
+      : filters.first
     : max
 
   const query = `query NFTs(
     ${NFTS_FILTERS}
-    ${getExtraVariables ? getExtraVariables(options).join('\n') : ''}
+    ${getExtraVariables ? getExtraVariables(filters).join('\n') : ''}
     ) {
     nfts(
       where: {
         ${where.join('\n')}
-        ${getExtraWhere ? getExtraWhere(options).join('\n') : ''}
+        ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
       }${getArguments(total)})
     {
       ${isCount ? 'id' : `...${fragmentName}`}

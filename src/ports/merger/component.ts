@@ -12,16 +12,16 @@ export function createMergerComponent<
 ): IMergerComponent<Result, Options, SortBy> {
   const { sources, defaultSortBy, directions, maxCount } = options
 
-  function getOptionsWithDefaults(options: FetchOptions<Options, SortBy>) {
+  function getOptionsWithDefaults(filters: FetchOptions<Options, SortBy>) {
     // compute defatuls
     const skip =
-      typeof options.skip === 'undefined' ? 0 : Math.max(options.skip, 0)
+      typeof filters.skip === 'undefined' ? 0 : Math.max(filters.skip, 0)
     const first =
-      typeof options.first === 'undefined'
+      typeof filters.first === 'undefined'
         ? DEFAULT_FIRST
-        : Math.max(options.first, 0)
-    const sortBy = options.sortBy || defaultSortBy
-    return { ...options, skip, first, sortBy }
+        : Math.max(filters.first, 0)
+    const sortBy = filters.sortBy || defaultSortBy
+    return { ...filters, skip, first, sortBy }
   }
 
   async function fetch(optionsWithoutDefaults: FetchOptions<Options, SortBy>) {

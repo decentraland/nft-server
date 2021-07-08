@@ -80,7 +80,7 @@ export type Data = {
   ens?: EnsData
 }
 
-export type NFTOptions = {
+export type NFTFilters = {
   first?: number
   skip?: number
   sortBy?: NFTSortBy
@@ -127,13 +127,13 @@ export type NFTResult = {
   order: Order | null
 }
 
-export type QueryVariables = Omit<NFTOptions, 'sortBy'> & {
+export type QueryVariables = Omit<NFTFilters, 'sortBy'> & {
   orderBy: string
   orderDirection: 'asc' | 'desc'
   expiresAt: string
 }
 
 export interface INFTComponent {
-  fetch(options: NFTOptions): Promise<NFTResult[]>
-  count(options: NFTOptions): Promise<number>
+  fetch(filters: NFTFilters): Promise<NFTResult[]>
+  count(filters: NFTFilters): Promise<number>
 }

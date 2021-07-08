@@ -1,6 +1,6 @@
 import { ChainId, Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
-import { IOrdersComponent, OrderFragment, OrderOptions } from './types'
+import { IOrdersComponent, OrderFragment, OrderFilters } from './types'
 import { fromOrderFragment, getIdQuery, getOrdersQuery } from './utils'
 
 export function createOrdersComponent(options: {
@@ -10,10 +10,10 @@ export function createOrdersComponent(options: {
 }): IOrdersComponent {
   const { subgraph, network, chainId } = options
 
-  async function fetch(options: OrderOptions) {
-    const { contractAddress, tokenId, buyer, owner, status } = options
+  async function fetch(filters: OrderFilters) {
+    const { contractAddress, tokenId, buyer, owner, status } = filters
 
-    if (options.network && options.network !== network) {
+    if (filters.network && filters.network !== network) {
       return []
     }
 

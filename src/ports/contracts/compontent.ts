@@ -1,5 +1,5 @@
 import { Network } from '@dcl/schemas'
-import { Contract, ContractOptions, IContractsComponent } from './types'
+import { Contract, ContractFilters, IContractsComponent } from './types'
 
 export function createContractsComponent(options: {
   getContracts: () => Promise<Contract[]>
@@ -7,13 +7,13 @@ export function createContractsComponent(options: {
 }): IContractsComponent {
   const { getContracts, network } = options
 
-  async function fetch(options: ContractOptions) {
-    if (options.network && options.network !== network) {
+  async function fetch(filters: ContractFilters) {
+    if (filters.network && filters.network !== network) {
       return []
     }
     const contracts = await getContracts()
-    return options.category
-      ? contracts.filter((contract) => contract.category === options.category)
+    return filters.category
+      ? contracts.filter((contract) => contract.category === filters.category)
       : contracts
   }
 

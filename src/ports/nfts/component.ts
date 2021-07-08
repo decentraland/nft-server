@@ -1,16 +1,16 @@
 import { ISubgraphComponent } from '../subgraph/types'
-import { INFTComponent, NFTOptions, NFTResult, NFTSortBy } from './types'
+import { INFTComponent, NFTFilters, NFTResult, NFTSortBy } from './types'
 import { getFetchOneQuery, getFetchQuery, getQueryVariables } from './utils'
 
 export function createNFTComponent<T extends { id: string }>(options: {
   subgraph: ISubgraphComponent
-  shouldFetch?: (options: NFTOptions) => boolean
+  shouldFetch?: (options: NFTFilters) => boolean
   fragmentName: string
   getFragment: () => string
   fromFragment(fragment: T): NFTResult
   getSortByProp(sortBy?: NFTSortBy): keyof T
-  getExtraVariables?: (options: NFTOptions) => string[]
-  getExtraWhere?: (options: NFTOptions) => string[]
+  getExtraVariables?: (options: NFTFilters) => string[]
+  getExtraWhere?: (options: NFTFilters) => string[]
 }): INFTComponent {
   const {
     subgraph,
@@ -23,17 +23,17 @@ export function createNFTComponent<T extends { id: string }>(options: {
     fromFragment,
   } = options
 
-  function getFragmentFetcher(options: NFTOptions) {
+  function getFragmentFetcher(filters: NFTFilters) {
     return async (isCount?: boolean) => {
       const query = getFetchQuery(
-        options,
+        filters,
         fragmentName,
         getFragment,
         getExtraVariables,
         getExtraWhere,
         isCount
       )
-      const variables = getQueryVariables(options, getSortByProp)
+      const variables = getQueryVariables(filters, getSortByProp)
       const { nfts: fragments } = await subgraph.query<{
         nfts: T[]
       }>(query, variables)
@@ -41,7 +41,7 @@ export function createNFTComponent<T extends { id: string }>(options: {
     }
   }
 
-  async function fetch(options: NFTOptions) {
+  async function fetch(options: NFTFilters) {
     if (shouldFetch && !shouldFetch(options)) {
       return []
     }
@@ -61,7 +61,7 @@ export function createNFTComponent<T extends { id: string }>(options: {
     return nfts
   }
 
-  async function count(options: NFTOptions) {
+  async function count(options: NFTFilters) {
     const fetchFragments = getFragmentFetcher(options)
     const fragments = await fetchFragments(true)
     return fragments.length

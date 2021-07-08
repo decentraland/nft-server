@@ -10,7 +10,7 @@ export function fromBidFragment(
     id: fragment.id,
     bidder: fragment.bidder,
     seller: fragment.seller,
-    price: +(fragment.price.length > 18 ? fragment.price.slice(0, -18) : 0),
+    price: fragment.price,
     fingerprint: fragment.fingerprint,
     status: fragment.status,
     blockchainId: fragment.blockchainId,

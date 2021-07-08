@@ -2,15 +2,15 @@ import { FetchOptions, Source } from '../../ports/merger/types'
 import {
   IOrdersComponent,
   Order,
-  OrderOptions,
+  OrderFilters,
   OrderSortBy,
 } from '../../ports/orders/types'
 
 export function createOrdersSource(
   orders: IOrdersComponent
-): Source<Order, OrderOptions, OrderSortBy> {
-  async function fetch(options: FetchOptions<OrderOptions, OrderSortBy>) {
-    const results = await orders.fetch(options)
+): Source<Order, OrderFilters, OrderSortBy> {
+  async function fetch(filters: FetchOptions<OrderFilters, OrderSortBy>) {
+    const results = await orders.fetch(filters)
     return results.map((result) => ({
       result,
       sort: {
@@ -21,8 +21,8 @@ export function createOrdersSource(
     }))
   }
 
-  async function count(options: FetchOptions<OrderOptions, OrderSortBy>) {
-    const results = await orders.fetch(options)
+  async function count(filters: FetchOptions<OrderFilters, OrderSortBy>) {
+    const results = await orders.fetch(filters)
     return results.length
   }
 

@@ -1,10 +1,10 @@
 import { ChainId, Network } from '@dcl/schemas'
 
 export interface IOrdersComponent {
-  fetch(options: OrderOptions): Promise<Order[]>
+  fetch(filters: OrderFilters): Promise<Order[]>
 }
 
-export type OrderOptions = {
+export type OrderFilters = {
   owner?: string
   buyer?: string
   contractAddress?: string
@@ -47,7 +47,7 @@ export type Order = {
   tokenId: string
   owner: string
   buyer: string | null
-  price: number
+  price: string
   status: OrderStatus
   expiresAt: number
   createdAt: number

@@ -14,16 +14,16 @@ import { createSubgraphComponent } from './ports/subgraph/component'
 import { createBidsComponent } from './ports/bids/component'
 import { createOrdersComponent } from './ports/orders/component'
 import { createMergerComponent } from './ports/merger/component'
-import { Order, OrderOptions, OrderSortBy } from './ports/orders/types'
+import { Order, OrderFilters, OrderSortBy } from './ports/orders/types'
 import { SortDirection } from './ports/merger/types'
-import { Bid, BidOptions, BidSortBy } from './ports/bids/types'
+import { Bid, BidFilters, BidSortBy } from './ports/bids/types'
 import { getMarketplaceChainId, getCollectionsChainId } from './logic/chainIds'
 import { createOrdersSource } from './adapters/sources/orders'
 import { createContractsComponent } from './ports/contracts/compontent'
 import { createBidsSource } from './adapters/sources/bids'
 import {
   Contract,
-  ContractOptions,
+  ContractFilters,
   ContractSortBy,
 } from './ports/contracts/types'
 import { createContractsSource } from './adapters/sources/contracts'
@@ -42,7 +42,7 @@ import {
   getCollectionsFragment,
   getCollectionsOrderBy,
 } from './logic/nfts/collections'
-import { NFTOptions, NFTResult, NFTSortBy } from './ports/nfts/types'
+import { NFTFilters, NFTResult, NFTSortBy } from './ports/nfts/types'
 import { NFT_DEFAULT_SORT_BY } from './ports/nfts/utils'
 import { createNFTsSource } from './adapters/sources/nfts'
 import {
@@ -117,7 +117,7 @@ async function initComponents(): Promise<AppComponents> {
     chainId: collectionsChainId,
   })
 
-  const orders = createMergerComponent<Order, OrderOptions, OrderSortBy>({
+  const orders = createMergerComponent<Order, OrderFilters, OrderSortBy>({
     sources: [
       createOrdersSource(marketplaceOrders),
       createOrdersSource(collectionsOrders),
@@ -138,7 +138,7 @@ async function initComponents(): Promise<AppComponents> {
     chainId: marketplaceChainId,
   })
 
-  const bids = createMergerComponent<Bid, BidOptions, BidSortBy>({
+  const bids = createMergerComponent<Bid, BidFilters, BidSortBy>({
     sources: [createBidsSource(marketplaceBids)],
     defaultSortBy: BidSortBy.RECENTLY_LISTED,
     directions: {
@@ -167,7 +167,7 @@ async function initComponents(): Promise<AppComponents> {
 
   const contracts = createMergerComponent<
     Contract,
-    ContractOptions,
+    ContractFilters,
     ContractSortBy
   >({
     sources: [
@@ -201,7 +201,7 @@ async function initComponents(): Promise<AppComponents> {
     getSortByProp: getCollectionsOrderBy,
   })
 
-  const nfts = createMergerComponent<NFTResult, NFTOptions, NFTSortBy>({
+  const nfts = createMergerComponent<NFTResult, NFTFilters, NFTSortBy>({
     sources: [
       createNFTsSource(marketplaceNFTs),
       createNFTsSource(collectionsNFTs),

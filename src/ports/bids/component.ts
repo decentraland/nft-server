@@ -1,6 +1,6 @@
 import { ChainId, Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
-import { BidFragment, BidOptions, IBidsComponent } from './types'
+import { BidFragment, BidFilters, IBidsComponent } from './types'
 import { fromBidFragment, getBidsQuery, getIdQuery } from './utils'
 
 export function createBidsComponent(options: {
@@ -10,8 +10,8 @@ export function createBidsComponent(options: {
 }): IBidsComponent {
   const { subgraph, network, chainId } = options
 
-  async function fetch(options: BidOptions) {
-    const { contractAddress, tokenId, bidder, seller, status } = options
+  async function fetch(filters: BidFilters) {
+    const { contractAddress, tokenId, bidder, seller, status } = filters
     const where: string[] = [`expiresAt_gt: "${Date.now()}"`]
 
     if (options.network && options.network !== network) {

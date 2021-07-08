@@ -1,16 +1,16 @@
 import { FetchOptions, Source } from '../../ports/merger/types'
 import {
   Contract,
-  ContractOptions,
+  ContractFilters,
   ContractSortBy,
   IContractsComponent,
 } from '../../ports/contracts/types'
 
 export function createContractsSource(
   contracts: IContractsComponent
-): Source<Contract, ContractOptions, ContractSortBy> {
-  async function fetch(options: FetchOptions<ContractOptions, ContractSortBy>) {
-    const results = await contracts.fetch(options)
+): Source<Contract, ContractFilters, ContractSortBy> {
+  async function fetch(filters: FetchOptions<ContractFilters, ContractSortBy>) {
+    const results = await contracts.fetch(filters)
     return results.map((result) => ({
       result,
       sort: {
@@ -19,8 +19,8 @@ export function createContractsSource(
     }))
   }
 
-  async function count(options: FetchOptions<ContractOptions, ContractSortBy>) {
-    const results = await contracts.fetch(options)
+  async function count(filters: FetchOptions<ContractFilters, ContractSortBy>) {
+    const results = await contracts.fetch(filters)
     return results.length
   }
 

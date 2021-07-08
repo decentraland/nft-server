@@ -1,16 +1,16 @@
 import { FetchOptions, Source } from '../../ports/merger/types'
 import {
   INFTComponent,
-  NFTOptions,
+  NFTFilters,
   NFTResult,
   NFTSortBy,
 } from '../../ports/nfts/types'
 
 export function createNFTsSource(
   nfts: INFTComponent
-): Source<NFTResult, NFTOptions, NFTSortBy> {
-  async function fetch(options: FetchOptions<NFTOptions, NFTSortBy>) {
-    const results = await nfts.fetch(options)
+): Source<NFTResult, NFTFilters, NFTSortBy> {
+  async function fetch(filters: FetchOptions<NFTFilters, NFTSortBy>) {
+    const results = await nfts.fetch(filters)
     return results.map((result) => ({
       result,
       sort: {
@@ -24,8 +24,8 @@ export function createNFTsSource(
     }))
   }
 
-  async function count(options: FetchOptions<NFTOptions, NFTSortBy>) {
-    return nfts.count(options)
+  async function count(filters: FetchOptions<NFTFilters, NFTSortBy>) {
+    return nfts.count(filters)
   }
 
   return {
