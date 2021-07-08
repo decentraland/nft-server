@@ -57,7 +57,7 @@ export const getBidFragment = () => `
 export function getBidsQuery(where: string[]) {
   return `
     query Bids {
-      bids(where: {
+      bids(first: 1000, where: {
         ${where.join('\n')}
       }) {
         ...bidFragment

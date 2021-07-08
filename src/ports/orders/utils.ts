@@ -28,7 +28,7 @@ export const getOrderFragment = () => `
 export const getOrdersQuery = (where: string[]) => {
   return `
     query Orders {
-      orders(where: {
+      orders(first: 1000, where: {
         ${where.join('\n')}
       }) {
         ...orderFragment
