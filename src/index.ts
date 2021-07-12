@@ -144,7 +144,7 @@ async function initComponents(): Promise<AppComponents> {
     directions: {
       [BidSortBy.RECENTLY_LISTED]: SortDirection.DESC,
       [BidSortBy.RECENTLY_UPDATED]: SortDirection.DESC,
-      [BidSortBy.CHEAPEST]: SortDirection.ASC,
+      [BidSortBy.MOST_EXPENSIVE]: SortDirection.DESC,
     },
     maxCount: 1000,
   })

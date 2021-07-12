@@ -11,35 +11,11 @@ export function createOrdersComponent(options: {
   const { subgraph, network, chainId } = options
 
   async function fetch(filters: OrderFilters) {
-    const { contractAddress, tokenId, buyer, owner, status } = filters
-
     if (filters.network && filters.network !== network) {
       return []
     }
 
-    const where: string[] = [`expiresAt_gt: "${Date.now()}"`]
-
-    if (contractAddress) {
-      where.push(`nftAddress: "${contractAddress}"`)
-    }
-
-    if (tokenId) {
-      where.push(`tokenId: "${tokenId}"`)
-    }
-
-    if (buyer) {
-      where.push(`buyer: "${buyer}"`)
-    }
-
-    if (owner) {
-      where.push(`owner: "${owner}"`)
-    }
-
-    if (status) {
-      where.push(`status: ${status}`)
-    }
-
-    const query = getOrdersQuery(where)
+    const query = getOrdersQuery(filters)
     const { orders: fragments } = await subgraph.query<{
       orders: OrderFragment[]
     }>(query)
@@ -51,7 +27,21 @@ export function createOrdersComponent(options: {
     return orders
   }
 
+  async function count(filters: OrderFilters) {
+    if (options.network && options.network !== network) {
+      return 0
+    }
+
+    const query = getOrdersQuery(filters, true)
+    const { orders: fragments } = await subgraph.query<{
+      orders: OrderFragment[]
+    }>(query)
+
+    return fragments.length
+  }
+
   return {
     fetch,
+    count,
   }
 }

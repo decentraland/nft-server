@@ -16,14 +16,14 @@ export function createBidsSource(
       sort: {
         [BidSortBy.RECENTLY_LISTED]: result.createdAt,
         [BidSortBy.RECENTLY_UPDATED]: result.updatedAt,
-        [BidSortBy.CHEAPEST]: +result.price,
+        [BidSortBy.MOST_EXPENSIVE]: +result.price,
       },
     }))
   }
 
   async function count(filters: FetchOptions<BidFilters, BidSortBy>) {
-    const results = await bids.fetch(filters)
-    return results.length
+    const total = await bids.count(filters)
+    return total
   }
 
   return {

@@ -2,6 +2,7 @@ import { ChainId, Network } from '@dcl/schemas'
 
 export interface IBidsComponent {
   fetch(filters: BidFilters): Promise<Bid[]>
+  count(filters: BidFilters): Promise<number>
 }
 
 export enum BidStatus {
@@ -13,10 +14,13 @@ export enum BidStatus {
 export enum BidSortBy {
   RECENTLY_LISTED = 'recently_listed',
   RECENTLY_UPDATED = 'recently_updated',
-  CHEAPEST = 'cheapest',
+  MOST_EXPENSIVE = 'most_expensive',
 }
 
 export type BidFilters = {
+  first?: number
+  skip?: number
+  sortBy?: BidSortBy
   bidder?: string
   seller?: string
   contractAddress?: string

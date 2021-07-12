@@ -22,8 +22,8 @@ export function createOrdersSource(
   }
 
   async function count(filters: FetchOptions<OrderFilters, OrderSortBy>) {
-    const results = await orders.fetch(filters)
-    return results.length
+    const total = await orders.count(filters)
+    return total
   }
 
   return {

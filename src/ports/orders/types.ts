@@ -2,9 +2,13 @@ import { ChainId, Network } from '@dcl/schemas'
 
 export interface IOrdersComponent {
   fetch(filters: OrderFilters): Promise<Order[]>
+  count(filters: OrderFilters): Promise<number>
 }
 
 export type OrderFilters = {
+  first?: number
+  skip?: number
+  sortBy?: OrderSortBy
   owner?: string
   buyer?: string
   contractAddress?: string

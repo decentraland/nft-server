@@ -11,34 +11,11 @@ export function createBidsComponent(options: {
   const { subgraph, network, chainId } = options
 
   async function fetch(filters: BidFilters) {
-    const { contractAddress, tokenId, bidder, seller, status } = filters
-    const where: string[] = [`expiresAt_gt: "${Date.now()}"`]
-
     if (options.network && options.network !== network) {
       return []
     }
 
-    if (contractAddress) {
-      where.push(`nftAddress: "${contractAddress}"`)
-    }
-
-    if (tokenId) {
-      where.push(`tokenId: "${tokenId}"`)
-    }
-
-    if (bidder) {
-      where.push(`bidder: "${bidder}"`)
-    }
-
-    if (seller) {
-      where.push(`seller: "${seller}"`)
-    }
-
-    if (status) {
-      where.push(`status: ${status}`)
-    }
-
-    const query = getBidsQuery(where)
+    const query = getBidsQuery(filters)
     const { bids: fragments } = await subgraph.query<{
       bids: BidFragment[]
     }>(query)
@@ -50,7 +27,21 @@ export function createBidsComponent(options: {
     return bids
   }
 
+  async function count(filters: BidFilters) {
+    if (options.network && options.network !== network) {
+      return 0
+    }
+
+    const query = getBidsQuery(filters, true)
+    const { bids: fragments } = await subgraph.query<{
+      bids: BidFragment[]
+    }>(query)
+
+    return fragments.length
+  }
+
   return {
     fetch,
+    count,
   }
 }
