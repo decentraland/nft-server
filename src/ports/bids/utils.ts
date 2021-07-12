@@ -1,6 +1,8 @@
 import { ChainId, Network } from '@dcl/schemas'
 import { Bid, BidFilters, BidFragment, BidSortBy } from './types'
 
+export const BID_DEFAULT_SORT_BY = BidSortBy.RECENTLY_OFFERED
+
 export function fromBidFragment(
   fragment: BidFragment,
   network: Network,
@@ -100,7 +102,7 @@ export function getBidsQuery(filters: BidFilters, isCount = false) {
   let orderBy: string
   let orderDirection: string
   switch (sortBy) {
-    case BidSortBy.RECENTLY_LISTED:
+    case BidSortBy.RECENTLY_OFFERED:
       orderBy = 'createdAt'
       orderDirection = 'desc'
       break
@@ -126,8 +128,8 @@ export function getBidsQuery(filters: BidFilters, isCount = false) {
         where: {
           ${where.join('\n')}
         }) 
-      { ...bidFragment }
+        { ${isCount ? 'id' : `...bidFragment`} }
     }
-    ${getBidFragment()}
+    ${isCount ? '' : getBidFragment()}
   `
 }

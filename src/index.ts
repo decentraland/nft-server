@@ -49,6 +49,12 @@ import {
   getCollectionsContracts,
   getMarketplaceContracts,
 } from './logic/contracts'
+import { BID_DEFAULT_SORT_BY } from './ports/bids/utils'
+import { ORDER_DEFAULT_SORT_BY } from './ports/orders/utils'
+import { Item, ItemFilters, ItemSortBy } from './ports/items/types'
+import { createItemsSource } from './adapters/sources/items'
+import { createItemsComponent } from './ports/items/component'
+import { ITEM_DEFAULT_SORT_BY } from './ports/items/utils'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -122,7 +128,7 @@ async function initComponents(): Promise<AppComponents> {
       createOrdersSource(marketplaceOrders),
       createOrdersSource(collectionsOrders),
     ],
-    defaultSortBy: OrderSortBy.RECENTLY_LISTED,
+    defaultSortBy: ORDER_DEFAULT_SORT_BY,
     directions: {
       [OrderSortBy.RECENTLY_LISTED]: SortDirection.DESC,
       [OrderSortBy.RECENTLY_UPDATED]: SortDirection.DESC,
@@ -140,9 +146,9 @@ async function initComponents(): Promise<AppComponents> {
 
   const bids = createMergerComponent<Bid, BidFilters, BidSortBy>({
     sources: [createBidsSource(marketplaceBids)],
-    defaultSortBy: BidSortBy.RECENTLY_LISTED,
+    defaultSortBy: BID_DEFAULT_SORT_BY,
     directions: {
-      [BidSortBy.RECENTLY_LISTED]: SortDirection.DESC,
+      [BidSortBy.RECENTLY_OFFERED]: SortDirection.DESC,
       [BidSortBy.RECENTLY_UPDATED]: SortDirection.DESC,
       [BidSortBy.MOST_EXPENSIVE]: SortDirection.DESC,
     },
@@ -216,6 +222,24 @@ async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
+  // items
+  const collectionsItems = createItemsComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.MATIC,
+    chainId: collectionsChainId,
+  })
+
+  const items = createMergerComponent<Item, ItemFilters, ItemSortBy>({
+    sources: [createItemsSource(collectionsItems)],
+    defaultSortBy: ITEM_DEFAULT_SORT_BY,
+    directions: {
+      [ItemSortBy.NEWEST]: SortDirection.DESC,
+      [ItemSortBy.NAME]: SortDirection.ASC,
+      [ItemSortBy.CHEAPEST]: SortDirection.ASC,
+    },
+    maxCount: 1000,
+  })
+
   return {
     config,
     logs,
@@ -226,6 +250,7 @@ async function initComponents(): Promise<AppComponents> {
     bids,
     contracts,
     nfts,
+    items,
   }
 }
 

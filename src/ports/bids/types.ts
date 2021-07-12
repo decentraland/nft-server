@@ -12,7 +12,7 @@ export enum BidStatus {
 }
 
 export enum BidSortBy {
-  RECENTLY_LISTED = 'recently_listed',
+  RECENTLY_OFFERED = 'recently_offered',
   RECENTLY_UPDATED = 'recently_updated',
   MOST_EXPENSIVE = 'most_expensive',
 }

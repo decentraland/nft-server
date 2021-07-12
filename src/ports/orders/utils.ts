@@ -2,6 +2,8 @@ import { ChainId, Network } from '@dcl/schemas'
 import { getId } from '../nfts/utils'
 import { Order, OrderFilters, OrderFragment, OrderSortBy } from './types'
 
+export const ORDER_DEFAULT_SORT_BY = OrderSortBy.RECENTLY_LISTED
+
 export const getOrderFields = () => `
   fragment orderFields on Order {
     id
@@ -70,7 +72,7 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
 
   let orderBy: string
   let orderDirection: string
-  switch (sortBy) {
+  switch (sortBy || ORDER_DEFAULT_SORT_BY) {
     case OrderSortBy.RECENTLY_LISTED:
       orderBy = 'createdAt'
       orderDirection = 'desc'
@@ -91,15 +93,15 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
   return `
     query Orders {
       orders(
-      first: ${total}, 
-      orderBy: ${orderBy}, 
-      orderDirection: ${orderDirection}, 
-      where: {
-        ${where.join('\n')}
-      }) 
-      { ...orderFragment }
+        first: ${total}, 
+        orderBy: ${orderBy}, 
+        orderDirection: ${orderDirection}, 
+        where: {
+          ${where.join('\n')}
+        }) 
+      { ${isCount ? 'id' : `...orderFragment`} }
     }
-    ${getOrderFragment()}
+    ${isCount ? '' : getOrderFragment()}
   `
 }
 

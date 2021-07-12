@@ -12,7 +12,7 @@ export function createContractsHandler(
   return async (context) => {
     const params = new Params(context.url.searchParams)
 
-    const first = params.getNumber('first', 0) // 0 is here so by default it returns all results
+    const first = params.getNumber('first')
     const skip = params.getNumber('skip')
     const sortBy = params.getValue<ContractSortBy>('sortBy', ContractSortBy)
     const network = params.getValue<Network>('network', Network)

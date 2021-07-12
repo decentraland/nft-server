@@ -1,5 +1,5 @@
 import { ISubgraphComponent } from '../subgraph/types'
-import { INFTComponent, NFTFilters, NFTResult, NFTSortBy } from './types'
+import { INFTsComponent, NFTFilters, NFTResult, NFTSortBy } from './types'
 import { getFetchOneQuery, getFetchQuery, getQueryVariables } from './utils'
 
 export function createNFTComponent<T extends { id: string }>(options: {
@@ -11,7 +11,7 @@ export function createNFTComponent<T extends { id: string }>(options: {
   getSortByProp(sortBy?: NFTSortBy): keyof T
   getExtraVariables?: (options: NFTFilters) => string[]
   getExtraWhere?: (options: NFTFilters) => string[]
-}): INFTComponent {
+}): INFTsComponent {
   const {
     subgraph,
     shouldFetch,

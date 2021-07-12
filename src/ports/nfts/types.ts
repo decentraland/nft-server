@@ -133,7 +133,7 @@ export type QueryVariables = Omit<NFTFilters, 'sortBy'> & {
   expiresAt: string
 }
 
-export interface INFTComponent {
+export interface INFTsComponent {
   fetch(filters: NFTFilters): Promise<NFTResult[]>
   count(filters: NFTFilters): Promise<number>
 }

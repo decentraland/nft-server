@@ -14,7 +14,7 @@ export function createBidsSource(
     return results.map((result) => ({
       result,
       sort: {
-        [BidSortBy.RECENTLY_LISTED]: result.createdAt,
+        [BidSortBy.RECENTLY_OFFERED]: result.createdAt,
         [BidSortBy.RECENTLY_UPDATED]: result.updatedAt,
         [BidSortBy.MOST_EXPENSIVE]: +result.price,
       },

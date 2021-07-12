@@ -1,5 +1,6 @@
 import { ChainId, Network } from '@dcl/schemas'
 import {
+  BodyShape,
   Data,
   NFTCategory,
   WearableCategory,
@@ -11,11 +12,9 @@ export type ItemFilters = {
   first?: number
   skip?: number
   sortBy?: ItemSortBy
-  category?: NFTCategory
   creator?: string
-  isOnSale?: boolean
+  isAvailable?: boolean
   search?: string
-  isLand?: boolean
   isWearableHead?: boolean
   isWearableAccessory?: boolean
   wearableCategory?: WearableCategory
@@ -38,25 +37,42 @@ export type Item = {
   thumbnail: string
   category: NFTCategory.WEARABLE
   contractAddress: string
-  collectionId: string
   blockchainId: string
   rarity: WearableRarity
   price: string
   available: number
-  createdAt: number
   creator: string
+  createdAt: number
+  updatedAt: number
   data: Data
   network: Network
   chainId: ChainId
 }
 
-export type QueryVariables = Omit<ItemFilters, 'sortBy'> & {
-  orderBy: string
-  orderDirection: 'asc' | 'desc'
-  expiresAt: string
+export type ItemFragment = {
+  id: string
+  price: string
+  blockchainId: string
+  image: string
+  rarity: WearableRarity
+  available: string
+  collection: {
+    id: string
+    creator: string
+    createdAt: string
+    updatedAt: string
+  }
+  metadata: {
+    wearable: {
+      name: string
+      description: string
+      category: WearableCategory
+    }
+  }
+  searchWearableBodyShapes: BodyShape[]
 }
 
-export interface INFTComponent {
+export interface IItemsComponent {
   fetch(filters: ItemFilters): Promise<Item[]>
   count(filters: ItemFilters): Promise<number>
 }

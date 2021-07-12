@@ -1,13 +1,13 @@
 import { FetchOptions, Source } from '../../ports/merger/types'
 import {
-  INFTComponent,
+  INFTsComponent,
   NFTFilters,
   NFTResult,
   NFTSortBy,
 } from '../../ports/nfts/types'
 
 export function createNFTsSource(
-  nfts: INFTComponent
+  nfts: INFTsComponent
 ): Source<NFTResult, NFTFilters, NFTSortBy> {
   async function fetch(filters: FetchOptions<NFTFilters, NFTSortBy>) {
     const results = await nfts.fetch(filters)

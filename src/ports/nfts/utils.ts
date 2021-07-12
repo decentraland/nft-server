@@ -167,23 +167,3 @@ export function getFetchOneQuery(
 export function getId(contractAddress: string, tokenId: string) {
   return `${contractAddress}-${tokenId}`
 }
-
-export function fromNumber(input: string | null) {
-  if (input !== null) {
-    const parsed = parseInt(input, 10)
-    if (!isNaN(parsed)) {
-      return parsed
-    }
-  }
-  return null
-}
-
-export function fromWei(input: string | null) {
-  if (input !== null) {
-    const parsed = fromNumber(input)
-    if (parsed !== null) {
-      return parsed / 10 ** 18
-    }
-  }
-  return null
-}

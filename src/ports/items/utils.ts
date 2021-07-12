@@ -1,109 +1,122 @@
-import {
-  ItemSortBy,
-  ItemFilters,
-  WearableGender,
-  QueryVariables,
-} from './types'
+import { ChainId, Network } from '@dcl/schemas'
+import { NFTCategory, WearableGender } from '../nfts/types'
+import { ItemSortBy, ItemFilters, ItemFragment, Item } from './types'
 
-export const NFT_DEFAULT_SORT_BY = ItemSortBy.NEWEST
+export const ITEM_DEFAULT_SORT_BY = ItemSortBy.NEWEST
 
-const NFTS_FILTERS = `
-  $first: Int
-  $skip: Int
-  $orderBy: String
-  $orderDirection: String
-  $expiresAt: String
-  $owner: String
-  $wearableCategory: String
-  $isWearableHead: Boolean
-  $isWearableAccessory: Boolean
-`
-
-const getArguments = (total: number) => `
-  first: ${total}
-  skip: 0
-  orderBy: $orderBy
-  orderDirection: $orderDirection
-`
-
-export function getOrderDirection(sortBy?: ItemSortBy): 'asc' | 'desc' {
-  switch (sortBy) {
-    case ItemSortBy.NEWEST:
-    case ItemSortBy.RECENTLY_LISTED:
-      return 'desc'
-    case ItemSortBy.NAME:
-    case ItemSortBy.CHEAPEST:
-      return 'asc'
-    default:
-      return getOrderDirection(NFT_DEFAULT_SORT_BY)
+export function fromItemFragment(
+  fragment: ItemFragment,
+  network: Network,
+  chainId: ChainId
+): Item {
+  const item: Item = {
+    id: fragment.id,
+    name: fragment.metadata.wearable.name,
+    thumbnail: fragment.image,
+    category: NFTCategory.WEARABLE,
+    contractAddress: fragment.collection.id,
+    blockchainId: fragment.blockchainId,
+    rarity: fragment.rarity,
+    price: fragment.price,
+    available: +fragment.available,
+    creator: fragment.collection.creator,
+    createdAt: +fragment.collection.createdAt * 1000,
+    updatedAt: +fragment.collection.updatedAt * 1000,
+    data: {
+      wearable: {
+        description: fragment.metadata.wearable.description,
+        category: fragment.metadata.wearable.category,
+        bodyShapes: fragment.searchWearableBodyShapes,
+        rarity: fragment.rarity,
+      },
+    },
+    network,
+    chainId,
   }
+
+  return item
 }
 
-export function getQueryVariables<T>(
-  options: ItemFilters,
-  getOrderBy: (sortBy?: ItemSortBy) => keyof T
-): QueryVariables {
-  const { sortBy, ...variables } = options
-  const orderBy = getOrderBy(sortBy) as string
-  const orderDirection = getOrderDirection(sortBy)
-  return {
-    ...variables,
-    orderBy,
-    orderDirection,
-    expiresAt: Date.now().toString(),
+export const getItemFragment = () => `
+  fragment itemFragment on Item {
+    id
+    price
+    blockchainId
+    image
+    rarity
+    available
+    collection {
+      id
+      creator
+      createdAt
+      updatedAt
+    }
+    metadata {
+      wearable {
+        name
+        description
+        category
+      }
+    }
+    searchWearableBodyShapes
   }
-}
+`
 
-export function getFetchQuery(
-  filters: ItemFilters,
-  fragmentName: string,
-  getNFTFragment: () => string,
-  getExtraVariables?: (options: ItemFilters) => string[],
-  getExtraWhere?: (options: ItemFilters) => string[],
-  isCount = false
-) {
-  const where: string[] = []
+export function getItemsQuery(filters: ItemFilters, isCount = false) {
+  const {
+    first,
+    skip,
+    sortBy,
+    creator,
+    isAvailable,
+    search,
+    isWearableHead,
+    isWearableAccessory,
+    wearableCategory,
+    wearableRarities,
+    wearableGenders,
+    contractAddresses,
+    blockchainId,
+  } = filters
 
-  if (filters.owner) {
-    where.push('owner: $owner')
-  }
+  const where: string[] = [`searchIsCollectionApproved: true`]
 
-  if (
-    filters.isOnSale ||
-    filters.sortBy === ItemSortBy.CHEAPEST ||
-    filters.sortBy === ItemSortBy.RECENTLY_LISTED
-  ) {
-    where.push('searchOrderStatus: open')
-    where.push('searchOrderExpiresAt_gt: $expiresAt')
-  }
-
-  if (filters.search) {
-    where.push(`searchText_contains: "${filters.search.trim().toLowerCase()}"`)
-  }
-
-  if (filters.wearableCategory) {
-    where.push('searchWearableCategory: $wearableCategory')
-  }
-
-  if (filters.isWearableHead) {
-    where.push('searchIsWearableHead: $isWearableHead')
-  }
-
-  if (filters.isWearableAccessory) {
-    where.push('searchIsWearableAccessory: $isWearableAccessory')
+  if (creator) {
+    // TODO: remove comment when added to supgrah
+    //where.push(`searchCreator: ${creator}`)
   }
 
-  if (filters.wearableRarities && filters.wearableRarities.length > 0) {
+  if (isAvailable || sortBy === ItemSortBy.CHEAPEST) {
+    where.push('available_gt: 0')
+  }
+
+  if (search) {
+    where.push(`searchText_contains: "${search.trim().toLowerCase()}"`)
+  }
+
+  if (wearableCategory) {
+    where.push(`searchWearableCategory: ${wearableCategory}`)
+  }
+
+  if (isWearableHead) {
+    where.push('searchIsWearableHead: true')
+  }
+
+  if (isWearableAccessory) {
+    where.push('searchIsWearableAccessory: true')
+  }
+
+  if (wearableRarities && wearableRarities.length > 0) {
     where.push(
-      `searchWearableRarity_in: [${filters.wearableRarities
+      `searchWearableRarity_in: [${wearableRarities
         .map((rarity) => `"${rarity}"`)
         .join(',')}]`
     )
   }
 
-  if (filters.wearableGenders && filters.wearableGenders.length > 0) {
-    const hasMale = filters.wearableGenders.includes(WearableGender.MALE)
-    const hasFemale = filters.wearableGenders.includes(WearableGender.FEMALE)
+  if (wearableGenders && wearableGenders.length > 0) {
+    const hasMale = wearableGenders.includes(WearableGender.MALE)
+    const hasFemale = wearableGenders.includes(WearableGender.FEMALE)
 
     if (hasMale && !hasFemale) {
       where.push(`searchWearableBodyShapes: [BaseMale]`)
@@ -114,81 +127,61 @@ export function getFetchQuery(
     }
   }
 
-  if (filters.contractAddresses && filters.contractAddresses.length > 0) {
+  if (contractAddresses && contractAddresses.length > 0) {
     where.push(
-      `contractAddress_in: [${filters.contractAddresses
+      `contractAddress_in: [${contractAddresses
         .map((contract) => `"${contract}"`)
         .join(', ')}]`
     )
+  }
+
+  if (blockchainId) {
+    where.push(`blockchainId: "${blockchainId}"`)
   }
 
   // Compute total nfts to query. If there's a "skip" we add it to the total, since we need all the prior results to later merge them in a single page. If nothing is provided we default to the max. When counting we also use the max.
   const max = 1000
   const total = isCount
     ? max
-    : typeof filters.first !== 'undefined'
-    ? typeof filters.skip !== 'undefined'
-      ? filters.skip + filters.first
-      : filters.first
+    : typeof first !== 'undefined'
+    ? typeof skip !== 'undefined'
+      ? skip + first
+      : first
     : max
 
-  const query = `query NFTs(
-    ${NFTS_FILTERS}
-    ${getExtraVariables ? getExtraVariables(filters).join('\n') : ''}
-    ) {
-    nfts(
+  let orderBy: string
+  let orderDirection: string
+  switch (sortBy || ITEM_DEFAULT_SORT_BY) {
+    case ItemSortBy.NEWEST:
+      orderBy = ''
+      orderDirection = ''
+      break
+    case ItemSortBy.NAME:
+      orderBy = 'searchText'
+      orderDirection = 'asc'
+      break
+    case ItemSortBy.CHEAPEST:
+      orderBy = 'price'
+      orderDirection = 'asc'
+      break
+    default:
+      orderBy = ''
+      orderDirection = ''
+  }
+
+  const query = `query Items {
+    items(
+      first: ${total}, 
+      ${orderBy ? `orderBy: ${orderBy},` : ''}
+      ${orderDirection ? `orderDirection: ${orderDirection},` : ''}
       where: {
         ${where.join('\n')}
-        ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
-      }${getArguments(total)})
-    {
-      ${isCount ? 'id' : `...${fragmentName}`}
-    }
+      }) 
+    { ${isCount ? 'id' : `...itemFragment`} }
   }`
 
   return `
     ${query}
-    ${isCount ? '' : getNFTFragment()}
+    ${isCount ? '' : getItemFragment()}
   `
-}
-
-export function getFetchOneQuery(
-  fragmentName: string,
-  getFragment: () => string
-) {
-  return `
-  query NFTByTokenId($contractAddress: String, $tokenId: String) {
-    nfts(
-      where: { contractAddress: $contractAddress, tokenId: $tokenId }
-      first: 1
-      ) {
-        ...${fragmentName}
-      }
-    }
-    ${getFragment()}
-    `
-}
-
-export function getId(contractAddress: string, tokenId: string) {
-  return `${contractAddress}-${tokenId}`
-}
-
-export function fromNumber(input: string | null) {
-  if (input !== null) {
-    const parsed = parseInt(input, 10)
-    if (!isNaN(parsed)) {
-      return parsed
-    }
-  }
-  return null
-}
-
-export function fromWei(input: string | null) {
-  if (input !== null) {
-    const parsed = fromNumber(input)
-    if (parsed !== null) {
-      return parsed / 10 ** 18
-    }
-  }
-  return null
 }
