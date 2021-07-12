@@ -1,4 +1,4 @@
-import { FetchOptions, Source } from '../../ports/merger/types'
+import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
 import {
   INFTsComponent,
   NFTFilters,
@@ -8,7 +8,7 @@ import {
 
 export function createNFTsSource(
   nfts: INFTsComponent
-): Source<NFTResult, NFTFilters, NFTSortBy> {
+): IMergerComponent.Source<NFTResult, NFTFilters, NFTSortBy> {
   async function fetch(filters: FetchOptions<NFTFilters, NFTSortBy>) {
     const results = await nfts.fetch(filters)
     return results.map((result) => ({

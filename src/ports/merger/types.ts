@@ -17,17 +17,6 @@ export enum SortDirection {
   DESC = 'desc',
 }
 
-export type Source<
-  Result,
-  Options extends {} = {},
-  SortBy extends string = ''
-> = {
-  fetch(
-    filters: FetchOptions<Options, SortBy>
-  ): Promise<Sortable<Result, SortBy>[]>
-  count(filters: FetchOptions<Options, SortBy>): Promise<number>
-}
-
 export interface IMergerComponent<
   Result,
   Options extends {} = {},
@@ -45,8 +34,21 @@ export type MergerOptions<
   Options extends {} = {},
   SortBy extends string = ''
 > = {
-  sources: Source<Result, Options, SortBy>[]
+  sources: IMergerComponent.Source<Result, Options, SortBy>[]
   directions: Record<SortBy, SortDirection>
   defaultSortBy: SortBy
   maxCount?: number
+}
+
+export namespace IMergerComponent {
+  export type Source<
+    Result,
+    Options extends {} = {},
+    SortBy extends string = ''
+  > = {
+    fetch(
+      filters: FetchOptions<Options, SortBy>
+    ): Promise<Sortable<Result, SortBy>[]>
+    count(filters: FetchOptions<Options, SortBy>): Promise<number>
+  }
 }

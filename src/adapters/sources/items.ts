@@ -1,14 +1,14 @@
+import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
 import {
   IItemsComponent,
   Item,
   ItemFilters,
   ItemSortBy,
 } from '../../ports/items/types'
-import { FetchOptions, Source } from '../../ports/merger/types'
 
 export function createItemsSource(
   items: IItemsComponent
-): Source<Item, ItemFilters, ItemSortBy> {
+): IMergerComponent.Source<Item, ItemFilters, ItemSortBy> {
   async function fetch(filters: FetchOptions<ItemFilters, ItemSortBy>) {
     const results = await items.fetch(filters)
     return results.map((result) => ({

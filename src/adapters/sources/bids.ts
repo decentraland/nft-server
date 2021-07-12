@@ -1,4 +1,4 @@
-import { FetchOptions, Source } from '../../ports/merger/types'
+import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
 import {
   Bid,
   BidFilters,
@@ -8,7 +8,7 @@ import {
 
 export function createBidsSource(
   bids: IBidsComponent
-): Source<Bid, BidFilters, BidSortBy> {
+): IMergerComponent.Source<Bid, BidFilters, BidSortBy> {
   async function fetch(filters: FetchOptions<BidFilters, BidSortBy>) {
     const results = await bids.fetch(filters)
     return results.map((result) => ({

@@ -1,4 +1,4 @@
-import { FetchOptions, Source } from '../../ports/merger/types'
+import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
 import {
   Contract,
   ContractFilters,
@@ -8,7 +8,7 @@ import {
 
 export function createContractsSource(
   contracts: IContractsComponent
-): Source<Contract, ContractFilters, ContractSortBy> {
+): IMergerComponent.Source<Contract, ContractFilters, ContractSortBy> {
   async function fetch(filters: FetchOptions<ContractFilters, ContractSortBy>) {
     const results = await contracts.fetch(filters)
     return results.map((result) => ({
