@@ -38,19 +38,6 @@ export const getOrdersQuery = (where: string[]) => {
   `
 }
 
-export const getIdQuery = (contractAddress: string, tokenId: string) => {
-  return `
-    query Id {
-      nfts(where: {
-        contractAddress: "${contractAddress}"
-        tokenId: "${tokenId}"
-      }) {
-        id
-      }
-    }
-  `
-}
-
 export function fromOrderFragment(
   fragment: OrderFragment,
   network: Network,

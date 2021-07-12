@@ -1,7 +1,7 @@
 import { ChainId, Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
 import { IOrdersComponent, OrderFragment, OrderFilters } from './types'
-import { fromOrderFragment, getIdQuery, getOrdersQuery } from './utils'
+import { fromOrderFragment, getOrdersQuery } from './utils'
 
 export function createOrdersComponent(options: {
   subgraph: ISubgraphComponent
@@ -19,23 +19,12 @@ export function createOrdersComponent(options: {
 
     const where: string[] = [`expiresAt_gt: "${Date.now()}"`]
 
-    if (contractAddress && tokenId) {
-      const query = getIdQuery(contractAddress, tokenId)
-      const { nfts: fragments } = await subgraph.query<{
-        nfts: { id: string }[]
-      }>(query)
-      if (fragments.length > 0) {
-        const { id } = fragments[0]
-        where.push(`nft: "${id}"`)
-      } else {
-        return []
-      }
-    } else if (contractAddress) {
+    if (contractAddress) {
       where.push(`nftAddress: "${contractAddress}"`)
-    } else if (tokenId) {
-      throw new Error(
-        'You need to provide a "contractAddress" as well when filtering by "tokenId"'
-      )
+    }
+
+    if (tokenId) {
+      where.push(`tokenId: "${tokenId}"`)
     }
 
     if (buyer) {

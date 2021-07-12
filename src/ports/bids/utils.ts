@@ -66,16 +66,3 @@ export function getBidsQuery(where: string[]) {
     ${getBidFragment()}
   `
 }
-
-export function getIdQuery(contractAddress: string, tokenId: string) {
-  return `
-    query Bids {
-      nfts(where: {
-        contractAddress: "${contractAddress}"
-        tokenId: "${tokenId}"
-      }) {
-        id
-      }
-    }
-  `
-}

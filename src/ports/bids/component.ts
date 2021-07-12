@@ -1,7 +1,7 @@
 import { ChainId, Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
 import { BidFragment, BidFilters, IBidsComponent } from './types'
-import { fromBidFragment, getBidsQuery, getIdQuery } from './utils'
+import { fromBidFragment, getBidsQuery } from './utils'
 
 export function createBidsComponent(options: {
   subgraph: ISubgraphComponent
@@ -18,30 +18,22 @@ export function createBidsComponent(options: {
       return []
     }
 
-    if (contractAddress && tokenId) {
-      const query = getIdQuery(contractAddress, tokenId)
-      const { nfts: fragments } = await subgraph.query<{
-        nfts: { id: string }[]
-      }>(query)
-      if (fragments.length > 0) {
-        const { id } = fragments[0]
-        where.push(`nft: "${id}"`)
-      } else {
-        return []
-      }
-    } else if (contractAddress) {
+    if (contractAddress) {
       where.push(`nftAddress: "${contractAddress}"`)
-    } else if (tokenId) {
-      throw new Error(
-        'You need to provide a "contractAddress" as well when filtering by "tokenId"'
-      )
     }
+
+    if (tokenId) {
+      where.push(`tokenId: "${tokenId}"`)
+    }
+
     if (bidder) {
       where.push(`bidder: "${bidder}"`)
     }
+
     if (seller) {
       where.push(`seller: "${seller}"`)
     }
+
     if (status) {
       where.push(`status: ${status}`)
     }
