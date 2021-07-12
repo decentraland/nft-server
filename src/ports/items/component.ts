@@ -11,7 +11,6 @@ export function createItemsComponent(options: {
   const { subgraph, network, chainId } = options
 
   async function fetch(options: ItemFilters) {
-    console.log(options)
     const query = getItemsQuery(options)
     const { items: fragments } = await subgraph.query<{
       items: ItemFragment[]
