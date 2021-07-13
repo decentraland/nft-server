@@ -116,10 +116,13 @@ export type NFT = {
   category: NFTCategory
   image: string
   url: string
+  issuedId: string | null
+  itemBlockchainId: string | null
   network: Network
   chainId: ChainId
   data: Data
   createdAt: number
+  updatedAt: number
 }
 
 export type NFTResult = {

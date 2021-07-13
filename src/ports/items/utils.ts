@@ -13,6 +13,7 @@ export function fromItemFragment(
     id: fragment.id,
     name: fragment.metadata.wearable.name,
     thumbnail: fragment.image,
+    url: `/contracts/${fragment.collection.id}/items/${fragment.blockchainId}`,
     category: NFTCategory.WEARABLE,
     contractAddress: fragment.collection.id,
     blockchainId: fragment.blockchainId,

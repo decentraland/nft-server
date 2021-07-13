@@ -35,6 +35,7 @@ export type Item = {
   id: string
   name: string
   thumbnail: string
+  url: string
   category: NFTCategory.WEARABLE
   contractAddress: string
   blockchainId: string
