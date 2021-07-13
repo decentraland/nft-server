@@ -11,7 +11,7 @@ npm install
 After that you'll need to up check the `.env.example` file and create your own `.env` file. Some properties have defaults. Once you're done, you can run the project!
 
 ```bash
-npm start # runs npm run build behind the scenes
+npm start # start the server
 
 npm run start:watch # will watch for changes
 ```
