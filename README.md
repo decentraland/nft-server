@@ -37,9 +37,9 @@ type NFT = {
   url: string
   issuedId: string | null
   itemBlockchainId: string | null
+  data: Data
   network: Network
   chainId: ChainId
-  data: Data
   createdAt: number
   updatedAt: number
 }
@@ -83,11 +83,11 @@ type Item = {
   price: string
   available: number
   creator: string
-  createdAt: number
-  updatedAt: number
   data: Data
   network: Network
   chainId: ChainId
+  createdAt: number
+  updatedAt: number
 }
 ```
 
@@ -125,10 +125,10 @@ type Order = {
   price: string
   status: OrderStatus
   expiresAt: number
-  createdAt: number
-  updatedAt: number
   network: Network
   chainId: ChainId
+  createdAt: number
+  updatedAt: number
 }
 ```
 
@@ -161,12 +161,12 @@ type Bid = {
   blockchainId: string
   blockNumber: string
   expiresAt: number
-  createdAt: number
-  updatedAt: number
   contractAddress: string
   tokenId: string
   network: Network
   chainId: ChainId
+  createdAt: number
+  updatedAt: number
 }
 ```
 

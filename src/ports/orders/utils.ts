@@ -120,10 +120,10 @@ export function fromOrderFragment(
     price: fragment.price,
     status: fragment.status,
     expiresAt: +fragment.expiresAt,
-    createdAt: +fragment.createdAt * 1000,
-    updatedAt: +fragment.updatedAt * 1000,
     network,
     chainId,
+    createdAt: +fragment.createdAt * 1000,
+    updatedAt: +fragment.updatedAt * 1000,
   }
 
   return order

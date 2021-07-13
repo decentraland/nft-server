@@ -32,6 +32,7 @@ export const getCollectionsFields = () => `
       }
     }
     createdAt
+    updatedAt
     searchOrderPrice
     searchOrderCreatedAt
   }
@@ -50,7 +51,13 @@ export const getCollectionsFragment = () => `
 
 export type CollectionsFields = Omit<
   NFT,
-  'activeOrderId' | 'owner' | 'category' | 'data' | 'name'
+  | 'activeOrderId'
+  | 'owner'
+  | 'category'
+  | 'data'
+  | 'name'
+  | 'createdAt'
+  | 'updatedAt'
 > & {
   owner: { address: string }
   metadata: {
@@ -59,6 +66,7 @@ export type CollectionsFields = Omit<
     }
   }
   createdAt: string
+  updatedAt: string
   searchOrderPrice: string
   searchOrderCreatedAt: string
   searchText: string
@@ -111,11 +119,11 @@ export function fromCollectionsFragment(
       },
       issuedId: fragment.issuedId,
       itemBlockchainId: fragment.itemBlockchainId,
-      createdAt: +fragment.createdAt * 1000,
-      updatedAt: +fragment.updatedAt * 1000,
       category: NFTCategory.WEARABLE,
       network: Network.MATIC,
       chainId: getCollectionsChainId(),
+      createdAt: +fragment.createdAt * 1000,
+      updatedAt: +fragment.updatedAt * 1000,
     },
     order:
       fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)

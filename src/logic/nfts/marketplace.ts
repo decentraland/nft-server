@@ -59,6 +59,7 @@ export const getMarketplaceFields = () => `
       subdomain
     }
     createdAt
+    updatedAt
     searchOrderPrice
     searchOrderCreatedAt
   }
@@ -77,7 +78,13 @@ export const getMarketplaceFragment = () => `
 
 export type MarketplaceNFTFields = Omit<
   NFT,
-  'activeOrderId' | 'owner' | 'data' | 'chainId' | 'createdAt' | 'name'
+  | 'activeOrderId'
+  | 'owner'
+  | 'data'
+  | 'chainId'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'name'
 > & {
   name: string | null
   owner: { address: string }
@@ -104,6 +111,7 @@ export type MarketplaceNFTFields = Omit<
   wearable?: WearableData
   ens?: EnsData
   createdAt: string
+  updatedAt: string
   searchOrderPrice: string
   searchOrderCreatedAt: string
 }
@@ -185,11 +193,11 @@ export function fromMarketplaceNFTFragment(
       },
       issuedId: null,
       itemBlockchainId: null,
-      createdAt: +fragment.createdAt * 1000,
-      updatedAt: +fragment.updatedAt * 1000,
       category: fragment.category,
       network: Network.ETHEREUM,
       chainId: getMarketplaceChainId(),
+      createdAt: +fragment.createdAt * 1000,
+      updatedAt: +fragment.updatedAt * 1000,
     },
     order:
       fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)

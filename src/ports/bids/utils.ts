@@ -18,12 +18,12 @@ export function fromBidFragment(
     blockchainId: fragment.blockchainId,
     blockNumber: fragment.blockNumber,
     expiresAt: +fragment.expiresAt,
-    createdAt: +fragment.createdAt * 1000,
-    updatedAt: +fragment.updatedAt * 1000,
     contractAddress: fragment.nft.contractAddress,
     tokenId: fragment.nft.tokenId,
     network,
     chainId,
+    createdAt: +fragment.createdAt * 1000,
+    updatedAt: +fragment.updatedAt * 1000,
   }
 
   return bid
