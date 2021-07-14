@@ -240,7 +240,10 @@ export function fromMarketplaceOrderFragment(fragment: OrderFragment) {
 }
 
 export function marketplaceShouldFetch(filters: NFTFilters) {
-  if (filters.network && filters.network !== Network.ETHEREUM) {
+  if (
+    (filters.network && filters.network !== Network.ETHEREUM) ||
+    filters.itemBlockchainId
+  ) {
     return false
   } else {
     return true

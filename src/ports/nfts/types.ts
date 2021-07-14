@@ -96,6 +96,7 @@ export type NFTFilters = {
   wearableGenders?: WearableGender[]
   contractAddresses?: string[]
   tokenId?: string
+  itemBlockchainId?: string
   network?: Network
 }
 

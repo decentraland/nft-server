@@ -140,6 +140,22 @@ export function fromCollectionsOrderFragment(fragment: OrderFragment) {
   return fromOrderFragment(fragment, Network.MATIC, getCollectionsChainId())
 }
 
+export function getCollectionsExtraVariables(options: NFTFilters) {
+  const extraVariables: string[] = []
+  if (options.itemBlockchainId) {
+    extraVariables.push('$itemBlockchainId: String')
+  }
+  return extraVariables
+}
+
+export function getCollectionsExtraWhere(options: NFTFilters) {
+  const extraWhere = []
+  if (options.itemBlockchainId) {
+    extraWhere.push('itemBlockchainId: $itemBlockchainId')
+  }
+  return extraWhere
+}
+
 export function collectionsShouldFetch(filters: NFTFilters) {
   if (filters.isLand) {
     return false

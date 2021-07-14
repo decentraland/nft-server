@@ -62,6 +62,7 @@ type NFT = {
 - `wearableGender`: Filter results by `WearableGender`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`.
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
 - `tokenId`: Filter results by `tokenId`. Type: `string`.
+- `itemBlockchainId`: Filter results by `itemBlockchainId`. Type `string`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 
 ## Items

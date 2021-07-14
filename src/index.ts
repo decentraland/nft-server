@@ -39,6 +39,8 @@ import {
 import {
   collectionsShouldFetch,
   fromCollectionsFragment,
+  getCollectionsExtraVariables,
+  getCollectionsExtraWhere,
   getCollectionsFragment,
   getCollectionsOrderBy,
 } from './logic/nfts/collections'
@@ -205,6 +207,8 @@ async function initComponents(): Promise<AppComponents> {
     getFragment: getCollectionsFragment,
     fromFragment: fromCollectionsFragment,
     getSortByProp: getCollectionsOrderBy,
+    getExtraWhere: getCollectionsExtraWhere,
+    getExtraVariables: getCollectionsExtraVariables,
   })
 
   const nfts = createMergerComponent<NFTResult, NFTFilters, NFTSortBy>({

@@ -42,6 +42,7 @@ export function createNFTsHandler(
     )
     const contractAddresses = params.getAddressList('contractAddress')
     const tokenId = params.getString('tokenId')
+    const itemBlockchainId = params.getString('itemBlockchainId')
     const network = params.getValue<Network>('network', Network)
 
     return json(() =>
@@ -61,6 +62,7 @@ export function createNFTsHandler(
         wearableGenders,
         contractAddresses,
         tokenId,
+        itemBlockchainId,
         network,
       })
     )
