@@ -47,7 +47,17 @@ export type Bid = {
   chainId: ChainId
 }
 
-export type BidFragment = Omit<Bid, 'contractAddress' | 'tokenId' | 'price'> & {
-  nft: { contractAddress: string; tokenId: string }
+export type BidFragment = {
+  id: string
+  bidder: string
+  seller: string
   price: string
+  fingerprint: string
+  status: BidStatus
+  blockchainId: string
+  blockNumber: string
+  expiresAt: number
+  createdAt: number
+  updatedAt: number
+  nft: { contractAddress: string; tokenId: string }
 }

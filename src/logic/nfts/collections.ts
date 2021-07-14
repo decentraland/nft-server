@@ -62,6 +62,10 @@ export type CollectionsFields = Omit<
   | 'updatedAt'
   | 'itemId'
 > & {
+  id: string
+  image: string
+  contractAddress: string
+  tokenId: string
   owner: { address: string }
   metadata: {
     wearable: WearableData & {
@@ -74,6 +78,7 @@ export type CollectionsFields = Omit<
   searchOrderCreatedAt: string
   searchText: string
   itemBlockchainId: string
+  issuedId: string | null
 }
 
 export type CollectionsFragment = CollectionsFields & {

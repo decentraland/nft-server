@@ -1,7 +1,6 @@
 import { Network } from '@dcl/schemas'
 import {
   EnsData,
-  NFT,
   NFTCategory,
   NFTFilters,
   NFTResult,
@@ -76,17 +75,13 @@ export const getMarketplaceFragment = () => `
   ${getOrderFields()}
 `
 
-export type MarketplaceNFTFields = Omit<
-  NFT,
-  | 'activeOrderId'
-  | 'owner'
-  | 'data'
-  | 'chainId'
-  | 'createdAt'
-  | 'updatedAt'
-  | 'name'
-> & {
+export type MarketplaceNFTFields = {
+  id: string
   name: string | null
+  image: string
+  contractAddress: string
+  tokenId: string
+  category: NFTCategory
   owner: { address: string }
   parcel?: {
     x: string

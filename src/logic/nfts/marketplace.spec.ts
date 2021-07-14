@@ -1,4 +1,3 @@
-import { Network } from '@dcl/schemas'
 import { NFTCategory } from '../../ports/nfts/types'
 import {
   fromMarketplaceNFTFragment,
@@ -12,8 +11,6 @@ describe('when building a result from the marketplace fragment', () => {
       owner: { address: 'anOwner' },
       id: 'id',
       contractAddress: 'anAddress',
-      issuedId: null,
-      itemId: null,
       tokenId: 'aTokenId',
       activeOrder: null,
       createdAt: '0',
@@ -23,8 +20,6 @@ describe('when building a result from the marketplace fragment', () => {
       name: 'aName',
       category: NFTCategory.PARCEL,
       image: 'anImage',
-      url: 'aURL',
-      network: Network.ETHEREUM,
       parcel: {
         x: '20',
         y: '30',
