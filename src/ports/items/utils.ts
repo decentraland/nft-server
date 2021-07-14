@@ -148,8 +148,6 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     where.push(`blockchainId: "${blockchainId}"`)
   }
 
-  console.log(isOnSale)
-
   if (isOnSale) {
     where.push(`searchIsStoreMinter: true`)
   }
@@ -194,8 +192,6 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       }) 
     { ${isCount ? 'id' : `...itemFragment`} }
   }`
-
-  console.log(query)
 
   return `
     ${query}
