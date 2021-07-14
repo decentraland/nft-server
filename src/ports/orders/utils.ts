@@ -1,5 +1,4 @@
 import { ChainId, Network } from '@dcl/schemas'
-import { getId } from '../nfts/utils'
 import {
   Order,
   OrderFilters,
@@ -122,7 +121,6 @@ export function fromOrderFragment(
   const order: Order = {
     id: fragment.id,
     contractAddress: fragment.nftAddress,
-    nftId: getId(fragment.nftAddress, fragment.nft.tokenId),
     tokenId: fragment.nft.tokenId,
     owner: fragment.owner,
     buyer: fragment.buyer,
