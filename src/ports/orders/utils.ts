@@ -1,6 +1,12 @@
 import { ChainId, Network } from '@dcl/schemas'
 import { getId } from '../nfts/utils'
-import { Order, OrderFilters, OrderFragment, OrderSortBy } from './types'
+import {
+  Order,
+  OrderFilters,
+  OrderFragment,
+  OrderSortBy,
+  OrderStatus,
+} from './types'
 
 export const ORDER_DEFAULT_SORT_BY = OrderSortBy.RECENTLY_LISTED
 
@@ -39,7 +45,7 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
     status,
   } = filters
 
-  const where: string[] = [`expiresAt_gt: "${Date.now()}"`]
+  const where: string[] = []
 
   if (contractAddress) {
     where.push(`nftAddress: "${contractAddress}"`)
@@ -58,6 +64,9 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
   }
 
   if (status) {
+    if (status === OrderStatus.OPEN) {
+      where.push(`expiresAt_gt: "${Date.now()}"`)
+    }
     where.push(`status: ${status}`)
   }
 
@@ -119,9 +128,9 @@ export function fromOrderFragment(
     buyer: fragment.buyer,
     price: fragment.price,
     status: fragment.status,
-    expiresAt: +fragment.expiresAt,
     network,
     chainId,
+    expiresAt: +fragment.expiresAt,
     createdAt: +fragment.createdAt * 1000,
     updatedAt: +fragment.updatedAt * 1000,
   }

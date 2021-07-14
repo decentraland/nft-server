@@ -1,5 +1,5 @@
 import { ChainId, Network } from '@dcl/schemas'
-import { Bid, BidFilters, BidFragment, BidSortBy } from './types'
+import { Bid, BidFilters, BidFragment, BidSortBy, BidStatus } from './types'
 
 export const BID_DEFAULT_SORT_BY = BidSortBy.RECENTLY_OFFERED
 
@@ -17,11 +17,11 @@ export function fromBidFragment(
     status: fragment.status,
     blockchainId: fragment.blockchainId,
     blockNumber: fragment.blockNumber,
-    expiresAt: +fragment.expiresAt,
     contractAddress: fragment.nft.contractAddress,
     tokenId: fragment.nft.tokenId,
     network,
     chainId,
+    expiresAt: +fragment.expiresAt,
     createdAt: +fragment.createdAt * 1000,
     updatedAt: +fragment.updatedAt * 1000,
   }
@@ -68,7 +68,7 @@ export function getBidsQuery(filters: BidFilters, isCount = false) {
     status,
   } = filters
 
-  const where: string[] = [`expiresAt_gt: "${Date.now()}"`]
+  const where: string[] = []
 
   if (contractAddress) {
     where.push(`nftAddress: "${contractAddress}"`)
@@ -87,6 +87,9 @@ export function getBidsQuery(filters: BidFilters, isCount = false) {
   }
 
   if (status) {
+    if (status === BidStatus.OPEN) {
+      where.push(`expiresAt_gt: "${Date.now()}"`)
+    }
     where.push(`status: ${status}`)
   }
 
