@@ -62,6 +62,9 @@ export function createNFTComponent<T extends { id: string }>(options: {
   }
 
   async function count(options: NFTFilters) {
+    if (shouldFetch && !shouldFetch(options)) {
+      return 0
+    }
     const fetchFragments = getFragmentFetcher(options)
     const fragments = await fetchFragments(true)
     return fragments.length
