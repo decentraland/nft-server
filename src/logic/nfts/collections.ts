@@ -60,6 +60,7 @@ export type CollectionsFields = Omit<
   | 'name'
   | 'createdAt'
   | 'updatedAt'
+  | 'itemId'
 > & {
   owner: { address: string }
   metadata: {
@@ -72,6 +73,7 @@ export type CollectionsFields = Omit<
   searchOrderPrice: string
   searchOrderCreatedAt: string
   searchText: string
+  itemBlockchainId: string
 }
 
 export type CollectionsFragment = CollectionsFields & {
@@ -120,7 +122,7 @@ export function fromCollectionsFragment(
         },
       },
       issuedId: fragment.issuedId,
-      itemId: fragment.itemId,
+      itemId: fragment.itemBlockchainId,
       category: NFTCategory.WEARABLE,
       network: Network.MATIC,
       chainId: getCollectionsChainId(),
