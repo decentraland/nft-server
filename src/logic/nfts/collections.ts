@@ -35,6 +35,8 @@ export const getCollectionsFields = () => `
     updatedAt
     searchOrderPrice
     searchOrderCreatedAt
+    itemBlockchainId
+    issuedId
   }
 `
 
