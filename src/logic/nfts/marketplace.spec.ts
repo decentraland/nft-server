@@ -13,7 +13,7 @@ describe('when building a result from the marketplace fragment', () => {
       id: 'id',
       contractAddress: 'anAddress',
       issuedId: null,
-      itemBlockchainId: null,
+      itemId: null,
       tokenId: 'aTokenId',
       activeOrder: null,
       createdAt: '0',

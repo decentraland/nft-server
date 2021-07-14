@@ -96,7 +96,7 @@ export type NFTFilters = {
   wearableGenders?: WearableGender[]
   contractAddresses?: string[]
   tokenId?: string
-  itemBlockchainId?: string
+  itemId?: string
   network?: Network
 }
 
@@ -118,7 +118,7 @@ export type NFT = {
   image: string
   url: string
   issuedId: string | null
-  itemBlockchainId: string | null
+  itemId: string | null
   network: Network
   chainId: ChainId
   data: Data

@@ -38,8 +38,8 @@ export function createItemsHandler(
       'wearableGender',
       WearableGender
     )
-    const contractAddresses = params.getAddressList('contractAddress')
-    const blockchainId = params.getString('blockchainId')
+    const contractAddress = params.getAddress('contractAddress')
+    const itemId = params.getString('itemId')
     const network = params.getValue<Network>('network', Network)
 
     return json(() =>
@@ -56,8 +56,8 @@ export function createItemsHandler(
         wearableCategory,
         wearableRarities,
         wearableGenders,
-        contractAddresses,
-        blockchainId,
+        contractAddress,
+        itemId,
         network,
       })
     )

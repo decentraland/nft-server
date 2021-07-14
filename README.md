@@ -36,7 +36,7 @@ type NFT = {
   image: string
   url: string
   issuedId: string | null
-  itemBlockchainId: string | null
+  itemId: string | null
   data: Data
   network: Network
   chainId: ChainId
@@ -62,7 +62,7 @@ type NFT = {
 - `wearableGender`: Filter results by `WearableGender`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`.
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
 - `tokenId`: Filter results by `tokenId`. Type: `string`.
-- `itemBlockchainId`: Filter results by `itemBlockchainId`. Type `string`.
+- `itemId`: Filter results by `itemId`. Type `string`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 
 ## Items
@@ -79,7 +79,7 @@ type Item = {
   url: string
   category: NFTCategory
   contractAddress: string
-  blockchainId: string
+  itemId: string
   rarity: WearableRarity
   price: string
   available: number
@@ -106,8 +106,8 @@ type Item = {
 - `wearableCategory`: Filter results by `WearableCategory`. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`.
 - `wearableRarity`: Filter results by `WearableRarity`. It supports multiple values by adding the query param multiple times. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
 - `wearableGender`: Filter results by `WearableGender`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`.
-- `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
-- `blockchainId`: Filter results by `blockchainId`. Type: `string`.
+- `contractAddress`: Filter results by contract address. Type: `address`.
+- `itemId`: Filter results by `itemId`. Type: `string`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 
 ## Orders

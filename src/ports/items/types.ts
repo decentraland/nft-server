@@ -21,8 +21,8 @@ export type ItemFilters = {
   wearableCategory?: WearableCategory
   wearableRarities?: WearableRarity[]
   wearableGenders?: WearableGender[]
-  contractAddresses?: string[]
-  blockchainId?: string
+  contractAddress?: string
+  itemId?: string
   network?: Network
 }
 
@@ -39,7 +39,7 @@ export type Item = {
   url: string
   category: NFTCategory.WEARABLE
   contractAddress: string
-  blockchainId: string
+  itemId: string
   rarity: WearableRarity
   price: string
   available: number

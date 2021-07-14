@@ -16,7 +16,7 @@ export function fromItemFragment(
     url: `/contracts/${fragment.collection.id}/items/${fragment.blockchainId}`,
     category: NFTCategory.WEARABLE,
     contractAddress: fragment.collection.id,
-    blockchainId: fragment.blockchainId,
+    itemId: fragment.blockchainId,
     rarity: fragment.rarity,
     price: fragment.price,
     available: +fragment.available,
@@ -77,8 +77,8 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     wearableCategory,
     wearableRarities,
     wearableGenders,
-    contractAddresses,
-    blockchainId,
+    contractAddress,
+    itemId,
   } = filters
 
   const where: string[] = [`searchIsCollectionApproved: true`]
@@ -136,16 +136,12 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     }
   }
 
-  if (contractAddresses && contractAddresses.length > 0) {
-    where.push(
-      `contractAddress_in: [${contractAddresses
-        .map((contract) => `"${contract}"`)
-        .join(', ')}]`
-    )
+  if (contractAddress) {
+    where.push(`collection: "${contractAddress}"`)
   }
 
-  if (blockchainId) {
-    where.push(`blockchainId: "${blockchainId}"`)
+  if (itemId) {
+    where.push(`blockchainId: "${itemId}"`)
   }
 
   if (isOnSale) {

@@ -192,7 +192,7 @@ export function fromMarketplaceNFTFragment(
         ens: fragment.ens ? { subdomain: fragment.ens.subdomain } : undefined,
       },
       issuedId: null,
-      itemBlockchainId: null,
+      itemId: null,
       category: fragment.category,
       network: Network.ETHEREUM,
       chainId: getMarketplaceChainId(),
@@ -242,7 +242,7 @@ export function fromMarketplaceOrderFragment(fragment: OrderFragment) {
 export function marketplaceShouldFetch(filters: NFTFilters) {
   if (
     (filters.network && filters.network !== Network.ETHEREUM) ||
-    filters.itemBlockchainId
+    filters.itemId
   ) {
     return false
   } else {

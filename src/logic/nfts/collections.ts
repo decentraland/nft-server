@@ -120,7 +120,7 @@ export function fromCollectionsFragment(
         },
       },
       issuedId: fragment.issuedId,
-      itemBlockchainId: fragment.itemBlockchainId,
+      itemId: fragment.itemId,
       category: NFTCategory.WEARABLE,
       network: Network.MATIC,
       chainId: getCollectionsChainId(),
@@ -142,16 +142,16 @@ export function fromCollectionsOrderFragment(fragment: OrderFragment) {
 
 export function getCollectionsExtraVariables(options: NFTFilters) {
   const extraVariables: string[] = []
-  if (options.itemBlockchainId) {
-    extraVariables.push('$itemBlockchainId: String')
+  if (options.itemId) {
+    extraVariables.push('$itemId: String')
   }
   return extraVariables
 }
 
 export function getCollectionsExtraWhere(options: NFTFilters) {
   const extraWhere = []
-  if (options.itemBlockchainId) {
-    extraWhere.push('itemBlockchainId: $itemBlockchainId')
+  if (options.itemId) {
+    extraWhere.push('itemBlockchainId: $itemId')
   }
   return extraWhere
 }
