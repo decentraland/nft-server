@@ -21,6 +21,7 @@ export function createItemsHandler(
     const skip = params.getNumber('skip')
     const sortBy = params.getValue<ItemSortBy>('sortBy', ItemSortBy)
     const creator = params.getAddress('creator')
+    const isSoldOut = params.getBoolean('isSoldOut')
     const isOnSale = params.getBoolean('isOnSale')
     const search = params.getString('search')
     const isWearableHead = params.getBoolean('isWearableHead')
@@ -47,7 +48,8 @@ export function createItemsHandler(
         skip,
         sortBy,
         creator,
-        isAvailable: isOnSale,
+        isSoldOut,
+        isOnSale,
         search,
         isWearableHead,
         isWearableAccessory,

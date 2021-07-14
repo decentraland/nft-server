@@ -13,7 +13,8 @@ export type ItemFilters = {
   skip?: number
   sortBy?: ItemSortBy
   creator?: string
-  isAvailable?: boolean
+  isSoldOut?: boolean
+  isOnSale?: boolean
   search?: string
   isWearableHead?: boolean
   isWearableAccessory?: boolean

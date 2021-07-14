@@ -21,8 +21,6 @@ export function fromItemFragment(
     price: fragment.price,
     available: +fragment.available,
     creator: fragment.collection.creator,
-    createdAt: +fragment.collection.createdAt * 1000,
-    updatedAt: +fragment.collection.updatedAt * 1000,
     data: {
       wearable: {
         description: fragment.metadata.wearable.description,
@@ -33,6 +31,8 @@ export function fromItemFragment(
     },
     network,
     chainId,
+    createdAt: +fragment.collection.createdAt * 1000,
+    updatedAt: +fragment.collection.updatedAt * 1000,
   }
 
   return item
@@ -69,7 +69,8 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     skip,
     sortBy,
     creator,
-    isAvailable,
+    isSoldOut,
+    isOnSale,
     search,
     isWearableHead,
     isWearableAccessory,
@@ -83,11 +84,18 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
   const where: string[] = [`searchIsCollectionApproved: true`]
 
   if (creator) {
-    // TODO: remove comment when added to supgrah
-    //where.push(`searchCreator: ${creator}`)
+    where.push(`creator: "${creator}"`)
   }
 
-  if (isAvailable || sortBy === ItemSortBy.CHEAPEST) {
+  if (isOnSale && isSoldOut) {
+    throw new Error(
+      `You can't use "isOnSale" and "isSoldOut" at the same time.`
+    )
+  } else if (isOnSale) {
+    where.push('available_gt: 0')
+  } else if (isSoldOut) {
+    where.push('available: 0')
+  } else if (sortBy === ItemSortBy.CHEAPEST) {
     where.push('available_gt: 0')
   }
 
@@ -140,6 +148,12 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     where.push(`blockchainId: "${blockchainId}"`)
   }
 
+  console.log(isOnSale)
+
+  if (isOnSale) {
+    where.push(`searchIsStoreMinter: true`)
+  }
+
   // Compute total nfts to query. If there's a "skip" we add it to the total, since we need all the prior results to later merge them in a single page. If nothing is provided we default to the max. When counting we also use the max.
   const max = 1000
   const total = isCount
@@ -180,6 +194,8 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       }) 
     { ${isCount ? 'id' : `...itemFragment`} }
   }`
+
+  console.log(query)
 
   return `
     ${query}

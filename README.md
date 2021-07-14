@@ -97,7 +97,8 @@ type Item = {
 - `skip`: Skip results. Type: `number`.
 - `sortBy`: Sort results. Possible values: `newest`, `name`, `cheapest`.
 - `creator`: Filter by creator. Type: `address`.
-- `isAvaialbe`: Only return results that are still available (not sold out). Type: `boolean`.
+- `isSoldOut`: Only return results that are sold out (all NFTs have been minted). Type: `boolean`.
+- `isOnSale`: Only return results that can be bought (`CollectionStore` has been added as minter, and there's still available supply to mint). Type: `boolean`.
 - `search`: Free text search. Type: `string`.
 - `isWearableHead`: Only return results that their category is `wearable` and are part of the avatar's head. Type `boolean`.
 - `isWearableAccessory`: Only return results that their category is `wearable` and accessories (not a part of the body).
