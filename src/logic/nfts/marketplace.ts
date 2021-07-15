@@ -98,7 +98,7 @@ export type MarketplaceNFTFields = {
   }
   estate?: {
     size: number
-    parcels: { x: number; y: number }[]
+    parcels: { x: string; y: string }[]
     data: {
       description: string
     } | null
@@ -173,7 +173,10 @@ export function fromMarketplaceNFTFragment(
                 (fragment.estate.data && fragment.estate.data.description) ||
                 null,
               size: fragment.estate.size,
-              parcels: fragment.estate.parcels.map(({ x, y }) => ({ x, y })),
+              parcels: fragment.estate.parcels.map(({ x, y }) => ({
+                x: +x,
+                y: +y,
+              })),
             }
           : undefined,
         wearable: fragment.wearable
