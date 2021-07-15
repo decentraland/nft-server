@@ -1,5 +1,7 @@
 import { Bid, ListingStatus, Network } from '@dcl/schemas'
 
+export { Bid }
+
 export interface IBidsComponent {
   fetch(filters: BidFilters): Promise<Bid[]>
   count(filters: BidFilters): Promise<number>

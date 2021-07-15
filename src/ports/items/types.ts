@@ -7,6 +7,8 @@ import {
 } from '@dcl/schemas'
 import { WearableGender } from '../nfts/types'
 
+export { Item }
+
 export type ItemFilters = {
   first?: number
   skip?: number

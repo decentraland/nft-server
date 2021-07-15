@@ -1,4 +1,5 @@
 import { ListingStatus, Network, Order } from '@dcl/schemas'
+export { Order }
 
 export interface IOrdersComponent {
   fetch(filters: OrderFilters): Promise<Order[]>

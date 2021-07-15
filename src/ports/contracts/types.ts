@@ -1,4 +1,5 @@
 import { Contract, Network, NFTCategory } from '@dcl/schemas'
+export { Contract }
 
 export type ContractFilters = {
   category?: NFTCategory
