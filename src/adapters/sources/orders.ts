@@ -1,7 +1,7 @@
+import { Order } from '@dcl/schemas'
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
 import {
   IOrdersComponent,
-  Order,
   OrderFilters,
   OrderSortBy,
 } from '../../ports/orders/types'

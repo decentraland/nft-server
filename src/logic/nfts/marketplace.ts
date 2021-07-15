@@ -1,12 +1,11 @@
-import { Network } from '@dcl/schemas'
 import {
-  EnsData,
+  BodyShape,
+  Network,
   NFTCategory,
-  NFTFilters,
-  NFTResult,
-  NFTSortBy,
-  WearableData,
-} from '../../ports/nfts/types'
+  Rarity,
+  WearableCategory,
+} from '@dcl/schemas'
+import { NFTFilters, NFTResult, NFTSortBy } from '../../ports/nfts/types'
 import { getId, NFT_DEFAULT_SORT_BY } from '../../ports/nfts/utils'
 import { OrderFragment } from '../../ports/orders/types'
 import { fromOrderFragment, getOrderFields } from '../../ports/orders/utils'
@@ -103,8 +102,15 @@ export type MarketplaceNFTFields = {
       description: string
     } | null
   }
-  wearable?: WearableData
-  ens?: EnsData
+  wearable?: {
+    description: string
+    category: WearableCategory
+    rarity: Rarity
+    bodyShapes: BodyShape[]
+  }
+  ens?: {
+    subdomain: string
+  }
   createdAt: string
   updatedAt: string
   searchOrderPrice: string

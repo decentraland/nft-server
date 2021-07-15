@@ -1,13 +1,4 @@
-import { ChainId, Network } from '@dcl/schemas'
-import { NFTCategory } from '../nfts/types'
-
-export type Contract = {
-  name: string
-  address: string
-  category: NFTCategory
-  network: Network
-  chainId: ChainId
-}
+import { Contract, Network, NFTCategory } from '@dcl/schemas'
 
 export type ContractFilters = {
   category?: NFTCategory

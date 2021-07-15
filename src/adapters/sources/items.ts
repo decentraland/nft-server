@@ -1,7 +1,7 @@
+import { Item } from '@dcl/schemas'
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
 import {
   IItemsComponent,
-  Item,
   ItemFilters,
   ItemSortBy,
 } from '../../ports/items/types'

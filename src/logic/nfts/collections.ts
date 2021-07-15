@@ -1,12 +1,12 @@
-import { Network } from '@dcl/schemas'
 import {
+  BodyShape,
+  Network,
   NFT,
   NFTCategory,
-  NFTFilters,
-  NFTResult,
-  NFTSortBy,
-  WearableData,
-} from '../../ports/nfts/types'
+  Rarity,
+  WearableCategory,
+} from '@dcl/schemas'
+import { NFTFilters, NFTResult, NFTSortBy } from '../../ports/nfts/types'
 import { getId, NFT_DEFAULT_SORT_BY } from '../../ports/nfts/utils'
 import { OrderFragment } from '../../ports/orders/types'
 import { fromOrderFragment, getOrderFields } from '../../ports/orders/utils'
@@ -68,7 +68,11 @@ export type CollectionsFields = Omit<
   tokenId: string
   owner: { address: string }
   metadata: {
-    wearable: WearableData & {
+    wearable: {
+      description: string
+      category: WearableCategory
+      rarity: Rarity
+      bodyShapes: BodyShape[]
       name: string
     }
   }

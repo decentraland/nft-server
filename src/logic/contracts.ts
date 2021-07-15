@@ -1,6 +1,4 @@
-import { ChainId, Network } from '@dcl/schemas'
-import { Contract } from '../ports/contracts/types'
-import { NFTCategory } from '../ports/nfts/types'
+import { ChainId, Contract, Network, NFTCategory } from '@dcl/schemas'
 import { ISubgraphComponent } from '../ports/subgraph/types'
 
 const getCollectionsQuery = `

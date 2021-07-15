@@ -1,12 +1,11 @@
-import { ChainId, Network } from '@dcl/schemas'
 import {
   BodyShape,
-  Data,
-  NFTCategory,
+  Item,
+  Network,
+  Rarity,
   WearableCategory,
-  WearableGender,
-  WearableRarity,
-} from '../nfts/types'
+} from '@dcl/schemas'
+import { WearableGender } from '../nfts/types'
 
 export type ItemFilters = {
   first?: number
@@ -19,7 +18,7 @@ export type ItemFilters = {
   isWearableHead?: boolean
   isWearableAccessory?: boolean
   wearableCategory?: WearableCategory
-  wearableRarities?: WearableRarity[]
+  wearableRarities?: Rarity[]
   wearableGenders?: WearableGender[]
   contractAddress?: string
   itemId?: string
@@ -32,31 +31,12 @@ export enum ItemSortBy {
   CHEAPEST = 'cheapest',
 }
 
-export type Item = {
-  id: string
-  name: string
-  thumbnail: string
-  url: string
-  category: NFTCategory.WEARABLE
-  contractAddress: string
-  itemId: string
-  rarity: WearableRarity
-  price: string
-  available: number
-  creator: string
-  createdAt: number
-  updatedAt: number
-  data: Data
-  network: Network
-  chainId: ChainId
-}
-
 export type ItemFragment = {
   id: string
   price: string
   blockchainId: string
   image: string
-  rarity: WearableRarity
+  rarity: Rarity
   available: string
   collection: {
     id: string

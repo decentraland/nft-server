@@ -1,6 +1,6 @@
+import { Contract } from '@dcl/schemas'
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
 import {
-  Contract,
   ContractFilters,
   ContractSortBy,
   IContractsComponent,

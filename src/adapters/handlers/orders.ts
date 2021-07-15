@@ -1,6 +1,6 @@
-import { Network } from '@dcl/schemas'
+import { ListingStatus, Network } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
-import { OrderSortBy, OrderStatus } from '../../ports/orders/types'
+import { OrderSortBy } from '../../ports/orders/types'
 import { AppComponents, Context } from '../../types'
 import { Params } from '../../logic/http/params'
 import { json } from '../../logic/http/response'
@@ -19,7 +19,7 @@ export function createOrdersHandler(
     const buyer = params.getAddress('buyer')
     const contractAddress = params.getAddress('contractAddress')
     const tokenId = params.getString('tokenId')
-    const status = params.getValue<OrderStatus>('status', OrderStatus)
+    const status = params.getValue<ListingStatus>('status', ListingStatus)
     const network = params.getValue<Network>('network', Network)
 
     return json(() =>

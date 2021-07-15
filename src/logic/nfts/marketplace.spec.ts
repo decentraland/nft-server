@@ -1,4 +1,4 @@
-import { NFTCategory } from '../../ports/nfts/types'
+import { NFTCategory } from '@dcl/schemas'
 import {
   fromMarketplaceNFTFragment,
   MarketplaceNFTFragment,

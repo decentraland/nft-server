@@ -1,13 +1,9 @@
-import { Network } from '@dcl/schemas'
+import { Network, Rarity, WearableCategory } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { AppComponents, Context } from '../../types'
 import { Params } from '../../logic/http/params'
 import { json } from '../../logic/http/response'
-import {
-  WearableCategory,
-  WearableGender,
-  WearableRarity,
-} from '../../ports/nfts/types'
+import { WearableGender } from '../../ports/nfts/types'
 import { ItemSortBy } from '../../ports/items/types'
 
 export function createItemsHandler(
@@ -30,10 +26,7 @@ export function createItemsHandler(
       'wearableCategory',
       WearableCategory
     )
-    const wearableRarities = params.getList<WearableRarity>(
-      'wearableRarity',
-      WearableRarity
-    )
+    const wearableRarities = params.getList<Rarity>('wearableRarity', Rarity)
     const wearableGenders = params.getList<WearableGender>(
       'wearableGender',
       WearableGender

@@ -1,14 +1,8 @@
-import { ChainId, Network } from '@dcl/schemas'
+import { Bid, ListingStatus, Network } from '@dcl/schemas'
 
 export interface IBidsComponent {
   fetch(filters: BidFilters): Promise<Bid[]>
   count(filters: BidFilters): Promise<number>
-}
-
-export enum BidStatus {
-  OPEN = 'open',
-  SOLD = 'sold',
-  CANCELLED = 'cancelled',
 }
 
 export enum BidSortBy {
@@ -25,26 +19,8 @@ export type BidFilters = {
   seller?: string
   contractAddress?: string
   tokenId?: string
-  status?: BidStatus
+  status?: ListingStatus
   network?: Network
-}
-
-export type Bid = {
-  id: string
-  bidder: string
-  seller: string
-  price: string
-  fingerprint: string
-  status: BidStatus
-  blockchainId: string
-  blockNumber: string
-  expiresAt: number
-  createdAt: number
-  updatedAt: number
-  contractAddress: string
-  tokenId: string
-  network: Network
-  chainId: ChainId
 }
 
 export type BidFragment = {
@@ -53,7 +29,7 @@ export type BidFragment = {
   seller: string
   price: string
   fingerprint: string
-  status: BidStatus
+  status: ListingStatus
   blockchainId: string
   blockNumber: string
   expiresAt: number

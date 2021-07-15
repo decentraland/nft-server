@@ -1,5 +1,5 @@
 import { config as configDotEnvFile } from 'dotenv'
-import { Network } from '@dcl/schemas'
+import { Bid, Contract, Item, Network, Order } from '@dcl/schemas'
 import { createConfigComponent } from '@well-known-components/env-config-provider'
 import {
   createServerComponent,
@@ -14,18 +14,14 @@ import { createSubgraphComponent } from './ports/subgraph/component'
 import { createBidsComponent } from './ports/bids/component'
 import { createOrdersComponent } from './ports/orders/component'
 import { createMergerComponent } from './ports/merger/component'
-import { Order, OrderFilters, OrderSortBy } from './ports/orders/types'
+import { OrderFilters, OrderSortBy } from './ports/orders/types'
 import { SortDirection } from './ports/merger/types'
-import { Bid, BidFilters, BidSortBy } from './ports/bids/types'
+import { BidFilters, BidSortBy } from './ports/bids/types'
 import { getMarketplaceChainId, getCollectionsChainId } from './logic/chainIds'
 import { createOrdersSource } from './adapters/sources/orders'
 import { createContractsComponent } from './ports/contracts/compontent'
 import { createBidsSource } from './adapters/sources/bids'
-import {
-  Contract,
-  ContractFilters,
-  ContractSortBy,
-} from './ports/contracts/types'
+import { ContractFilters, ContractSortBy } from './ports/contracts/types'
 import { createContractsSource } from './adapters/sources/contracts'
 import { createNFTComponent } from './ports/nfts/component'
 import {
@@ -53,7 +49,7 @@ import {
 } from './logic/contracts'
 import { BID_DEFAULT_SORT_BY } from './ports/bids/utils'
 import { ORDER_DEFAULT_SORT_BY } from './ports/orders/utils'
-import { Item, ItemFilters, ItemSortBy } from './ports/items/types'
+import { ItemFilters, ItemSortBy } from './ports/items/types'
 import { createItemsSource } from './adapters/sources/items'
 import { createItemsComponent } from './ports/items/component'
 import { ITEM_DEFAULT_SORT_BY } from './ports/items/utils'

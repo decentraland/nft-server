@@ -10,10 +10,7 @@ export class Params {
     return value === null ? defaultValue : value
   }
 
-  getList<T extends string = string>(
-    key: string,
-    values: Record<string, T> = {}
-  ) {
+  getList<T extends string = string>(key: string, values: Values = {}) {
     const list = this.params.getAll(key) as T[]
     const validValues = this.getValidValues(values)
     return validValues.length > 0

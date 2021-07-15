@@ -1,5 +1,5 @@
-import { ChainId, Network } from '@dcl/schemas'
-import { Bid, BidFilters, BidFragment, BidSortBy, BidStatus } from './types'
+import { Bid, ChainId, ListingStatus, Network } from '@dcl/schemas'
+import { BidFilters, BidFragment, BidSortBy } from './types'
 
 export const BID_DEFAULT_SORT_BY = BidSortBy.RECENTLY_OFFERED
 
@@ -87,7 +87,7 @@ export function getBidsQuery(filters: BidFilters, isCount = false) {
   }
 
   if (status) {
-    if (status === BidStatus.OPEN) {
+    if (status === ListingStatus.OPEN) {
       where.push(`expiresAt_gt: "${Date.now()}"`)
     }
     where.push(`status: ${status}`)

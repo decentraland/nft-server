@@ -1,10 +1,6 @@
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
-import {
-  Bid,
-  BidFilters,
-  BidSortBy,
-  IBidsComponent,
-} from '../../ports/bids/types'
+import { BidFilters, BidSortBy, IBidsComponent } from '../../ports/bids/types'
+import { Bid } from '@dcl/schemas'
 
 export function createBidsSource(
   bids: IBidsComponent

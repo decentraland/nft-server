@@ -1,11 +1,5 @@
-import { ChainId, Network } from '@dcl/schemas'
-import {
-  Order,
-  OrderFilters,
-  OrderFragment,
-  OrderSortBy,
-  OrderStatus,
-} from './types'
+import { ChainId, ListingStatus, Network, Order } from '@dcl/schemas'
+import { OrderFilters, OrderFragment, OrderSortBy } from './types'
 
 export const ORDER_DEFAULT_SORT_BY = OrderSortBy.RECENTLY_LISTED
 
@@ -63,7 +57,7 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
   }
 
   if (status) {
-    if (status === OrderStatus.OPEN) {
+    if (status === ListingStatus.OPEN) {
       where.push(`expiresAt_gt: "${Date.now()}"`)
     }
     where.push(`status: ${status}`)

@@ -1,15 +1,9 @@
-import { Network } from '@dcl/schemas'
+import { Network, NFTCategory, Rarity, WearableCategory } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { AppComponents, Context } from '../../types'
 import { Params } from '../../logic/http/params'
 import { HttpError, json } from '../../logic/http/response'
-import {
-  NFTCategory,
-  NFTSortBy,
-  WearableCategory,
-  WearableGender,
-  WearableRarity,
-} from '../../ports/nfts/types'
+import { NFTSortBy, WearableGender } from '../../ports/nfts/types'
 
 export function createNFTsHandler(
   components: Pick<AppComponents, 'logs' | 'nfts'>
@@ -32,10 +26,7 @@ export function createNFTsHandler(
       'wearableCategory',
       WearableCategory
     )
-    const wearableRarities = params.getList<WearableRarity>(
-      'wearableRarity',
-      WearableRarity
-    )
+    const wearableRarities = params.getList<Rarity>('wearableRarity', Rarity)
     const wearableGenders = params.getList<WearableGender>(
       'wearableGender',
       WearableGender
