@@ -78,7 +78,7 @@ export const getMarketplaceFragment = () => `
 export type MarketplaceNFTFields = {
   id: string
   name: string | null
-  image: string
+  image: string | null
   contractAddress: string
   tokenId: string
   category: NFTCategory
@@ -146,7 +146,7 @@ export function fromMarketplaceNFTFragment(
           : null,
       owner: fragment.owner.address.toLowerCase(),
       name: fragment.name || capitalize(fragment.category),
-      image: fragment.image,
+      image: fragment.image || '',
       url: `/contracts/${fragment.contractAddress}/tokens/${fragment.tokenId}`,
       data: {
         parcel: fragment.parcel
