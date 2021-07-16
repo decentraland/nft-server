@@ -4,11 +4,18 @@ import type {
   ILoggerComponent,
   IHttpServerComponent,
   IMetricsComponent,
-  IBaseComponent
+  IBaseComponent,
 } from '@well-known-components/interfaces'
-import { IBidsComponent } from './ports/bids/types'
-import { IBrowseComponent } from './ports/browse/types'
-import { ISubgraphComponent } from './ports/subgraph/types'
+import { IMergerComponent } from './ports/merger/types'
+import { Bid, BidFilters, BidSortBy } from './ports/bids/types'
+import { Order, OrderFilters, OrderSortBy } from './ports/orders/types'
+import {
+  Contract,
+  ContractFilters,
+  ContractSortBy,
+} from './ports/contracts/types'
+import { NFTFilters, NFTResult, NFTSortBy } from './ports/nfts/types'
+import { Item, ItemFilters, ItemSortBy } from './ports/items/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -26,10 +33,11 @@ export type AppComponents = {
   server: IHttpServerComponent<GlobalContext>
   statusChecks: IBaseComponent
   metrics: IMetricsComponent<any>
-  marketplaceSubgraph: ISubgraphComponent
-  collectionsSubgraph: ISubgraphComponent
-  browse: IBrowseComponent
-  bids: IBidsComponent
+  orders: IMergerComponent<Order, OrderFilters, OrderSortBy>
+  bids: IMergerComponent<Bid, BidFilters, BidSortBy>
+  contracts: IMergerComponent<Contract, ContractFilters, ContractSortBy>
+  nfts: IMergerComponent<NFTResult, NFTFilters, NFTSortBy>
+  items: IMergerComponent<Item, ItemFilters, ItemSortBy>
 }
 
 export type Context<Path extends string = any> = RoutedContext<

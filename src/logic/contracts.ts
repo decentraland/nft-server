@@ -1,224 +1,36 @@
-import { ChainId, Network } from '@dcl/schemas'
-import {
-  Result,
-  SortBy,
-  EnsData,
-  NFT,
-  WearableData,
-  Contract,
-  OrderFragment,
-  NFTCategory,
-} from '../../source/types'
-import {
-  fromNumber,
-  fromOrderFragment,
-  fromWei,
-  getId,
-  getOrderFields,
-} from '../../source/utils'
-import { isExpired } from '../utils'
+import { ChainId, Contract, Network, NFTCategory } from '@dcl/schemas'
+import { ISubgraphComponent } from '../ports/subgraph/types'
 
-const PARCEL_ESTATE_NAME_DEFAULT_VALUE = 'Estate'
-
-export const getMarketplaceChainId = () =>
-  parseInt(
-    process.env.MARKETPLACE_CHAIN_ID || ChainId.ETHEREUM_MAINNET.toString()
-  ) as ChainId
-
-export const getMarketplaceFields = () => `
-  fragment marketplaceFields on NFT {
-    id
-    name
-    image
-    contractAddress
-    tokenId
-    category
-    owner {
-      address
+const getCollectionsQuery = `
+  query getCollections {
+    collections(first: 1000) {
+      name
+      id
     }
-    parcel {
-      x
-      y
-      data {
-        description
-      }
-      estate {
-        tokenId
-        data {
-          name
-        }
-      }
-    }
-    estate {
-      size
-      parcels {
-        x
-        y
-      }
-      data {
-        description
-      }
-    }
-    wearable {
-      description
-      category
-      rarity
-      bodyShapes
-    }
-    ens {
-      subdomain
-    }
-    createdAt
-    searchOrderPrice
-    searchOrderCreatedAt
   }
 `
 
-export const getMarketplaceFragment = () => `
-  fragment marketplaceFragment on NFT {
-    ...marketplaceFields
-    activeOrder {
-      ...orderFields
-    }
-  }
-  ${getMarketplaceFields()}
-  ${getOrderFields()}
-`
+export async function getCollectionsContracts(
+  subgraph: ISubgraphComponent,
+  network: Network,
+  chainId: ChainId
+): Promise<Contract[]> {
+  const { collections } = await subgraph.query<{
+    collections: { id: string; name: string }[]
+  }>(getCollectionsQuery)
 
-export type MarketplaceFields = Omit<
-  NFT,
-  'activeOrderId' | 'owner' | 'data' | 'chainId'
-> & {
-  owner: { address: string }
-  parcel?: {
-    x: string
-    y: string
-    data: {
-      description: string
-    } | null
-    estate: {
-      tokenId: string
-      data: {
-        name: string | null
-      } | null
-    } | null
-  }
-  estate?: {
-    size: number
-    parcels: { x: number; y: number }[]
-    data: {
-      description: string
-    } | null
-  }
-  wearable?: WearableData
-  ens?: EnsData
-  createdAt: string
-  searchOrderPrice: string
-  searchOrderCreatedAt: string
+  return collections.map(({ id: address, name }) => ({
+    name,
+    address,
+    category: NFTCategory.WEARABLE,
+    network,
+    chainId,
+  }))
 }
 
-export type MarketplaceFragment = MarketplaceFields & {
-  activeOrder: OrderFragment | null
-}
-
-export function getMarketplaceOrderBy(
-  sortBy?: SortBy
-): keyof MarketplaceFragment {
-  switch (sortBy) {
-    case SortBy.NEWEST:
-      return 'createdAt'
-    case SortBy.NAME:
-      return 'name'
-    case SortBy.RECENTLY_LISTED:
-      return 'searchOrderCreatedAt'
-    case SortBy.CHEAPEST:
-      return 'searchOrderPrice'
-    default:
-      return getMarketplaceOrderBy(SortBy.NEWEST)
-  }
-}
-
-export function fromMarketplaceFragment(fragment: MarketplaceFragment): Result {
-  const result: Result = {
-    nft: {
-      id: getId(fragment.contractAddress, fragment.tokenId),
-      tokenId: fragment.tokenId,
-      contractAddress: fragment.contractAddress,
-      activeOrderId:
-        fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
-          ? fragment.activeOrder.id
-          : null,
-      owner: fragment.owner.address.toLowerCase(),
-      name: fragment.name,
-      image: fragment.image,
-      url: `/contracts/${fragment.contractAddress}/tokens/${fragment.tokenId}`,
-      data: {
-        parcel: fragment.parcel
-          ? {
-              description:
-                (fragment.parcel.data && fragment.parcel.data.description) ||
-                null,
-              x: fragment.parcel.x,
-              y: fragment.parcel.y,
-              estate: fragment.parcel.estate
-                ? {
-                    tokenId: fragment.parcel.estate.tokenId,
-                    name: fragment.parcel.estate.data
-                      ? fragment.parcel.estate.data.name ??
-                        PARCEL_ESTATE_NAME_DEFAULT_VALUE
-                      : PARCEL_ESTATE_NAME_DEFAULT_VALUE,
-                  }
-                : null,
-            }
-          : undefined,
-        estate: fragment.estate
-          ? {
-              description:
-                (fragment.estate.data && fragment.estate.data.description) ||
-                null,
-              size: fragment.estate.size,
-              parcels: fragment.estate.parcels.map(({ x, y }) => ({ x, y })),
-            }
-          : undefined,
-        wearable: fragment.wearable
-          ? {
-              bodyShapes: fragment.wearable.bodyShapes,
-              category: fragment.wearable.category,
-              description: fragment.wearable.description,
-              rarity: fragment.wearable.rarity,
-            }
-          : undefined,
-        ens: fragment.ens ? { subdomain: fragment.ens.subdomain } : undefined,
-      },
-      category: fragment.category,
-      network: Network.ETHEREUM,
-      chainId: getMarketplaceChainId(),
-    },
-    order:
-      fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
-        ? fromOrderFragment(fragment.activeOrder)
-        : null,
-    sort: {
-      [SortBy.NEWEST]: fromNumber(fragment.createdAt),
-      [SortBy.NAME]: fragment.name,
-      [SortBy.RECENTLY_LISTED]: fromNumber(fragment.searchOrderCreatedAt),
-      [SortBy.CHEAPEST]: fromWei(fragment.searchOrderPrice),
-    },
-  }
-
-  // remove undefined data
-  for (const property of Object.keys(result.nft.data)) {
-    const key = property as keyof typeof result.nft.data
-    if (!result.nft.data[key]) {
-      delete result.nft.data[key]
-    }
-  }
-
-  return result
-}
-
-export async function getMarketplaceContracts(): Promise<Contract[]> {
-  const chainId = getMarketplaceChainId()
+export async function getMarketplaceContracts(
+  chainId: ChainId
+): Promise<Contract[]> {
   switch (chainId) {
     case ChainId.ETHEREUM_MAINNET: {
       return [

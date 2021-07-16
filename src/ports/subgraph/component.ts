@@ -12,17 +12,30 @@ export function createSubgraphComponent(url: string): ISubgraphComponent {
     remainingAttempts = 3
   ): Promise<T> {
     try {
-      const result: { data: T } = await fetch(url, {
-        method: 'post',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query,
-          variables,
-        }),
-      }).then((resp) => resp.json())
+      const result: { data: T; errors?: { message: string }[] } = await fetch(
+        url,
+        {
+          method: 'post',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            query,
+            variables,
+          }),
+        }
+      ).then((resp) => resp.json())
 
       if (!result || !result.data || Object.keys(result.data).length === 0) {
-        throw new Error('Invalid response')
+        if (result && result.errors && result.errors.length) {
+          throw new Error(
+            `${
+              result.errors.length > 1
+                ? `There was a total of ${result.errors.length} GraphQL errors, the first one was:`
+                : `GraphQL Error:`
+            } ${result.errors[0].message}`
+          )
+        } else {
+          throw new Error('GraphQL Error: Invalid response')
+        }
       }
 
       return result.data

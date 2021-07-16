@@ -1,36 +1,41 @@
+import { Bid, ListingStatus, Network } from '@dcl/schemas'
+
+export { Bid }
+
 export interface IBidsComponent {
-  fetch(options: BidOptions): Promise<Bid[]>
+  fetch(filters: BidFilters): Promise<Bid[]>
+  count(filters: BidFilters): Promise<number>
 }
 
-export enum BidStatus {
-  OPEN = 'open',
-  SOLD = 'sold',
-  CANCELLED = 'cancelled',
+export enum BidSortBy {
+  RECENTLY_OFFERED = 'recently_offered',
+  RECENTLY_UPDATED = 'recently_updated',
+  MOST_EXPENSIVE = 'most_expensive',
 }
 
-export type BidOptions = {
-  bidder: string | null
-  seller: string | null
-  nftId: string | null
-  status: BidStatus | null
+export type BidFilters = {
+  first?: number
+  skip?: number
+  sortBy?: BidSortBy
+  bidder?: string
+  seller?: string
+  contractAddress?: string
+  tokenId?: string
+  status?: ListingStatus
+  network?: Network
 }
 
-export type Bid = {
+export type BidFragment = {
   id: string
   bidder: string
   seller: string
   price: string
   fingerprint: string
-  status: BidStatus
+  status: ListingStatus
   blockchainId: string
   blockNumber: string
   expiresAt: number
   createdAt: number
   updatedAt: number
-  contractAddress: string
-  tokenId: string
-}
-
-export type BidFragment = Omit<Bid, 'contractAddress' | 'tokenId'> & {
   nft: { contractAddress: string; tokenId: string }
 }
