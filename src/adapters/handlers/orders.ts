@@ -3,7 +3,7 @@ import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { OrderSortBy } from '../../ports/orders/types'
 import { AppComponents, Context } from '../../types'
 import { Params } from '../../logic/http/params'
-import { json } from '../../logic/http/response'
+import { asJSON } from '../../logic/http/response'
 
 export function createOrdersHandler(
   components: Pick<AppComponents, 'logs' | 'orders'>
@@ -22,7 +22,7 @@ export function createOrdersHandler(
     const status = params.getValue<ListingStatus>('status', ListingStatus)
     const network = params.getValue<Network>('network', Network)
 
-    return json(() =>
+    return asJSON(() =>
       orders.fetchAndCount({
         first,
         skip,

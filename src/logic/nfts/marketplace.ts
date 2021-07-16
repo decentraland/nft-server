@@ -212,7 +212,7 @@ export function fromMarketplaceNFTFragment(
   // remove undefined data
   for (const property of Object.keys(result.nft.data)) {
     const key = property as keyof typeof result.nft.data
-    if (!result.nft.data[key]) {
+    if (typeof result.nft.data[key] === 'undefined') {
       delete result.nft.data[key]
     }
   }
@@ -249,7 +249,7 @@ export function marketplaceShouldFetch(filters: NFTFilters) {
     filters.itemId
   ) {
     return false
-  } else {
-    return true
   }
+
+  return true
 }

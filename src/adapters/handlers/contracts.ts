@@ -3,7 +3,7 @@ import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { ContractSortBy } from '../../ports/contracts/types'
 import { AppComponents, Context } from '../../types'
 import { Params } from '../../logic/http/params'
-import { json } from '../../logic/http/response'
+import { asJSON } from '../../logic/http/response'
 
 export function createContractsHandler(
   components: Pick<AppComponents, 'logs' | 'contracts'>
@@ -17,7 +17,7 @@ export function createContractsHandler(
     const sortBy = params.getValue<ContractSortBy>('sortBy', ContractSortBy)
     const network = params.getValue<Network>('network', Network)
 
-    return json(() =>
+    return asJSON(() =>
       contracts.fetchAndCount({
         first,
         skip,

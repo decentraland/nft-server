@@ -2,7 +2,7 @@ import { Network, Rarity, WearableCategory } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { AppComponents, Context } from '../../types'
 import { Params } from '../../logic/http/params'
-import { json } from '../../logic/http/response'
+import { asJSON } from '../../logic/http/response'
 import { WearableGender } from '../../ports/nfts/types'
 import { ItemSortBy } from '../../ports/items/types'
 
@@ -35,7 +35,7 @@ export function createItemsHandler(
     const itemId = params.getString('itemId')
     const network = params.getValue<Network>('network', Network)
 
-    return json(() =>
+    return asJSON(() =>
       items.fetchAndCount({
         first,
         skip,

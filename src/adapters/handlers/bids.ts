@@ -1,7 +1,7 @@
 import { ListingStatus, Network } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { Params } from '../../logic/http/params'
-import { json } from '../../logic/http/response'
+import { asJSON } from '../../logic/http/response'
 import { BidSortBy } from '../../ports/bids/types'
 import { AppComponents, Context } from '../../types'
 
@@ -23,7 +23,7 @@ export function createBidsHandler(
     const status = params.getValue<ListingStatus>('status', ListingStatus)
     const network = params.getValue<Network>('network', Network)
 
-    return json(() =>
+    return asJSON(() =>
       bids.fetchAndCount({
         first,
         skip,

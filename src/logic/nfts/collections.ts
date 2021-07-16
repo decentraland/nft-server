@@ -168,13 +168,13 @@ export function getCollectionsExtraWhere(options: NFTFilters) {
 }
 
 export function collectionsShouldFetch(filters: NFTFilters) {
-  if (filters.isLand) {
+  if (
+    filters.isLand ||
+    (filters.network && filters.network !== Network.MATIC) ||
+    (filters.category && filters.category !== NFTCategory.WEARABLE)
+  ) {
     return false
-  } else if (filters.category && filters.category !== NFTCategory.WEARABLE) {
-    return false
-  } else if (filters.network && filters.network !== Network.MATIC) {
-    return false
-  } else {
-    return true
   }
+
+  return true
 }

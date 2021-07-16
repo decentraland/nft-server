@@ -9,7 +9,7 @@ export class HttpError extends Error {
   }
 }
 
-export async function json(
+export async function asJSON(
   handle: () => Promise<any>
 ): Promise<IHttpServerComponent.IResponse> {
   try {

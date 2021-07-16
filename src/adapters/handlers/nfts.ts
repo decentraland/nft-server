@@ -2,7 +2,7 @@ import { Network, NFTCategory, Rarity, WearableCategory } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { AppComponents, Context } from '../../types'
 import { Params } from '../../logic/http/params'
-import { HttpError, json } from '../../logic/http/response'
+import { HttpError, asJSON } from '../../logic/http/response'
 import { NFTSortBy, WearableGender } from '../../ports/nfts/types'
 
 export function createNFTsHandler(
@@ -36,7 +36,7 @@ export function createNFTsHandler(
     const itemId = params.getString('itemId')
     const network = params.getValue<Network>('network', Network)
 
-    return json(() =>
+    return asJSON(() =>
       nfts.fetchAndCount({
         first,
         skip,
@@ -69,7 +69,7 @@ export function createNFTHandler(
   return async (context) => {
     const { contractAddress, tokenId } = context.params
 
-    return json(async () => {
+    return asJSON(async () => {
       const results = await nfts.fetch({
         contractAddresses: [contractAddress],
         tokenId,
