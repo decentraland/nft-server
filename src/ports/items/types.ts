@@ -17,10 +17,10 @@ export type ItemFilters = {
   isSoldOut?: boolean
   isOnSale?: boolean
   search?: string
+  rarities?: Rarity[]
   isWearableHead?: boolean
   isWearableAccessory?: boolean
   wearableCategory?: WearableCategory
-  wearableRarities?: Rarity[]
   wearableGenders?: WearableGender[]
   contractAddress?: string
   itemId?: string

@@ -19,6 +19,7 @@ export function createNFTsHandler(
     const owner = params.getAddress('owner')
     const isOnSale = params.getBoolean('isOnSale')
     const search = params.getString('search')
+    const rarities = params.getList<Rarity>('rarity', Rarity)
     const isLand = params.getBoolean('isLand')
     const isWearableHead = params.getBoolean('isWearableHead')
     const isWearableAccessory = params.getBoolean('isWearableAccessory')
@@ -26,7 +27,6 @@ export function createNFTsHandler(
       'wearableCategory',
       WearableCategory
     )
-    const wearableRarities = params.getList<Rarity>('wearableRarity', Rarity)
     const wearableGenders = params.getList<WearableGender>(
       'wearableGender',
       WearableGender
@@ -49,7 +49,7 @@ export function createNFTsHandler(
         isWearableHead,
         isWearableAccessory,
         wearableCategory,
-        wearableRarities,
+        rarities,
         wearableGenders,
         contractAddresses,
         tokenId,

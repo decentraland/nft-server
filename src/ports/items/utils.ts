@@ -72,10 +72,10 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     isSoldOut,
     isOnSale,
     search,
+    rarities,
     isWearableHead,
     isWearableAccessory,
     wearableCategory,
-    wearableRarities,
     wearableGenders,
     contractAddress,
     itemId,
@@ -115,9 +115,9 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     where.push('searchIsWearableAccessory: true')
   }
 
-  if (wearableRarities && wearableRarities.length > 0) {
+  if (rarities && rarities.length > 0) {
     where.push(
-      `searchWearableRarity_in: [${wearableRarities
+      `searchWearableRarity_in: [${rarities
         .map((rarity) => `"${rarity}"`)
         .join(',')}]`
     )

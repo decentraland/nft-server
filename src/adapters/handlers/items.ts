@@ -20,13 +20,13 @@ export function createItemsHandler(
     const isSoldOut = params.getBoolean('isSoldOut')
     const isOnSale = params.getBoolean('isOnSale')
     const search = params.getString('search')
+    const rarities = params.getList<Rarity>('rarity', Rarity)
     const isWearableHead = params.getBoolean('isWearableHead')
     const isWearableAccessory = params.getBoolean('isWearableAccessory')
     const wearableCategory = params.getValue<WearableCategory>(
       'wearableCategory',
       WearableCategory
     )
-    const wearableRarities = params.getList<Rarity>('wearableRarity', Rarity)
     const wearableGenders = params.getList<WearableGender>(
       'wearableGender',
       WearableGender
@@ -44,10 +44,10 @@ export function createItemsHandler(
         isSoldOut,
         isOnSale,
         search,
+        rarities,
         isWearableHead,
         isWearableAccessory,
         wearableCategory,
-        wearableRarities,
         wearableGenders,
         contractAddress,
         itemId,

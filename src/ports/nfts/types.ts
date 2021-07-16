@@ -24,7 +24,7 @@ export type NFTFilters = {
   isWearableHead?: boolean
   isWearableAccessory?: boolean
   wearableCategory?: WearableCategory
-  wearableRarities?: Rarity[]
+  rarities?: Rarity[]
   wearableGenders?: WearableGender[]
   contractAddresses?: string[]
   tokenId?: string

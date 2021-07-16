@@ -88,9 +88,9 @@ export function getFetchQuery(
     where.push('searchIsWearableAccessory: $isWearableAccessory')
   }
 
-  if (filters.wearableRarities && filters.wearableRarities.length > 0) {
+  if (filters.rarities && filters.rarities.length > 0) {
     where.push(
-      `searchWearableRarity_in: [${filters.wearableRarities
+      `searchWearableRarity_in: [${filters.rarities
         .map((rarity) => `"${rarity}"`)
         .join(',')}]`
     )
