@@ -43,8 +43,6 @@ export type ItemFragment = {
   collection: {
     id: string
     creator: string
-    createdAt: string
-    updatedAt: string
   }
   metadata: {
     wearable: {
@@ -54,6 +52,8 @@ export type ItemFragment = {
     }
   }
   searchWearableBodyShapes: BodyShape[]
+  createdAt: string
+  updatedAt: string
 }
 
 export interface IItemsComponent {

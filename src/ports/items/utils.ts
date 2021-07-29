@@ -31,8 +31,8 @@ export function fromItemFragment(
     },
     network,
     chainId,
-    createdAt: +fragment.collection.createdAt * 1000,
-    updatedAt: +fragment.collection.updatedAt * 1000,
+    createdAt: +fragment.createdAt * 1000,
+    updatedAt: +fragment.updatedAt * 1000,
   }
 
   return item
@@ -49,8 +49,6 @@ export const getItemFragment = () => `
     collection {
       id
       creator
-      createdAt
-      updatedAt
     }
     metadata {
       wearable {
@@ -60,6 +58,8 @@ export const getItemFragment = () => `
       }
     }
     searchWearableBodyShapes
+    createdAt
+    updatedAt
   }
 `
 
@@ -162,8 +162,8 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
   let orderDirection: string
   switch (sortBy || ITEM_DEFAULT_SORT_BY) {
     case ItemSortBy.NEWEST:
-      orderBy = ''
-      orderDirection = ''
+      orderBy = 'createdAt'
+      orderDirection = 'desc'
       break
     case ItemSortBy.NAME:
       orderBy = 'searchText'
@@ -174,8 +174,8 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       orderDirection = 'asc'
       break
     default:
-      orderBy = ''
-      orderDirection = ''
+      orderBy = 'createdAt'
+      orderDirection = 'desc'
   }
 
   const query = `query Items {
