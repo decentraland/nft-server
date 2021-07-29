@@ -14,13 +14,13 @@ export type ItemFilters = {
   skip?: number
   sortBy?: ItemSortBy
   creator?: string
+  rarities?: Rarity[]
   isSoldOut?: boolean
   isOnSale?: boolean
   search?: string
   isWearableHead?: boolean
   isWearableAccessory?: boolean
   wearableCategory?: WearableCategory
-  wearableRarities?: Rarity[]
   wearableGenders?: WearableGender[]
   contractAddress?: string
   itemId?: string

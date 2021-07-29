@@ -26,7 +26,7 @@ export function createItemsHandler(
       'wearableCategory',
       WearableCategory
     )
-    const wearableRarities = params.getList<Rarity>('wearableRarity', Rarity)
+    const rarities = params.getList<Rarity>('rarity', Rarity)
     const wearableGenders = params.getList<WearableGender>(
       'wearableGender',
       WearableGender
@@ -41,13 +41,13 @@ export function createItemsHandler(
         skip,
         sortBy,
         creator,
+        rarities,
         isSoldOut,
         isOnSale,
         search,
         isWearableHead,
         isWearableAccessory,
         wearableCategory,
-        wearableRarities,
         wearableGenders,
         contractAddress,
         itemId,
