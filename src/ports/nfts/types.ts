@@ -20,11 +20,11 @@ export type NFTFilters = {
   owner?: string
   isOnSale?: boolean
   search?: string
+  itemRarities?: Rarity[]
   isLand?: boolean
   isWearableHead?: boolean
   isWearableAccessory?: boolean
   wearableCategory?: WearableCategory
-  wearableRarities?: Rarity[]
   wearableGenders?: WearableGender[]
   contractAddresses?: string[]
   tokenId?: string

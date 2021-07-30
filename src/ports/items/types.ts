@@ -14,13 +14,13 @@ export type ItemFilters = {
   skip?: number
   sortBy?: ItemSortBy
   creator?: string
+  rarities?: Rarity[]
   isSoldOut?: boolean
   isOnSale?: boolean
   search?: string
   isWearableHead?: boolean
   isWearableAccessory?: boolean
   wearableCategory?: WearableCategory
-  wearableRarities?: Rarity[]
   wearableGenders?: WearableGender[]
   contractAddress?: string
   itemId?: string
@@ -43,8 +43,6 @@ export type ItemFragment = {
   collection: {
     id: string
     creator: string
-    createdAt: string
-    updatedAt: string
   }
   metadata: {
     wearable: {
@@ -54,6 +52,9 @@ export type ItemFragment = {
     }
   }
   searchWearableBodyShapes: BodyShape[]
+  searchIsStoreMinter: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 export interface IItemsComponent {

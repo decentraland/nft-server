@@ -58,10 +58,10 @@ type NFT = {
 - `isWearableHead`: Only return results that their category is `wearable` and are part of the avatar's head. Type `boolean`.
 - `isWearableAccessory`: Only return results that their category is `wearable` and accessories (not a part of the body).
 - `wearableCategory`: Filter results by `WearableCategory`. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`.
-- `wearableRarity`: Filter results by `WearableRarity`. It supports multiple values by adding the query param multiple times. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
 - `wearableGender`: Filter results by `WearableGender`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`.
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
 - `tokenId`: Filter results by `tokenId`. Type: `string`.
+- `itemRarity`: Filter results by `Rarity`. It supports multiple values by adding the query param multiple times. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
 - `itemId`: Filter results by `itemId`. Type `string`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 
@@ -80,7 +80,7 @@ type Item = {
   category: NFTCategory
   contractAddress: string
   itemId: string
-  rarity: WearableRarity
+  rarity: Rarity
   price: string
   available: number
   creator: string
@@ -98,13 +98,13 @@ type Item = {
 - `skip`: Skip results. Type: `number`.
 - `sortBy`: Sort results. Possible values: `newest`, `name`, `cheapest`.
 - `creator`: Filter by creator. Type: `address`.
+- `rarity`: Filter results by `Rarity`. It supports multiple values by adding the query param multiple times. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
 - `isSoldOut`: Only return results that are sold out (all NFTs have been minted). Type: `boolean`.
 - `isOnSale`: Only return results that can be bought (`CollectionStore` has been added as minter, and there's still available supply to mint). Type: `boolean`.
 - `search`: Free text search. Type: `string`.
 - `isWearableHead`: Only return results that their category is `wearable` and are part of the avatar's head. Type `boolean`.
 - `isWearableAccessory`: Only return results that their category is `wearable` and accessories (not a part of the body).
 - `wearableCategory`: Filter results by `WearableCategory`. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`.
-- `wearableRarity`: Filter results by `WearableRarity`. It supports multiple values by adding the query param multiple times. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
 - `wearableGender`: Filter results by `WearableGender`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`.
 - `contractAddress`: Filter results by contract address. Type: `address`.
 - `itemId`: Filter results by `itemId`. Type: `string`.

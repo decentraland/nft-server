@@ -20,6 +20,7 @@ export function fromItemFragment(
     rarity: fragment.rarity,
     price: fragment.price,
     available: +fragment.available,
+    isOnSale: fragment.searchIsStoreMinter && +fragment.available > 0,
     creator: fragment.collection.creator,
     data: {
       wearable: {
@@ -31,8 +32,8 @@ export function fromItemFragment(
     },
     network,
     chainId,
-    createdAt: +fragment.collection.createdAt * 1000,
-    updatedAt: +fragment.collection.updatedAt * 1000,
+    createdAt: +fragment.createdAt * 1000,
+    updatedAt: +fragment.updatedAt * 1000,
   }
 
   return item
@@ -49,8 +50,6 @@ export const getItemFragment = () => `
     collection {
       id
       creator
-      createdAt
-      updatedAt
     }
     metadata {
       wearable {
@@ -60,6 +59,9 @@ export const getItemFragment = () => `
       }
     }
     searchWearableBodyShapes
+    searchIsStoreMinter
+    createdAt
+    updatedAt
   }
 `
 
@@ -69,13 +71,13 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     skip,
     sortBy,
     creator,
+    rarities,
     isSoldOut,
     isOnSale,
     search,
     isWearableHead,
     isWearableAccessory,
     wearableCategory,
-    wearableRarities,
     wearableGenders,
     contractAddress,
     itemId,
@@ -115,9 +117,9 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     where.push('searchIsWearableAccessory: true')
   }
 
-  if (wearableRarities && wearableRarities.length > 0) {
+  if (rarities && rarities.length > 0) {
     where.push(
-      `searchWearableRarity_in: [${wearableRarities
+      `searchWearableRarity_in: [${rarities
         .map((rarity) => `"${rarity}"`)
         .join(',')}]`
     )
@@ -162,8 +164,8 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
   let orderDirection: string
   switch (sortBy || ITEM_DEFAULT_SORT_BY) {
     case ItemSortBy.NEWEST:
-      orderBy = ''
-      orderDirection = ''
+      orderBy = 'createdAt'
+      orderDirection = 'desc'
       break
     case ItemSortBy.NAME:
       orderBy = 'searchText'
@@ -174,8 +176,8 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       orderDirection = 'asc'
       break
     default:
-      orderBy = ''
-      orderDirection = ''
+      orderBy = 'createdAt'
+      orderDirection = 'desc'
   }
 
   const query = `query Items {
