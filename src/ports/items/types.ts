@@ -52,6 +52,7 @@ export type ItemFragment = {
     }
   }
   searchWearableBodyShapes: BodyShape[]
+  searchIsStoreMinter: boolean
   createdAt: string
   updatedAt: string
 }

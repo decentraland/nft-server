@@ -20,6 +20,7 @@ export function fromItemFragment(
     rarity: fragment.rarity,
     price: fragment.price,
     available: +fragment.available,
+    isOnSale: fragment.searchIsStoreMinter && +fragment.available > 0,
     creator: fragment.collection.creator,
     data: {
       wearable: {
@@ -58,6 +59,7 @@ export const getItemFragment = () => `
       }
     }
     searchWearableBodyShapes
+    searchIsStoreMinter
     createdAt
     updatedAt
   }
