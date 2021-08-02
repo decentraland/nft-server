@@ -1,4 +1,4 @@
-import { Network } from '@dcl/schemas'
+import { Network, NFTCategory } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { ContractSortBy } from '../../ports/contracts/types'
 import { AppComponents, Context } from '../../types'
@@ -15,6 +15,7 @@ export function createContractsHandler(
     const first = params.getNumber('first')
     const skip = params.getNumber('skip')
     const sortBy = params.getValue<ContractSortBy>('sortBy', ContractSortBy)
+    const category = params.getValue<NFTCategory>('category', NFTCategory)
     const network = params.getValue<Network>('network', Network)
 
     return asJSON(() =>
@@ -22,6 +23,7 @@ export function createContractsHandler(
         first,
         skip,
         sortBy,
+        category,
         network,
       })
     )
