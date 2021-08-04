@@ -175,14 +175,21 @@ export async function getMarketplaceContracts(
           chainId: ChainId.ETHEREUM_MAINNET,
         },
         {
-          name: 'Halloween2019',
+          name: 'Dillon Francis Atari',
+          address: '0x51e0b1afe5da0c038fc93a3fc8e11cf7a238b40b',
+          category: NFTCategory.WEARABLE,
+          network: Network.ETHEREUM,
+          chainId: ChainId.ETHEREUM_MAINNET,
+        },
+        {
+          name: 'Halloween 2019',
           address: '0xc1f4b0eea2bd6690930e6c66efd3e197d620b9c2',
           category: NFTCategory.WEARABLE,
           network: Network.ETHEREUM,
           chainId: ChainId.ETHEREUM_MAINNET,
         },
         {
-          name: 'Halloween2020',
+          name: 'Halloween 2020',
           address: '0xfeb52cbf71b9adac957c6f948a6cf9980ac8c907',
           category: NFTCategory.WEARABLE,
           network: Network.ETHEREUM,
