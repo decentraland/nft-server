@@ -96,7 +96,7 @@ type Item = {
 
 - `first`: Limit the number of results. Type: `number`.
 - `skip`: Skip results. Type: `number`.
-- `sortBy`: Sort results. Possible values: `newest`, `name`, `cheapest`.
+- `sortBy`: Sort results. Possible values: `newest`, `recently_reviewed`, `name`, `cheapest`.
 - `creator`: Filter by creator. Type: `address`.
 - `rarity`: Filter results by `Rarity`. It supports multiple values by adding the query param multiple times. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
 - `isSoldOut`: Only return results that are sold out (all NFTs have been minted). Type: `boolean`.

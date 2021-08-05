@@ -234,6 +234,7 @@ async function initComponents(): Promise<AppComponents> {
     defaultSortBy: ITEM_DEFAULT_SORT_BY,
     directions: {
       [ItemSortBy.NEWEST]: SortDirection.DESC,
+      [ItemSortBy.RECENTLY_REVIEWED]: SortDirection.DESC,
       [ItemSortBy.NAME]: SortDirection.ASC,
       [ItemSortBy.CHEAPEST]: SortDirection.ASC,
     },

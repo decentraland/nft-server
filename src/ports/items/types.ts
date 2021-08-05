@@ -30,6 +30,7 @@ export type ItemFilters = {
 export enum ItemSortBy {
   NAME = 'name',
   NEWEST = 'newest',
+  RECENTLY_REVIEWED = 'recently_reviewed',
   CHEAPEST = 'cheapest',
 }
 
@@ -55,6 +56,7 @@ export type ItemFragment = {
   searchIsStoreMinter: boolean
   createdAt: string
   updatedAt: string
+  reviewedAt: string
 }
 
 export interface IItemsComponent {
