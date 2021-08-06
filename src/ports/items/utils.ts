@@ -34,6 +34,7 @@ export function fromItemFragment(
     chainId,
     createdAt: +fragment.createdAt * 1000,
     updatedAt: +fragment.updatedAt * 1000,
+    reviewedAt: +fragment.reviewedAt * 1000,
   }
 
   return item
@@ -62,6 +63,7 @@ export const getItemFragment = () => `
     searchIsStoreMinter
     createdAt
     updatedAt
+    reviewedAt
   }
 `
 
@@ -167,6 +169,10 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       orderBy = 'createdAt'
       orderDirection = 'desc'
       break
+    case ItemSortBy.RECENTLY_REVIEWED:
+        orderBy = 'reviewedAt'
+        orderDirection = 'desc'
+        break
     case ItemSortBy.NAME:
       orderBy = 'searchText'
       orderDirection = 'asc'
