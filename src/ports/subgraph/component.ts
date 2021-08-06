@@ -12,7 +12,7 @@ export function createSubgraphComponent(url: string): ISubgraphComponent {
     remainingAttempts = 3
   ): Promise<T> {
     try {
-      const result: { data: T; errors?: { message: string }[] } = await fetch(
+      const response = await fetch(
         url,
         {
           method: 'post',
@@ -22,7 +22,13 @@ export function createSubgraphComponent(url: string): ISubgraphComponent {
             variables,
           }),
         }
-      ).then((resp) => resp.json())
+      )
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch subgraph: ${await response.text()}`)
+      }
+
+      const result: { data: T; errors?: { message: string }[] } = await response.json()
 
       if (!result || !result.data || Object.keys(result.data).length === 0) {
         if (result && result.errors && result.errors.length) {
