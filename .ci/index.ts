@@ -64,6 +64,8 @@ export = async function main() {
       },
       version: '1',
       memoryReservation: 1024,
+      cpuReservation: 256,
+      desiredCount: env === 'prd' ? 3 : 1,
       extraExposedServiceOptions: {
         createCloudflareProxiedSubdomain: true,
       },
