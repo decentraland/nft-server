@@ -53,6 +53,10 @@ import { ItemFilters, ItemSortBy } from './ports/items/types'
 import { createItemsSource } from './adapters/sources/items'
 import { createItemsComponent } from './ports/items/component'
 import { ITEM_DEFAULT_SORT_BY } from './ports/items/utils'
+import { createMintsComponent } from './ports/mints/component'
+import { createMintsSource } from './adapters/sources/mints'
+import { Mint, MintFilters, MintSortBy } from './ports/mints/types'
+import { MINT_DEFAULT_SORT_BY } from './ports/mints/utils'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -241,6 +245,23 @@ async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
+  // mints
+  const collectionsMints = createMintsComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.MATIC,
+    chainId: collectionsChainId,
+  })
+
+  const mints = createMergerComponent<Mint, MintFilters, MintSortBy>({
+    sources: [createMintsSource(collectionsMints)],
+    defaultSortBy: MINT_DEFAULT_SORT_BY,
+    directions: {
+      [MintSortBy.RECENTLY_MINTED]: SortDirection.DESC,
+      [MintSortBy.MOST_EXPENSIVE]: SortDirection.DESC,
+    },
+    maxCount: 1000,
+  })
+
   return {
     config,
     logs,
@@ -252,6 +273,7 @@ async function initComponents(): Promise<AppComponents> {
     contracts,
     nfts,
     items,
+    mints,
   }
 }
 

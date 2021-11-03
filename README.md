@@ -184,6 +184,44 @@ type Bid = {
 - `status`: Filter results by `BidStatus`. Possible values: `open`, `sold`, `cancelled`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 
+## Mints
+
+**Endpoint**: `/v1/mints`
+
+**Type**:
+
+```ts
+type Mint = {
+  id: string
+  creator: string
+  beneficiary: string
+  minter: string
+  itemId: string
+  tokenId: string
+  issuedId: string
+  contractAddress: string
+  price: string | null
+  timestamp: number
+  network: Network
+  chainId: ChainId
+}
+```
+
+**Query Params**:
+
+- `first`: Limit the number of results. Type: `number`.
+- `skip`: Skip results. Type: `number`.
+- `sortBy`: Sort results. Possible values: `recently_minted`, `most_expensive`.
+- `creator`: Filter by creator. Type: `address`.
+- `beneficiary`: Filter by beneficiary. Type: `address`.
+- `minter`: Filter by minter. Type: `address`.
+- `contractAddress`: Filter results by contract address. Type: `address`.
+- `tokenId`: Filter results by `tokenId`. Type: `string`.
+- `itemId`: Filter results by `itemId`. Type: `string`.
+- `issuedId`: Filter results by `issuedId`. Type: `string`.
+- `isSale`: Return only mints that came from a sale.
+- `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
+
 ## Contracts
 
 **Endpoint**: `/v1/contracts`
