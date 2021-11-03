@@ -1,9 +1,11 @@
 import { ChainId, Contract, Network, NFTCategory } from '@dcl/schemas'
 import { ISubgraphComponent } from '../ports/subgraph/types'
 
-const getCollectionsQuery = `
+const MAX_RESULTS = 1000
+
+const getCollectionsQuery = (page: number) => `
   query getCollections {
-    collections(first: 1000) {
+    collections(first: ${MAX_RESULTS}, skip: ${page * MAX_RESULTS}, where: { isApproved: true }) {
       name
       id
     }
@@ -13,19 +15,33 @@ const getCollectionsQuery = `
 export async function getCollectionsContracts(
   subgraph: ISubgraphComponent,
   network: Network,
-  chainId: ChainId
+  chainId: ChainId,
 ): Promise<Contract[]> {
-  const { collections } = await subgraph.query<{
-    collections: { id: string; name: string }[]
-  }>(getCollectionsQuery)
 
-  return collections.map(({ id: address, name }) => ({
-    name,
-    address,
-    category: NFTCategory.WEARABLE,
-    network,
-    chainId,
-  }))
+  let page = 0
+  const contracts: Contract[] = []
+  
+  while (true) {
+    const { collections } = await subgraph.query<{
+      collections: { id: string; name: string }[]
+    }>(getCollectionsQuery(page++))
+
+    for (const { id: address, name } of collections) {
+      contracts.push({
+        name,
+        address,
+        category: NFTCategory.WEARABLE,
+        network,
+        chainId,
+      })
+    }
+
+    if (collections.length < MAX_RESULTS) {
+      break
+    }
+  }
+
+  return contracts
 }
 
 export async function getMarketplaceContracts(
