@@ -57,6 +57,10 @@ import { createMintsComponent } from './ports/mints/component'
 import { createMintsSource } from './adapters/sources/mints'
 import { Mint, MintFilters, MintSortBy } from './ports/mints/types'
 import { MINT_DEFAULT_SORT_BY } from './ports/mints/utils'
+import { createSalesSource } from './adapters/sources/sales'
+import { Sale, SaleFilters, SaleSortBy } from './ports/sales/types'
+import { SALE_DEFAULT_SORT_BY } from './ports/sales/utils'
+import { createSalesComponent } from './ports/sales/component'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -159,7 +163,7 @@ async function initComponents(): Promise<AppComponents> {
 
   // contracts
   const marketplaceContracts = createContractsComponent({
-    getContracts: () => getMarketplaceContracts(marketplaceChainId),
+    getContracts: async () => getMarketplaceContracts(marketplaceChainId),
     network: Network.ETHEREUM,
   })
 
@@ -262,6 +266,32 @@ async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
+  // sales
+  const marketplaceSales = createSalesComponent({
+    subgraph: marketplaceSubgraph,
+    network: Network.ETHEREUM,
+    chainId: marketplaceChainId,
+  })
+
+  const collectionsSales = createSalesComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.MATIC,
+    chainId: collectionsChainId,
+  })
+
+  const sales = createMergerComponent<Sale, SaleFilters, SaleSortBy>({
+    sources: [
+      createSalesSource(marketplaceSales),
+      createSalesSource(collectionsSales),
+    ],
+    defaultSortBy: SALE_DEFAULT_SORT_BY,
+    directions: {
+      [SaleSortBy.RECENTLY_SOLD]: SortDirection.DESC,
+      [SaleSortBy.MOST_EXPENSIVE]: SortDirection.DESC,
+    },
+    maxCount: 1000,
+  })
+
   return {
     config,
     logs,
@@ -274,6 +304,7 @@ async function initComponents(): Promise<AppComponents> {
     nfts,
     items,
     mints,
+    sales,
   }
 }
 

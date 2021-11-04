@@ -5,7 +5,9 @@ const MAX_RESULTS = 1000
 
 const getCollectionsQuery = (page: number) => `
   query getCollections {
-    collections(first: ${MAX_RESULTS}, skip: ${page * MAX_RESULTS}, where: { isApproved: true }) {
+    collections(first: ${MAX_RESULTS}, skip: ${
+  page * MAX_RESULTS
+}, where: { isApproved: true }) {
       name
       id
     }
@@ -15,12 +17,11 @@ const getCollectionsQuery = (page: number) => `
 export async function getCollectionsContracts(
   subgraph: ISubgraphComponent,
   network: Network,
-  chainId: ChainId,
+  chainId: ChainId
 ): Promise<Contract[]> {
-
   let page = 0
   const contracts: Contract[] = []
-  
+
   while (true) {
     const { collections } = await subgraph.query<{
       collections: { id: string; name: string }[]
@@ -44,9 +45,7 @@ export async function getCollectionsContracts(
   return contracts
 }
 
-export async function getMarketplaceContracts(
-  chainId: ChainId
-): Promise<Contract[]> {
+export function getMarketplaceContracts(chainId: ChainId): Contract[] {
   switch (chainId) {
     case ChainId.ETHEREUM_MAINNET: {
       return [

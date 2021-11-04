@@ -15,7 +15,7 @@ export function createMintsSource(
       result,
       sort: {
         [MintSortBy.RECENTLY_MINTED]: result.timestamp,
-        [MintSortBy.MOST_EXPENSIVE]: result.price ? result.price : 0,
+        [MintSortBy.MOST_EXPENSIVE]: result.price ? +result.price : 0,
       },
     }))
   }

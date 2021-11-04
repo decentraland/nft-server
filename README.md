@@ -222,6 +222,47 @@ type Mint = {
 - `isSale`: Return only mints that came from a sale.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 
+## Sales
+
+**Endpoint**: `/v1/sales`
+
+**Type**:
+
+```ts
+export type Sale = {
+  id: string
+  type: SaleType
+  buyer: string
+  seller: string
+  itemId: string | null
+  tokenId: string
+  contractAddress: string
+  price: string
+  timestamp: number
+  txHash: string
+  network: Network
+  chainId: ChainId
+}
+```
+
+**Query Params**:
+
+- `first`: Limit the number of results. Type: `number`.
+- `skip`: Skip results. Type: `number`.
+- `sortBy`: Sort results. Possible values: `recently_sold`, `most_expensive`.
+- `type`: Filter by sale type. Possible values: `order`, `bid`, `mint`.
+- `category`: Filter by NFT category. Possible values: `parcel`, `estate`, `ens`, `wearable`.
+- `seller`: Filter by seller. Type: `address`.
+- `buyer`: Filter by buyer. Type: `address`.
+- `contractAddress`: Filter results by contract address. Type: `address`.
+- `tokenId`: Filter results by `tokenId`. Type: `string`.
+- `itemId`: Filter results by `itemId`. Type: `string`.
+- `from`: Return only sales that happened after this timestamp. Type `number`.
+- `to`: Return only sales that happened before this timestamp. Type `number`.
+- `minPrice`: Return only sales with a price higher than this. Type `number`.
+- `maxPrice`: Return only sales with a price lower than this. Type `number`.
+- `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
+
 ## Contracts
 
 **Endpoint**: `/v1/contracts`

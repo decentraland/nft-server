@@ -17,6 +17,7 @@ import {
 import { NFTFilters, NFTResult, NFTSortBy } from './ports/nfts/types'
 import { Item, ItemFilters, ItemSortBy } from './ports/items/types'
 import { Mint, MintFilters, MintSortBy } from './ports/mints/types'
+import { Sale, SaleFilters, SaleSortBy } from './ports/sales/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -40,6 +41,7 @@ export type AppComponents = {
   nfts: IMergerComponent<NFTResult, NFTFilters, NFTSortBy>
   items: IMergerComponent<Item, ItemFilters, ItemSortBy>
   mints: IMergerComponent<Mint, MintFilters, MintSortBy>
+  sales: IMergerComponent<Sale, SaleFilters, SaleSortBy>
 }
 
 export type Context<Path extends string = any> = RoutedContext<
