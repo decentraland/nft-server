@@ -58,6 +58,7 @@ export const getMarketplaceFields = () => `
     }
     createdAt
     updatedAt
+    soldAt
     searchOrderPrice
     searchOrderCreatedAt
   }
@@ -113,6 +114,7 @@ export type MarketplaceNFTFields = {
   }
   createdAt: string
   updatedAt: string
+  soldAt: string
   searchOrderPrice: string
   searchOrderCreatedAt: string
 }
@@ -133,6 +135,8 @@ export function getMarketplaceOrderBy(
       return 'searchOrderCreatedAt'
     case NFTSortBy.CHEAPEST:
       return 'searchOrderPrice'
+    case NFTSortBy.RECENTLY_SOLD:
+      return 'soldAt'
     default:
       return getMarketplaceOrderBy(NFT_DEFAULT_SORT_BY)
   }
@@ -202,6 +206,8 @@ export function fromMarketplaceNFTFragment(
       chainId: getMarketplaceChainId(),
       createdAt: +fragment.createdAt * 1000,
       updatedAt: +fragment.updatedAt * 1000,
+      //@ts-ignore
+      soldAt: +fragment.soldAt * 1000,
     },
     order:
       fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)

@@ -33,6 +33,7 @@ export const getCollectionsFields = () => `
     }
     createdAt
     updatedAt
+    soldAt
     searchOrderPrice
     searchOrderCreatedAt
     itemBlockchainId
@@ -78,6 +79,7 @@ export type CollectionsFields = Omit<
   }
   createdAt: string
   updatedAt: string
+  soldAt: string
   searchOrderPrice: string
   searchOrderCreatedAt: string
   searchText: string
@@ -101,6 +103,8 @@ export function getCollectionsOrderBy(
       return 'searchOrderCreatedAt'
     case NFTSortBy.CHEAPEST:
       return 'searchOrderPrice'
+    case NFTSortBy.RECENTLY_SOLD:
+      return 'soldAt'
     default:
       return getCollectionsOrderBy(NFT_DEFAULT_SORT_BY)
   }
@@ -137,6 +141,8 @@ export function fromCollectionsFragment(
       chainId: getCollectionsChainId(),
       createdAt: +fragment.createdAt * 1000,
       updatedAt: +fragment.updatedAt * 1000,
+      //@ts-ignore
+      soldAt: +fragment.soldAt * 1000,
     },
     order:
       fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)

@@ -226,6 +226,7 @@ async function initComponents(): Promise<AppComponents> {
       [NFTSortBy.NAME]: SortDirection.ASC,
       [NFTSortBy.NEWEST]: SortDirection.DESC,
       [NFTSortBy.RECENTLY_LISTED]: SortDirection.DESC,
+      [NFTSortBy.RECENTLY_SOLD]: SortDirection.DESC,
     },
     maxCount: 1000,
   })
@@ -243,6 +244,7 @@ async function initComponents(): Promise<AppComponents> {
     directions: {
       [ItemSortBy.NEWEST]: SortDirection.DESC,
       [ItemSortBy.RECENTLY_REVIEWED]: SortDirection.DESC,
+      [ItemSortBy.RECENTLY_SOLD]: SortDirection.DESC,
       [ItemSortBy.NAME]: SortDirection.ASC,
       [ItemSortBy.CHEAPEST]: SortDirection.ASC,
     },

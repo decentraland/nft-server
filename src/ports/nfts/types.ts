@@ -36,6 +36,7 @@ export enum NFTSortBy {
   NAME = 'name',
   NEWEST = 'newest',
   RECENTLY_LISTED = 'recently_listed',
+  RECENTLY_SOLD = 'recently_sold',
   CHEAPEST = 'cheapest',
 }
 

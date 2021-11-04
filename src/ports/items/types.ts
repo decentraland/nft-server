@@ -31,6 +31,7 @@ export enum ItemSortBy {
   NAME = 'name',
   NEWEST = 'newest',
   RECENTLY_REVIEWED = 'recently_reviewed',
+  RECENTLY_SOLD = 'recently_sold',
   CHEAPEST = 'cheapest',
 }
 
@@ -57,6 +58,7 @@ export type ItemFragment = {
   createdAt: string
   updatedAt: string
   reviewedAt: string
+  soldAt: string
 }
 
 export interface IItemsComponent {

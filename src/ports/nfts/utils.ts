@@ -25,6 +25,7 @@ export function getOrderDirection(sortBy?: NFTSortBy): 'asc' | 'desc' {
   switch (sortBy) {
     case NFTSortBy.NEWEST:
     case NFTSortBy.RECENTLY_LISTED:
+    case NFTSortBy.RECENTLY_SOLD:
       return 'desc'
     case NFTSortBy.NAME:
     case NFTSortBy.CHEAPEST:
@@ -115,6 +116,10 @@ export function getFetchQuery(
         .map((contract) => `"${contract}"`)
         .join(', ')}]`
     )
+  }
+
+  if (filters.sortBy === NFTSortBy.RECENTLY_SOLD) {
+    where.push(`soldAt_not: null`)
   }
 
   // Compute total nfts to query. If there's a "skip" we add it to the total, since we need all the prior results to later merge them in a single page. If nothing is provided we default to the max. When counting we also use the max.

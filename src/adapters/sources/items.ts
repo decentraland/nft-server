@@ -16,6 +16,8 @@ export function createItemsSource(
       sort: {
         [ItemSortBy.NEWEST]: result.createdAt,
         [ItemSortBy.RECENTLY_REVIEWED]: result.reviewedAt,
+        //@ts-ignore
+        [ItemSortBy.RECENTLY_SOLD]: result.soldAt,
         [ItemSortBy.NAME]: result.name,
         [ItemSortBy.CHEAPEST]: result.available > 0 ? +result.price : null,
       },

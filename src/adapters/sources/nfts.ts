@@ -20,6 +20,8 @@ export function createNFTsSource(
         [NFTSortBy.NAME]: result.nft.name.toLowerCase(),
         [NFTSortBy.CHEAPEST]: result.order ? +result.order.price : null,
         [NFTSortBy.NEWEST]: result.nft.createdAt,
+        //@ts-ignore
+        [NFTSortBy.RECENTLY_SOLD]: result.nft.soldAt,
       },
     }))
   }
