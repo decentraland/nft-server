@@ -263,6 +263,38 @@ export type Sale = {
 - `maxPrice`: Return only sales with a price lower than this. Type `number`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 
+## Collections
+
+**Endpoint**: `/v1/collections`
+
+**Type**:
+
+```ts
+export type Collection = {
+  urn: string
+  name: string
+  creator: string
+  contractAddress: string
+  isOnSale: boolean
+  size: number
+  createdAt: number
+  updatedAt: number
+  reviewedAt: number
+  network: Network
+  chainId: ChainId
+}
+```
+
+**Query Params**:
+
+- `first`: Limit the number of results. Type: `number`.
+- `skip`: Skip results. Type: `number`.
+- `sortBy`: Sort results. Possible values: `newest`, `name`, `recently_reviewed`, `size`.
+- `creator`: Filter by creator. Type: `address`.
+- `contractAddress`: Filter results by contract address. Type: `address`.
+- `isOnSale`: Return only collections are currently on sale. Type: `boolean`.
+- `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
+
 ## Contracts
 
 **Endpoint**: `/v1/contracts`

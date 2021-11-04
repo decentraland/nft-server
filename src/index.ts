@@ -61,6 +61,14 @@ import { createSalesSource } from './adapters/sources/sales'
 import { Sale, SaleFilters, SaleSortBy } from './ports/sales/types'
 import { SALE_DEFAULT_SORT_BY } from './ports/sales/utils'
 import { createSalesComponent } from './ports/sales/component'
+import { createCollectionsComponent } from './ports/collections/component'
+import { createCollectionsSource } from './adapters/sources/collections'
+import {
+  Collection,
+  CollectionFilters,
+  CollectionSortBy,
+} from './ports/collections/types'
+import { COLLECTION_DEFAULT_SORT_BY } from './ports/collections/utils'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -294,6 +302,29 @@ async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
+  // collections
+  const collectionsCollections = createCollectionsComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.MATIC,
+    chainId: collectionsChainId,
+  })
+
+  const collections = createMergerComponent<
+    Collection,
+    CollectionFilters,
+    CollectionSortBy
+  >({
+    sources: [createCollectionsSource(collectionsCollections)],
+    defaultSortBy: COLLECTION_DEFAULT_SORT_BY,
+    directions: {
+      [CollectionSortBy.NAME]: SortDirection.ASC,
+      [CollectionSortBy.NEWEST]: SortDirection.DESC,
+      [CollectionSortBy.RECENTLY_REVIEWED]: SortDirection.DESC,
+      [CollectionSortBy.SIZE]: SortDirection.DESC,
+    },
+    maxCount: 1000,
+  })
+
   return {
     config,
     logs,
@@ -307,6 +338,7 @@ async function initComponents(): Promise<AppComponents> {
     items,
     mints,
     sales,
+    collections,
   }
 }
 
