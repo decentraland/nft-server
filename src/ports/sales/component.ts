@@ -16,7 +16,6 @@ export function createSalesComponent(options: {
     }
 
     const query = getSalesQuery(filters, false, network)
-    network === Network.ETHEREUM && console.log(query)
     const { sales: fragments } = await subgraph.query<{
       sales: SaleFragment[]
     }>(query)
