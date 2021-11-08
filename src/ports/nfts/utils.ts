@@ -1,4 +1,5 @@
-import { NFTSortBy, NFTFilters, WearableGender, QueryVariables } from './types'
+import { NFTFilters, NFTSortBy, WearableGender } from '@dcl/schemas'
+import { QueryVariables } from './types'
 
 export const NFT_DEFAULT_SORT_BY = NFTSortBy.NEWEST
 

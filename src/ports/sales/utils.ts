@@ -1,7 +1,14 @@
-import { ChainId, Network, NFTCategory } from '@dcl/schemas'
+import {
+  ChainId,
+  Network,
+  NFTCategory,
+  Sale,
+  SaleFilters,
+  SaleSortBy,
+} from '@dcl/schemas'
 import { getMarketplaceChainId } from '../../logic/chainIds'
 import { getMarketplaceContracts } from '../../logic/contracts'
-import { Sale, SaleFilters, SaleFragment, SaleSortBy } from './types'
+import { SaleFragment } from './types'
 
 export const SALE_DEFAULT_SORT_BY = SaleSortBy.RECENTLY_SOLD
 

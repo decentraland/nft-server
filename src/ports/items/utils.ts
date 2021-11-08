@@ -1,6 +1,13 @@
-import { ChainId, Item, Network, NFTCategory } from '@dcl/schemas'
-import { WearableGender } from '../nfts/types'
-import { ItemSortBy, ItemFilters, ItemFragment } from './types'
+import {
+  ChainId,
+  Item,
+  ItemFilters,
+  ItemSortBy,
+  Network,
+  NFTCategory,
+  WearableGender,
+} from '@dcl/schemas'
+import { ItemFragment } from './types'
 
 export const ITEM_DEFAULT_SORT_BY = ItemSortBy.NEWEST
 

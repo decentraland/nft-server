@@ -1,6 +1,6 @@
-import { ChainId, Network } from '@dcl/schemas'
+import { ChainId, Network, OrderFilters } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
-import { IOrdersComponent, OrderFragment, OrderFilters } from './types'
+import { IOrdersComponent, OrderFragment } from './types'
 import { fromOrderFragment, getOrdersQuery } from './utils'
 
 export function createOrdersComponent(options: {

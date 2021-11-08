@@ -1,14 +1,4 @@
-import { Contract, Network, NFTCategory } from '@dcl/schemas'
-export { Contract }
-
-export type ContractFilters = {
-  category?: NFTCategory
-  network?: Network
-}
-
-export enum ContractSortBy {
-  NAME = 'name',
-}
+import { Contract, ContractFilters } from '@dcl/schemas'
 
 export interface IContractsComponent {
   fetch(filters: ContractFilters): Promise<Contract[]>

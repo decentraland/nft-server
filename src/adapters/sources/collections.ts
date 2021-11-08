@@ -1,10 +1,6 @@
+import { Collection, CollectionFilters, CollectionSortBy } from '@dcl/schemas'
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
-import {
-  CollectionFilters,
-  CollectionSortBy,
-  ICollectionsComponent,
-  Collection,
-} from '../../ports/collections/types'
+import { ICollectionsComponent } from '../../ports/collections/types'
 
 export function createCollectionsSource(
   collections: ICollectionsComponent

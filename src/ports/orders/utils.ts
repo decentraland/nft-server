@@ -1,5 +1,12 @@
-import { ChainId, ListingStatus, Network, Order } from '@dcl/schemas'
-import { OrderFilters, OrderFragment, OrderSortBy } from './types'
+import {
+  ChainId,
+  ListingStatus,
+  Network,
+  Order,
+  OrderFilters,
+  OrderSortBy,
+} from '@dcl/schemas'
+import { OrderFragment } from './types'
 
 export const ORDER_DEFAULT_SORT_BY = OrderSortBy.RECENTLY_LISTED
 

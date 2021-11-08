@@ -1,44 +1,4 @@
-import {
-  Network,
-  NFT,
-  NFTCategory,
-  Order,
-  Rarity,
-  WearableCategory,
-} from '@dcl/schemas'
-
-export enum WearableGender {
-  MALE = 'male',
-  FEMALE = 'female',
-}
-
-export type NFTFilters = {
-  first?: number
-  skip?: number
-  sortBy?: NFTSortBy
-  category?: NFTCategory
-  owner?: string
-  isOnSale?: boolean
-  search?: string
-  itemRarities?: Rarity[]
-  isLand?: boolean
-  isWearableHead?: boolean
-  isWearableAccessory?: boolean
-  wearableCategory?: WearableCategory
-  wearableGenders?: WearableGender[]
-  contractAddresses?: string[]
-  tokenId?: string
-  itemId?: string
-  network?: Network
-}
-
-export enum NFTSortBy {
-  NAME = 'name',
-  NEWEST = 'newest',
-  RECENTLY_LISTED = 'recently_listed',
-  RECENTLY_SOLD = 'recently_sold',
-  CHEAPEST = 'cheapest',
-}
+import { NFT, NFTFilters, Order } from '@dcl/schemas'
 
 export type NFTResult = {
   nft: NFT

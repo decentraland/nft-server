@@ -3,10 +3,12 @@ import {
   Network,
   NFT,
   NFTCategory,
+  NFTFilters,
+  NFTSortBy,
   Rarity,
   WearableCategory,
 } from '@dcl/schemas'
-import { NFTFilters, NFTResult, NFTSortBy } from '../../ports/nfts/types'
+import { NFTResult } from '../../ports/nfts/types'
 import { getId, NFT_DEFAULT_SORT_BY } from '../../ports/nfts/utils'
 import { OrderFragment } from '../../ports/orders/types'
 import { fromOrderFragment, getOrderFields } from '../../ports/orders/utils'

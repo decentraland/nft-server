@@ -1,10 +1,6 @@
+import { NFTFilters, NFTSortBy } from '@dcl/schemas'
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
-import {
-  INFTsComponent,
-  NFTFilters,
-  NFTResult,
-  NFTSortBy,
-} from '../../ports/nfts/types'
+import { INFTsComponent, NFTResult } from '../../ports/nfts/types'
 
 export function createNFTsSource(
   nfts: INFTsComponent

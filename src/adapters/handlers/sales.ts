@@ -1,8 +1,7 @@
-import { Network, NFTCategory } from '@dcl/schemas'
+import { Network, NFTCategory, SaleSortBy, SaleType } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { Params } from '../../logic/http/params'
 import { asJSON } from '../../logic/http/response'
-import { SaleSortBy, SaleType } from '../../ports/sales/types'
 import { AppComponents, Context } from '../../types'
 
 export function createSalesHandler(

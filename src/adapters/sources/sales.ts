@@ -1,10 +1,6 @@
+import { Sale, SaleFilters, SaleSortBy } from '@dcl/schemas'
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
-import {
-  SaleFilters,
-  SaleSortBy,
-  ISalesComponent,
-  Sale,
-} from '../../ports/sales/types'
+import { ISalesComponent } from '../../ports/sales/types'
 
 export function createSalesSource(
   mints: ISalesComponent

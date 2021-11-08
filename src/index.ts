@@ -1,5 +1,30 @@
 import { config as configDotEnvFile } from 'dotenv'
-import { Bid, Contract, Item, Network, Order } from '@dcl/schemas'
+import {
+  Bid,
+  BidFilters,
+  BidSortBy,
+  Collection,
+  CollectionFilters,
+  CollectionSortBy,
+  Contract,
+  ContractFilters,
+  ContractSortBy,
+  Item,
+  ItemFilters,
+  ItemSortBy,
+  Mint,
+  MintFilters,
+  MintSortBy,
+  Network,
+  NFTFilters,
+  NFTSortBy,
+  Order,
+  OrderFilters,
+  OrderSortBy,
+  Sale,
+  SaleFilters,
+  SaleSortBy,
+} from '@dcl/schemas'
 import { createConfigComponent } from '@well-known-components/env-config-provider'
 import {
   createServerComponent,
@@ -14,14 +39,11 @@ import { createSubgraphComponent } from './ports/subgraph/component'
 import { createBidsComponent } from './ports/bids/component'
 import { createOrdersComponent } from './ports/orders/component'
 import { createMergerComponent } from './ports/merger/component'
-import { OrderFilters, OrderSortBy } from './ports/orders/types'
 import { SortDirection } from './ports/merger/types'
-import { BidFilters, BidSortBy } from './ports/bids/types'
 import { getMarketplaceChainId, getCollectionsChainId } from './logic/chainIds'
 import { createOrdersSource } from './adapters/sources/orders'
 import { createContractsComponent } from './ports/contracts/compontent'
 import { createBidsSource } from './adapters/sources/bids'
-import { ContractFilters, ContractSortBy } from './ports/contracts/types'
 import { createContractsSource } from './adapters/sources/contracts'
 import { createNFTComponent } from './ports/nfts/component'
 import {
@@ -40,7 +62,7 @@ import {
   getCollectionsFragment,
   getCollectionsOrderBy,
 } from './logic/nfts/collections'
-import { NFTFilters, NFTResult, NFTSortBy } from './ports/nfts/types'
+import { NFTResult } from './ports/nfts/types'
 import { NFT_DEFAULT_SORT_BY } from './ports/nfts/utils'
 import { createNFTsSource } from './adapters/sources/nfts'
 import {
@@ -49,25 +71,17 @@ import {
 } from './logic/contracts'
 import { BID_DEFAULT_SORT_BY } from './ports/bids/utils'
 import { ORDER_DEFAULT_SORT_BY } from './ports/orders/utils'
-import { ItemFilters, ItemSortBy } from './ports/items/types'
 import { createItemsSource } from './adapters/sources/items'
 import { createItemsComponent } from './ports/items/component'
 import { ITEM_DEFAULT_SORT_BY } from './ports/items/utils'
 import { createMintsComponent } from './ports/mints/component'
 import { createMintsSource } from './adapters/sources/mints'
-import { Mint, MintFilters, MintSortBy } from './ports/mints/types'
 import { MINT_DEFAULT_SORT_BY } from './ports/mints/utils'
 import { createSalesSource } from './adapters/sources/sales'
-import { Sale, SaleFilters, SaleSortBy } from './ports/sales/types'
 import { SALE_DEFAULT_SORT_BY } from './ports/sales/utils'
 import { createSalesComponent } from './ports/sales/component'
 import { createCollectionsComponent } from './ports/collections/component'
 import { createCollectionsSource } from './adapters/sources/collections'
-import {
-  Collection,
-  CollectionFilters,
-  CollectionSortBy,
-} from './ports/collections/types'
 import { COLLECTION_DEFAULT_SORT_BY } from './ports/collections/utils'
 
 async function main(components: AppComponents) {

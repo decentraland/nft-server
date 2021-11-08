@@ -1,6 +1,6 @@
-import { ChainId, Network } from '@dcl/schemas'
+import { ChainId, MintFilters, Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
-import { MintFragment, MintFilters, IMintsComponent } from './types'
+import { MintFragment, IMintsComponent } from './types'
 import { fromMintFragment, getMintsQuery } from './utils'
 
 export function createMintsComponent(options: {

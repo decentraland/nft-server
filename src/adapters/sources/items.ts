@@ -1,10 +1,6 @@
-import { Item } from '@dcl/schemas'
+import { Item, ItemFilters, ItemSortBy } from '@dcl/schemas'
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
-import {
-  IItemsComponent,
-  ItemFilters,
-  ItemSortBy,
-} from '../../ports/items/types'
+import { IItemsComponent } from '../../ports/items/types'
 
 export function createItemsSource(
   items: IItemsComponent

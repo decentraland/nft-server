@@ -1,10 +1,11 @@
-import { ChainId, Network } from '@dcl/schemas'
 import {
+  ChainId,
   Collection,
   CollectionFilters,
-  CollectionFragment,
   CollectionSortBy,
-} from './types'
+  Network,
+} from '@dcl/schemas'
+import { CollectionFragment } from './types'
 
 export const COLLECTION_DEFAULT_SORT_BY = CollectionSortBy.NAME
 

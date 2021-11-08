@@ -1,6 +1,6 @@
-import { ChainId, Network } from '@dcl/schemas'
+import { ChainId, Network, SaleFilters } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
-import { SaleFragment, SaleFilters, ISalesComponent } from './types'
+import { SaleFragment, ISalesComponent } from './types'
 import { fromSaleFragment, getSalesQuery } from './utils'
 
 export function createSalesComponent(options: {

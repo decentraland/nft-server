@@ -1,10 +1,6 @@
-import { Order } from '@dcl/schemas'
+import { Order, OrderFilters, OrderSortBy } from '@dcl/schemas'
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
-import {
-  IOrdersComponent,
-  OrderFilters,
-  OrderSortBy,
-} from '../../ports/orders/types'
+import { IOrdersComponent } from '../../ports/orders/types'
 
 export function createOrdersSource(
   orders: IOrdersComponent

@@ -1,10 +1,6 @@
+import { Mint, MintFilters, MintSortBy } from '@dcl/schemas'
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
-import {
-  MintFilters,
-  MintSortBy,
-  IMintsComponent,
-  Mint,
-} from '../../ports/mints/types'
+import { IMintsComponent } from '../../ports/mints/types'
 
 export function createMintsSource(
   mints: IMintsComponent

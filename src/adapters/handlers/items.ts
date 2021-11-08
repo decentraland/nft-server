@@ -1,10 +1,14 @@
-import { Network, Rarity, WearableCategory } from '@dcl/schemas'
+import {
+  ItemSortBy,
+  Network,
+  Rarity,
+  WearableCategory,
+  WearableGender,
+} from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { AppComponents, Context } from '../../types'
 import { Params } from '../../logic/http/params'
 import { asJSON } from '../../logic/http/response'
-import { WearableGender } from '../../ports/nfts/types'
-import { ItemSortBy } from '../../ports/items/types'
 
 export function createItemsHandler(
   components: Pick<AppComponents, 'logs' | 'items'>

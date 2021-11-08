@@ -1,8 +1,7 @@
-import { Network } from '@dcl/schemas'
+import { MintSortBy, Network } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { Params } from '../../logic/http/params'
 import { asJSON } from '../../logic/http/response'
-import { MintSortBy } from '../../ports/mints/types'
 import { AppComponents, Context } from '../../types'
 
 export function createMintsHandler(

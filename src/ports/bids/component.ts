@@ -1,6 +1,6 @@
-import { ChainId, Network } from '@dcl/schemas'
+import { BidFilters, ChainId, Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
-import { BidFragment, BidFilters, IBidsComponent } from './types'
+import { BidFragment, IBidsComponent } from './types'
 import { fromBidFragment, getBidsQuery } from './utils'
 
 export function createBidsComponent(options: {

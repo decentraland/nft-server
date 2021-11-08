@@ -1,3 +1,28 @@
+import {
+  Bid,
+  BidFilters,
+  BidSortBy,
+  Collection,
+  CollectionFilters,
+  CollectionSortBy,
+  Contract,
+  ContractFilters,
+  ContractSortBy,
+  Item,
+  ItemFilters,
+  ItemSortBy,
+  Mint,
+  MintFilters,
+  MintSortBy,
+  NFTFilters,
+  NFTSortBy,
+  Order,
+  OrderFilters,
+  OrderSortBy,
+  Sale,
+  SaleFilters,
+  SaleSortBy,
+} from '@dcl/schemas'
 import { RoutedContext } from '@well-known-components/http-server'
 import type {
   IConfigComponent,
@@ -7,22 +32,7 @@ import type {
   IBaseComponent,
 } from '@well-known-components/interfaces'
 import { IMergerComponent } from './ports/merger/types'
-import { Bid, BidFilters, BidSortBy } from './ports/bids/types'
-import { Order, OrderFilters, OrderSortBy } from './ports/orders/types'
-import {
-  Contract,
-  ContractFilters,
-  ContractSortBy,
-} from './ports/contracts/types'
-import { NFTFilters, NFTResult, NFTSortBy } from './ports/nfts/types'
-import { Item, ItemFilters, ItemSortBy } from './ports/items/types'
-import { Mint, MintFilters, MintSortBy } from './ports/mints/types'
-import { Sale, SaleFilters, SaleSortBy } from './ports/sales/types'
-import {
-  Collection,
-  CollectionFilters,
-  CollectionSortBy,
-} from './ports/collections/types'
+import { NFTResult } from './ports/nfts/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string

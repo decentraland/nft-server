@@ -1,10 +1,6 @@
-import { Contract } from '@dcl/schemas'
+import { Contract, ContractFilters, ContractSortBy } from '@dcl/schemas'
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
-import {
-  ContractFilters,
-  ContractSortBy,
-  IContractsComponent,
-} from '../../ports/contracts/types'
+import { IContractsComponent } from '../../ports/contracts/types'
 
 export function createContractsSource(
   contracts: IContractsComponent
