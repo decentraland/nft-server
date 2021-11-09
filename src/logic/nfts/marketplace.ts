@@ -2,10 +2,12 @@ import {
   BodyShape,
   Network,
   NFTCategory,
+  NFTFilters,
+  NFTSortBy,
   Rarity,
   WearableCategory,
 } from '@dcl/schemas'
-import { NFTFilters, NFTResult, NFTSortBy } from '../../ports/nfts/types'
+import { NFTResult } from '../../ports/nfts/types'
 import { getId, NFT_DEFAULT_SORT_BY } from '../../ports/nfts/utils'
 import { OrderFragment } from '../../ports/orders/types'
 import { fromOrderFragment, getOrderFields } from '../../ports/orders/utils'
@@ -58,6 +60,7 @@ export const getMarketplaceFields = () => `
     }
     createdAt
     updatedAt
+    soldAt
     searchOrderPrice
     searchOrderCreatedAt
   }
@@ -113,6 +116,7 @@ export type MarketplaceNFTFields = {
   }
   createdAt: string
   updatedAt: string
+  soldAt: string
   searchOrderPrice: string
   searchOrderCreatedAt: string
 }
@@ -133,6 +137,8 @@ export function getMarketplaceOrderBy(
       return 'searchOrderCreatedAt'
     case NFTSortBy.CHEAPEST:
       return 'searchOrderPrice'
+    case NFTSortBy.RECENTLY_SOLD:
+      return 'soldAt'
     default:
       return getMarketplaceOrderBy(NFT_DEFAULT_SORT_BY)
   }
@@ -202,6 +208,8 @@ export function fromMarketplaceNFTFragment(
       chainId: getMarketplaceChainId(),
       createdAt: +fragment.createdAt * 1000,
       updatedAt: +fragment.updatedAt * 1000,
+      //@ts-ignore
+      soldAt: +fragment.soldAt * 1000,
     },
     order:
       fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)

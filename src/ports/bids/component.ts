@@ -1,6 +1,6 @@
-import { ChainId, Network } from '@dcl/schemas'
+import { BidFilters, ChainId, Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
-import { BidFragment, BidFilters, IBidsComponent } from './types'
+import { BidFragment, IBidsComponent } from './types'
 import { fromBidFragment, getBidsQuery } from './utils'
 
 export function createBidsComponent(options: {
@@ -11,7 +11,7 @@ export function createBidsComponent(options: {
   const { subgraph, network, chainId } = options
 
   async function fetch(filters: BidFilters) {
-    if (options.network && options.network !== network) {
+    if (filters.network && filters.network !== network) {
       return []
     }
 
@@ -28,7 +28,7 @@ export function createBidsComponent(options: {
   }
 
   async function count(filters: BidFilters) {
-    if (options.network && options.network !== network) {
+    if (filters.network && filters.network !== network) {
       return 0
     }
 

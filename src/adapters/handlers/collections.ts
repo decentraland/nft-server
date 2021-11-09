@@ -1,37 +1,35 @@
-import { BidSortBy, ListingStatus, Network } from '@dcl/schemas'
+import { CollectionSortBy, Network } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { Params } from '../../logic/http/params'
 import { asJSON } from '../../logic/http/response'
 import { AppComponents, Context } from '../../types'
 
-export function createBidsHandler(
-  components: Pick<AppComponents, 'logs' | 'bids'>
-): IHttpServerComponent.IRequestHandler<Context<'/bids'>> {
-  const { bids } = components
+export function createCollectionsHandler(
+  components: Pick<AppComponents, 'logs' | 'collections'>
+): IHttpServerComponent.IRequestHandler<Context<'/collections'>> {
+  const { collections } = components
 
   return async (context) => {
     const params = new Params(context.url.searchParams)
 
     const first = params.getNumber('first')
     const skip = params.getNumber('skip')
-    const sortBy = params.getValue<BidSortBy>('sortBy', BidSortBy)
-    const bidder = params.getAddress('bidder')
-    const seller = params.getAddress('seller')
+    const sortBy = params.getValue<CollectionSortBy>('sortBy', CollectionSortBy)
+    const creator = params.getAddress('creator')
+    const urn = params.getString('urn')
     const contractAddress = params.getAddress('contractAddress')
-    const tokenId = params.getString('tokenId')
-    const status = params.getValue<ListingStatus>('status', ListingStatus)
+    const isOnSale = params.getBoolean('isOnSale')
     const network = params.getValue<Network>('network', Network)
 
     return asJSON(() =>
-      bids.fetchAndCount({
+      collections.fetchAndCount({
         first,
         skip,
         sortBy,
-        bidder,
-        seller,
+        creator,
+        urn,
         contractAddress,
-        tokenId,
-        status,
+        isOnSale,
         network,
       })
     )

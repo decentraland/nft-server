@@ -15,6 +15,7 @@ describe('when building a result from the marketplace fragment', () => {
       activeOrder: null,
       createdAt: '0',
       updatedAt: '0',
+      soldAt: '0',
       searchOrderPrice: 'anOrderPrice',
       searchOrderCreatedAt: 'anOrderTime',
       name: 'aName',

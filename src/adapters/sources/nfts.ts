@@ -1,10 +1,6 @@
+import { NFTFilters, NFTSortBy } from '@dcl/schemas'
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
-import {
-  INFTsComponent,
-  NFTFilters,
-  NFTResult,
-  NFTSortBy,
-} from '../../ports/nfts/types'
+import { INFTsComponent, NFTResult } from '../../ports/nfts/types'
 
 export function createNFTsSource(
   nfts: INFTsComponent
@@ -20,6 +16,8 @@ export function createNFTsSource(
         [NFTSortBy.NAME]: result.nft.name.toLowerCase(),
         [NFTSortBy.CHEAPEST]: result.order ? +result.order.price : null,
         [NFTSortBy.NEWEST]: result.nft.createdAt,
+        //@ts-ignore
+        [NFTSortBy.RECENTLY_SOLD]: result.nft.soldAt,
       },
     }))
   }

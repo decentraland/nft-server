@@ -1,6 +1,5 @@
-import { ListingStatus, Network } from '@dcl/schemas'
+import { ListingStatus, Network, OrderSortBy } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
-import { OrderSortBy } from '../../ports/orders/types'
 import { AppComponents, Context } from '../../types'
 import { Params } from '../../logic/http/params'
 import { asJSON } from '../../logic/http/response'

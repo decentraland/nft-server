@@ -1,5 +1,30 @@
 import { config as configDotEnvFile } from 'dotenv'
-import { Bid, Contract, Item, Network, Order } from '@dcl/schemas'
+import {
+  Bid,
+  BidFilters,
+  BidSortBy,
+  Collection,
+  CollectionFilters,
+  CollectionSortBy,
+  Contract,
+  ContractFilters,
+  ContractSortBy,
+  Item,
+  ItemFilters,
+  ItemSortBy,
+  Mint,
+  MintFilters,
+  MintSortBy,
+  Network,
+  NFTFilters,
+  NFTSortBy,
+  Order,
+  OrderFilters,
+  OrderSortBy,
+  Sale,
+  SaleFilters,
+  SaleSortBy,
+} from '@dcl/schemas'
 import { createConfigComponent } from '@well-known-components/env-config-provider'
 import {
   createServerComponent,
@@ -14,14 +39,11 @@ import { createSubgraphComponent } from './ports/subgraph/component'
 import { createBidsComponent } from './ports/bids/component'
 import { createOrdersComponent } from './ports/orders/component'
 import { createMergerComponent } from './ports/merger/component'
-import { OrderFilters, OrderSortBy } from './ports/orders/types'
 import { SortDirection } from './ports/merger/types'
-import { BidFilters, BidSortBy } from './ports/bids/types'
 import { getMarketplaceChainId, getCollectionsChainId } from './logic/chainIds'
 import { createOrdersSource } from './adapters/sources/orders'
 import { createContractsComponent } from './ports/contracts/compontent'
 import { createBidsSource } from './adapters/sources/bids'
-import { ContractFilters, ContractSortBy } from './ports/contracts/types'
 import { createContractsSource } from './adapters/sources/contracts'
 import { createNFTComponent } from './ports/nfts/component'
 import {
@@ -40,7 +62,7 @@ import {
   getCollectionsFragment,
   getCollectionsOrderBy,
 } from './logic/nfts/collections'
-import { NFTFilters, NFTResult, NFTSortBy } from './ports/nfts/types'
+import { NFTResult } from './ports/nfts/types'
 import { NFT_DEFAULT_SORT_BY } from './ports/nfts/utils'
 import { createNFTsSource } from './adapters/sources/nfts'
 import {
@@ -49,10 +71,18 @@ import {
 } from './logic/contracts'
 import { BID_DEFAULT_SORT_BY } from './ports/bids/utils'
 import { ORDER_DEFAULT_SORT_BY } from './ports/orders/utils'
-import { ItemFilters, ItemSortBy } from './ports/items/types'
 import { createItemsSource } from './adapters/sources/items'
 import { createItemsComponent } from './ports/items/component'
 import { ITEM_DEFAULT_SORT_BY } from './ports/items/utils'
+import { createMintsComponent } from './ports/mints/component'
+import { createMintsSource } from './adapters/sources/mints'
+import { MINT_DEFAULT_SORT_BY } from './ports/mints/utils'
+import { createSalesSource } from './adapters/sources/sales'
+import { SALE_DEFAULT_SORT_BY } from './ports/sales/utils'
+import { createSalesComponent } from './ports/sales/component'
+import { createCollectionsComponent } from './ports/collections/component'
+import { createCollectionsSource } from './adapters/sources/collections'
+import { COLLECTION_DEFAULT_SORT_BY } from './ports/collections/utils'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -155,7 +185,7 @@ async function initComponents(): Promise<AppComponents> {
 
   // contracts
   const marketplaceContracts = createContractsComponent({
-    getContracts: () => getMarketplaceContracts(marketplaceChainId),
+    getContracts: async () => getMarketplaceContracts(marketplaceChainId),
     network: Network.ETHEREUM,
   })
 
@@ -218,6 +248,7 @@ async function initComponents(): Promise<AppComponents> {
       [NFTSortBy.NAME]: SortDirection.ASC,
       [NFTSortBy.NEWEST]: SortDirection.DESC,
       [NFTSortBy.RECENTLY_LISTED]: SortDirection.DESC,
+      [NFTSortBy.RECENTLY_SOLD]: SortDirection.DESC,
     },
     maxCount: 1000,
   })
@@ -235,8 +266,75 @@ async function initComponents(): Promise<AppComponents> {
     directions: {
       [ItemSortBy.NEWEST]: SortDirection.DESC,
       [ItemSortBy.RECENTLY_REVIEWED]: SortDirection.DESC,
+      [ItemSortBy.RECENTLY_SOLD]: SortDirection.DESC,
       [ItemSortBy.NAME]: SortDirection.ASC,
       [ItemSortBy.CHEAPEST]: SortDirection.ASC,
+    },
+    maxCount: 1000,
+  })
+
+  // mints
+  const collectionsMints = createMintsComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.MATIC,
+    chainId: collectionsChainId,
+  })
+
+  const mints = createMergerComponent<Mint, MintFilters, MintSortBy>({
+    sources: [createMintsSource(collectionsMints)],
+    defaultSortBy: MINT_DEFAULT_SORT_BY,
+    directions: {
+      [MintSortBy.RECENTLY_MINTED]: SortDirection.DESC,
+      [MintSortBy.MOST_EXPENSIVE]: SortDirection.DESC,
+    },
+    maxCount: 1000,
+  })
+
+  // sales
+  const marketplaceSales = createSalesComponent({
+    subgraph: marketplaceSubgraph,
+    network: Network.ETHEREUM,
+    chainId: marketplaceChainId,
+  })
+
+  const collectionsSales = createSalesComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.MATIC,
+    chainId: collectionsChainId,
+  })
+
+  const sales = createMergerComponent<Sale, SaleFilters, SaleSortBy>({
+    sources: [
+      createSalesSource(marketplaceSales),
+      createSalesSource(collectionsSales),
+    ],
+    defaultSortBy: SALE_DEFAULT_SORT_BY,
+    directions: {
+      [SaleSortBy.RECENTLY_SOLD]: SortDirection.DESC,
+      [SaleSortBy.MOST_EXPENSIVE]: SortDirection.DESC,
+    },
+    maxCount: 1000,
+  })
+
+  // collections
+  const collectionsCollections = createCollectionsComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.MATIC,
+    chainId: collectionsChainId,
+  })
+
+  const collections = createMergerComponent<
+    Collection,
+    CollectionFilters,
+    CollectionSortBy
+  >({
+    sources: [createCollectionsSource(collectionsCollections)],
+    defaultSortBy: COLLECTION_DEFAULT_SORT_BY,
+    directions: {
+      [CollectionSortBy.NAME]: SortDirection.ASC,
+      [CollectionSortBy.NEWEST]: SortDirection.DESC,
+      [CollectionSortBy.RECENTLY_REVIEWED]: SortDirection.DESC,
+      [CollectionSortBy.SIZE]: SortDirection.DESC,
     },
     maxCount: 1000,
   })
@@ -252,6 +350,9 @@ async function initComponents(): Promise<AppComponents> {
     contracts,
     nfts,
     items,
+    mints,
+    sales,
+    collections,
   }
 }
 

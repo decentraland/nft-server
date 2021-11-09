@@ -1,6 +1,5 @@
-import { Network, NFTCategory } from '@dcl/schemas'
+import { ContractSortBy, Network, NFTCategory } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
-import { ContractSortBy } from '../../ports/contracts/types'
 import { AppComponents, Context } from '../../types'
 import { Params } from '../../logic/http/params'
 import { asJSON } from '../../logic/http/response'

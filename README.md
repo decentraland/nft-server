@@ -49,7 +49,7 @@ type NFT = {
 
 - `first`: Limit the number of results. Type: `number`.
 - `skip`: Skip results. Type: `number`.
-- `sortBy`: Sort results. Possible values: `newest`, `name`, `recently_listed`, `cheapest`.
+- `sortBy`: Sort results. Possible values: `newest`, `name`, `recently_listed`, `recently_sold`, `cheapest`.
 - `category`: Filter by `NFTCategory`. Possible values: `parcel`, `estate`, `wearable`, `ens`.
 - `owner`: Filter by owner. Type: `address`.
 - `isOnSale`: Only return results that have an open, non-expired listing. Type: `boolean`.
@@ -96,7 +96,7 @@ type Item = {
 
 - `first`: Limit the number of results. Type: `number`.
 - `skip`: Skip results. Type: `number`.
-- `sortBy`: Sort results. Possible values: `newest`, `recently_reviewed`, `name`, `cheapest`.
+- `sortBy`: Sort results. Possible values: `newest`, `recently_reviewed`, `recently_sold`, `name`, `cheapest`.
 - `creator`: Filter by creator. Type: `address`.
 - `rarity`: Filter results by `Rarity`. It supports multiple values by adding the query param multiple times. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
 - `isSoldOut`: Only return results that are sold out (all NFTs have been minted). Type: `boolean`.
@@ -182,6 +182,117 @@ type Bid = {
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
 - `tokenId`: Filter results by `tokenId`. Type: `string`.
 - `status`: Filter results by `BidStatus`. Possible values: `open`, `sold`, `cancelled`.
+- `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
+
+## Mints
+
+**Endpoint**: `/v1/mints`
+
+**Type**:
+
+```ts
+type Mint = {
+  id: string
+  creator: string
+  beneficiary: string
+  minter: string
+  itemId: string
+  tokenId: string
+  issuedId: string
+  contractAddress: string
+  price: string | null
+  timestamp: number
+  network: Network
+  chainId: ChainId
+}
+```
+
+**Query Params**:
+
+- `first`: Limit the number of results. Type: `number`.
+- `skip`: Skip results. Type: `number`.
+- `sortBy`: Sort results. Possible values: `recently_minted`, `most_expensive`.
+- `creator`: Filter by creator. Type: `address`.
+- `beneficiary`: Filter by beneficiary. Type: `address`.
+- `minter`: Filter by minter. Type: `address`.
+- `contractAddress`: Filter results by contract address. Type: `address`.
+- `tokenId`: Filter results by `tokenId`. Type: `string`.
+- `itemId`: Filter results by `itemId`. Type: `string`.
+- `issuedId`: Filter results by `issuedId`. Type: `string`.
+- `isSale`: Return only mints that came from a sale.
+- `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
+
+## Sales
+
+**Endpoint**: `/v1/sales`
+
+**Type**:
+
+```ts
+export type Sale = {
+  id: string
+  type: SaleType
+  buyer: string
+  seller: string
+  itemId: string | null
+  tokenId: string
+  contractAddress: string
+  price: string
+  timestamp: number
+  txHash: string
+  network: Network
+  chainId: ChainId
+}
+```
+
+**Query Params**:
+
+- `first`: Limit the number of results. Type: `number`.
+- `skip`: Skip results. Type: `number`.
+- `sortBy`: Sort results. Possible values: `recently_sold`, `most_expensive`.
+- `type`: Filter by sale type. Possible values: `order`, `bid`, `mint`.
+- `category`: Filter by NFT category. Possible values: `parcel`, `estate`, `ens`, `wearable`.
+- `seller`: Filter by seller. Type: `address`.
+- `buyer`: Filter by buyer. Type: `address`.
+- `contractAddress`: Filter results by contract address. Type: `address`.
+- `tokenId`: Filter results by `tokenId`. Type: `string`.
+- `itemId`: Filter results by `itemId`. Type: `string`.
+- `from`: Return only sales that happened after this timestamp. Type `number`.
+- `to`: Return only sales that happened before this timestamp. Type `number`.
+- `minPrice`: Return only sales with a price higher than this. Type `number`.
+- `maxPrice`: Return only sales with a price lower than this. Type `number`.
+- `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
+
+## Collections
+
+**Endpoint**: `/v1/collections`
+
+**Type**:
+
+```ts
+export type Collection = {
+  urn: string
+  name: string
+  creator: string
+  contractAddress: string
+  isOnSale: boolean
+  size: number
+  createdAt: number
+  updatedAt: number
+  reviewedAt: number
+  network: Network
+  chainId: ChainId
+}
+```
+
+**Query Params**:
+
+- `first`: Limit the number of results. Type: `number`.
+- `skip`: Skip results. Type: `number`.
+- `sortBy`: Sort results. Possible values: `newest`, `name`, `recently_reviewed`, `size`.
+- `creator`: Filter by creator. Type: `address`.
+- `contractAddress`: Filter results by contract address. Type: `address`.
+- `isOnSale`: Return only collections are currently on sale. Type: `boolean`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 
 ## Contracts
