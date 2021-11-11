@@ -53,6 +53,7 @@ export function getCollectionsQuery(
     first,
     skip,
     sortBy,
+    name,
     creator,
     urn,
     contractAddress,
@@ -75,6 +76,10 @@ export function getCollectionsQuery(
 
   if (isOnSale) {
     where.push('searchIsStoreMinter: true')
+  }
+
+  if (name) {
+    where.push(`name_contains: "${name.trim().toLowerCase()}"`)
   }
 
   const max = 1000
