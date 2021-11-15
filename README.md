@@ -290,6 +290,8 @@ export type Collection = {
 - `first`: Limit the number of results. Type: `number`.
 - `skip`: Skip results. Type: `number`.
 - `sortBy`: Sort results. Possible values: `newest`, `name`, `recently_reviewed`, `size`.
+- `name`: Filter by the collection name. Type: `string`.
+- `search`: Filter collections containing the search value in its name, case insensitive. Type: `string`.
 - `creator`: Filter by creator. Type: `address`.
 - `contractAddress`: Filter results by contract address. Type: `address`.
 - `isOnSale`: Return only collections are currently on sale. Type: `boolean`.

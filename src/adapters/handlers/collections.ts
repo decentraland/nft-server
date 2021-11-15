@@ -16,6 +16,7 @@ export function createCollectionsHandler(
     const skip = params.getNumber('skip')
     const sortBy = params.getValue<CollectionSortBy>('sortBy', CollectionSortBy)
     const name = params.getString('name')
+    const search = params.getString('search')
     const creator = params.getAddress('creator')
     const urn = params.getString('urn')
     const contractAddress = params.getAddress('contractAddress')
@@ -28,6 +29,7 @@ export function createCollectionsHandler(
         skip,
         sortBy,
         name,
+        search,
         creator,
         urn,
         contractAddress,
