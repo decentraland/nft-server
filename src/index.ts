@@ -110,6 +110,9 @@ async function initComponents(): Promise<AppComponents> {
   }
 
   const logs = createLogComponent()
+
+  const globalLogger = logs.getLogger('nft-server')
+
   const server = await createServerComponent<GlobalContext>(
     { config, logs },
     { cors, compression: {} }
@@ -342,6 +345,7 @@ async function initComponents(): Promise<AppComponents> {
   return {
     config,
     logs,
+    globalLogger,
     server,
     statusChecks,
     metrics,

@@ -47,6 +47,7 @@ export type GlobalContext = {
 export type AppComponents = {
   config: IConfigComponent
   logs: ILoggerComponent
+  globalLogger: ILoggerComponent.ILogger
   server: IHttpServerComponent<GlobalContext>
   statusChecks: IBaseComponent
   metrics: IMetricsComponent<any>
