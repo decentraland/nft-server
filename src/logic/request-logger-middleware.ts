@@ -8,6 +8,7 @@ enum RequestState {
   REQUEST = 'REQUEST',
   SUCCESS = 'SUCCESS',
   FAILURE = 'FAILURE',
+  UNHANDLED_FAILURE = 'UNHANDLED_FAILURE',
   UNKNOWN = 'UNKNOWN',
 }
 
@@ -29,25 +30,47 @@ export function createRequestLoggerMiddleware(
       })
     )
 
-    const result = await next()
-    const status = result.status
-    const finish = Date.now()
+    try {
+      const result = await next()
+      const status = result.status
+      const finish = Date.now()
 
-    logger.info(
-      url,
-      buildLogData({
-        id,
-        state: status
-          ? status < 400
-            ? RequestState.SUCCESS
-            : RequestState.FAILURE
-          : RequestState.UNKNOWN,
-        code: status,
-        time: finish - start,
-      })
-    )
+      logger.info(
+        url,
+        buildLogData({
+          id,
+          state: status
+            ? status < 400
+              ? RequestState.SUCCESS
+              : RequestState.FAILURE
+            : RequestState.UNKNOWN,
+          code: status,
+          time: finish - start,
+          message:
+            status && status >= 500 && result.body
+              ? JSON.stringify(result.body)
+              : undefined,
+        })
+      )
 
-    return result
+      return result
+    } catch (error: any) {
+      const finish = Date.now()
+
+      logger.info(
+        url,
+        buildLogData({
+          id,
+          state: RequestState.UNHANDLED_FAILURE,
+          time: finish - start,
+          message: error.message,
+        })
+      )
+      return {
+        status: 500,
+        body: error.message,
+      }
+    }
   }
 }
 
@@ -56,6 +79,7 @@ function buildLogData({
   state,
   code,
   time,
+  message,
 }: {
   id: number
   state: RequestState
@@ -74,6 +98,10 @@ function buildLogData({
 
   if (time) {
     data.time = time
+  }
+
+  if (message) {
+    data.message = message
   }
 
   return data
