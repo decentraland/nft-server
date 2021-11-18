@@ -8,6 +8,7 @@ import { createItemsHandler } from './handlers/items'
 import { createMintsHandler } from './handlers/mints'
 import { createSalesHandler } from './handlers/sales'
 import { createCollectionsHandler } from './handlers/collections'
+import { createRequestLoggerMiddleware } from '../logic/request-logger-middleware'
 
 export async function setupRoutes(globalContext: GlobalContext) {
   const { components } = globalContext
@@ -17,7 +18,11 @@ export async function setupRoutes(globalContext: GlobalContext) {
 
   const apiVersion = await config.requireString('API_VERSION')
 
+  
+
   router.prefix(`/${apiVersion}`)
+  
+  router.use(createRequestLoggerMiddleware(components))
 
   router.get('/bids', createBidsHandler(components))
   router.get('/orders', createOrdersHandler(components))
