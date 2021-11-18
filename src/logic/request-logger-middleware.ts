@@ -66,6 +66,7 @@ export function createRequestLoggerMiddleware(
           message: error.message,
         })
       )
+      
       return {
         status: 500,
         body: error.message,
