@@ -18,10 +18,8 @@ export async function setupRoutes(globalContext: GlobalContext) {
 
   const apiVersion = await config.requireString('API_VERSION')
 
-  
-
   router.prefix(`/${apiVersion}`)
-  
+
   router.use(createRequestLoggerMiddleware(components))
 
   router.get('/bids', createBidsHandler(components))
