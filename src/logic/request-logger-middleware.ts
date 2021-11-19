@@ -2,6 +2,7 @@ import {
   IHttpServerComponent,
   ILoggerComponent,
 } from '@well-known-components/interfaces'
+import { createNamespace } from 'continuation-local-storage'
 import { AppComponents, Context } from '../types'
 
 enum Result {
@@ -15,17 +16,18 @@ export function createRequestLoggerMiddleware(
   components: Pick<AppComponents, 'globalLogger'>
 ): IHttpServerComponent.IRequestHandler<Context<string>> {
   const { globalLogger: logger } = components
+  const session = createNamespace('session')
 
   return async (context, next) => {
     const start = Date.now()
-    const { headers } = context.request
-    const headerRequestId = headers.get('x-request-id')
-    const requestId = headerRequestId || start.toString()
-
-    headers.set('x-request-id', requestId)
+    const requestId = start.toString()
 
     try {
-      const result = await next()
+      const result = await session.runAndReturn(() => {
+        session.set('requestId', requestId)
+        return next()
+      })
+
       const status = result.status
 
       log(

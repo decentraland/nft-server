@@ -2,6 +2,7 @@ import { ILoggerComponent } from '@well-known-components/interfaces'
 import fetch from 'node-fetch'
 import { ISubgraphComponent } from './types'
 import { sleep } from './utils'
+import { getNamespace } from 'continuation-local-storage'
 
 export function createSubgraphComponent(
   url: string,
@@ -16,6 +17,18 @@ export function createSubgraphComponent(
     remainingAttempts = 3
   ): Promise<T> {
     const start = Date.now()
+    const requestId = getNamespace('session')?.get('requestId') as string
+
+    const log = (result: 'SUCCESS' | 'FAILURE') => {
+      logger.info('Subgraph Query', {
+        id: requestId,
+        url,
+        result,
+        time: Date.now() - start,
+        remainingAttempts,
+      })
+    }
+
     try {
       const response = await fetch(url, {
         method: 'post',
@@ -62,16 +75,6 @@ export function createSubgraphComponent(
       } else {
         throw error // bubble up
       }
-    }
-
-    function log(result: 'SUCCESS' | 'FAILURE') {
-      logger.info('Subgraph Query', {
-        url,
-        variables: JSON.stringify(variables),
-        result,
-        time: Date.now() - start,
-        remainingAttempts,
-      })
     }
   }
 
