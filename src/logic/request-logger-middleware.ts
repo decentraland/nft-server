@@ -2,7 +2,6 @@ import {
   IHttpServerComponent,
   ILoggerComponent,
 } from '@well-known-components/interfaces'
-import { createNamespace } from 'continuation-local-storage'
 import { AppComponents, Context } from '../types'
 
 enum Result {
@@ -13,20 +12,47 @@ enum Result {
 }
 
 export function createRequestLoggerMiddleware(
-  components: Pick<AppComponents, 'globalLogger'>
+  components: Pick<AppComponents, 'globalLogger' | 'session'>
 ): IHttpServerComponent.IRequestHandler<Context<string>> {
-  const { globalLogger: logger } = components
-  const session = createNamespace('session')
+  const { globalLogger: logger, session } = components
 
   return async (context, next) => {
     const start = Date.now()
-    const requestId = start.toString()
+    const requestId = session.getRequestId()
+
+    const log = (
+      result: Result,
+      options: { status?: number; message?: string } = {}
+    ) => {
+      const { searchParams, pathname } = context.url
+      const { method } = context.request
+      const { status, message } = options
+
+      const data: Parameters<ILoggerComponent.ILogger['info']>[1] = {
+        id: requestId,
+        path: pathname,
+        method,
+        result,
+        time: Date.now() - start,
+      }
+
+      if (searchParams) {
+        data.query = searchParams.toString()
+      }
+
+      if (status) {
+        data.status = status
+      }
+
+      if (message) {
+        data.message = message
+      }
+
+      logger.info(`HTTP Request`, data)
+    }
 
     try {
-      const result = await session.runAndReturn(() => {
-        session.set('requestId', requestId)
-        return next()
-      })
+      const result = await next()
 
       const status = result.status
 
@@ -53,37 +79,6 @@ export function createRequestLoggerMiddleware(
         status: 500,
         body: error.message,
       }
-    }
-
-    function log(
-      result: Result,
-      options: { status?: number; message?: string } = {}
-    ) {
-      const { searchParams, pathname } = context.url
-      const { method } = context.request
-      const { status, message } = options
-
-      const data: Parameters<ILoggerComponent.ILogger['info']>[1] = {
-        id: requestId,
-        path: pathname,
-        method,
-        result,
-        time: Date.now() - start,
-      }
-
-      if (searchParams) {
-        data.query = searchParams.toString()
-      }
-
-      if (status) {
-        data.status = status
-      }
-
-      if (message) {
-        data.message = message
-      }
-
-      logger.info(`HTTP Request`, data)
     }
   }
 }

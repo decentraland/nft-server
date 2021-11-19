@@ -12,7 +12,7 @@ import { createRequestLoggerMiddleware } from '../logic/request-logger-middlewar
 
 export async function setupRoutes(globalContext: GlobalContext) {
   const { components } = globalContext
-  const { config, server } = components
+  const { config, server, session } = components
 
   const router = new Router<GlobalContext>()
 
@@ -20,6 +20,7 @@ export async function setupRoutes(globalContext: GlobalContext) {
 
   router.prefix(`/${apiVersion}`)
 
+  router.use(session.createMiddleware())
   router.use(createRequestLoggerMiddleware(components))
 
   router.get('/bids', createBidsHandler(components))
