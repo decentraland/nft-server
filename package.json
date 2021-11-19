@@ -34,6 +34,8 @@
     "@well-known-components/logger": "^1.0.0",
     "@well-known-components/metrics": "^1.1.1",
     "ajv": "^7.1.1",
+    "continuation-local-storage": "^3.2.1",
+    "cuid": "^2.1.8",
     "dotenv": "^8.2.0",
     "fp-future": "^1.0.1",
     "node-fetch": "^2.6.1",
@@ -45,6 +47,7 @@
   },
   "devDependencies": {
     "@types/compression": "^1.7.0",
+    "@types/continuation-local-storage": "^3.2.3",
     "@types/cors": "^2.8.10",
     "@types/jest": "^26.0.23",
     "@types/node": "^14.14.28",
