@@ -83,7 +83,7 @@ import { createSalesComponent } from './ports/sales/component'
 import { createCollectionsComponent } from './ports/collections/component'
 import { createCollectionsSource } from './adapters/sources/collections'
 import { COLLECTION_DEFAULT_SORT_BY } from './ports/collections/utils'
-import { createSessionComponent } from './ports/session/component'
+import { createRequestSessionComponent } from './ports/requestSession/component'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -133,19 +133,19 @@ async function initComponents(): Promise<AppComponents> {
   const marketplaceChainId = getMarketplaceChainId()
   const collectionsChainId = getCollectionsChainId()
 
-  const session = createSessionComponent()
+  const requestSession = createRequestSessionComponent()
 
   // subgraphs
   const marketplaceSubgraph = createSubgraphComponent(
     await config.requireString('MARKETPLACE_SUBGRAPH_URL'),
     globalLogger,
-    session
+    requestSession
   )
 
   const collectionsSubgraph = createSubgraphComponent(
     await config.requireString('COLLECTIONS_SUBGRAPH_URL'),
     globalLogger,
-    session
+    requestSession
   )
 
   // orders
@@ -353,7 +353,7 @@ async function initComponents(): Promise<AppComponents> {
     config,
     logs,
     globalLogger,
-    session,
+    requestSession,
     server,
     statusChecks,
     metrics,

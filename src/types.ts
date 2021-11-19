@@ -33,7 +33,7 @@ import type {
 } from '@well-known-components/interfaces'
 import { IMergerComponent } from './ports/merger/types'
 import { NFTResult } from './ports/nfts/types'
-import { ISessionComponent } from './ports/session/types'
+import { IRequestSessionComponent } from './ports/requestSession/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -49,7 +49,7 @@ export type AppComponents = {
   config: IConfigComponent
   logs: ILoggerComponent
   globalLogger: ILoggerComponent.ILogger
-  session: ISessionComponent
+  requestSession: IRequestSessionComponent
   server: IHttpServerComponent<GlobalContext>
   statusChecks: IBaseComponent
   metrics: IMetricsComponent<any>

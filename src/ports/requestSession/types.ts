@@ -1,8 +1,8 @@
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { Context } from '../../types'
 
-export type ISessionComponent = {
+export type IRequestSessionComponent = {
   createMiddleware: () => IHttpServerComponent.IRequestHandler<Context<string>>
-  getRequestId: () => string
-  setRequestId: (requestId: string) => void
+  getId: () => string
+  setId: (requestId: string) => void
 }

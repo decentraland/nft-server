@@ -12,13 +12,13 @@ enum Result {
 }
 
 export function createRequestLoggerMiddleware(
-  components: Pick<AppComponents, 'globalLogger' | 'session'>
+  components: Pick<AppComponents, 'globalLogger' | 'requestSession'>
 ): IHttpServerComponent.IRequestHandler<Context<string>> {
-  const { globalLogger: logger, session } = components
+  const { globalLogger: logger, requestSession } = components
 
   return async (context, next) => {
     const start = Date.now()
-    const requestId = session.getRequestId()
+    const requestId = requestSession.getId()
 
     const log = (
       result: Result,
