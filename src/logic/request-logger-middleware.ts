@@ -18,74 +18,70 @@ export function createRequestLoggerMiddleware(
 
   return async (context, next) => {
     const start = Date.now()
+    const { headers } = context.request
+    const headerRequestId = headers.get('x-request-id')
+    const requestId = headerRequestId || start.toString()
+
+    headers.set('x-request-id', requestId)
 
     try {
       const result = await next()
       const status = result.status
-      const finish = Date.now()
 
-      log(logger, context, {
-        status,
-        result: status
+      log(
+        status
           ? status < 400
             ? Result.SUCCESS
             : Result.FAILURE
           : Result.UNKNOWN,
-        time: finish - start,
-        message:
-          status && status >= 500 && result.body
-            ? JSON.stringify(result.body)
-            : undefined,
-      })
+        {
+          status,
+          message:
+            status && status >= 500 && result.body
+              ? JSON.stringify(result.body)
+              : undefined,
+        }
+      )
 
       return result
     } catch (error: any) {
-      const finish = Date.now()
-
-      log(logger, context, {
-        result: Result.UNHANDLED_FAILURE,
-        time: finish - start,
-        message: error.message,
-      })
+      log(Result.UNHANDLED_FAILURE, { message: error.message })
 
       return {
         status: 500,
         body: error.message,
       }
     }
+
+    function log(
+      result: Result,
+      options: { status?: number; message?: string } = {}
+    ) {
+      const { searchParams, pathname } = context.url
+      const { method } = context.request
+      const { status, message } = options
+
+      const data: Parameters<ILoggerComponent.ILogger['info']>[1] = {
+        id: requestId,
+        path: pathname,
+        method,
+        result,
+        time: Date.now() - start,
+      }
+
+      if (searchParams) {
+        data.query = searchParams.toString()
+      }
+
+      if (status) {
+        data.status = status
+      }
+
+      if (message) {
+        data.message = message
+      }
+
+      logger.info(`HTTP Request`, data)
+    }
   }
-}
-
-function log(
-  logger: ILoggerComponent.ILogger,
-  context: IHttpServerComponent.DefaultContext<Context<string>>,
-  {
-    result,
-    status,
-    time,
-    message,
-  }: { result: Result; status?: number; time: number; message?: string }
-) {
-  const { searchParams, pathname } = context.url
-  const { method } = context.request
-
-  const data: Parameters<ILoggerComponent.ILogger['info']>[1] = {
-    method,
-    result,
-    time,
-  }
-
-  if (searchParams) {
-    data.searchParams = searchParams.toString()
-  }
-
-  if (status) {
-    data.status = status
-  }
-
-  if (message) {
-    data.message = message
-  }
-
-  logger.info(pathname, data)
 }
