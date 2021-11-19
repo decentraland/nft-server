@@ -1,8 +1,12 @@
+import { ILoggerComponent } from '@well-known-components/interfaces'
 import fetch from 'node-fetch'
 import { ISubgraphComponent } from './types'
 import { sleep } from './utils'
 
-export function createSubgraphComponent(url: string): ISubgraphComponent {
+export function createSubgraphComponent(
+  url: string,
+  logger: ILoggerComponent.ILogger
+): ISubgraphComponent {
   async function executeQuery<T>(
     query: string,
     variables: Record<
@@ -11,24 +15,25 @@ export function createSubgraphComponent(url: string): ISubgraphComponent {
     > = {},
     remainingAttempts = 3
   ): Promise<T> {
+    const start = Date.now()
     try {
-      const response = await fetch(
-        url,
-        {
-          method: 'post',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            query,
-            variables,
-          }),
-        }
-      )
+      const response = await fetch(url, {
+        method: 'post',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query,
+          variables,
+        }),
+      })
 
       if (!response.ok) {
         throw new Error(`Failed to fetch subgraph: ${await response.text()}`)
       }
 
-      const result: { data: T; errors?: { message: string }[] } = await response.json()
+      const result: {
+        data: T
+        errors?: { message: string }[]
+      } = await response.json()
 
       if (!result || !result.data || Object.keys(result.data).length === 0) {
         if (result && result.errors && result.errors.length) {
@@ -44,8 +49,12 @@ export function createSubgraphComponent(url: string): ISubgraphComponent {
         }
       }
 
+      log('SUCCESS')
+
       return result.data
     } catch (error) {
+      log('FAILURE')
+
       if (remainingAttempts > 0) {
         // retry
         await sleep(500)
@@ -53,6 +62,16 @@ export function createSubgraphComponent(url: string): ISubgraphComponent {
       } else {
         throw error // bubble up
       }
+    }
+
+    function log(result: 'SUCCESS' | 'FAILURE') {
+      logger.info('Subgraph Query', {
+        url,
+        variables: JSON.stringify(variables),
+        result,
+        time: Date.now() - start,
+        remainingAttempts,
+      })
     }
   }
 
