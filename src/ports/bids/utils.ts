@@ -1,5 +1,12 @@
-import { Bid, ChainId, ListingStatus, Network } from '@dcl/schemas'
-import { BidFilters, BidFragment, BidSortBy } from './types'
+import {
+  Bid,
+  BidFilters,
+  BidSortBy,
+  ChainId,
+  ListingStatus,
+  Network,
+} from '@dcl/schemas'
+import { BidFragment } from './types'
 
 export const BID_DEFAULT_SORT_BY = BidSortBy.RECENTLY_OFFERED
 

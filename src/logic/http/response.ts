@@ -18,7 +18,7 @@ export async function asJSON(
       status: 200,
       body: result,
     }
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof HttpError) {
       return {
         status: error.code,

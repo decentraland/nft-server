@@ -1,10 +1,6 @@
-import { Item } from '@dcl/schemas'
+import { Item, ItemFilters, ItemSortBy } from '@dcl/schemas'
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
-import {
-  IItemsComponent,
-  ItemFilters,
-  ItemSortBy,
-} from '../../ports/items/types'
+import { IItemsComponent } from '../../ports/items/types'
 
 export function createItemsSource(
   items: IItemsComponent
@@ -16,6 +12,8 @@ export function createItemsSource(
       sort: {
         [ItemSortBy.NEWEST]: result.createdAt,
         [ItemSortBy.RECENTLY_REVIEWED]: result.reviewedAt,
+        //@ts-ignore
+        [ItemSortBy.RECENTLY_SOLD]: result.soldAt,
         [ItemSortBy.NAME]: result.name,
         [ItemSortBy.CHEAPEST]: result.available > 0 ? +result.price : null,
       },

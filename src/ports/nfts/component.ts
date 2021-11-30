@@ -1,5 +1,6 @@
+import { NFTFilters, NFTSortBy } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
-import { INFTsComponent, NFTFilters, NFTResult, NFTSortBy } from './types'
+import { INFTsComponent, NFTResult } from './types'
 import { getFetchOneQuery, getFetchQuery, getQueryVariables } from './utils'
 
 export function createNFTComponent<T extends { id: string }>(options: {

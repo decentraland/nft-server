@@ -1,3 +1,28 @@
+import {
+  Bid,
+  BidFilters,
+  BidSortBy,
+  Collection,
+  CollectionFilters,
+  CollectionSortBy,
+  Contract,
+  ContractFilters,
+  ContractSortBy,
+  Item,
+  ItemFilters,
+  ItemSortBy,
+  Mint,
+  MintFilters,
+  MintSortBy,
+  NFTFilters,
+  NFTSortBy,
+  Order,
+  OrderFilters,
+  OrderSortBy,
+  Sale,
+  SaleFilters,
+  SaleSortBy,
+} from '@dcl/schemas'
 import { RoutedContext } from '@well-known-components/http-server'
 import type {
   IConfigComponent,
@@ -7,15 +32,8 @@ import type {
   IBaseComponent,
 } from '@well-known-components/interfaces'
 import { IMergerComponent } from './ports/merger/types'
-import { Bid, BidFilters, BidSortBy } from './ports/bids/types'
-import { Order, OrderFilters, OrderSortBy } from './ports/orders/types'
-import {
-  Contract,
-  ContractFilters,
-  ContractSortBy,
-} from './ports/contracts/types'
-import { NFTFilters, NFTResult, NFTSortBy } from './ports/nfts/types'
-import { Item, ItemFilters, ItemSortBy } from './ports/items/types'
+import { NFTResult } from './ports/nfts/types'
+import { IRequestSessionComponent } from './ports/requestSession/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -30,6 +48,8 @@ export type GlobalContext = {
 export type AppComponents = {
   config: IConfigComponent
   logs: ILoggerComponent
+  globalLogger: ILoggerComponent.ILogger
+  requestSession: IRequestSessionComponent
   server: IHttpServerComponent<GlobalContext>
   statusChecks: IBaseComponent
   metrics: IMetricsComponent<any>
@@ -38,6 +58,9 @@ export type AppComponents = {
   contracts: IMergerComponent<Contract, ContractFilters, ContractSortBy>
   nfts: IMergerComponent<NFTResult, NFTFilters, NFTSortBy>
   items: IMergerComponent<Item, ItemFilters, ItemSortBy>
+  mints: IMergerComponent<Mint, MintFilters, MintSortBy>
+  sales: IMergerComponent<Sale, SaleFilters, SaleSortBy>
+  collections: IMergerComponent<Collection, CollectionFilters, CollectionSortBy>
 }
 
 export type Context<Path extends string = any> = RoutedContext<

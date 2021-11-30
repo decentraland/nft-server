@@ -1,6 +1,13 @@
-import { ChainId, Item, Network, NFTCategory } from '@dcl/schemas'
-import { WearableGender } from '../nfts/types'
-import { ItemSortBy, ItemFilters, ItemFragment } from './types'
+import {
+  ChainId,
+  Item,
+  ItemFilters,
+  ItemSortBy,
+  Network,
+  NFTCategory,
+  WearableGender,
+} from '@dcl/schemas'
+import { ItemFragment } from './types'
 
 export const ITEM_DEFAULT_SORT_BY = ItemSortBy.NEWEST
 
@@ -35,6 +42,8 @@ export function fromItemFragment(
     createdAt: +fragment.createdAt * 1000,
     updatedAt: +fragment.updatedAt * 1000,
     reviewedAt: +fragment.reviewedAt * 1000,
+    //@ts-ignore
+    soldAt: +fragment.soldAt * 1000,
   }
 
   return item
@@ -65,6 +74,7 @@ export const getItemFragment = () => `
     createdAt
     updatedAt
     reviewedAt
+    soldAt
   }
 `
 
@@ -153,6 +163,10 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     where.push(`searchIsStoreMinter: true`)
   }
 
+  if (sortBy === ItemSortBy.RECENTLY_SOLD) {
+    where.push('soldAt_not: null')
+  }
+
   // Compute total nfts to query. If there's a "skip" we add it to the total, since we need all the prior results to later merge them in a single page. If nothing is provided we default to the max. When counting we also use the max.
   const max = 1000
   const total = isCount
@@ -172,6 +186,10 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       break
     case ItemSortBy.RECENTLY_REVIEWED:
       orderBy = 'reviewedAt'
+      orderDirection = 'desc'
+      break
+    case ItemSortBy.RECENTLY_SOLD:
+      orderBy = 'soldAt'
       orderDirection = 'desc'
       break
     case ItemSortBy.NAME:

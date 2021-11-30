@@ -1,27 +1,8 @@
-import { ListingStatus, Network, Order } from '@dcl/schemas'
-export { Order }
+import { ListingStatus, Order, OrderFilters } from '@dcl/schemas'
 
 export interface IOrdersComponent {
   fetch(filters: OrderFilters): Promise<Order[]>
   count(filters: OrderFilters): Promise<number>
-}
-
-export type OrderFilters = {
-  first?: number
-  skip?: number
-  sortBy?: OrderSortBy
-  owner?: string
-  buyer?: string
-  contractAddress?: string
-  tokenId?: string
-  status?: ListingStatus
-  network?: Network
-}
-
-export enum OrderSortBy {
-  RECENTLY_LISTED = 'recently_listed',
-  RECENTLY_UPDATED = 'recently_updated',
-  CHEAPEST = 'cheapest',
 }
 
 export type OrderFragment = {

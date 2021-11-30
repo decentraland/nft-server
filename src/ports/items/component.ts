@@ -1,6 +1,6 @@
-import { ChainId, Network } from '@dcl/schemas'
+import { ChainId, ItemFilters, Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
-import { IItemsComponent, ItemFilters, ItemFragment } from './types'
+import { IItemsComponent, ItemFragment } from './types'
 import { fromItemFragment, getItemsQuery } from './utils'
 
 export function createItemsComponent(options: {

@@ -1,34 +1,53 @@
+import { ILoggerComponent } from '@well-known-components/interfaces'
 import fetch from 'node-fetch'
 import { ISubgraphComponent } from './types'
 import { sleep } from './utils'
+import { IRequestSessionComponent } from '../requestSession/types'
 
-export function createSubgraphComponent(url: string): ISubgraphComponent {
+export function createSubgraphComponent(
+  url: string,
+  logger: ILoggerComponent.ILogger,
+  requestSession: IRequestSessionComponent
+): ISubgraphComponent {
   async function executeQuery<T>(
     query: string,
     variables: Record<
       string,
       string[] | string | number | boolean | undefined
     > = {},
-    remainingAttempts = 3
+    remainingAttempts = 3,
+    requestId = requestSession.getId()
   ): Promise<T> {
-    try {
-      const response = await fetch(
+    const start = Date.now()
+
+    const log = (result: 'SUCCESS' | 'FAILURE') => {
+      logger.info('Subgraph Query', {
+        id: requestId,
         url,
-        {
-          method: 'post',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            query,
-            variables,
-          }),
-        }
-      )
+        result,
+        time: Date.now() - start,
+        remainingAttempts,
+      })
+    }
+
+    try {
+      const response = await fetch(url, {
+        method: 'post',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query,
+          variables,
+        }),
+      })
 
       if (!response.ok) {
         throw new Error(`Failed to fetch subgraph: ${await response.text()}`)
       }
 
-      const result: { data: T; errors?: { message: string }[] } = await response.json()
+      const result: {
+        data: T
+        errors?: { message: string }[]
+      } = await response.json()
 
       if (!result || !result.data || Object.keys(result.data).length === 0) {
         if (result && result.errors && result.errors.length) {
@@ -44,12 +63,16 @@ export function createSubgraphComponent(url: string): ISubgraphComponent {
         }
       }
 
+      log('SUCCESS')
+
       return result.data
     } catch (error) {
+      log('FAILURE')
+
       if (remainingAttempts > 0) {
         // retry
         await sleep(500)
-        return executeQuery<T>(query, variables, remainingAttempts - 1)
+        return executeQuery<T>(query, variables, remainingAttempts - 1, requestId)
       } else {
         throw error // bubble up
       }

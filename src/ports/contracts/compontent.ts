@@ -1,5 +1,5 @@
-import { Contract, Network } from '@dcl/schemas'
-import { ContractFilters, IContractsComponent } from './types'
+import { Contract, ContractFilters, Network } from '@dcl/schemas'
+import { IContractsComponent } from './types'
 
 export function createContractsComponent(options: {
   getContracts: () => Promise<Contract[]>
