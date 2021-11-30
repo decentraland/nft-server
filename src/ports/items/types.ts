@@ -22,6 +22,7 @@ export type ItemFragment = {
       name: string
       description: string
       category: WearableCategory
+      bodyShapes: BodyShape[]
     }
   }
   searchWearableBodyShapes: BodyShape[]

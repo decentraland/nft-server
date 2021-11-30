@@ -33,7 +33,7 @@ export function fromItemFragment(
       wearable: {
         description: fragment.metadata.wearable.description,
         category: fragment.metadata.wearable.category,
-        bodyShapes: fragment.searchWearableBodyShapes,
+        bodyShapes: fragment.metadata.wearable.bodyShapes,
         rarity: fragment.rarity,
       },
     },
@@ -66,6 +66,7 @@ export const getItemFragment = () => `
         name
         description
         category
+        bodyShapes
       }
     }
     searchWearableBodyShapes
