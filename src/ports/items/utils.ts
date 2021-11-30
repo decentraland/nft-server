@@ -26,7 +26,7 @@ export function fromItemFragment(
       wearable: {
         description: fragment.metadata.wearable.description,
         category: fragment.metadata.wearable.category,
-        bodyShapes: fragment.searchWearableBodyShapes,
+        bodyShapes: fragment.metadata.wearable.bodyShapes,
         rarity: fragment.rarity,
       },
     },
@@ -57,6 +57,7 @@ export const getItemFragment = () => `
         name
         description
         category
+        bodyShapes
       }
     }
     searchWearableBodyShapes
@@ -170,9 +171,9 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       orderDirection = 'desc'
       break
     case ItemSortBy.RECENTLY_REVIEWED:
-        orderBy = 'reviewedAt'
-        orderDirection = 'desc'
-        break
+      orderBy = 'reviewedAt'
+      orderDirection = 'desc'
+      break
     case ItemSortBy.NAME:
       orderBy = 'searchText'
       orderDirection = 'asc'
