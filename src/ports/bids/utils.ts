@@ -39,6 +39,7 @@ export function fromBidFragment(
 export const getBidFields = () => `
   fragment bidFields on Bid {
     id
+    bidAddress
     blockchainId
     bidder
     seller
@@ -68,6 +69,7 @@ export function getBidsQuery(filters: BidFilters, isCount = false) {
     first,
     skip,
     sortBy,
+    bidAddress,
     contractAddress,
     tokenId,
     bidder,
@@ -76,6 +78,10 @@ export function getBidsQuery(filters: BidFilters, isCount = false) {
   } = filters
 
   const where: string[] = []
+
+  if (bidAddress) {
+    where.push(`bidAddress: "${bidAddress}""`)
+  }
 
   if (contractAddress) {
     where.push(`nftAddress: "${contractAddress}"`)
@@ -104,10 +110,10 @@ export function getBidsQuery(filters: BidFilters, isCount = false) {
   const total = isCount
     ? max
     : typeof first !== 'undefined'
-    ? typeof skip !== 'undefined'
-      ? skip + first
-      : first
-    : max
+      ? typeof skip !== 'undefined'
+        ? skip + first
+        : first
+      : max
 
   let orderBy: string
   let orderDirection: string
@@ -132,12 +138,12 @@ export function getBidsQuery(filters: BidFilters, isCount = false) {
   return `
     query Bids {
       bids(
-        first: ${total}, 
-        orderBy: ${orderBy}, 
-        orderDirection: ${orderDirection}, 
+        first: ${total},
+        orderBy: ${orderBy},
+        orderDirection: ${orderDirection},
         where: {
           ${where.join('\n')}
-        }) 
+        })
         { ${isCount ? 'id' : `...bidFragment`} }
     }
     ${isCount ? '' : getBidFragment()}

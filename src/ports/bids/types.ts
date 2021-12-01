@@ -7,6 +7,7 @@ export interface IBidsComponent {
 
 export type BidFragment = {
   id: string
+  bidAddress: string
   bidder: string
   seller: string
   price: string

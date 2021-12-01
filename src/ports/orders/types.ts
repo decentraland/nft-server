@@ -7,6 +7,7 @@ export interface IOrdersComponent {
 
 export type OrderFragment = {
   id: string
+  marketplaceAddress: string
   nftAddress: string
   owner: string
   buyer: string | null

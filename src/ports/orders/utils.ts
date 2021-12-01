@@ -13,6 +13,7 @@ export const ORDER_DEFAULT_SORT_BY = OrderSortBy.RECENTLY_LISTED
 export const getOrderFields = () => `
   fragment orderFields on Order {
     id
+    marketplaceAddress
     nftAddress
     owner
     buyer
@@ -38,6 +39,7 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
     first,
     skip,
     sortBy,
+    marketplaceAddress,
     contractAddress,
     tokenId,
     buyer,
@@ -46,6 +48,10 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
   } = filters
 
   const where: string[] = []
+
+  if (marketplaceAddress) {
+    where.push(`marketplaceAddress : "${marketplaceAddress}"`)
+  }
 
   if (contractAddress) {
     where.push(`nftAddress: "${contractAddress}"`)
@@ -74,10 +80,10 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
   const total = isCount
     ? max
     : typeof first !== 'undefined'
-    ? typeof skip !== 'undefined'
-      ? skip + first
-      : first
-    : max
+      ? typeof skip !== 'undefined'
+        ? skip + first
+        : first
+      : max
 
   let orderBy: string
   let orderDirection: string
@@ -102,12 +108,12 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
   return `
     query Orders {
       orders(
-        first: ${total}, 
-        orderBy: ${orderBy}, 
-        orderDirection: ${orderDirection}, 
+        first: ${total},
+        orderBy: ${orderBy},
+        orderDirection: ${orderDirection},
         where: {
           ${where.join('\n')}
-        }) 
+        })
       { ${isCount ? 'id' : `...orderFragment`} }
     }
     ${isCount ? '' : getOrderFragment()}
