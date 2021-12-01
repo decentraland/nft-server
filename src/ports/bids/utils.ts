@@ -17,6 +17,7 @@ export function fromBidFragment(
 ): Bid {
   const bid: Bid = {
     id: fragment.id,
+    bidAddress: fragment.bidAddress,
     bidder: fragment.bidder,
     seller: fragment.seller,
     price: fragment.price,

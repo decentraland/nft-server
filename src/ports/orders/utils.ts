@@ -127,6 +127,7 @@ export function fromOrderFragment(
 ): Order {
   const order: Order = {
     id: fragment.id,
+    marketplaceAddress: fragment.marketplaceAddress,
     contractAddress: fragment.nftAddress,
     tokenId: fragment.nft.tokenId,
     owner: fragment.owner,
