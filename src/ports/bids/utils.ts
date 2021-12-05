@@ -21,7 +21,7 @@ export function fromBidFragment(
     bidder: fragment.bidder,
     seller: fragment.seller,
     price: fragment.price,
-    fingerprint: fragment.fingerprint,
+    fingerprint: fragment.fingerprint || '0x',
     status: fragment.status,
     blockchainId: fragment.blockchainId,
     blockNumber: fragment.blockNumber,
@@ -37,7 +37,7 @@ export function fromBidFragment(
   return bid
 }
 
-export const getBidFields = () => `
+export const getBidFields = (withFingerprint: boolean) => `
   fragment bidFields on Bid {
     id
     bidAddress
@@ -45,7 +45,7 @@ export const getBidFields = () => `
     bidder
     seller
     price
-    fingerprint
+    ${withFingerprint ? 'fingerprint' : ''}
     status
     blockNumber
     expiresAt
@@ -54,7 +54,7 @@ export const getBidFields = () => `
   }
 `
 
-export const getBidFragment = () => `
+export const getBidFragment = (withFingerprint: boolean) => `
   fragment bidFragment on Bid {
     ...bidFields
     nft {
@@ -62,7 +62,7 @@ export const getBidFragment = () => `
       tokenId
     }
   }
-  ${getBidFields()}
+  ${getBidFields(withFingerprint)}
 `
 
 export function getBidsQuery(filters: BidFilters, isCount = false) {
@@ -76,6 +76,7 @@ export function getBidsQuery(filters: BidFilters, isCount = false) {
     bidder,
     seller,
     status,
+    network,
   } = filters
 
   const where: string[] = []
@@ -111,10 +112,10 @@ export function getBidsQuery(filters: BidFilters, isCount = false) {
   const total = isCount
     ? max
     : typeof first !== 'undefined'
-      ? typeof skip !== 'undefined'
-        ? skip + first
-        : first
-      : max
+    ? typeof skip !== 'undefined'
+      ? skip + first
+      : first
+    : max
 
   let orderBy: string
   let orderDirection: string
@@ -147,6 +148,6 @@ export function getBidsQuery(filters: BidFilters, isCount = false) {
         })
         { ${isCount ? 'id' : `...bidFragment`} }
     }
-    ${isCount ? '' : getBidFragment()}
+    ${isCount ? '' : getBidFragment(network === Network.ETHEREUM)}
   `
 }

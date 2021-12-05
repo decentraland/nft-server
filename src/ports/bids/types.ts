@@ -11,7 +11,7 @@ export type BidFragment = {
   bidder: string
   seller: string
   price: string
-  fingerprint: string
+  fingerprint?: string
   status: ListingStatus
   blockchainId: string
   blockNumber: string
