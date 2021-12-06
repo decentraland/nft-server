@@ -182,8 +182,18 @@ async function initComponents(): Promise<AppComponents> {
     chainId: marketplaceChainId,
   })
 
+  const collectionsBids = createBidsComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.MATIC,
+    chainId: collectionsChainId,
+  })
+
+
   const bids = createMergerComponent<Bid, BidFilters, BidSortBy>({
-    sources: [createBidsSource(marketplaceBids)],
+    sources: [
+      createBidsSource(marketplaceBids),
+      createBidsSource(collectionsBids)
+    ],
     defaultSortBy: BID_DEFAULT_SORT_BY,
     directions: {
       [BidSortBy.RECENTLY_OFFERED]: SortDirection.DESC,

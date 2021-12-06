@@ -17,10 +17,11 @@ export function fromBidFragment(
 ): Bid {
   const bid: Bid = {
     id: fragment.id,
+    bidAddress: fragment.bidAddress,
     bidder: fragment.bidder,
     seller: fragment.seller,
     price: fragment.price,
-    fingerprint: fragment.fingerprint,
+    fingerprint: fragment.fingerprint || '0x',
     status: fragment.status,
     blockchainId: fragment.blockchainId,
     blockNumber: fragment.blockNumber,
@@ -36,14 +37,15 @@ export function fromBidFragment(
   return bid
 }
 
-export const getBidFields = () => `
+export const getBidFields = (withFingerprint: boolean) => `
   fragment bidFields on Bid {
     id
+    bidAddress
     blockchainId
     bidder
     seller
     price
-    fingerprint
+    ${withFingerprint ? 'fingerprint' : ''}
     status
     blockNumber
     expiresAt
@@ -52,7 +54,7 @@ export const getBidFields = () => `
   }
 `
 
-export const getBidFragment = () => `
+export const getBidFragment = (withFingerprint: boolean) => `
   fragment bidFragment on Bid {
     ...bidFields
     nft {
@@ -60,7 +62,7 @@ export const getBidFragment = () => `
       tokenId
     }
   }
-  ${getBidFields()}
+  ${getBidFields(withFingerprint)}
 `
 
 export function getBidsQuery(filters: BidFilters, isCount = false) {
@@ -68,14 +70,20 @@ export function getBidsQuery(filters: BidFilters, isCount = false) {
     first,
     skip,
     sortBy,
+    bidAddress,
     contractAddress,
     tokenId,
     bidder,
     seller,
     status,
+    network,
   } = filters
 
   const where: string[] = []
+
+  if (bidAddress) {
+    where.push(`bidAddress: "${bidAddress}""`)
+  }
 
   if (contractAddress) {
     where.push(`nftAddress: "${contractAddress}"`)
@@ -132,14 +140,14 @@ export function getBidsQuery(filters: BidFilters, isCount = false) {
   return `
     query Bids {
       bids(
-        first: ${total}, 
-        orderBy: ${orderBy}, 
-        orderDirection: ${orderDirection}, 
+        first: ${total},
+        orderBy: ${orderBy},
+        orderDirection: ${orderDirection},
         where: {
           ${where.join('\n')}
-        }) 
+        })
         { ${isCount ? 'id' : `...bidFragment`} }
     }
-    ${isCount ? '' : getBidFragment()}
+    ${isCount ? '' : getBidFragment(network === Network.ETHEREUM)}
   `
 }

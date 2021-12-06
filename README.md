@@ -120,6 +120,7 @@ type Item = {
 type Order = {
   id: string
   nftId: string
+  marketplaceAddress: string
   contractAddress: string
   tokenId: string
   owner: string
@@ -139,6 +140,7 @@ type Order = {
 - `first`: Limit the number of results. Type: `number`.
 - `skip`: Skip results. Type: `number`.
 - `sortBy`: Sort results. Possible values: `recently_listed`, `recently_updated`, `cheapest`.
+- `marketplaceAddress`: Filter results by marketplace contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
 - `owner`: Filter by owner. Type: `address`.
 - `buyer`: Filter by buyer. Type: `address`.
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
@@ -155,6 +157,7 @@ type Order = {
 ```ts
 type Bid = {
   id: string
+  bidAddress: string
   bidder: string
   seller: string
   price: string
@@ -177,6 +180,7 @@ type Bid = {
 - `first`: Limit the number of results. Type: `number`.
 - `skip`: Skip results. Type: `number`.
 - `sortBy`: Sort results. Possible values: `recently_offered`, `recently_updated`, `most_expensive`.
+- `bidAddress`: Filter results by bid contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
 - `bidder`: Filter by bidder. Type: `address`.
 - `seller`: Filter by seller. Type: `address`.
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.

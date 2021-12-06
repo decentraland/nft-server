@@ -16,6 +16,7 @@ export function createOrdersHandler(
     const sortBy = params.getValue<OrderSortBy>('sortBy', OrderSortBy)
     const owner = params.getAddress('owner')
     const buyer = params.getAddress('buyer')
+    const marketplaceAddress = params.getAddress('marketplaceAddress')
     const contractAddress = params.getAddress('contractAddress')
     const tokenId = params.getString('tokenId')
     const status = params.getValue<ListingStatus>('status', ListingStatus)
@@ -28,6 +29,7 @@ export function createOrdersHandler(
         sortBy,
         owner,
         buyer,
+        marketplaceAddress,
         contractAddress,
         tokenId,
         status,

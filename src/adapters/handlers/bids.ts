@@ -17,6 +17,7 @@ export function createBidsHandler(
     const sortBy = params.getValue<BidSortBy>('sortBy', BidSortBy)
     const bidder = params.getAddress('bidder')
     const seller = params.getAddress('seller')
+    const bidAddress = params.getAddress('bidAddress')
     const contractAddress = params.getAddress('contractAddress')
     const tokenId = params.getString('tokenId')
     const status = params.getValue<ListingStatus>('status', ListingStatus)
@@ -29,6 +30,7 @@ export function createBidsHandler(
         sortBy,
         bidder,
         seller,
+        bidAddress,
         contractAddress,
         tokenId,
         status,
