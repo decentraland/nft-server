@@ -140,10 +140,10 @@ type Order = {
 - `first`: Limit the number of results. Type: `number`.
 - `skip`: Skip results. Type: `number`.
 - `sortBy`: Sort results. Possible values: `recently_listed`, `recently_updated`, `cheapest`.
-- `marketplaceAddress`: Filter results by marketplace contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
+- `marketplaceAddress`: Filter results by marketplace contract address. Type: `address`.
 - `owner`: Filter by owner. Type: `address`.
 - `buyer`: Filter by buyer. Type: `address`.
-- `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
+- `contractAddress`: Filter results by contract address. Type: `address`.
 - `tokenId`: Filter results by `tokenId`. Type: `string`.
 - `status`: Filter results by `OrderStatus`. Possible values: `open`, `sold`, `cancelled`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
@@ -180,10 +180,10 @@ type Bid = {
 - `first`: Limit the number of results. Type: `number`.
 - `skip`: Skip results. Type: `number`.
 - `sortBy`: Sort results. Possible values: `recently_offered`, `recently_updated`, `most_expensive`.
-- `bidAddress`: Filter results by bid contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
+- `bidAddress`: Filter results by bid contract address. Type: `address`.
 - `bidder`: Filter by bidder. Type: `address`.
 - `seller`: Filter by seller. Type: `address`.
-- `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
+- `contractAddress`: Filter results by contract address. Type: `address`.
 - `tokenId`: Filter results by `tokenId`. Type: `string`.
 - `status`: Filter results by `BidStatus`. Possible values: `open`, `sold`, `cancelled`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
