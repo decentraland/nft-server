@@ -15,7 +15,7 @@ export function createBidsComponent(options: {
       return []
     }
 
-    const query = getBidsQuery(filters)
+    const query = getBidsQuery({ ...filters, network })
     const { bids: fragments } = await subgraph.query<{
       bids: BidFragment[]
     }>(query)
