@@ -11,7 +11,7 @@ export function fromAccountFragment(fragment: AccountFragment): Account {
     purchases: fragment.purchases,
     spent: fragment.spent,
     earned: fragment.earned,
-    royalties: fragment.royalties,
+    royalties: fragment.royalties || '0',
   }
 
   return account

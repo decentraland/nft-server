@@ -12,5 +12,5 @@ export type AccountFragment = {
   purchases: number
   spent: string
   earned: string
-  royalties: string
+  royalties?: string
 }
