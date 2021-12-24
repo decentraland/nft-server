@@ -267,6 +267,33 @@ export type Sale = {
 - `maxPrice`: Return only sales with a price lower than this. Type `number`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 
+## Accounts
+
+**Endpoint**: `/v1/accounts`
+
+**Type**:
+
+```ts
+export type Account = {
+  id: string
+  address: string
+  sales: number
+  purchases: number
+  spent: string
+  earned: string
+  royalties: string
+}
+```
+
+**Query Params**:
+
+- `first`: Limit the number of results. Type: `number`.
+- `skip`: Skip results. Type: `number`.
+- `sortBy`: Sort results. Possible values: `most_sales`, `most_purchases`, `most_spent`, `most_earned`, `most_royalties`.
+- `id`: Filter by user address. Type: `string`.
+- `address`: Currently the same as id, Filter by user address. Type: 'string'.
+- `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
+
 ## Collections
 
 **Endpoint**: `/v1/collections`
