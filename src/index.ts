@@ -1,5 +1,8 @@
 import { config as configDotEnvFile } from 'dotenv'
 import {
+  Account,
+  AccountFilters,
+  AccountSortBy,
   Bid,
   BidFilters,
   BidSortBy,
@@ -84,6 +87,9 @@ import { createCollectionsComponent } from './ports/collections/component'
 import { createCollectionsSource } from './adapters/sources/collections'
 import { COLLECTION_DEFAULT_SORT_BY } from './ports/collections/utils'
 import { createRequestSessionComponent } from './ports/requestSession/component'
+import { createAccountsComponent } from './ports/accounts/component'
+import { createAccountsSource } from './adapters/sources/accounts'
+import { ACCOUNT_DEFAULT_SORT_BY } from './ports/accounts/utils'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -188,11 +194,10 @@ async function initComponents(): Promise<AppComponents> {
     chainId: collectionsChainId,
   })
 
-
   const bids = createMergerComponent<Bid, BidFilters, BidSortBy>({
     sources: [
       createBidsSource(marketplaceBids),
-      createBidsSource(collectionsBids)
+      createBidsSource(collectionsBids),
     ],
     defaultSortBy: BID_DEFAULT_SORT_BY,
     directions: {
@@ -336,6 +341,38 @@ async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
+  // accounts
+  const marketplaceAccounts = createAccountsComponent({
+    subgraph: marketplaceSubgraph,
+    network: Network.ETHEREUM,
+    chainId: marketplaceChainId,
+  })
+
+  const collectionsAccounts = createAccountsComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.MATIC,
+    chainId: collectionsChainId,
+  })
+
+  const accounts = createMergerComponent<
+    Account,
+    AccountFilters,
+    AccountSortBy
+  >({
+    sources: [
+      createAccountsSource(marketplaceAccounts),
+      createAccountsSource(collectionsAccounts),
+    ],
+    defaultSortBy: ACCOUNT_DEFAULT_SORT_BY,
+    directions: {
+      [AccountSortBy.MOST_EARNED]: SortDirection.DESC,
+      [AccountSortBy.MOST_PURCHASES]: SortDirection.DESC,
+      [AccountSortBy.MOST_ROYALTIES]: SortDirection.DESC,
+      [AccountSortBy.MOST_SALES]: SortDirection.DESC,
+      [AccountSortBy.MOST_SPENT]: SortDirection.DESC,
+    },
+  })
+
   // collections
   const collectionsCollections = createCollectionsComponent({
     subgraph: collectionsSubgraph,
@@ -375,6 +412,7 @@ async function initComponents(): Promise<AppComponents> {
     mints,
     sales,
     collections,
+    accounts,
   }
 }
 

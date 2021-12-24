@@ -1,4 +1,7 @@
 import {
+  Account,
+  AccountFilters,
+  AccountSortBy,
   Bid,
   BidFilters,
   BidSortBy,
@@ -61,6 +64,7 @@ export type AppComponents = {
   mints: IMergerComponent<Mint, MintFilters, MintSortBy>
   sales: IMergerComponent<Sale, SaleFilters, SaleSortBy>
   collections: IMergerComponent<Collection, CollectionFilters, CollectionSortBy>
+  accounts: IMergerComponent<Account, AccountFilters, AccountSortBy>
 }
 
 export type Context<Path extends string = any> = RoutedContext<
