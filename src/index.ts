@@ -104,9 +104,9 @@ async function initComponents(): Promise<AppComponents> {
 
   // default config
   const defaultValues: Partial<AppConfig> = {
-    HTTP_SERVER_PORT: '5000',
-    HTTP_SERVER_HOST: '0.0.0.0',
-    API_VERSION: 'v1',
+    HTTP_SERVER_PORT: process.env.HTTP_SERVER_PORT || '5000',
+    HTTP_SERVER_HOST: process.env.HTTP_SERVER_HOST || '0.0.0.0',
+    API_VERSION: process.env.API_VERSION || 'v1',
   }
 
   const config = createConfigComponent(process.env, defaultValues)
