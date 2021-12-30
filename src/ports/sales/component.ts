@@ -1,4 +1,4 @@
-import { ChainId, Network, SaleFilters } from '@dcl/schemas'
+import { ChainId, Network, SaleFilters, SaleType } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
 import { SaleFragment, ISalesComponent } from './types'
 import { fromSaleFragment, getSalesQuery } from './utils'
@@ -10,8 +10,17 @@ export function createSalesComponent(options: {
 }): ISalesComponent {
   const { subgraph, network, chainId } = options
 
+  function isValid(network: Network, filters: SaleFilters) {
+    return (
+      // Querying a different network to the component's one is not valid
+      (!filters.network || filters.network === network) &&
+      // Querying a SaleType.MINT on Ethereum is not valid
+      (filters.type !== SaleType.MINT || network !== Network.ETHEREUM)
+    )
+  }
+
   async function fetch(filters: SaleFilters) {
-    if (filters.network && filters.network !== network) {
+    if (!isValid(network, filters)) {
       return []
     }
 
@@ -28,7 +37,7 @@ export function createSalesComponent(options: {
   }
 
   async function count(filters: SaleFilters) {
-    if (filters.network && filters.network !== network) {
+    if (!isValid(network, filters)) {
       return 0
     }
 
