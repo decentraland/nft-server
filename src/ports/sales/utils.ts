@@ -102,7 +102,7 @@ export function getSalesQuery(
   }
 
   if (type) {
-    where.push(`type: "${type}"`)
+    where.push(`type: ${type}`)
   }
 
   if (from) {

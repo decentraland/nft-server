@@ -1,4 +1,4 @@
-import { ChainId, Network, SaleFilters } from '@dcl/schemas'
+import { ChainId, Network, SaleFilters, SaleType } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
 import { SaleFragment, ISalesComponent } from './types'
 import { fromSaleFragment, getSalesQuery } from './utils'
@@ -11,7 +11,10 @@ export function createSalesComponent(options: {
   const { subgraph, network, chainId } = options
 
   async function fetch(filters: SaleFilters) {
-    if (filters.network && filters.network !== network) {
+    if (
+      (filters.network && filters.network !== network) ||
+      (filters.type === SaleType.MINT && network === Network.ETHEREUM)
+    ) {
       return []
     }
 
@@ -28,7 +31,10 @@ export function createSalesComponent(options: {
   }
 
   async function count(filters: SaleFilters) {
-    if (filters.network && filters.network !== network) {
+    if (
+      (filters.network && filters.network !== network) ||
+      (filters.type === SaleType.MINT && network === Network.ETHEREUM)
+    ) {
       return 0
     }
 
