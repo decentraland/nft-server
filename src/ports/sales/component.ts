@@ -12,7 +12,9 @@ export function createSalesComponent(options: {
 
   function isValid(network: Network, filters: SaleFilters) {
     return (
+      // Querying a different network to the component's one is not valid
       (!filters.network || filters.network === network) &&
+      // Querying a SaleType.MINT on Ethereum is not valid
       (filters.type !== SaleType.MINT || network !== Network.ETHEREUM)
     )
   }
