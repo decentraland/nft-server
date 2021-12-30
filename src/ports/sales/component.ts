@@ -10,11 +10,15 @@ export function createSalesComponent(options: {
 }): ISalesComponent {
   const { subgraph, network, chainId } = options
 
+  function isValid(network: Network, filters: SaleFilters) {
+    return (
+      (!filters.network || filters.network === network) &&
+      (filters.type !== SaleType.MINT || network !== Network.ETHEREUM)
+    )
+  }
+
   async function fetch(filters: SaleFilters) {
-    if (
-      (filters.network && filters.network !== network) ||
-      (filters.type === SaleType.MINT && network === Network.ETHEREUM)
-    ) {
+    if (!isValid(network, filters)) {
       return []
     }
 
@@ -31,10 +35,7 @@ export function createSalesComponent(options: {
   }
 
   async function count(filters: SaleFilters) {
-    if (
-      (filters.network && filters.network !== network) ||
-      (filters.type === SaleType.MINT && network === Network.ETHEREUM)
-    ) {
+    if (!isValid(network, filters)) {
       return 0
     }
 
