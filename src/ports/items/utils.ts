@@ -97,6 +97,9 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
 
   const where: string[] = [`searchIsCollectionApproved: true`]
 
+  // TODO: Remove when biconomy pools issue can be solved
+  where.push('price_gt: 0')
+
   if (creator) {
     where.push(`creator: "${creator}"`)
   }
