@@ -30,7 +30,7 @@ export function fromItemFragment(
     isOnSale:
       fragment.searchIsStoreMinter &&
       +fragment.available > 0 &&
-      +fragment.price > 0,
+      fragment.price !== '0',
     creator: fragment.collection.creator,
     data: {
       wearable: {
