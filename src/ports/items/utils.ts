@@ -27,7 +27,10 @@ export function fromItemFragment(
     rarity: fragment.rarity,
     price: fragment.price,
     available: +fragment.available,
-    isOnSale: fragment.searchIsStoreMinter && +fragment.available > 0,
+    isOnSale:
+      fragment.searchIsStoreMinter &&
+      +fragment.available > 0 &&
+      fragment.price !== '0',
     creator: fragment.collection.creator,
     data: {
       wearable: {
@@ -107,10 +110,12 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     )
   } else if (isOnSale) {
     where.push('available_gt: 0')
+    where.push('price_gt: 0')
   } else if (isSoldOut) {
     where.push('available: 0')
   } else if (sortBy === ItemSortBy.CHEAPEST) {
     where.push('available_gt: 0')
+    where.push('price_gt: 0')
   }
 
   if (search) {
