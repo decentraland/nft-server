@@ -66,7 +66,7 @@ export function getAccountsQuery(
       break
     case AccountSortBy.MOST_ROYALTIES:
       orderBy = 'royalties'
-      orderDirection = 'asc'
+      orderDirection = 'desc'
       break
     case AccountSortBy.MOST_SALES:
       orderBy = 'sales'
@@ -77,7 +77,6 @@ export function getAccountsQuery(
       orderDirection = 'desc'
       break
     default:
-      // AccountSortBy.MOST_EARNED
       orderBy = 'earned'
       orderDirection = 'desc'
   }

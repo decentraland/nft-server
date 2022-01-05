@@ -1,4 +1,4 @@
-import { AccountFilters, ChainId, Network } from '@dcl/schemas'
+import { AccountFilters, AccountSortBy, ChainId, Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '../subgraph/types'
 import { AccountFragment, IAccountsComponent } from './types'
 import { fromAccountFragment, getAccountsQuery } from './utils'
@@ -10,8 +10,18 @@ export function createAccountsComponent(options: {
 }): IAccountsComponent {
   const { subgraph, network } = options
 
+  function isValid(network: Network, filters: AccountFilters) {
+    return (
+      // Querying a different network to the component's one is not valid
+      (!filters.network || filters.network === network) &&
+      // Sorting by "most_royalties" on Ethereum is not valid
+      (filters.sortBy !== AccountSortBy.MOST_ROYALTIES ||
+        network !== Network.ETHEREUM)
+    )
+  }
+
   async function fetch(filters: AccountFilters) {
-    if (filters.network && filters.network !== network) {
+    if (!isValid(network, filters)) {
       return []
     }
 
@@ -29,7 +39,7 @@ export function createAccountsComponent(options: {
   }
 
   async function count(filters: AccountFilters) {
-    if (filters.network && filters.network !== network) {
+    if (!isValid(network, filters)) {
       return 0
     }
 

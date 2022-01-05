@@ -10,10 +10,10 @@ export function createAccountsSource(
     return results.map((result) => ({
       result,
       sort: {
-        [AccountSortBy.MOST_SPENT]: result.spent,
-        [AccountSortBy.MOST_EARNED]: result.earned,
+        [AccountSortBy.MOST_SPENT]: +result.spent,
+        [AccountSortBy.MOST_EARNED]: +result.earned,
         [AccountSortBy.MOST_PURCHASES]: result.purchases,
-        [AccountSortBy.MOST_ROYALTIES]: result.royalties,
+        [AccountSortBy.MOST_ROYALTIES]: +result.royalties,
         [AccountSortBy.MOST_SALES]: result.sales,
       },
     }))
