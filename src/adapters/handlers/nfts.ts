@@ -28,6 +28,7 @@ export function createNFTsHandler(
     const isLand = params.getBoolean('isLand')
     const isWearableHead = params.getBoolean('isWearableHead')
     const isWearableAccessory = params.getBoolean('isWearableAccessory')
+    const isWearableSmart = params.getBoolean('isWearableSmart')
     const wearableCategory = params.getValue<WearableCategory>(
       'wearableCategory',
       WearableCategory
@@ -54,6 +55,7 @@ export function createNFTsHandler(
         isLand,
         isWearableHead,
         isWearableAccessory,
+        isWearableSmart,
         wearableCategory,
         wearableGenders,
         contractAddresses,

@@ -57,6 +57,7 @@ type NFT = {
 - `isLand`: Only return results that their `category` is either `parcel` or `estate`.
 - `isWearableHead`: Only return results that their category is `wearable` and are part of the avatar's head. Type `boolean`.
 - `isWearableAccessory`: Only return results that their category is `wearable` and accessories (not a part of the body).
+- `isWearableSmart`: Only return smart wearables. Type `boolean`.
 - `wearableCategory`: Filter results by `WearableCategory`. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`.
 - `wearableGender`: Filter results by `WearableGender`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`.
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
@@ -75,7 +76,6 @@ type NFT = {
 type Item = {
   id: string
   name: string
-  type: ItemType
   thumbnail: string
   url: string
   category: NFTCategory
@@ -108,11 +108,11 @@ type Item = {
 - `search`: Free text search. Type: `string`.
 - `isWearableHead`: Only return results that their category is `wearable` and are part of the avatar's head. Type `boolean`.
 - `isWearableAccessory`: Only return results that their category is `wearable` and accessories (not a part of the body).
+- `isWearableSmart`: Only return smart wearables. Type `boolean`.
 - `wearableCategory`: Filter results by `WearableCategory`. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`.
 - `wearableGender`: Filter results by `WearableGender`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`.
 - `contractAddress`: Filter results by contract address. Type: `address`.
 - `itemId`: Filter results by `itemId`. Type: `string`.
-- `itemType`: Filter results by `ItemType`. Possible values: `wearable`, `smart_wearable`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 
 ## Orders

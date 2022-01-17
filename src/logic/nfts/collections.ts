@@ -8,6 +8,7 @@ import {
   Rarity,
   WearableCategory,
 } from '@dcl/schemas'
+import { FragmentItemType } from '../../ports/items/types'
 import { NFTResult } from '../../ports/nfts/types'
 import { getId, NFT_DEFAULT_SORT_BY } from '../../ports/nfts/utils'
 import { OrderFragment } from '../../ports/orders/types'
@@ -18,6 +19,7 @@ import { isExpired } from '../expiration'
 export const getCollectionsFields = () => `
   fragment collectionsFields on NFT {
     id
+    itemType
     image
     contractAddress
     tokenId
@@ -66,6 +68,7 @@ export type CollectionsFields = Omit<
   | 'itemId'
 > & {
   id: string
+  itemType: FragmentItemType
   image: string
   contractAddress: string
   tokenId: string
@@ -134,6 +137,7 @@ export function fromCollectionsFragment(
           category: fragment.metadata.wearable.category,
           description: fragment.metadata.wearable.description,
           rarity: fragment.metadata.wearable.rarity,
+          isSmart: fragment.itemType === FragmentItemType.SMART_WEARABLE_V1,
         },
       },
       issuedId: fragment.issuedId,
@@ -171,6 +175,9 @@ export function getCollectionsExtraWhere(options: NFTFilters) {
   const extraWhere = []
   if (options.itemId) {
     extraWhere.push('itemBlockchainId: $itemId')
+  }
+  if (options.isWearableSmart) {
+    extraWhere.push('itemType: smart_wearable_v1')
   }
   return extraWhere
 }
