@@ -197,6 +197,7 @@ export function fromMarketplaceNFTFragment(
               category: fragment.wearable.category,
               description: fragment.wearable.description,
               rarity: fragment.wearable.rarity,
+              isSmart: false,
             }
           : undefined,
         ens: fragment.ens ? { subdomain: fragment.ens.subdomain } : undefined,
@@ -254,7 +255,8 @@ export function fromMarketplaceOrderFragment(fragment: OrderFragment) {
 export function marketplaceShouldFetch(filters: NFTFilters) {
   if (
     (filters.network && filters.network !== Network.ETHEREUM) ||
-    filters.itemId
+    filters.itemId ||
+    filters.isWearableSmart
   ) {
     return false
   }
