@@ -3,11 +3,12 @@ import {
   Item,
   ItemFilters,
   ItemSortBy,
+  ItemType,
   Network,
   NFTCategory,
   WearableGender,
 } from '@dcl/schemas'
-import { ItemFragment } from './types'
+import { ItemFragment, FragmentItemType } from './types'
 
 export const ITEM_DEFAULT_SORT_BY = ItemSortBy.NEWEST
 
@@ -20,6 +21,7 @@ export function fromItemFragment(
     id: fragment.id,
     name: fragment.metadata.wearable.name,
     thumbnail: fragment.image,
+    type: getItemTypeFromFragment(fragment.itemType),
     url: `/contracts/${fragment.collection.id}/items/${fragment.blockchainId}`,
     category: NFTCategory.WEARABLE,
     contractAddress: fragment.collection.id,
@@ -60,6 +62,7 @@ export const getItemFragment = () => `
     image
     rarity
     available
+    itemType
     collection {
       id
       creator
@@ -96,6 +99,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     wearableGenders,
     contractAddress,
     itemId,
+    itemType
   } = filters
 
   const where: string[] = [`searchIsCollectionApproved: true`]
@@ -171,6 +175,17 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     where.push('soldAt_not: null')
   }
 
+  switch(itemType) {
+    case ItemType.WEARABLE:
+      where.push(`itemType_in: [wearable_v1, wearable_v2]`)
+      break
+    case ItemType.SMART_WEARABLE:
+      where.push(`itemType: smart_wearable_v1`)
+      break
+    default:
+      // undefined does nothing
+  }
+
   // Compute total nfts to query. If there's a "skip" we add it to the total, since we need all the prior results to later merge them in a single page. If nothing is provided we default to the max. When counting we also use the max.
   const max = 1000
   const total = isCount
@@ -224,4 +239,14 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     ${query}
     ${isCount ? '' : getItemFragment()}
   `
+}
+
+function getItemTypeFromFragment(fragmentItemType: FragmentItemType){
+  switch(fragmentItemType) {
+    case FragmentItemType.WEARABLE_V1:
+    case FragmentItemType.WEARABLE_V2:
+      return ItemType.WEARABLE
+    case FragmentItemType.SMART_WEARABLE_V1:
+      return ItemType.SMART_WEARABLE
+  }
 }
