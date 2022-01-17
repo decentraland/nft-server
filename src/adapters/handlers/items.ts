@@ -1,5 +1,6 @@
 import {
   ItemSortBy,
+  ItemType,
   Network,
   Rarity,
   WearableCategory,
@@ -37,6 +38,7 @@ export function createItemsHandler(
     )
     const contractAddress = params.getAddress('contractAddress')
     const itemId = params.getString('itemId')
+    const itemType = params.getValue<ItemType>('itemType', ItemType)
     const network = params.getValue<Network>('network', Network)
 
     return asJSON(() =>
@@ -55,6 +57,7 @@ export function createItemsHandler(
         wearableGenders,
         contractAddress,
         itemId,
+        itemType,
         network,
       })
     )

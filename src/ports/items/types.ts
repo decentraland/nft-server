@@ -6,6 +6,12 @@ import {
   WearableCategory,
 } from '@dcl/schemas'
 
+export enum FragmentItemType {
+  WEARABLE_V1='wearable_v1',
+  WEARABLE_V2='wearable_v2',
+  SMART_WEARABLE_V1='smart_wearable_v1'
+}
+
 export type ItemFragment = {
   id: string
   price: string
@@ -13,6 +19,7 @@ export type ItemFragment = {
   image: string
   rarity: Rarity
   available: string
+  itemType: FragmentItemType,
   collection: {
     id: string
     creator: string

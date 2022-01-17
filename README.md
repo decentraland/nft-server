@@ -75,6 +75,7 @@ type NFT = {
 type Item = {
   id: string
   name: string
+  type: ItemType
   thumbnail: string
   url: string
   category: NFTCategory
@@ -83,12 +84,15 @@ type Item = {
   rarity: Rarity
   price: string
   available: number
+  isOnSale: boolean
   creator: string
   data: Data
   network: Network
   chainId: ChainId
   createdAt: number
   updatedAt: number
+  reviewedAt: number
+  soldAt: number
 }
 ```
 
@@ -108,6 +112,7 @@ type Item = {
 - `wearableGender`: Filter results by `WearableGender`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`.
 - `contractAddress`: Filter results by contract address. Type: `address`.
 - `itemId`: Filter results by `itemId`. Type: `string`.
+- `itemType`: Filter results by `ItemType`. Possible values: `wearable`, `smart_wearable`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 
 ## Orders
