@@ -10,7 +10,7 @@ export function createAccountsComponent(options: {
 }): IAccountsComponent {
   const { subgraph, network } = options
 
-  function isValid(network: Network, filters: AccountFilters) {
+  function isValid(filters: AccountFilters) {
     return (
       // Querying a different network to the component's one is not valid
       (!filters.network || filters.network === network) &&
@@ -21,7 +21,7 @@ export function createAccountsComponent(options: {
   }
 
   async function fetch(filters: AccountFilters) {
-    if (!isValid(network, filters)) {
+    if (!isValid(filters)) {
       return []
     }
 
@@ -39,7 +39,7 @@ export function createAccountsComponent(options: {
   }
 
   async function count(filters: AccountFilters) {
-    if (!isValid(network, filters)) {
+    if (!isValid(filters)) {
       return 0
     }
 
