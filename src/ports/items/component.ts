@@ -10,8 +10,12 @@ export function createItemsComponent(options: {
 }): IItemsComponent {
   const { subgraph, network, chainId } = options
 
-  async function fetch(options: ItemFilters) {
-    const query = getItemsQuery(options)
+  async function fetch(filters: ItemFilters) {
+    if (filters.network && filters.network !== network) {
+      return []
+    }
+
+    const query = getItemsQuery(filters)
     const { items: fragments } = await subgraph.query<{
       items: ItemFragment[]
     }>(query)
@@ -21,8 +25,12 @@ export function createItemsComponent(options: {
     return items
   }
 
-  async function count(options: ItemFilters) {
-    const query = getItemsQuery(options, true)
+  async function count(filters: ItemFilters) {
+    if (filters.network && filters.network !== network) {
+      return 0
+    }
+
+    const query = getItemsQuery(filters, true)
     const { items: fragments } = await subgraph.query<{
       items: ItemFragment[]
     }>(query)
