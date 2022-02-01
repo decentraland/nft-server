@@ -12,7 +12,9 @@ import { isAddressZero } from '../../logic/address'
 
 export const ITEM_DEFAULT_SORT_BY = ItemSortBy.NEWEST
 
-const MAX_ITEM_PRICE = 2 ** 256 - 1
+// Comparing strings instead of huge numbers because JavaScript is not that accurate when operating them
+const MAX_ITEM_PRICE =
+  '115792089237316195423570985008687907853269984665640564039457584007913129639935'
 
 export function fromItemFragment(
   fragment: ItemFragment,
@@ -31,7 +33,7 @@ export function fromItemFragment(
       ? fragment.beneficiary
       : null,
     rarity: fragment.rarity,
-    price: MAX_ITEM_PRICE === +fragment.price ? '0' : fragment.price,
+    price: MAX_ITEM_PRICE === fragment.price ? '0' : fragment.price,
     available: +fragment.available,
     isOnSale:
       fragment.searchIsStoreMinter &&
