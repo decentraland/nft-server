@@ -12,6 +12,8 @@ import { isAddressZero } from '../../logic/address'
 
 export const ITEM_DEFAULT_SORT_BY = ItemSortBy.NEWEST
 
+const MAX_ITEM_PRICE = 2 ** 256 - 1
+
 export function fromItemFragment(
   fragment: ItemFragment,
   network: Network,
@@ -29,7 +31,7 @@ export function fromItemFragment(
       ? fragment.beneficiary
       : null,
     rarity: fragment.rarity,
-    price: fragment.price,
+    price: MAX_ITEM_PRICE === +fragment.price ? '0' : fragment.price,
     available: +fragment.available,
     isOnSale:
       fragment.searchIsStoreMinter &&
