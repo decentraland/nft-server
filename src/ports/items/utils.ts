@@ -8,8 +8,13 @@ import {
   WearableGender,
 } from '@dcl/schemas'
 import { ItemFragment, FragmentItemType } from './types'
+import { isAddressZero } from '../../logic/address'
 
 export const ITEM_DEFAULT_SORT_BY = ItemSortBy.NEWEST
+
+// Comparing strings instead of huge numbers because JavaScript is not that accurate when operating them
+const MAX_ITEM_PRICE =
+  '115792089237316195423570985008687907853269984665640564039457584007913129639935'
 
 export function fromItemFragment(
   fragment: ItemFragment,
@@ -24,8 +29,11 @@ export function fromItemFragment(
     category: NFTCategory.WEARABLE,
     contractAddress: fragment.collection.id,
     itemId: fragment.blockchainId,
+    beneficiary: !isAddressZero(fragment.beneficiary)
+      ? fragment.beneficiary
+      : null,
     rarity: fragment.rarity,
-    price: fragment.price,
+    price: MAX_ITEM_PRICE === fragment.price ? '0' : fragment.price,
     available: +fragment.available,
     isOnSale:
       fragment.searchIsStoreMinter &&
@@ -75,6 +83,7 @@ export const getItemFragment = () => `
     }
     searchWearableBodyShapes
     searchIsStoreMinter
+    beneficiary
     createdAt
     updatedAt
     reviewedAt
