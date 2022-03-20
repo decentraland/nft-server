@@ -1,5 +1,6 @@
 import {
   BodyShape,
+  EmoteCategory,
   Item,
   ItemFilters,
   Rarity,
@@ -10,6 +11,7 @@ export enum FragmentItemType {
   WEARABLE_V1 = 'wearable_v1',
   WEARABLE_V2 = 'wearable_v2',
   SMART_WEARABLE_V1 = 'smart_wearable_v1',
+  EMOTE_V1 = 'emote_v1',
 }
 
 export type ItemFragment = {
@@ -29,9 +31,15 @@ export type ItemFragment = {
       name: string
       description: string
       category: WearableCategory
-    }
+    } | null
+    emote: {
+      name: string
+      description: string
+      category: EmoteCategory
+    } | null
   }
-  searchWearableBodyShapes: BodyShape[]
+  searchWearableBodyShapes: BodyShape[] | null
+  searchEmoteBodyShapes: BodyShape[] | null
   searchIsStoreMinter: boolean
   createdAt: string
   updatedAt: string
