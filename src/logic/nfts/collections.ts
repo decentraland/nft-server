@@ -137,7 +137,6 @@ export function getCollectionsOrderBy(
 export function fromCollectionsFragment(
   fragment: CollectionsFragment
 ): NFTResult {
-  console.log(fragment)
   let name: string
   let category: NFTCategory
   let data: NFT['data']
