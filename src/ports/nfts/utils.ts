@@ -1,4 +1,9 @@
-import { NFTCategory, NFTFilters, NFTSortBy, WearableGender } from '@dcl/schemas'
+import {
+  NFTCategory,
+  NFTFilters,
+  NFTSortBy,
+  WearableGender,
+} from '@dcl/schemas'
 import { QueryVariables } from './types'
 
 export const NFT_DEFAULT_SORT_BY = NFTSortBy.NEWEST
@@ -99,7 +104,6 @@ export function getFetchQuery(
   }
 
   if (!filters.category || filters.category === NFTCategory.WEARABLE) {
-
     if (filters.wearableCategory) {
       where.push('searchWearableCategory: $wearableCategory')
     }
@@ -127,7 +131,7 @@ export function getFetchQuery(
   }
 
   if (!filters.category || filters.category === NFTCategory.EMOTE) {
-    if (filters .emoteCategory) {
+    if (filters.emoteCategory) {
       where.push('searchEmoteCategory: $emoteCategory')
     }
 

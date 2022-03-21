@@ -256,7 +256,7 @@ export function marketplaceShouldFetch(filters: NFTFilters) {
   if (
     (filters.network && filters.network !== Network.ETHEREUM) ||
     filters.itemId ||
-    filters.isWearableSmart || 
+    filters.isWearableSmart ||
     filters.category === NFTCategory.EMOTE
   ) {
     return false

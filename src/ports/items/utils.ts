@@ -167,7 +167,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
 
   const where: string[] = [`searchIsCollectionApproved: true`]
 
-  switch(category) {
+  switch (category) {
     case NFTCategory.WEARABLE: {
       if (!isWearableSmart) {
         where.push(`itemType_in: [wearable_v1, wearable_v2, smart_wearable_v1]`)
@@ -226,7 +226,6 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
   }
 
   if (!category || category === NFTCategory.WEARABLE) {
-
     if (wearableCategory) {
       where.push(`searchWearableCategory: ${wearableCategory}`)
     }
@@ -256,7 +255,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       where.push(`itemType: smart_wearable_v1`)
     }
   }
-  
+
   if (!category || category === NFTCategory.EMOTE) {
     if (emoteCategory) {
       where.push(`searchEmoteCategory: ${emoteCategory}`)
