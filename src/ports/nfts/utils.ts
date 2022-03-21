@@ -127,13 +127,13 @@ export function getFetchQuery(
   }
 
   if (!filters.category || filters.category === NFTCategory.EMOTE) {
-    if ((filters as any).emoteCategory) {
+    if (filters .emoteCategory) {
       where.push('searchEmoteCategory: $emoteCategory')
     }
 
-    if ((filters as any).emoteGenders && (filters as any).emoteGenders.length > 0) {
-      const hasMale = (filters as any).emoteGenders.includes(WearableGender.MALE)
-      const hasFemale = (filters as any).emoteGenders.includes(WearableGender.FEMALE)
+    if (filters.emoteGenders && filters.emoteGenders.length > 0) {
+      const hasMale = filters.emoteGenders.includes(WearableGender.MALE)
+      const hasFemale = filters.emoteGenders.includes(WearableGender.FEMALE)
 
       if (hasMale && !hasFemale) {
         where.push(`searchEmoteBodyShapes: [BaseMale]`)
