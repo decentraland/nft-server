@@ -232,6 +232,9 @@ export function getCollectionsExtraVariables(options: NFTFilters) {
   if (options.itemId) {
     extraVariables.push('$itemId: String')
   }
+  if (options.emoteCategory) {
+    extraVariables.push('$emoteCategory: String')
+  }
   return extraVariables
 }
 
