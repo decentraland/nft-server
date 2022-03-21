@@ -133,94 +133,73 @@ export function getCollectionsOrderBy(
 export function fromCollectionsFragment(
   fragment: CollectionsFragment
 ): NFTResult {
+  let category: NFTCategory
+  let data: NFT['data']
+
   switch (fragment.itemType) {
     case FragmentItemType.WEARABLE_V1:
     case FragmentItemType.WEARABLE_V2:
     case FragmentItemType.SMART_WEARABLE_V1: {
-      const result: NFTResult = {
-        nft: {
-          id: getId(fragment.contractAddress, fragment.tokenId),
-          tokenId: fragment.tokenId,
-          contractAddress: fragment.contractAddress,
-          activeOrderId:
-            fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
-              ? fragment.activeOrder.id
-              : null,
-          owner: fragment.owner.address.toLowerCase(),
-          name: fragment.metadata.wearable!.name,
-          image: fragment.image,
-          url: `/contracts/${fragment.contractAddress}/tokens/${fragment.tokenId}`,
-          data: {
-            wearable: {
-              bodyShapes: fragment.metadata.wearable!.bodyShapes,
-              category: fragment.metadata.wearable!.category,
-              description: fragment.metadata.wearable!.description,
-              rarity: fragment.metadata.wearable!.rarity,
-              isSmart: fragment.itemType === FragmentItemType.SMART_WEARABLE_V1,
-            },
-          },
-          issuedId: fragment.issuedId,
-          itemId: fragment.itemBlockchainId,
-          category: NFTCategory.WEARABLE,
-          network: Network.MATIC,
-          chainId: getCollectionsChainId(),
-          createdAt: +fragment.createdAt * 1000,
-          updatedAt: +fragment.updatedAt * 1000,
-          //@ts-ignore
-          soldAt: +fragment.soldAt * 1000,
+      category = NFTCategory.WEARABLE
+      data = {
+        wearable: {
+          bodyShapes: fragment.metadata.wearable!.bodyShapes,
+          category: fragment.metadata.wearable!.category,
+          description: fragment.metadata.wearable!.description,
+          rarity: fragment.metadata.wearable!.rarity,
+          isSmart: fragment.itemType === FragmentItemType.SMART_WEARABLE_V1,
         },
-        order:
-          fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
-            ? fromCollectionsOrderFragment(fragment.activeOrder)
-            : null,
       }
-
-      return result
+      break
     }
     case FragmentItemType.EMOTE_V1: {
-      const result: NFTResult = {
-        nft: {
-          id: getId(fragment.contractAddress, fragment.tokenId),
-          tokenId: fragment.tokenId,
-          contractAddress: fragment.contractAddress,
-          activeOrderId:
-            fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
-              ? fragment.activeOrder.id
-              : null,
-          owner: fragment.owner.address.toLowerCase(),
-          name: fragment.metadata.emote!.name,
-          image: fragment.image,
-          url: `/contracts/${fragment.contractAddress}/tokens/${fragment.tokenId}`,
-          data: {
-            emote: {
-              bodyShapes: fragment.metadata.emote!.bodyShapes,
-              category: fragment.metadata.emote!.category,
-              description: fragment.metadata.emote!.description,
-              rarity: fragment.metadata.emote!.rarity,
-            },
-          },
-          issuedId: fragment.issuedId,
-          itemId: fragment.itemBlockchainId,
-          category: NFTCategory.EMOTE,
-          network: Network.MATIC,
-          chainId: getCollectionsChainId(),
-          createdAt: +fragment.createdAt * 1000,
-          updatedAt: +fragment.updatedAt * 1000,
-          //@ts-ignore
-          soldAt: +fragment.soldAt * 1000,
+      category = NFTCategory.EMOTE
+      data = {
+        emote: {
+          bodyShapes: fragment.metadata.emote!.bodyShapes,
+          category: fragment.metadata.emote!.category,
+          description: fragment.metadata.emote!.description,
+          rarity: fragment.metadata.emote!.rarity,
         },
-        order:
-          fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
-            ? fromCollectionsOrderFragment(fragment.activeOrder)
-            : null,
       }
-
-      return result
+      break
     }
     default: {
       throw new Error(`Uknown itemType=${fragment.itemType}`)
     }
   }
+
+  const result: NFTResult = {
+    nft: {
+      id: getId(fragment.contractAddress, fragment.tokenId),
+      tokenId: fragment.tokenId,
+      contractAddress: fragment.contractAddress,
+      category,
+      activeOrderId:
+        fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
+          ? fragment.activeOrder.id
+          : null,
+      owner: fragment.owner.address.toLowerCase(),
+      name: fragment.metadata.emote!.name,
+      image: fragment.image,
+      url: `/contracts/${fragment.contractAddress}/tokens/${fragment.tokenId}`,
+      data,
+      issuedId: fragment.issuedId,
+      itemId: fragment.itemBlockchainId,
+      network: Network.MATIC,
+      chainId: getCollectionsChainId(),
+      createdAt: +fragment.createdAt * 1000,
+      updatedAt: +fragment.updatedAt * 1000,
+      //@ts-ignore
+      soldAt: +fragment.soldAt * 1000,
+    },
+    order:
+      fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
+        ? fromCollectionsOrderFragment(fragment.activeOrder)
+        : null,
+  }
+
+  return result
 }
 
 export function fromCollectionsOrderFragment(fragment: OrderFragment) {
@@ -247,7 +226,9 @@ export function getCollectionsExtraWhere(options: NFTFilters) {
     extraWhere.push('itemType: smart_wearable_v1')
   } else if (options.category) {
     if (options.category === NFTCategory.WEARABLE) {
-      extraWhere.push('itemType_in: [wearable_v1, wearable_v2, smart_wearable_v1]')
+      extraWhere.push(
+        'itemType_in: [wearable_v1, wearable_v2, smart_wearable_v1]'
+      )
     } else if (options.category === NFTCategory.EMOTE) {
       extraWhere.push('itemType: emote_v1')
     }
@@ -259,7 +240,9 @@ export function collectionsShouldFetch(filters: NFTFilters) {
   if (
     filters.isLand ||
     (filters.network && filters.network !== Network.MATIC) ||
-    (filters.category && filters.category !== NFTCategory.WEARABLE && filters.category !== NFTCategory.EMOTE)
+    (filters.category &&
+      filters.category !== NFTCategory.WEARABLE &&
+      filters.category !== NFTCategory.EMOTE)
   ) {
     return false
   }

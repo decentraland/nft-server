@@ -21,90 +21,71 @@ export function fromItemFragment(
   network: Network,
   chainId: ChainId
 ): Item {
+  let category: NFTCategory
+  let data: Item['data']
+
   switch (fragment.itemType) {
     case FragmentItemType.WEARABLE_V1:
     case FragmentItemType.WEARABLE_V2:
     case FragmentItemType.SMART_WEARABLE_V1: {
-      const item: Item = {
-        id: fragment.id,
-        name: fragment.metadata.wearable!.name,
-        thumbnail: fragment.image,
-        url: `/contracts/${fragment.collection.id}/items/${fragment.blockchainId}`,
-        category: NFTCategory.WEARABLE,
-        contractAddress: fragment.collection.id,
-        itemId: fragment.blockchainId,
-        beneficiary: !isAddressZero(fragment.beneficiary)
-          ? fragment.beneficiary
-          : null,
-        rarity: fragment.rarity,
-        price: MAX_ITEM_PRICE === fragment.price ? '0' : fragment.price,
-        available: +fragment.available,
-        isOnSale:
-          fragment.searchIsStoreMinter &&
-          +fragment.available > 0 &&
-          fragment.price !== '0',
-        creator: fragment.collection.creator,
-        data: {
-          wearable: {
-            description: fragment.metadata.wearable!.description,
-            category: fragment.metadata.wearable!.category,
-            bodyShapes: fragment.searchWearableBodyShapes!,
-            rarity: fragment.rarity,
-            isSmart: fragment.itemType === FragmentItemType.SMART_WEARABLE_V1,
-          },
+      category = NFTCategory.WEARABLE
+      data = {
+        wearable: {
+          description: fragment.metadata.wearable!.description,
+          category: fragment.metadata.wearable!.category,
+          bodyShapes: fragment.searchWearableBodyShapes!,
+          rarity: fragment.rarity,
+          isSmart: fragment.itemType === FragmentItemType.SMART_WEARABLE_V1,
         },
-        network,
-        chainId,
-        createdAt: +fragment.createdAt * 1000,
-        updatedAt: +fragment.updatedAt * 1000,
-        reviewedAt: +fragment.reviewedAt * 1000,
-        soldAt: +fragment.soldAt * 1000,
       }
-
-      return item
+      break
     }
     case FragmentItemType.EMOTE_V1: {
-      const item: Item = {
-        id: fragment.id,
-        name: fragment.metadata.emote!.name,
-        thumbnail: fragment.image,
-        url: `/contracts/${fragment.collection.id}/items/${fragment.blockchainId}`,
-        category: NFTCategory.EMOTE,
-        contractAddress: fragment.collection.id,
-        itemId: fragment.blockchainId,
-        beneficiary: !isAddressZero(fragment.beneficiary)
-          ? fragment.beneficiary
-          : null,
-        rarity: fragment.rarity,
-        price: MAX_ITEM_PRICE === fragment.price ? '0' : fragment.price,
-        available: +fragment.available,
-        isOnSale:
-          fragment.searchIsStoreMinter &&
-          +fragment.available > 0 &&
-          fragment.price !== '0',
-        creator: fragment.collection.creator,
-        data: {
-          emote: {
-            description: fragment.metadata.emote!.description,
-            category: fragment.metadata.emote!.category,
-            bodyShapes: fragment.searchEmoteBodyShapes!,
-            rarity: fragment.rarity,
-          },
+      category = NFTCategory.EMOTE
+      data = {
+        emote: {
+          description: fragment.metadata.emote!.description,
+          category: fragment.metadata.emote!.category,
+          bodyShapes: fragment.searchEmoteBodyShapes!,
+          rarity: fragment.rarity,
         },
-        network,
-        chainId,
-        createdAt: +fragment.createdAt * 1000,
-        updatedAt: +fragment.updatedAt * 1000,
-        reviewedAt: +fragment.reviewedAt * 1000,
-        soldAt: +fragment.soldAt * 1000,
       }
-
-      return item
+      break
     }
     default: {
       throw new Error(`Unknown itemType=${fragment.itemType}`)
     }
   }
+
+  const item: Item = {
+    id: fragment.id,
+    name: fragment.metadata.wearable!.name,
+    thumbnail: fragment.image,
+    url: `/contracts/${fragment.collection.id}/items/${fragment.blockchainId}`,
+    category,
+    contractAddress: fragment.collection.id,
+    itemId: fragment.blockchainId,
+    beneficiary: !isAddressZero(fragment.beneficiary)
+      ? fragment.beneficiary
+      : null,
+    rarity: fragment.rarity,
+    price: MAX_ITEM_PRICE === fragment.price ? '0' : fragment.price,
+    available: +fragment.available,
+    isOnSale:
+      fragment.searchIsStoreMinter &&
+      +fragment.available > 0 &&
+      fragment.price !== '0',
+    creator: fragment.collection.creator,
+    data,
+    network,
+    chainId,
+    createdAt: +fragment.createdAt * 1000,
+    updatedAt: +fragment.updatedAt * 1000,
+    reviewedAt: +fragment.reviewedAt * 1000,
+    soldAt: +fragment.soldAt * 1000,
+  }
+
+  return item
 }
 
 export const getItemFragment = () => `
