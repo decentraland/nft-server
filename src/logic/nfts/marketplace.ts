@@ -231,7 +231,7 @@ export function fromMarketplaceNFTFragment(
 
 export function getMarketplaceExtraVariables(options: NFTFilters) {
   const extraVariables: string[] = []
-  if (options.category) {
+  if (options.category && options.category !== NFTCategory.EMOTE) {
     extraVariables.push('$category: Category')
   }
   return extraVariables
@@ -239,7 +239,7 @@ export function getMarketplaceExtraVariables(options: NFTFilters) {
 
 export function getMarketplaceExtraWhere(options: NFTFilters) {
   const extraWhere = ['searchEstateSize_gt: 0', 'searchParcelIsInBounds: true']
-  if (options.category) {
+  if (options.category && options.category !== NFTCategory.EMOTE) {
     extraWhere.push('category: $category')
   }
   if (options.isLand) {
@@ -256,7 +256,8 @@ export function marketplaceShouldFetch(filters: NFTFilters) {
   if (
     (filters.network && filters.network !== Network.ETHEREUM) ||
     filters.itemId ||
-    filters.isWearableSmart
+    filters.isWearableSmart ||
+    filters.category === NFTCategory.EMOTE
   ) {
     return false
   }

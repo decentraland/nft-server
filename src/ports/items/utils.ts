@@ -21,12 +21,51 @@ export function fromItemFragment(
   network: Network,
   chainId: ChainId
 ): Item {
+  let name: string
+  let category: NFTCategory
+  let data: Item['data']
+
+  switch (fragment.itemType) {
+    case FragmentItemType.WEARABLE_V1:
+    case FragmentItemType.WEARABLE_V2:
+    case FragmentItemType.SMART_WEARABLE_V1: {
+      name = fragment.metadata.wearable!.name
+      category = NFTCategory.WEARABLE
+      data = {
+        wearable: {
+          description: fragment.metadata.wearable!.description,
+          category: fragment.metadata.wearable!.category,
+          bodyShapes: fragment.searchWearableBodyShapes!,
+          rarity: fragment.rarity,
+          isSmart: fragment.itemType === FragmentItemType.SMART_WEARABLE_V1,
+        },
+      }
+      break
+    }
+    case FragmentItemType.EMOTE_V1: {
+      name = fragment.metadata.emote!.name
+      category = NFTCategory.EMOTE
+      data = {
+        emote: {
+          description: fragment.metadata.emote!.description,
+          category: fragment.metadata.emote!.category,
+          bodyShapes: fragment.searchEmoteBodyShapes!,
+          rarity: fragment.rarity,
+        },
+      }
+      break
+    }
+    default: {
+      throw new Error(`Unknown itemType=${fragment.itemType}`)
+    }
+  }
+
   const item: Item = {
     id: fragment.id,
-    name: fragment.metadata.wearable.name,
+    name,
     thumbnail: fragment.image,
     url: `/contracts/${fragment.collection.id}/items/${fragment.blockchainId}`,
-    category: NFTCategory.WEARABLE,
+    category,
     contractAddress: fragment.collection.id,
     itemId: fragment.blockchainId,
     beneficiary: !isAddressZero(fragment.beneficiary)
@@ -40,21 +79,12 @@ export function fromItemFragment(
       +fragment.available > 0 &&
       fragment.price !== '0',
     creator: fragment.collection.creator,
-    data: {
-      wearable: {
-        description: fragment.metadata.wearable.description,
-        category: fragment.metadata.wearable.category,
-        bodyShapes: fragment.searchWearableBodyShapes,
-        rarity: fragment.rarity,
-        isSmart: fragment.itemType === FragmentItemType.SMART_WEARABLE_V1,
-      },
-    },
+    data,
     network,
     chainId,
     createdAt: +fragment.createdAt * 1000,
     updatedAt: +fragment.updatedAt * 1000,
     reviewedAt: +fragment.reviewedAt * 1000,
-    //@ts-ignore
     soldAt: +fragment.soldAt * 1000,
   }
 
@@ -80,8 +110,14 @@ export const getItemFragment = () => `
         description
         category
       }
+      emote {
+        name
+        description
+        category
+      }
     }
     searchWearableBodyShapes
+    searchEmoteBodyShapes
     searchIsStoreMinter
     beneficiary
     createdAt
@@ -97,6 +133,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     skip,
     sortBy,
     creator,
+    category,
     rarities,
     isSoldOut,
     isOnSale,
@@ -106,11 +143,25 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     isWearableSmart,
     wearableCategory,
     wearableGenders,
+    emoteCategory,
+    emoteGenders,
     contractAddress,
     itemId,
-  } = filters
+  } = filters as ItemFilters
 
   const where: string[] = [`searchIsCollectionApproved: true`]
+
+  switch (category) {
+    case NFTCategory.WEARABLE: {
+      if (!isWearableSmart) {
+        where.push(`itemType_in: [wearable_v1, wearable_v2, smart_wearable_v1]`)
+      }
+      break
+    }
+    case NFTCategory.EMOTE: {
+      where.push(`itemType: emote_v1`)
+    }
+  }
 
   if (creator) {
     where.push(`creator: "${creator}"`)
@@ -134,37 +185,12 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     where.push(`searchText_contains: "${search.trim().toLowerCase()}"`)
   }
 
-  if (wearableCategory) {
-    where.push(`searchWearableCategory: ${wearableCategory}`)
-  }
-
-  if (isWearableHead) {
-    where.push('searchIsWearableHead: true')
-  }
-
-  if (isWearableAccessory) {
-    where.push('searchIsWearableAccessory: true')
-  }
-
   if (rarities && rarities.length > 0) {
     where.push(
       `searchWearableRarity_in: [${rarities
         .map((rarity) => `"${rarity}"`)
         .join(',')}]`
     )
-  }
-
-  if (wearableGenders && wearableGenders.length > 0) {
-    const hasMale = wearableGenders.includes(WearableGender.MALE)
-    const hasFemale = wearableGenders.includes(WearableGender.FEMALE)
-
-    if (hasMale && !hasFemale) {
-      where.push(`searchWearableBodyShapes: [BaseMale]`)
-    } else if (hasFemale && !hasMale) {
-      where.push(`searchWearableBodyShapes: [BaseFemale]`)
-    } else if (hasMale && hasFemale) {
-      where.push(`searchWearableBodyShapes_contains: [BaseMale, BaseFemale]`)
-    }
   }
 
   if (contractAddress) {
@@ -183,8 +209,54 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     where.push('soldAt_not: null')
   }
 
-  if (isWearableSmart) {
-    where.push(`itemType: smart_wearable_v1`)
+  if (!category || category === NFTCategory.WEARABLE) {
+    if (wearableCategory) {
+      where.push(`searchWearableCategory: ${wearableCategory}`)
+    }
+
+    if (isWearableHead) {
+      where.push('searchIsWearableHead: true')
+    }
+
+    if (isWearableAccessory) {
+      where.push('searchIsWearableAccessory: true')
+    }
+
+    if (wearableGenders && wearableGenders.length > 0) {
+      const hasMale = wearableGenders.includes(WearableGender.MALE)
+      const hasFemale = wearableGenders.includes(WearableGender.FEMALE)
+
+      if (hasMale && !hasFemale) {
+        where.push(`searchWearableBodyShapes: [BaseMale]`)
+      } else if (hasFemale && !hasMale) {
+        where.push(`searchWearableBodyShapes: [BaseFemale]`)
+      } else if (hasMale && hasFemale) {
+        where.push(`searchWearableBodyShapes_contains: [BaseMale, BaseFemale]`)
+      }
+    }
+
+    if (isWearableSmart) {
+      where.push(`itemType: smart_wearable_v1`)
+    }
+  }
+
+  if (!category || category === NFTCategory.EMOTE) {
+    if (emoteCategory) {
+      where.push(`searchEmoteCategory: ${emoteCategory}`)
+    }
+
+    if (emoteGenders && emoteGenders.length > 0) {
+      const hasMale = emoteGenders.includes(WearableGender.MALE)
+      const hasFemale = emoteGenders.includes(WearableGender.FEMALE)
+
+      if (hasMale && !hasFemale) {
+        where.push(`searchEmoteBodyShapes: [BaseMale]`)
+      } else if (hasFemale && !hasMale) {
+        where.push(`searchEmoteBodyShapes: [BaseFemale]`)
+      } else if (hasMale && hasFemale) {
+        where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
+      }
+    }
   }
 
   // Compute total nfts to query. If there's a "skip" we add it to the total, since we need all the prior results to later merge them in a single page. If nothing is provided we default to the max. When counting we also use the max.

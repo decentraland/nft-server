@@ -1,6 +1,8 @@
 import {
+  EmoteCategory,
   ItemSortBy,
   Network,
+  NFTCategory,
   Rarity,
   WearableCategory,
   WearableGender,
@@ -20,6 +22,7 @@ export function createItemsHandler(
     const first = params.getNumber('first')
     const skip = params.getNumber('skip')
     const sortBy = params.getValue<ItemSortBy>('sortBy', ItemSortBy)
+    const category = params.getValue<NFTCategory>('category', NFTCategory)
     const creator = params.getAddress('creator')
     const isSoldOut = params.getBoolean('isSoldOut')
     const isOnSale = params.getBoolean('isOnSale')
@@ -36,6 +39,14 @@ export function createItemsHandler(
       'wearableGender',
       WearableGender
     )
+    const emoteCategory = params.getValue<EmoteCategory>(
+      'emoteCategory',
+      EmoteCategory
+    )
+    const emoteGenders = params.getList<WearableGender>(
+      'emoteGender',
+      WearableGender
+    )
     const contractAddress = params.getAddress('contractAddress')
     const itemId = params.getString('itemId')
     const network = params.getValue<Network>('network', Network)
@@ -45,6 +56,7 @@ export function createItemsHandler(
         first,
         skip,
         sortBy,
+        category,
         creator,
         rarities,
         isSoldOut,
@@ -54,6 +66,8 @@ export function createItemsHandler(
         isWearableAccessory,
         wearableCategory,
         wearableGenders,
+        emoteCategory,
+        emoteGenders,
         contractAddress,
         itemId,
         isWearableSmart,
