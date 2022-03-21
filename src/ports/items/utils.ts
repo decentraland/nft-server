@@ -21,6 +21,7 @@ export function fromItemFragment(
   network: Network,
   chainId: ChainId
 ): Item {
+  let name: string
   let category: NFTCategory
   let data: Item['data']
 
@@ -28,6 +29,7 @@ export function fromItemFragment(
     case FragmentItemType.WEARABLE_V1:
     case FragmentItemType.WEARABLE_V2:
     case FragmentItemType.SMART_WEARABLE_V1: {
+      name = fragment.metadata.wearable!.name
       category = NFTCategory.WEARABLE
       data = {
         wearable: {
@@ -41,6 +43,7 @@ export function fromItemFragment(
       break
     }
     case FragmentItemType.EMOTE_V1: {
+      name = fragment.metadata.emote!.name
       category = NFTCategory.EMOTE
       data = {
         emote: {
@@ -59,7 +62,7 @@ export function fromItemFragment(
 
   const item: Item = {
     id: fragment.id,
-    name: fragment.metadata.wearable!.name,
+    name,
     thumbnail: fragment.image,
     url: `/contracts/${fragment.collection.id}/items/${fragment.blockchainId}`,
     category,

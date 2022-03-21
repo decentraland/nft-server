@@ -133,6 +133,7 @@ export function getCollectionsOrderBy(
 export function fromCollectionsFragment(
   fragment: CollectionsFragment
 ): NFTResult {
+  let name: string
   let category: NFTCategory
   let data: NFT['data']
 
@@ -140,6 +141,7 @@ export function fromCollectionsFragment(
     case FragmentItemType.WEARABLE_V1:
     case FragmentItemType.WEARABLE_V2:
     case FragmentItemType.SMART_WEARABLE_V1: {
+      name = fragment.metadata.wearable!.name
       category = NFTCategory.WEARABLE
       data = {
         wearable: {
@@ -153,6 +155,7 @@ export function fromCollectionsFragment(
       break
     }
     case FragmentItemType.EMOTE_V1: {
+      name = fragment.metadata.emote!.name
       category = NFTCategory.EMOTE
       data = {
         emote: {
@@ -180,7 +183,7 @@ export function fromCollectionsFragment(
           ? fragment.activeOrder.id
           : null,
       owner: fragment.owner.address.toLowerCase(),
-      name: fragment.metadata.emote!.name,
+      name,
       image: fragment.image,
       url: `/contracts/${fragment.contractAddress}/tokens/${fragment.tokenId}`,
       data,
