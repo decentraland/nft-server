@@ -73,7 +73,11 @@ export type CollectionsFields = Omit<
   | 'name'
   | 'createdAt'
   | 'updatedAt'
+  | 'soldAt'
   | 'itemId'
+  | 'url'
+  | 'network'
+  | 'chainId'
 > & {
   id: string
   itemType: FragmentItemType
@@ -100,9 +104,9 @@ export type CollectionsFields = Omit<
   createdAt: string
   updatedAt: string
   soldAt: string
-  searchOrderPrice: string
-  searchOrderCreatedAt: string
-  searchText: string
+  searchOrderPrice: string | null
+  searchOrderCreatedAt: string | null
+  searchText?: string
   itemBlockchainId: string
   issuedId: string | null
 }
@@ -133,6 +137,7 @@ export function getCollectionsOrderBy(
 export function fromCollectionsFragment(
   fragment: CollectionsFragment
 ): NFTResult {
+  console.log(fragment)
   let name: string
   let category: NFTCategory
   let data: NFT['data']
