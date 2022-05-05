@@ -102,7 +102,7 @@ async function main(components: AppComponents) {
 async function initComponents(): Promise<AppComponents> {
   configDotEnvFile()
 
-  // default config
+  // Default config
   const defaultValues: Partial<AppConfig> = {
     HTTP_SERVER_PORT: process.env.HTTP_SERVER_PORT || '5000',
     HTTP_SERVER_HOST: process.env.HTTP_SERVER_HOST || '0.0.0.0',
