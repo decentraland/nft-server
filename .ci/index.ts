@@ -45,6 +45,10 @@ export = async function main() {
             : 'https://api.thegraph.com/subgraphs/name/decentraland/collections-matic-mumbai',
       },
       {
+        name: 'MIN_SALE_VALUE_IN_WEI',
+        value: '0',
+      },
+      {
         name: 'WKC_METRICS_BEARER_TOKEN',
         value: prometheusStack.getOutput('serviceMetricsBearerToken'),
       },
