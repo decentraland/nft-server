@@ -315,6 +315,10 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
   `
 }
 
+/**
+ * It returns the minimum sale value allowed for item sales.
+ * The price is expected to be used as an inclusive cap, meaning that prices that equal the value SHOULD be filtered
+ */
 function getMinSaleValueInWei(): string {
   return process.env.MIN_SALE_VALUE_IN_WEI || '0'
 }
