@@ -1,3 +1,4 @@
+import BN from 'bn.js'
 import {
   ChainId,
   Item,
@@ -74,7 +75,10 @@ export function fromItemFragment(
     rarity: fragment.rarity,
     price: MAX_ITEM_PRICE === fragment.price ? '0' : fragment.price,
     available: +fragment.available,
-    isOnSale: fragment.searchIsStoreMinter && +fragment.available > 0,
+    isOnSale:
+      fragment.searchIsStoreMinter &&
+      +fragment.available > 0 &&
+      new BN(fragment.price).lte(new BN(getMinSaleValueInWei())),
     creator: fragment.collection.creator,
     data,
     network,
@@ -170,10 +174,12 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     )
   } else if (isOnSale) {
     where.push('available_gt: 0')
+    where.push(`price_gt: ${getMinSaleValueInWei()}`)
   } else if (isSoldOut) {
     where.push('available: 0')
   } else if (sortBy === ItemSortBy.CHEAPEST) {
     where.push('available_gt: 0')
+    where.push(`price_gt: ${getMinSaleValueInWei()}`)
   }
 
   if (search) {
@@ -307,4 +313,12 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     ${query}
     ${isCount ? '' : getItemFragment()}
   `
+}
+
+/**
+ * It returns the minimum sale value allowed for item sales.
+ * The price is expected to be used as an inclusive cap, meaning that prices that equal the value SHOULD be filtered
+ */
+function getMinSaleValueInWei(): string {
+  return process.env.MIN_SALE_VALUE_IN_WEI || '0'
 }
