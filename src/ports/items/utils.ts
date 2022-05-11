@@ -174,14 +174,14 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
   } else if (isOnSale) {
     where.push('available_gt: 0')
     if (minSaleValue) {
-      where.push(`price_gt: ${minSaleValue}`)
+      where.push(`price_gte: ${minSaleValue}`)
     }
   } else if (isSoldOut) {
     where.push('available: 0')
   } else if (sortBy === ItemSortBy.CHEAPEST) {
     where.push('available_gt: 0')
     if (minSaleValue) {
-      where.push(`price_gt: ${minSaleValue}`)
+      where.push(`price_gte: ${minSaleValue}`)
     }
   }
 
@@ -331,7 +331,7 @@ function isFragmentOnSale(fragment: ItemFragment) {
 
   const isOnSale = fragment.searchIsStoreMinter && +fragment.available > 0
   const isValidSalePrice =
-    !minSaleValue || new BN(fragment.price).gt(new BN(minSaleValue))
+    !minSaleValue || new BN(fragment.price).gte(new BN(minSaleValue))
 
   return isOnSale && isValidSalePrice
 }
