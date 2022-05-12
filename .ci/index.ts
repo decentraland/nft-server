@@ -46,7 +46,7 @@ export = async function main() {
       },
       {
         name: 'MIN_SALE_VALUE_IN_WEI',
-        value: '0',
+        value: '',
       },
       {
         name: 'WKC_METRICS_BEARER_TOKEN',

@@ -75,10 +75,7 @@ export function fromItemFragment(
     rarity: fragment.rarity,
     price: MAX_ITEM_PRICE === fragment.price ? '0' : fragment.price,
     available: +fragment.available,
-    isOnSale:
-      fragment.searchIsStoreMinter &&
-      +fragment.available > 0 &&
-      new BN(fragment.price).lte(new BN(getMinSaleValueInWei())),
+    isOnSale: isFragmentOnSale(fragment),
     creator: fragment.collection.creator,
     data,
     network,
@@ -168,18 +165,24 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     where.push(`creator: "${creator}"`)
   }
 
+  const minSaleValue = getMinSaleValueInWei()
+
   if (isOnSale && isSoldOut) {
     throw new Error(
       `You can't use "isOnSale" and "isSoldOut" at the same time.`
     )
   } else if (isOnSale) {
     where.push('available_gt: 0')
-    where.push(`price_gt: ${getMinSaleValueInWei()}`)
+    if (minSaleValue) {
+      where.push(`price_gte: ${minSaleValue}`)
+    }
   } else if (isSoldOut) {
     where.push('available: 0')
   } else if (sortBy === ItemSortBy.CHEAPEST) {
     where.push('available_gt: 0')
-    where.push(`price_gt: ${getMinSaleValueInWei()}`)
+    if (minSaleValue) {
+      where.push(`price_gte: ${minSaleValue}`)
+    }
   }
 
   if (search) {
@@ -316,9 +319,19 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
 }
 
 /**
- * It returns the minimum sale value allowed for item sales.
+ * It returns the minimum sale value allowed for item sales if any.
  * The price is expected to be used as an inclusive cap, meaning that prices that equal the value SHOULD be filtered
  */
-function getMinSaleValueInWei(): string {
-  return process.env.MIN_SALE_VALUE_IN_WEI || '0'
+function getMinSaleValueInWei(): string | undefined {
+  return process.env.MIN_SALE_VALUE_IN_WEI
+}
+
+function isFragmentOnSale(fragment: ItemFragment) {
+  const minSaleValue = getMinSaleValueInWei()
+
+  const isOnSale = fragment.searchIsStoreMinter && +fragment.available > 0
+  const isValidSalePrice =
+    !minSaleValue || new BN(fragment.price).gte(new BN(minSaleValue))
+
+  return isOnSale && isValidSalePrice
 }
