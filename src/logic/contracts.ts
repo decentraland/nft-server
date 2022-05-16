@@ -1,5 +1,5 @@
 import { ChainId, Contract, Network, NFTCategory } from '@dcl/schemas'
-import { ISubgraphComponent } from '../ports/subgraph/types'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 
 const MAX_RESULTS = 1000
 

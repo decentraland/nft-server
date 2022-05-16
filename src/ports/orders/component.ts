@@ -1,5 +1,5 @@
 import { ChainId, Network, OrderFilters } from '@dcl/schemas'
-import { ISubgraphComponent } from '../subgraph/types'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { IOrdersComponent, OrderFragment } from './types'
 import { fromOrderFragment, getOrdersQuery } from './utils'
 

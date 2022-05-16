@@ -1,5 +1,5 @@
 import { NFTFilters, NFTSortBy } from '@dcl/schemas'
-import { ISubgraphComponent } from '../subgraph/types'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { INFTsComponent, NFTResult } from './types'
 import { getFetchOneQuery, getFetchQuery, getQueryVariables } from './utils'
 

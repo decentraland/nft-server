@@ -1,5 +1,5 @@
 import { ChainId, ItemFilters, Network } from '@dcl/schemas'
-import { ISubgraphComponent } from '../subgraph/types'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { IItemsComponent, ItemFragment } from './types'
 import { fromItemFragment, getItemsQuery } from './utils'
 

@@ -1,4 +1,5 @@
 import { config as configDotEnvFile } from 'dotenv'
+import nodeFetch from 'node-fetch'
 import {
   Account,
   AccountFilters,
@@ -29,16 +30,17 @@ import {
   SaleSortBy,
 } from '@dcl/schemas'
 import { createConfigComponent } from '@well-known-components/env-config-provider'
+import { createSubgraphComponent } from '@well-known-components/thegraph-component'
 import {
   createServerComponent,
   createStatusCheckComponent,
+  IFetchComponent,
 } from '@well-known-components/http-server'
 import { createLogComponent } from '@well-known-components/logger'
 import { Lifecycle } from '@well-known-components/interfaces'
 import { createMetricsComponent } from '@well-known-components/metrics'
 import { setupRoutes } from './adapters/routes'
 import { AppComponents, AppConfig, GlobalContext } from './types'
-import { createSubgraphComponent } from './ports/subgraph/component'
 import { createBidsComponent } from './ports/bids/component'
 import { createOrdersComponent } from './ports/orders/component'
 import { createMergerComponent } from './ports/merger/component'
@@ -125,7 +127,7 @@ async function initComponents(): Promise<AppComponents> {
     { cors, compression: {} }
   )
 
-  const statusChecks = await createStatusCheckComponent({ server })
+  const statusChecks = await createStatusCheckComponent({ config, server })
 
   const metrics = await createMetricsComponent(
     {},
@@ -141,17 +143,19 @@ async function initComponents(): Promise<AppComponents> {
 
   const requestSession = createRequestSessionComponent()
 
+  const fetch: IFetchComponent = {
+    fetch: nodeFetch,
+  }
+
   // subgraphs
-  const marketplaceSubgraph = createSubgraphComponent(
+  const marketplaceSubgraph = await createSubgraphComponent(
     await config.requireString('MARKETPLACE_SUBGRAPH_URL'),
-    globalLogger,
-    requestSession
+    { logs, config, fetch, metrics }
   )
 
-  const collectionsSubgraph = createSubgraphComponent(
+  const collectionsSubgraph = await createSubgraphComponent(
     await config.requireString('COLLECTIONS_SUBGRAPH_URL'),
-    globalLogger,
-    requestSession
+    { logs, config, fetch, metrics }
   )
 
   // orders
