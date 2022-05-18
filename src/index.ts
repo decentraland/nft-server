@@ -30,7 +30,10 @@ import {
   SaleSortBy,
 } from '@dcl/schemas'
 import { createConfigComponent } from '@well-known-components/env-config-provider'
-import { createSubgraphComponent } from '@well-known-components/thegraph-component'
+import {
+  createSubgraphComponent,
+  metricDeclarations,
+} from '@well-known-components/thegraph-component'
 import {
   createServerComponent,
   createStatusCheckComponent,
@@ -129,13 +132,10 @@ async function initComponents(): Promise<AppComponents> {
 
   const statusChecks = await createStatusCheckComponent({ config, server })
 
-  const metrics = await createMetricsComponent(
-    {},
-    {
-      server,
-      config,
-    }
-  )
+  const metrics = await createMetricsComponent(metricDeclarations, {
+    server,
+    config,
+  })
 
   // chain ids
   const marketplaceChainId = getMarketplaceChainId()
