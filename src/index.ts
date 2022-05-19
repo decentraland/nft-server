@@ -39,7 +39,6 @@ import {
   createStatusCheckComponent,
   IFetchComponent,
 } from '@well-known-components/http-server'
-import { createLogComponent } from '@well-known-components/logger'
 import { Lifecycle } from '@well-known-components/interfaces'
 import { createMetricsComponent } from '@well-known-components/metrics'
 import { setupRoutes } from './adapters/routes'
@@ -95,6 +94,7 @@ import { createRequestSessionComponent } from './ports/requestSession/component'
 import { createAccountsComponent } from './ports/accounts/component'
 import { createAccountsSource } from './adapters/sources/accounts'
 import { ACCOUNT_DEFAULT_SORT_BY } from './ports/accounts/utils'
+import { createLogComponent } from './ports/logger/component'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -121,7 +121,8 @@ async function initComponents(): Promise<AppComponents> {
     method: await config.getString('CORS_METHOD'),
   }
 
-  const logs = createLogComponent()
+  const requestSession = createRequestSessionComponent()
+  const logs = createLogComponent({ requestSession })
 
   const globalLogger = logs.getLogger('nft-server')
 
@@ -140,8 +141,6 @@ async function initComponents(): Promise<AppComponents> {
   // chain ids
   const marketplaceChainId = getMarketplaceChainId()
   const collectionsChainId = getCollectionsChainId()
-
-  const requestSession = createRequestSessionComponent()
 
   const fetch: IFetchComponent = {
     fetch: nodeFetch,
