@@ -1,4 +1,5 @@
 import { config as configDotEnvFile } from 'dotenv'
+import nodeFetch from 'node-fetch'
 import {
   Account,
   AccountFilters,
@@ -30,15 +31,18 @@ import {
 } from '@dcl/schemas'
 import { createConfigComponent } from '@well-known-components/env-config-provider'
 import {
+  createSubgraphComponent,
+  metricDeclarations,
+} from '@well-known-components/thegraph-component'
+import {
   createServerComponent,
   createStatusCheckComponent,
+  IFetchComponent,
 } from '@well-known-components/http-server'
-import { createLogComponent } from '@well-known-components/logger'
 import { Lifecycle } from '@well-known-components/interfaces'
 import { createMetricsComponent } from '@well-known-components/metrics'
 import { setupRoutes } from './adapters/routes'
 import { AppComponents, AppConfig, GlobalContext } from './types'
-import { createSubgraphComponent } from './ports/subgraph/component'
 import { createBidsComponent } from './ports/bids/component'
 import { createOrdersComponent } from './ports/orders/component'
 import { createMergerComponent } from './ports/merger/component'
@@ -90,6 +94,7 @@ import { createRequestSessionComponent } from './ports/requestSession/component'
 import { createAccountsComponent } from './ports/accounts/component'
 import { createAccountsSource } from './adapters/sources/accounts'
 import { ACCOUNT_DEFAULT_SORT_BY } from './ports/accounts/utils'
+import { createLogComponent } from './ports/logger/component'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -116,7 +121,8 @@ async function initComponents(): Promise<AppComponents> {
     method: await config.getString('CORS_METHOD'),
   }
 
-  const logs = createLogComponent()
+  const requestSession = createRequestSessionComponent()
+  const logs = createLogComponent({ requestSession })
 
   const globalLogger = logs.getLogger('nft-server')
 
@@ -125,33 +131,30 @@ async function initComponents(): Promise<AppComponents> {
     { cors, compression: {} }
   )
 
-  const statusChecks = await createStatusCheckComponent({ server })
+  const statusChecks = await createStatusCheckComponent({ config, server })
 
-  const metrics = await createMetricsComponent(
-    {},
-    {
-      server,
-      config,
-    }
-  )
+  const metrics = await createMetricsComponent(metricDeclarations, {
+    server,
+    config,
+  })
 
   // chain ids
   const marketplaceChainId = getMarketplaceChainId()
   const collectionsChainId = getCollectionsChainId()
 
-  const requestSession = createRequestSessionComponent()
+  const fetch: IFetchComponent = {
+    fetch: nodeFetch,
+  }
 
   // subgraphs
-  const marketplaceSubgraph = createSubgraphComponent(
+  const marketplaceSubgraph = await createSubgraphComponent(
     await config.requireString('MARKETPLACE_SUBGRAPH_URL'),
-    globalLogger,
-    requestSession
+    { logs, config, fetch, metrics }
   )
 
-  const collectionsSubgraph = createSubgraphComponent(
+  const collectionsSubgraph = await createSubgraphComponent(
     await config.requireString('COLLECTIONS_SUBGRAPH_URL'),
-    globalLogger,
-    requestSession
+    { logs, config, fetch, metrics }
   )
 
   // orders

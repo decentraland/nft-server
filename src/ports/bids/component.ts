@@ -1,5 +1,5 @@
 import { BidFilters, ChainId, Network } from '@dcl/schemas'
-import { ISubgraphComponent } from '../subgraph/types'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { BidFragment, IBidsComponent } from './types'
 import { fromBidFragment, getBidsQuery } from './utils'
 

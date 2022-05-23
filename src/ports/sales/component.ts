@@ -1,5 +1,5 @@
 import { ChainId, Network, SaleFilters, SaleType } from '@dcl/schemas'
-import { ISubgraphComponent } from '../subgraph/types'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { SaleFragment, ISalesComponent } from './types'
 import { fromSaleFragment, getSalesQuery } from './utils'
 

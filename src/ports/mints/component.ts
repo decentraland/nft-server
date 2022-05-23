@@ -1,5 +1,5 @@
 import { ChainId, MintFilters, Network } from '@dcl/schemas'
-import { ISubgraphComponent } from '../subgraph/types'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { MintFragment, IMintsComponent } from './types'
 import { fromMintFragment, getMintsQuery } from './utils'
 

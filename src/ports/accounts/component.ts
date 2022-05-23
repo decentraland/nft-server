@@ -1,5 +1,5 @@
 import { AccountFilters, AccountSortBy, ChainId, Network } from '@dcl/schemas'
-import { ISubgraphComponent } from '../subgraph/types'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { AccountFragment, IAccountsComponent } from './types'
 import { fromAccountFragment, getAccountsQuery } from './utils'
 
