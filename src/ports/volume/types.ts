@@ -9,24 +9,6 @@ export type VolumeData = {
   dailyDAOEarnings: string
 }
 
-export type MarketplaceVolumeData = {
-  id: string
-  date: number
-  dailySales: number
-  dailyVolumeMANA: string
-  dailyCreatorsEarnings: string
-  dailyDAOEarnings: string
-}
-
-export type CollectionsVolumeData = {
-  id: string
-  date: number
-  dailySales: number
-  dailyVolumeMANA: string
-  dailyCreatorsEarnings: string
-  dailyDAOEarnings: string
-}
-
 export type VolumeFilters = {
   from?: number
   network?: Network
