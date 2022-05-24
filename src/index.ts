@@ -148,13 +148,13 @@ async function initComponents(): Promise<AppComponents> {
 
   // subgraphs
   const marketplaceSubgraph = await createSubgraphComponent(
-    await config.requireString('MARKETPLACE_SUBGRAPH_URL'),
-    { logs, config, fetch, metrics }
+    { logs, config, fetch, metrics },
+    await config.requireString('MARKETPLACE_SUBGRAPH_URL')
   )
 
   const collectionsSubgraph = await createSubgraphComponent(
-    await config.requireString('COLLECTIONS_SUBGRAPH_URL'),
-    { logs, config, fetch, metrics }
+    { logs, config, fetch, metrics },
+    await config.requireString('COLLECTIONS_SUBGRAPH_URL')
   )
 
   // orders
