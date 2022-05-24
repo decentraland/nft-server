@@ -29,6 +29,9 @@ import {
   Sale,
   SaleFilters,
   SaleSortBy,
+  AnalyticsDayData,
+  AnalyticsDayDataFilters,
+  AnalyticsDayDataSortBy,
 } from '@dcl/schemas'
 import { createConfigComponent } from '@well-known-components/env-config-provider'
 import {
@@ -96,9 +99,8 @@ import { createAccountsComponent } from './ports/accounts/component'
 import { createAccountsSource } from './adapters/sources/accounts'
 import { ACCOUNT_DEFAULT_SORT_BY } from './ports/accounts/utils'
 import { createLogComponent } from './ports/logger/component'
-import { createVolumeComponent } from './ports/volume/component'
-import { VolumeData, VolumeFilters, VolumeSortBy } from './ports/volume/types'
-import { createVolumeSource } from './adapters/sources/volume'
+import { createAnalyticsDayDataComponent } from './ports/analyticsDayData/component'
+import { createAnalyticsDayDataSource } from './adapters/sources/analyticsDayData'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -349,47 +351,50 @@ async function initComponents(): Promise<AppComponents> {
   })
 
   // historic collections volume data
-  const marketplaceVolume = createVolumeComponent({
+  const marketplaceAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: marketplaceSubgraph,
     network: Network.MATIC,
   })
 
   // historic marketplace volume data
-  const collectionsVolume = createVolumeComponent({
+  const collectionsAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
   })
 
-  const volume = createMergerComponent<VolumeData, VolumeFilters, VolumeSortBy>(
-    {
-      sources: [
-        createVolumeSource(marketplaceVolume),
-        createVolumeSource(collectionsVolume),
-      ],
-      defaultSortBy: VolumeSortBy.DATE,
-      directions: {
-        [VolumeSortBy.DATE]: SortDirection.DESC,
-        [VolumeSortBy.MOST_SALES]: SortDirection.DESC,
-      },
-      maxCount: 1000,
-      mergerEqualFn: (volume1: VolumeData, volume2: VolumeData) =>
-        volume1.id === volume2.id,
-      mergerStrategy: (volume1: VolumeData, volume2: VolumeData) => ({
-        id: volume1.id, // id and date will be the same since they. We pick just the one from 'volume1'
-        date: volume1.date,
-        dailySales: volume1.dailySales + volume2.dailySales,
-        dailyVolumeMANA: new BN(volume1.dailyVolumeMANA)
-          .add(new BN(volume2.dailyVolumeMANA))
-          .toString(),
-        dailyDAOEarnings: new BN(volume1.dailyDAOEarnings)
-          .add(new BN(volume2.dailyDAOEarnings))
-          .toString(),
-        dailyCreatorsEarnings: new BN(volume1.dailyCreatorsEarnings)
-          .add(new BN(volume2.dailyCreatorsEarnings))
-          .toString(),
-      }),
-    }
-  )
+  const analyticsDayData = createMergerComponent<
+    AnalyticsDayData,
+    AnalyticsDayDataFilters,
+    AnalyticsDayDataSortBy
+  >({
+    sources: [
+      createAnalyticsDayDataSource(marketplaceAnalyticsDayData),
+      createAnalyticsDayDataSource(collectionsAnalyticsDayData),
+    ],
+    defaultSortBy: AnalyticsDayDataSortBy.DATE,
+    directions: {
+      [AnalyticsDayDataSortBy.DATE]: SortDirection.DESC,
+      [AnalyticsDayDataSortBy.MOST_SALES]: SortDirection.DESC,
+    },
+    maxCount: 1000,
+    mergerEqualFn: (dayData1: AnalyticsDayData, dayData2: AnalyticsDayData) =>
+      dayData1.id === dayData2.id,
+    mergerStrategy: (
+      dayData1: AnalyticsDayData,
+      dayData2: AnalyticsDayData
+    ): AnalyticsDayData => ({
+      id: dayData1.id, // id and date will be the same since they. We pick just the one from 'volume1'
+      date: dayData1.date,
+      sales: dayData1.sales + dayData2.sales,
+      volume: new BN(dayData1.volume).add(new BN(dayData2.volume)).toString(),
+      daoEarnings: new BN(dayData1.daoEarnings)
+        .add(new BN(dayData2.daoEarnings))
+        .toString(),
+      creatorsEarnings: new BN(dayData1.creatorsEarnings)
+        .add(new BN(dayData2.creatorsEarnings))
+        .toString(),
+    }),
+  })
 
   // accounts
   const marketplaceAccounts = createAccountsComponent({
@@ -463,7 +468,7 @@ async function initComponents(): Promise<AppComponents> {
     sales,
     collections,
     accounts,
-    volume,
+    analyticsDayData,
   }
 }
 
