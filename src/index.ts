@@ -1,3 +1,4 @@
+import BN from 'bn.js'
 import { config as configDotEnvFile } from 'dotenv'
 import nodeFetch from 'node-fetch'
 import {
@@ -95,6 +96,9 @@ import { createAccountsComponent } from './ports/accounts/component'
 import { createAccountsSource } from './adapters/sources/accounts'
 import { ACCOUNT_DEFAULT_SORT_BY } from './ports/accounts/utils'
 import { createLogComponent } from './ports/logger/component'
+import { createVolumeComponent } from './ports/volume/component'
+import { VolumeData, VolumeFilters, VolumeSortBy } from './ports/volume/types'
+import { createVolumeSource } from './adapters/sources/volume'
 
 async function main(components: AppComponents) {
   const globalContext: GlobalContext = {
@@ -344,6 +348,49 @@ async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
+  // historic collections volume data
+  const marketplaceVolume = createVolumeComponent({
+    subgraph: marketplaceSubgraph,
+    network: Network.MATIC,
+  })
+
+  // historic marketplace volume data
+  const collectionsVolume = createVolumeComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.MATIC,
+  })
+
+  const volume = createMergerComponent<VolumeData, VolumeFilters, VolumeSortBy>(
+    {
+      sources: [
+        createVolumeSource(marketplaceVolume),
+        createVolumeSource(collectionsVolume),
+      ],
+      defaultSortBy: VolumeSortBy.DATE,
+      directions: {
+        [VolumeSortBy.DATE]: SortDirection.DESC,
+        [VolumeSortBy.MOST_SALES]: SortDirection.DESC,
+      },
+      maxCount: 1000,
+      mergerEqualFn: (volume1: VolumeData, volume2: VolumeData) =>
+        volume1.id === volume2.id,
+      mergerStrategy: (volume1: VolumeData, volume2: VolumeData) => ({
+        id: volume1.id, // id and date will be the same since they. We pick just the one from 'volume1'
+        date: volume1.date,
+        dailySales: volume1.dailySales + volume2.dailySales,
+        dailyVolumeMANA: new BN(volume1.dailyVolumeMANA)
+          .add(new BN(volume2.dailyVolumeMANA))
+          .toString(),
+        dailyDAOEarnings: new BN(volume1.dailyDAOEarnings)
+          .add(new BN(volume2.dailyDAOEarnings))
+          .toString(),
+        dailyCreatorsEarnings: new BN(volume1.dailyCreatorsEarnings)
+          .add(new BN(volume2.dailyCreatorsEarnings))
+          .toString(),
+      }),
+    }
+  )
+
   // accounts
   const marketplaceAccounts = createAccountsComponent({
     subgraph: marketplaceSubgraph,
@@ -416,6 +463,7 @@ async function initComponents(): Promise<AppComponents> {
     sales,
     collections,
     accounts,
+    volume,
   }
 }
 

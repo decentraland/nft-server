@@ -37,6 +37,7 @@ import type {
 import { IMergerComponent } from './ports/merger/types'
 import { NFTResult } from './ports/nfts/types'
 import { IRequestSessionComponent } from './ports/requestSession/types'
+import { VolumeData, VolumeFilters, VolumeSortBy } from './ports/volume/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -65,6 +66,7 @@ export type AppComponents = {
   sales: IMergerComponent<Sale, SaleFilters, SaleSortBy>
   collections: IMergerComponent<Collection, CollectionFilters, CollectionSortBy>
   accounts: IMergerComponent<Account, AccountFilters, AccountSortBy>
+  volume: IMergerComponent<VolumeData, VolumeFilters, VolumeSortBy>
 }
 
 export type Context<Path extends string = any> = RoutedContext<

@@ -38,6 +38,8 @@ export type MergerOptions<
   directions: Record<SortBy, SortDirection>
   defaultSortBy: SortBy
   maxCount?: number
+  mergerStrategy?: (a: Result, b: Result) => Result
+  mergerEqualFn?: (a: Result, b: Result) => boolean
 }
 
 export namespace IMergerComponent {

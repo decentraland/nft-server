@@ -10,6 +10,7 @@ import { createSalesHandler } from './handlers/sales'
 import { createCollectionsHandler } from './handlers/collections'
 import { createRequestLoggerMiddleware } from '../logic/requestLoggerMiddleware'
 import { createAccountsHandler } from './handlers/accounts'
+import { createCollectionsVolumeHandler } from './handlers/volume'
 
 export async function setupRoutes(globalContext: GlobalContext) {
   const { components } = globalContext
@@ -33,6 +34,7 @@ export async function setupRoutes(globalContext: GlobalContext) {
   router.get('/sales', createSalesHandler(components))
   router.get('/collections', createCollectionsHandler(components))
   router.get('/accounts', createAccountsHandler(components))
+  router.get('/volumes', createCollectionsVolumeHandler(components))
   router.get(
     '/contracts/:contractAddress/tokens/:tokenId',
     createNFTHandler(components)
