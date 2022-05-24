@@ -350,13 +350,13 @@ async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
-  // historic collections volume data
+  // analytics day data for the marketplace subgraph
   const marketplaceAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: marketplaceSubgraph,
     network: Network.MATIC,
   })
 
-  // historic marketplace volume data
+  // analytics day data for the collections subgraph
   const collectionsAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
