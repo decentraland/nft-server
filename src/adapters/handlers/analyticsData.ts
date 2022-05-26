@@ -4,7 +4,7 @@ import { AnalyticsTimeframe } from '../../ports/analyticsDayData/types'
 import { getTimestampFromTimeframe } from '../../ports/analyticsDayData/utils'
 import { AppComponents, Context } from '../../types'
 
-export function createAnalyticsDayDataHandler(
+export function createAnalyticsDataHandler(
   components: Pick<AppComponents, 'analyticsData'>
 ): IHttpServerComponent.IRequestHandler<Context<'/analytics/:timeframe'>> {
   const { analyticsData } = components

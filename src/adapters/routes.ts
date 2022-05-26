@@ -10,7 +10,8 @@ import { createSalesHandler } from './handlers/sales'
 import { createCollectionsHandler } from './handlers/collections'
 import { createRequestLoggerMiddleware } from '../logic/requestLoggerMiddleware'
 import { createAccountsHandler } from './handlers/accounts'
-import { createAnalyticsDayDataHandler } from './handlers/analyticsDayData'
+import { createAnalyticsDataHandler } from './handlers/analyticsData'
+import { createRankingsHandler } from './handlers/rankings'
 
 export async function setupRoutes(globalContext: GlobalContext) {
   const { components } = globalContext
@@ -34,7 +35,8 @@ export async function setupRoutes(globalContext: GlobalContext) {
   router.get('/sales', createSalesHandler(components))
   router.get('/collections', createCollectionsHandler(components))
   router.get('/accounts', createAccountsHandler(components))
-  router.get('/analytics/day', createAnalyticsDayDataHandler(components))
+  router.get('/analytics/:timeframe', createAnalyticsDataHandler(components))
+  router.get('/rankings/:timeframe', createRankingsHandler(components))
   router.get(
     '/contracts/:contractAddress/tokens/:tokenId',
     createNFTHandler(components)

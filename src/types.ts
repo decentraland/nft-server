@@ -68,7 +68,7 @@ export type AppComponents = {
   sales: IMergerComponent<Sale, SaleFilters, SaleSortBy>
   collections: IMergerComponent<Collection, CollectionFilters, CollectionSortBy>
   accounts: IMergerComponent<Account, AccountFilters, AccountSortBy>
-  analyticsDayData: IMergerComponent<
+  analyticsData: IMergerComponent<
     AnalyticsDayData,
     AnalyticsDayDataFilters,
     AnalyticsDayDataSortBy

@@ -362,7 +362,7 @@ async function initComponents(): Promise<AppComponents> {
     network: Network.MATIC,
   })
 
-  const analyticsDayData = createMergerComponent<
+  const analyticsData = createMergerComponent<
     AnalyticsDayData,
     AnalyticsDayDataFilters,
     AnalyticsDayDataSortBy
@@ -468,7 +468,7 @@ async function initComponents(): Promise<AppComponents> {
     sales,
     collections,
     accounts,
-    analyticsDayData,
+    analyticsData,
   }
 }
 
