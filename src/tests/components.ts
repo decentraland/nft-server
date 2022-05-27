@@ -1,16 +1,27 @@
-import BN from 'bn.js'
-import { config as configDotEnvFile } from 'dotenv'
 import nodeFetch from 'node-fetch'
+import BN from 'bn.js'
+import { createDotEnvConfigComponent } from '@well-known-components/env-config-provider'
 import {
-  Account,
-  AccountFilters,
-  AccountSortBy,
+  createServerComponent,
+  createStatusCheckComponent,
+} from '@well-known-components/http-server'
+import {
+  createSubgraphComponent,
+  metricDeclarations,
+} from '@well-known-components/thegraph-component'
+import { createMetricsComponent } from '@well-known-components/metrics'
+import { createLogComponent } from '@well-known-components/logger'
+import { createRunner } from '@well-known-components/test-helpers'
+import { main } from '../../src/service'
+import { AppComponents, GlobalContext } from '../types'
+import {
+  Network,
+  AnalyticsDayData,
+  AnalyticsDayDataFilters,
+  AnalyticsDayDataSortBy,
   Bid,
   BidFilters,
   BidSortBy,
-  Collection,
-  CollectionFilters,
-  CollectionSortBy,
   Contract,
   ContractFilters,
   ContractSortBy,
@@ -20,7 +31,6 @@ import {
   Mint,
   MintFilters,
   MintSortBy,
-  Network,
   NFTFilters,
   NFTSortBy,
   Order,
@@ -29,133 +39,126 @@ import {
   Sale,
   SaleFilters,
   SaleSortBy,
-  AnalyticsDayData,
-  AnalyticsDayDataFilters,
-  AnalyticsDayDataSortBy,
+  Collection,
+  CollectionFilters,
+  CollectionSortBy,
+  Account,
+  AccountFilters,
+  AccountSortBy,
 } from '@dcl/schemas'
-import { createConfigComponent } from '@well-known-components/env-config-provider'
+
+import { createAnalyticsDayDataSource } from '../adapters/sources/analyticsDayData'
+import { createAnalyticsDayDataComponent } from '../ports/analyticsDayData/component'
+import { createMergerComponent } from '../ports/merger/component'
+import { SortDirection } from '../ports/merger/types'
+import { createRequestSessionComponent } from '../ports/requestSession/component'
+import { createBidsSource } from '../adapters/sources/bids'
+import { createContractsSource } from '../adapters/sources/contracts'
+import { createItemsSource } from '../adapters/sources/items'
+import { createMintsSource } from '../adapters/sources/mints'
+import { createNFTsSource } from '../adapters/sources/nfts'
+import { createOrdersSource } from '../adapters/sources/orders'
+import { createSalesSource } from '../adapters/sources/sales'
 import {
-  createSubgraphComponent,
-  metricDeclarations,
-} from '@well-known-components/thegraph-component'
-import {
-  createServerComponent,
-  createStatusCheckComponent,
-  IFetchComponent,
-} from '@well-known-components/http-server'
-import { Lifecycle } from '@well-known-components/interfaces'
-import { createMetricsComponent } from '@well-known-components/metrics'
-import { AppComponents, AppConfig, GlobalContext } from './types'
-import { createBidsComponent } from './ports/bids/component'
-import { createOrdersComponent } from './ports/orders/component'
-import { createMergerComponent } from './ports/merger/component'
-import { SortDirection } from './ports/merger/types'
-import { getMarketplaceChainId, getCollectionsChainId } from './logic/chainIds'
-import { createOrdersSource } from './adapters/sources/orders'
-import { createContractsComponent } from './ports/contracts/compontent'
-import { createBidsSource } from './adapters/sources/bids'
-import { createContractsSource } from './adapters/sources/contracts'
-import { createNFTComponent } from './ports/nfts/component'
-import {
-  fromMarketplaceNFTFragment,
-  getMarketplaceExtraVariables,
-  getMarketplaceExtraWhere,
-  getMarketplaceFragment,
-  getMarketplaceOrderBy,
-  marketplaceShouldFetch,
-} from './logic/nfts/marketplace'
+  getMarketplaceContracts,
+  getCollectionsContracts,
+} from '../logic/contracts'
 import {
   collectionsShouldFetch,
-  fromCollectionsFragment,
-  getCollectionsExtraVariables,
-  getCollectionsExtraWhere,
   getCollectionsFragment,
+  fromCollectionsFragment,
   getCollectionsOrderBy,
-} from './logic/nfts/collections'
-import { NFTResult } from './ports/nfts/types'
-import { NFT_DEFAULT_SORT_BY } from './ports/nfts/utils'
-import { createNFTsSource } from './adapters/sources/nfts'
+  getCollectionsExtraWhere,
+  getCollectionsExtraVariables,
+} from '../logic/nfts/collections'
 import {
-  getCollectionsContracts,
-  getMarketplaceContracts,
-} from './logic/contracts'
-import { BID_DEFAULT_SORT_BY } from './ports/bids/utils'
-import { ORDER_DEFAULT_SORT_BY } from './ports/orders/utils'
-import { createItemsSource } from './adapters/sources/items'
-import { createItemsComponent } from './ports/items/component'
-import { ITEM_DEFAULT_SORT_BY } from './ports/items/utils'
-import { createMintsComponent } from './ports/mints/component'
-import { createMintsSource } from './adapters/sources/mints'
-import { MINT_DEFAULT_SORT_BY } from './ports/mints/utils'
-import { createSalesSource } from './adapters/sources/sales'
-import { SALE_DEFAULT_SORT_BY } from './ports/sales/utils'
-import { createSalesComponent } from './ports/sales/component'
-import { createCollectionsComponent } from './ports/collections/component'
-import { createCollectionsSource } from './adapters/sources/collections'
-import { COLLECTION_DEFAULT_SORT_BY } from './ports/collections/utils'
-import { createRequestSessionComponent } from './ports/requestSession/component'
-import { createAccountsComponent } from './ports/accounts/component'
-import { createAccountsSource } from './adapters/sources/accounts'
-import { ACCOUNT_DEFAULT_SORT_BY } from './ports/accounts/utils'
-import { createLogComponent } from './ports/logger/component'
-import { createAnalyticsDayDataComponent } from './ports/analyticsDayData/component'
-import { createAnalyticsDayDataSource } from './adapters/sources/analyticsDayData'
-import { main } from './service'
-import { createRankingsComponent } from './ports/rankings/component'
+  marketplaceShouldFetch,
+  getMarketplaceFragment,
+  fromMarketplaceNFTFragment,
+  getMarketplaceOrderBy,
+  getMarketplaceExtraVariables,
+  getMarketplaceExtraWhere,
+} from '../logic/nfts/marketplace'
+import { createBidsComponent } from '../ports/bids/component'
+import { BID_DEFAULT_SORT_BY } from '../ports/bids/utils'
+import { createContractsComponent } from '../ports/contracts/compontent'
+import { createItemsComponent } from '../ports/items/component'
+import { ITEM_DEFAULT_SORT_BY } from '../ports/items/utils'
+import { createMintsComponent } from '../ports/mints/component'
+import { MINT_DEFAULT_SORT_BY } from '../ports/mints/utils'
+import { createNFTComponent } from '../ports/nfts/component'
+import { NFTResult } from '../ports/nfts/types'
+import { NFT_DEFAULT_SORT_BY } from '../ports/nfts/utils'
+import { ORDER_DEFAULT_SORT_BY } from '../ports/orders/utils'
+import { createSalesComponent } from '../ports/sales/component'
+import { SALE_DEFAULT_SORT_BY } from '../ports/sales/utils'
+import { getMarketplaceChainId, getCollectionsChainId } from '../logic/chainIds'
+import { createOrdersComponent } from '../ports/orders/component'
+import { createCollectionsComponent } from '../ports/collections/component'
+import { createCollectionsSource } from '../adapters/sources/collections'
+import { COLLECTION_DEFAULT_SORT_BY } from '../ports/collections/utils'
+import { createAccountsSource } from '../adapters/sources/accounts'
+import { createAccountsComponent } from '../ports/accounts/component'
+import { ACCOUNT_DEFAULT_SORT_BY } from '../ports/accounts/utils'
+import { createRankingsComponent } from '../ports/rankings/component'
 
-async function initComponents(): Promise<AppComponents> {
-  configDotEnvFile()
+// start TCP port for listeners
+let lastUsedPort = 19000 + parseInt(process.env.JEST_WORKER_ID || '1') * 1000
+function getFreePort() {
+  return lastUsedPort + 1
+}
 
-  // Default config
-  const defaultValues: Partial<AppConfig> = {
-    HTTP_SERVER_PORT: process.env.HTTP_SERVER_PORT || '5000',
-    HTTP_SERVER_HOST: process.env.HTTP_SERVER_HOST || '0.0.0.0',
-    API_VERSION: process.env.API_VERSION || 'v1',
-  }
+/**
+ * Behaves like Jest "describe" function, used to describe a test for a
+ * use case, it creates a whole new program and components to run an
+ * isolated test.
+ *
+ * State is persistent within the steps of the test.
+ */
+export const test = createRunner<AppComponents>({
+  main,
+  initComponents,
+})
 
-  const config = createConfigComponent(process.env, defaultValues)
+export async function initComponents(): Promise<AppComponents> {
+  const currentPort = getFreePort()
+  process.env.HTTP_SERVER_PORT = (currentPort + 1).toString()
+
+  // default config from process.env + .env file
+  const config = await createDotEnvConfigComponent(
+    { path: ['.env.spec'] },
+    process.env
+  )
+
+  // chain ids
+  const marketplaceChainId = getMarketplaceChainId()
+  const collectionsChainId = getCollectionsChainId()
 
   const cors = {
     origin: await config.getString('CORS_ORIGIN'),
     method: await config.getString('CORS_METHOD'),
   }
 
-  const requestSession = createRequestSessionComponent()
-  const logs = createLogComponent({ requestSession })
-
-  const globalLogger = logs.getLogger('nft-server')
-
+  const logs = createLogComponent()
   const server = await createServerComponent<GlobalContext>(
     { config, logs },
     { cors, compression: {} }
   )
-
-  const statusChecks = await createStatusCheckComponent({ config, server })
 
   const metrics = await createMetricsComponent(metricDeclarations, {
     server,
     config,
   })
 
-  // chain ids
-  const marketplaceChainId = getMarketplaceChainId()
-  const collectionsChainId = getCollectionsChainId()
-
-  const fetch: IFetchComponent = {
-    fetch: nodeFetch,
-  }
-
-  // subgraphs
   const marketplaceSubgraph = await createSubgraphComponent(
-    { logs, config, fetch, metrics },
+    { config, logs, fetch: { fetch: nodeFetch }, metrics },
     await config.requireString('MARKETPLACE_SUBGRAPH_URL')
   )
 
   const collectionsSubgraph = await createSubgraphComponent(
-    { logs, config, fetch, metrics },
+    { config, logs, fetch: { fetch: nodeFetch }, metrics },
     await config.requireString('COLLECTIONS_SUBGRAPH_URL')
   )
-
   // orders
   const marketplaceOrders = createOrdersComponent({
     subgraph: marketplaceSubgraph,
@@ -392,6 +395,29 @@ async function initComponents(): Promise<AppComponents> {
   // rankings
   const rankings = createRankingsComponent(analyticsData)
 
+  // collections
+  const collectionsCollections = createCollectionsComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.MATIC,
+    chainId: collectionsChainId,
+  })
+
+  const collections = createMergerComponent<
+    Collection,
+    CollectionFilters,
+    CollectionSortBy
+  >({
+    sources: [createCollectionsSource(collectionsCollections)],
+    defaultSortBy: COLLECTION_DEFAULT_SORT_BY,
+    directions: {
+      [CollectionSortBy.NAME]: SortDirection.ASC,
+      [CollectionSortBy.NEWEST]: SortDirection.DESC,
+      [CollectionSortBy.RECENTLY_REVIEWED]: SortDirection.DESC,
+      [CollectionSortBy.SIZE]: SortDirection.DESC,
+    },
+    maxCount: 1000,
+  })
+
   // accounts
   const marketplaceAccounts = createAccountsComponent({
     subgraph: marketplaceSubgraph,
@@ -424,28 +450,9 @@ async function initComponents(): Promise<AppComponents> {
     },
   })
 
-  // collections
-  const collectionsCollections = createCollectionsComponent({
-    subgraph: collectionsSubgraph,
-    network: Network.MATIC,
-    chainId: collectionsChainId,
-  })
-
-  const collections = createMergerComponent<
-    Collection,
-    CollectionFilters,
-    CollectionSortBy
-  >({
-    sources: [createCollectionsSource(collectionsCollections)],
-    defaultSortBy: COLLECTION_DEFAULT_SORT_BY,
-    directions: {
-      [CollectionSortBy.NAME]: SortDirection.ASC,
-      [CollectionSortBy.NEWEST]: SortDirection.DESC,
-      [CollectionSortBy.RECENTLY_REVIEWED]: SortDirection.DESC,
-      [CollectionSortBy.SIZE]: SortDirection.DESC,
-    },
-    maxCount: 1000,
-  })
+  const statusChecks = await createStatusCheckComponent({ config, server })
+  const globalLogger = logs.getLogger('nft-server')
+  const requestSession = createRequestSessionComponent()
 
   return {
     config,
@@ -464,11 +471,9 @@ async function initComponents(): Promise<AppComponents> {
     sales,
     collections,
     accounts,
-    rankings,
     analyticsData,
-    collectionsSubgraph,
     marketplaceSubgraph,
+    collectionsSubgraph,
+    rankings,
   }
 }
-
-Lifecycle.run({ main, initComponents })

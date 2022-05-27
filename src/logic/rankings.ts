@@ -1,9 +1,9 @@
 import BN from 'bn.js'
 import { AnalyticsDayData } from '@dcl/schemas'
-import { AnalyticsDayDataFragment } from '../ports/analyticsTotalData/types'
+import { AnalyticsDataFragment } from '../ports/analyticsDayData/types'
 
 export function getAccumulatedAnalyticsData(
-  fragments: AnalyticsDayDataFragment[]
+  fragments: AnalyticsDataFragment[]
 ) {
   return fragments.reduce((acc, dayData) => {
     if (!Object.values(acc).length) {
