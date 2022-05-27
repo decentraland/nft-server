@@ -79,7 +79,7 @@ test('analyticsDayData component', function ({ components }) {
           .mockResolvedValueOnce({ analytics: graphResponse })
       })
 
-      it('should fetch the Total data en return it', async () => {
+      it('should fetch the Day data and return it', async () => {
         const { collectionsSubgraph } = components
         expect(await analyticsDayData.fetch(filters)).toEqual(graphResponse)
         expect(collectionsSubgraph.query).toHaveBeenCalledWith(
