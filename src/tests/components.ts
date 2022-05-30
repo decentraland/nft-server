@@ -101,6 +101,7 @@ import { createAccountsSource } from '../adapters/sources/accounts'
 import { createAccountsComponent } from '../ports/accounts/component'
 import { ACCOUNT_DEFAULT_SORT_BY } from '../ports/accounts/utils'
 import { createRankingsComponent } from '../ports/rankings/component'
+import { createTrendingsComponent } from '../ports/trending/component'
 
 // start TCP port for listeners
 let lastUsedPort = 19000 + parseInt(process.env.JEST_WORKER_ID || '1') * 1000
@@ -346,6 +347,9 @@ export async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
+  // trendings
+  const trendings = createTrendingsComponent(sales, nfts)
+
   // analytics day data for the marketplace subgraph
   const marketplaceAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: marketplaceSubgraph,
@@ -469,6 +473,7 @@ export async function initComponents(): Promise<AppComponents> {
     items,
     mints,
     sales,
+    trendings,
     collections,
     accounts,
     analyticsData,

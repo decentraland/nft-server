@@ -102,6 +102,7 @@ import { createAnalyticsDayDataComponent } from './ports/analyticsDayData/compon
 import { createAnalyticsDayDataSource } from './adapters/sources/analyticsDayData'
 import { main } from './service'
 import { createRankingsComponent } from './ports/rankings/component'
+import { createTrendingsComponent } from './ports/trending/component'
 
 async function initComponents(): Promise<AppComponents> {
   configDotEnvFile()
@@ -322,12 +323,18 @@ async function initComponents(): Promise<AppComponents> {
     subgraph: marketplaceSubgraph,
     network: Network.ETHEREUM,
     chainId: marketplaceChainId,
+    // fragmentName: 'marketplaceFragment',
+    // getNFTFragment: getMarketplaceFragment,
+    // fromFragment: fromMarketplaceNFTFragment,
   })
 
   const collectionsSales = createSalesComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
     chainId: collectionsChainId,
+    // fragmentName: 'collectionsFragment',
+    // getNFTFragment: getCollectionsFragment,
+    // fromFragment: fromCollectionsFragment,
   })
 
   const sales = createMergerComponent<Sale, SaleFilters, SaleSortBy>({
@@ -342,6 +349,9 @@ async function initComponents(): Promise<AppComponents> {
     },
     maxCount: 1000,
   })
+
+  // trendings
+  const trendings = createTrendingsComponent(sales, nfts)
 
   // analytics day data for the marketplace subgraph
   const marketplaceAnalyticsDayData = createAnalyticsDayDataComponent({
@@ -462,6 +472,7 @@ async function initComponents(): Promise<AppComponents> {
     items,
     mints,
     sales,
+    trendings,
     collections,
     accounts,
     rankings,
