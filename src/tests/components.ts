@@ -348,7 +348,7 @@ export async function initComponents(): Promise<AppComponents> {
   })
 
   // trendings
-  const trendings = createTrendingsComponent(sales, nfts)
+  const trendings = createTrendingsComponent(sales, items)
 
   // analytics day data for the marketplace subgraph
   const marketplaceAnalyticsDayData = createAnalyticsDayDataComponent({
