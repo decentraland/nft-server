@@ -1,7 +1,7 @@
 import { Network, AnalyticsDayDataFilters } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
-import { AnalyticsDayDataFragment, IAnalyticsDayDataComponent } from './types'
-import { getAnalyticsDayDataQuery } from './utils'
+import { AnalyticsDataFragment, IAnalyticsDayDataComponent } from './types'
+import { getAnalyticsDayDataQuery, getAnalyticsTotalDataQuery } from './utils'
 
 export function createAnalyticsDayDataComponent(options: {
   subgraph: ISubgraphComponent
@@ -21,9 +21,13 @@ export function createAnalyticsDayDataComponent(options: {
       return []
     }
 
-    const query = getAnalyticsDayDataQuery(filters)
-    const { analyticsDayDatas: fragments } = await subgraph.query<{
-      analyticsDayDatas: AnalyticsDayDataFragment[]
+    const query =
+      filters.from === 0
+        ? getAnalyticsTotalDataQuery()
+        : getAnalyticsDayDataQuery(filters)
+
+    const { analytics: fragments } = await subgraph.query<{
+      analytics: AnalyticsDataFragment[]
     }>(query)
 
     return fragments
@@ -34,9 +38,12 @@ export function createAnalyticsDayDataComponent(options: {
       return 0
     }
 
-    const query = getAnalyticsDayDataQuery(filters)
-    const { sales: fragments } = await subgraph.query<{
-      sales: AnalyticsDayDataFragment[]
+    const query =
+      filters.from === 0
+        ? getAnalyticsTotalDataQuery()
+        : getAnalyticsDayDataQuery(filters)
+    const { analytics: fragments } = await subgraph.query<{
+      analytics: AnalyticsDataFragment[]
     }>(query)
 
     return fragments.length

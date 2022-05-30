@@ -37,6 +37,8 @@ import type {
   IMetricsComponent,
   IBaseComponent,
 } from '@well-known-components/interfaces'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
+import { IRankingsComponent } from './ports/rankings/types'
 import { IMergerComponent } from './ports/merger/types'
 import { NFTResult } from './ports/nfts/types'
 import { IRequestSessionComponent } from './ports/requestSession/types'
@@ -67,8 +69,11 @@ export type AppComponents = {
   mints: IMergerComponent<Mint, MintFilters, MintSortBy>
   sales: IMergerComponent<Sale, SaleFilters, SaleSortBy>
   collections: IMergerComponent<Collection, CollectionFilters, CollectionSortBy>
+  collectionsSubgraph: ISubgraphComponent
+  marketplaceSubgraph: ISubgraphComponent
   accounts: IMergerComponent<Account, AccountFilters, AccountSortBy>
-  analyticsDayData: IMergerComponent<
+  rankings: IRankingsComponent
+  analyticsData: IMergerComponent<
     AnalyticsDayData,
     AnalyticsDayDataFilters,
     AnalyticsDayDataSortBy
