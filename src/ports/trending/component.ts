@@ -27,24 +27,27 @@ export function createTrendingsComponent(
       sortBy: SaleSortBy.MOST_EXPENSIVE, // sort by volume
     })
 
+    // Get trending sales by amount of sales
+    const trendingSales = sales.reduce((acc, sale) => {
+      if (sale.itemId) {
+        const key = `${sale.contractAddress}-${sale.itemId}`
+        acc[key] = (acc[key] || 0) + 1
+      }
+      return acc
+    }, {} as Record<string, number>)
+
     // Fetch all the items from those 24hs sales
     const items = (
       await Promise.all(
-        sales.map((sale) =>
-          itemsComponent.fetch({
-            contractAddress: sale.contractAddress,
-            itemId: sale.itemId || undefined,
+        Object.keys(trendingSales).map((key) => {
+          const [contractAddress, itemId] = key.split('-')
+          return itemsComponent.fetch({
+            contractAddress,
+            itemId: itemId || undefined,
           })
-        )
+        })
       )
     ).reduce((a, b) => a.concat(b), []) // flatten the array of arrays
-
-    // Get trending sales by amount of sales
-    const trendingSales = sales.reduce((acc, sale) => {
-      const key = `${sale.contractAddress}-${sale.itemId}`
-      acc[key] = (acc[key] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
 
     const trendingBySales: Item[] = []
     new Map(
