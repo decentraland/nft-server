@@ -323,18 +323,12 @@ async function initComponents(): Promise<AppComponents> {
     subgraph: marketplaceSubgraph,
     network: Network.ETHEREUM,
     chainId: marketplaceChainId,
-    // fragmentName: 'marketplaceFragment',
-    // getNFTFragment: getMarketplaceFragment,
-    // fromFragment: fromMarketplaceNFTFragment,
   })
 
   const collectionsSales = createSalesComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
     chainId: collectionsChainId,
-    // fragmentName: 'collectionsFragment',
-    // getNFTFragment: getCollectionsFragment,
-    // fromFragment: fromCollectionsFragment,
   })
 
   const sales = createMergerComponent<Sale, SaleFilters, SaleSortBy>({
