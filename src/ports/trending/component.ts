@@ -1,9 +1,9 @@
 import seedrandom from 'seedrandom'
-import { Sale, SaleFilters, SaleSortBy } from '@dcl/schemas'
+import { Item, Sale, SaleFilters, SaleSortBy } from '@dcl/schemas'
 
 import { IMergerComponent } from '../merger/types'
 import { getDateXDaysAgo } from '../analyticsDayData/utils'
-import { INFTsComponent, NFTResult } from '../nfts/types'
+import { IItemsComponent } from '../items/types'
 import { ITrendingsComponent, TrendingFilters } from './types'
 
 const DEFAULT_SIZE = 20
@@ -12,7 +12,7 @@ const VOLUME_CUT = 0.4
 
 export function createTrendingsComponent(
   salesComponent: IMergerComponent<Sale, SaleFilters, SaleSortBy>,
-  nftsComponent: INFTsComponent
+  itemsComponent: IItemsComponent
 ): ITrendingsComponent {
   /**
    * The fetch will return the trending NFTs based on the sales amount and volume.
@@ -27,14 +27,13 @@ export function createTrendingsComponent(
       sortBy: SaleSortBy.MOST_EXPENSIVE, // sort by volume
     })
 
-    // Fetch all the nfts from those 24hs sales
-    const nftResults = (
+    // Fetch all the items from those 24hs sales
+    const items = (
       await Promise.all(
         sales.map((sale) =>
-          nftsComponent.fetch({
-            tokenId: sale.tokenId,
-            contractAddresses: [sale.contractAddress],
-            itemId: sale.itemId || '',
+          itemsComponent.fetch({
+            contractAddress: sale.contractAddress,
+            itemId: sale.itemId || undefined,
           })
         )
       )
@@ -47,15 +46,15 @@ export function createTrendingsComponent(
       return acc
     }, {} as Record<string, number>)
 
-    const trendingBySales: NFTResult[] = []
+    const trendingBySales: Item[] = []
     new Map(
       [...Object.entries(trendingSales)].sort((a, b) => b[1] - a[1])
     ).forEach((_value, key) =>
       trendingBySales.push(
-        nftResults.find(
-          ({ nft }) =>
-            key.split('-')[0] === nft.contractAddress &&
-            key.split('-')[1] === nft.itemId
+        items.find(
+          (item) =>
+            key.split('-')[0] === item.contractAddress &&
+            key.split('-')[1] === item.itemId
         )!
       )
     )
@@ -68,21 +67,21 @@ export function createTrendingsComponent(
 
     // Get the trending ones by volume, making sure is not being repeated with the one from the trending sales.
     // It will iterate over sales which is already ordered by volume as it was used as the SortBy parameter.
-    const trendingByVolume: NFTResult[] = sales
+    const trendingByVolume: Item[] = sales
       .map((sale) => {
-        const nft = nftResults.find(
-          ({ nft }) =>
-            nft.contractAddress === sale.contractAddress &&
-            nft.itemId === sale.itemId
+        const itemFound = items.find(
+          (item) =>
+            item.contractAddress === sale.contractAddress &&
+            item.itemId === sale.itemId
         )
-        return !!nft &&
+        return !!itemFound &&
           !slicedTrendingBySales.find(
-            (trendingBySalesNFT) => trendingBySalesNFT.nft.id === nft.nft.id
+            (trendingBySalesNFT) => trendingBySalesNFT.id === itemFound.id
           )
-          ? nft
+          ? itemFound
           : undefined
       })
-      .filter((nftResult): nftResult is NFTResult => !!nftResult) // filter out the undefined ones
+      .filter((item): item is Item => !!item) // filter out the undefined ones
 
     // Get 40% of the trending sales by volume
     const slicedTrendingByVolume = trendingByVolume.slice(
@@ -93,8 +92,8 @@ export function createTrendingsComponent(
     // Return a deterministic shuffled result using the nft.id as the seed for seedrandom
     return slicedTrendingBySales
       .concat(slicedTrendingByVolume)
-      .sort(({ nft: nft1 }, { nft: nft2 }) =>
-        seedrandom(nft1.id + nft2.id)() > 0.5 ? 1 : -1
+      .sort((item1, item2) =>
+        seedrandom(item1.id + item2.id)() > 0.5 ? 1 : -1
       )
   }
 
