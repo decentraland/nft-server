@@ -7,8 +7,8 @@ import { IItemsComponent } from '../items/types'
 import { ITrendingsComponent, TrendingFilters } from './types'
 
 const DEFAULT_SIZE = 20
-const SALES_CUT = 0.6
-const VOLUME_CUT = 0.4
+export const SALES_CUT = 0.6
+export const VOLUME_CUT = 0.4
 
 export function createTrendingsComponent(
   salesComponent: IMergerComponent<Sale, SaleFilters, SaleSortBy>,
@@ -23,7 +23,7 @@ export function createTrendingsComponent(
   async function fetch(filters: TrendingFilters) {
     // Fetch all sales from the past 24hs
     const sales = await salesComponent.fetch({
-      from: getDateXDaysAgo(1).getTime(),
+      from: getDateXDaysAgo(2).getTime(),
       sortBy: SaleSortBy.MOST_EXPENSIVE, // sort by volume
     })
 
@@ -72,6 +72,8 @@ export function createTrendingsComponent(
     // It will iterate over sales which is already ordered by volume as it was used as the SortBy parameter.
     const trendingByVolume: Item[] = sales
       .map((sale) => {
+        // console.log('sale.contractAddress: ', sale.contractAddress)
+        // console.log('sale.itemId: ', sale.itemId)
         const itemFound = items.find(
           (item) =>
             item.contractAddress === sale.contractAddress &&

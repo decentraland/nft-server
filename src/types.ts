@@ -42,7 +42,7 @@ import { IRankingsComponent } from './ports/rankings/types'
 import { IMergerComponent } from './ports/merger/types'
 import { NFTResult } from './ports/nfts/types'
 import { IRequestSessionComponent } from './ports/requestSession/types'
-import { ITrendingsComponent } from './ports/trending/types'
+import { ITrendingsComponent } from './ports/trendings/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string

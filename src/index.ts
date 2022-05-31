@@ -102,7 +102,7 @@ import { createAnalyticsDayDataComponent } from './ports/analyticsDayData/compon
 import { createAnalyticsDayDataSource } from './adapters/sources/analyticsDayData'
 import { main } from './service'
 import { createRankingsComponent } from './ports/rankings/component'
-import { createTrendingsComponent } from './ports/trending/component'
+import { createTrendingsComponent } from './ports/trendings/component'
 
 async function initComponents(): Promise<AppComponents> {
   configDotEnvFile()

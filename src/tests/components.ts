@@ -101,7 +101,7 @@ import { createAccountsSource } from '../adapters/sources/accounts'
 import { createAccountsComponent } from '../ports/accounts/component'
 import { ACCOUNT_DEFAULT_SORT_BY } from '../ports/accounts/utils'
 import { createRankingsComponent } from '../ports/rankings/component'
-import { createTrendingsComponent } from '../ports/trending/component'
+import { createTrendingsComponent } from '../ports/trendings/component'
 
 // start TCP port for listeners
 let lastUsedPort = 19000 + parseInt(process.env.JEST_WORKER_ID || '1') * 1000
