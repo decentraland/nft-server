@@ -72,8 +72,6 @@ export function createTrendingsComponent(
     // It will iterate over sales which is already ordered by volume as it was used as the SortBy parameter.
     const trendingByVolume: Item[] = sales
       .map((sale) => {
-        // console.log('sale.contractAddress: ', sale.contractAddress)
-        // console.log('sale.itemId: ', sale.itemId)
         const itemFound = items.find(
           (item) =>
             item.contractAddress === sale.contractAddress &&
