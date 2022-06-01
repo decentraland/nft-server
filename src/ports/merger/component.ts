@@ -10,7 +10,14 @@ export function createMergerComponent<
 >(
   options: MergerOptions<Result, Options, SortBy>
 ): IMergerComponent<Result, Options, SortBy> {
-  const { sources, defaultSortBy, directions, maxCount } = options
+  const {
+    sources,
+    defaultSortBy,
+    directions,
+    maxCount,
+    mergerEqualFn,
+    mergerStrategy,
+  } = options
 
   function getOptionsWithDefaults(filters: FetchOptions<Options, SortBy>) {
     // compute defatuls
@@ -34,11 +41,23 @@ export function createMergerComponent<
     )
 
     // sort results
-    const sorted = sort<Result, SortBy>(
+    let sorted = sort<Result, SortBy>(
       results.reduce((results, all) => all.concat(results)),
       options.sortBy,
       directions[options.sortBy]
     )
+
+    if (mergerEqualFn && mergerStrategy) {
+      sorted = sorted.reduce((acc, result) => {
+        const existingIndex = acc.findIndex((r) => mergerEqualFn(r, result))
+        if (existingIndex > -1) {
+          acc[existingIndex] = mergerStrategy(acc[existingIndex], result)
+        } else {
+          acc.push(result)
+        }
+        return acc
+      }, [] as Result[])
+    }
 
     // return the limit of result, if first is 0, that means all the results
     return options.first === 0
