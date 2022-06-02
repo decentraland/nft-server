@@ -102,6 +102,7 @@ import { createAnalyticsDayDataComponent } from './ports/analyticsDayData/compon
 import { createAnalyticsDayDataSource } from './adapters/sources/analyticsDayData'
 import { main } from './service'
 import { createRankingsComponent } from './ports/rankings/component'
+import { createTrendingsComponent } from './ports/trendings/component'
 
 async function initComponents(): Promise<AppComponents> {
   configDotEnvFile()
@@ -343,6 +344,9 @@ async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
+  // trendings
+  const trendings = createTrendingsComponent(sales, items)
+
   // analytics day data for the marketplace subgraph
   const marketplaceAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: marketplaceSubgraph,
@@ -462,6 +466,7 @@ async function initComponents(): Promise<AppComponents> {
     items,
     mints,
     sales,
+    trendings,
     collections,
     accounts,
     rankings,
