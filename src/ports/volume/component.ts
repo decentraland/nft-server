@@ -3,7 +3,7 @@ import {
   AnalyticsDayData,
   AnalyticsDayDataSortBy,
 } from '@dcl/schemas'
-import { getAccumulatedAnalyticsData } from '../../logic/rankings'
+import { getAccumulatedAnalyticsData } from '../../logic/volume'
 import { AnalyticsTimeframe } from '../analyticsDayData/types'
 import { getTimestampFromTimeframe } from '../analyticsDayData/utils'
 import { IMergerComponent } from '../merger/types'

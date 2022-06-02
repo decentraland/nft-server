@@ -28,7 +28,12 @@ function getQueryParams(filters: ItemsDayDataFilters) {
     where.push(`searchWearableCategory: ${category}`)
   }
   if (rarity) {
-    where.push(`searchWearableRarity: ${rarity}`)
+    if (from === 0) {
+      // if it fetches the Item entity
+      where.push(`rarity: "${rarity}"`)
+    } else {
+      where.push(`searchRarity: "${rarity}"`)
+    }
   }
   if (from) {
     where.push(`date_gt: ${Math.round(from / 1000)}`)
@@ -41,13 +46,11 @@ function getQueryParams(filters: ItemsDayDataFilters) {
       orderBy = 'sales'
       orderDirection = 'desc'
       break
-    case ItemsDayDataSortBy.MOST_EXPENSIVE:
+    case ItemsDayDataSortBy.MOST_VOLUME:
       orderBy = 'volume'
       orderDirection = 'desc'
       break
     default:
-      // orderBy = 'date'
-      // orderDirection = 'desc'
       orderBy = 'volume'
       orderDirection = 'desc'
   }

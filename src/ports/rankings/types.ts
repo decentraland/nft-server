@@ -1,7 +1,7 @@
 import { Network, Rarity, WearableCategory } from '@dcl/schemas'
 
 export enum ItemsDayDataSortBy {
-  MOST_EXPENSIVE = 'most_expensive',
+  MOST_VOLUME = 'most_volume',
   MOST_SALES = 'most_sales',
 }
 
@@ -21,7 +21,7 @@ export enum ItemsDayDataTimeframe {
 }
 
 export type RankingItem = {
-  itemId: string
+  id: string
   sales: number
   volume: string
 }
@@ -33,9 +33,6 @@ export interface IItemsDayDataComponent {
 
 export type ItemsDayDataFragment = {
   id: string
-  date: number
   sales: number
   volume: string
-  searchWearableCategory: string
-  searchWearableRarity: string
 }

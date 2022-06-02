@@ -1,3 +1,4 @@
+import { Rarity, WearableCategory } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { Params } from '../../logic/http/params'
 import { asJSON } from '../../logic/http/response'
@@ -18,11 +19,18 @@ export function createRankingsHandler(
       'sortBy',
       ItemsDayDataSortBy
     )
+    const category = params.getValue<WearableCategory>(
+      'category',
+      WearableCategory
+    )
+    const rarity = params.getValue<Rarity>('rarity', Rarity)
 
     return asJSON(async () => ({
       data: await rankings.fetch({
         from: getTimestampFromTimeframe(timeframe as AnalyticsTimeframe),
         sortBy,
+        category,
+        rarity,
       }),
     }))
   }
