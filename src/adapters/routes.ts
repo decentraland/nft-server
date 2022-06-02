@@ -13,6 +13,7 @@ import { createAccountsHandler } from './handlers/accounts'
 import { createAnalyticsDataHandler } from './handlers/analyticsData'
 import { createRankingsHandler } from './handlers/rankings'
 import { createTrendingHandler } from './handlers/trending'
+import { createVolumeHandler } from './handlers/volume'
 
 export async function setupRoutes(globalContext: GlobalContext) {
   const { components } = globalContext
@@ -37,6 +38,7 @@ export async function setupRoutes(globalContext: GlobalContext) {
   router.get('/collections', createCollectionsHandler(components))
   router.get('/accounts', createAccountsHandler(components))
   router.get('/analytics/:timeframe', createAnalyticsDataHandler(components))
+  router.get('/volume/:timeframe', createVolumeHandler(components))
   router.get('/rankings/:timeframe', createRankingsHandler(components))
   router.get('/trendings', createTrendingHandler(components))
   router.get(

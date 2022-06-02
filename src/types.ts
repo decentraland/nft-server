@@ -38,7 +38,8 @@ import type {
   IBaseComponent,
 } from '@well-known-components/interfaces'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
-import { IRankingsComponent } from './ports/rankings/types'
+import { IVolumeComponent } from './ports/volume/types'
+import { IItemsDayDataComponent } from './ports/rankings/types'
 import { IMergerComponent } from './ports/merger/types'
 import { NFTResult } from './ports/nfts/types'
 import { IRequestSessionComponent } from './ports/requestSession/types'
@@ -74,7 +75,8 @@ export type AppComponents = {
   collectionsSubgraph: ISubgraphComponent
   marketplaceSubgraph: ISubgraphComponent
   accounts: IMergerComponent<Account, AccountFilters, AccountSortBy>
-  rankings: IRankingsComponent
+  rankings: IItemsDayDataComponent
+  volumes: IVolumeComponent
   analyticsData: IMergerComponent<
     AnalyticsDayData,
     AnalyticsDayDataFilters,

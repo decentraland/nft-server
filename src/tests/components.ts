@@ -100,8 +100,9 @@ import { COLLECTION_DEFAULT_SORT_BY } from '../ports/collections/utils'
 import { createAccountsSource } from '../adapters/sources/accounts'
 import { createAccountsComponent } from '../ports/accounts/component'
 import { ACCOUNT_DEFAULT_SORT_BY } from '../ports/accounts/utils'
-import { createRankingsComponent } from '../ports/rankings/component'
+import { createVolumeComponent } from '../ports/volume/component'
 import { createTrendingsComponent } from '../ports/trendings/component'
+import { createRankingsComponent } from '../ports/rankings/component'
 
 // start TCP port for listeners
 let lastUsedPort = 19000 + parseInt(process.env.JEST_WORKER_ID || '1') * 1000
@@ -396,8 +397,14 @@ export async function initComponents(): Promise<AppComponents> {
     }),
   })
 
-  // rankings
-  const rankings = createRankingsComponent(analyticsData)
+  // volumes
+  const volumes = createVolumeComponent(analyticsData)
+
+  // rankings collections subgraph
+  const rankings = createRankingsComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.MATIC,
+  })
 
   // collections
   const collectionsCollections = createCollectionsComponent({
@@ -479,6 +486,7 @@ export async function initComponents(): Promise<AppComponents> {
     analyticsData,
     marketplaceSubgraph,
     collectionsSubgraph,
+    volumes,
     rankings,
   }
 }

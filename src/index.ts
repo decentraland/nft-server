@@ -101,6 +101,7 @@ import { createLogComponent } from './ports/logger/component'
 import { createAnalyticsDayDataComponent } from './ports/analyticsDayData/component'
 import { createAnalyticsDayDataSource } from './adapters/sources/analyticsDayData'
 import { main } from './service'
+import { createVolumeComponent } from './ports/volume/component'
 import { createRankingsComponent } from './ports/rankings/component'
 import { createTrendingsComponent } from './ports/trendings/component'
 
@@ -393,8 +394,14 @@ async function initComponents(): Promise<AppComponents> {
     }),
   })
 
-  // rankings
-  const rankings = createRankingsComponent(analyticsData)
+  // volumes
+  const volumes = createVolumeComponent(analyticsData)
+
+  // rankings collections subgraph
+  const rankings = createRankingsComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.MATIC,
+  })
 
   // accounts
   const marketplaceAccounts = createAccountsComponent({
@@ -470,6 +477,7 @@ async function initComponents(): Promise<AppComponents> {
     collections,
     accounts,
     rankings,
+    volumes,
     analyticsData,
     collectionsSubgraph,
     marketplaceSubgraph,

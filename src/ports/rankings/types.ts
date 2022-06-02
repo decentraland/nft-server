@@ -1,11 +1,41 @@
-import { AnalyticsDayData } from '@dcl/schemas'
-import { AnalyticsTimeframe } from '../analyticsDayData/types'
+import { Network, Rarity, WearableCategory } from '@dcl/schemas'
 
-export type RankingData = Pick<
-  AnalyticsDayData,
-  'sales' | 'volume' | 'creatorsEarnings' | 'daoEarnings'
->
+export enum ItemsDayDataSortBy {
+  MOST_EXPENSIVE = 'most_expensive',
+  MOST_SALES = 'most_sales',
+}
 
-export interface IRankingsComponent {
-  fetch(timeframe: AnalyticsTimeframe): Promise<RankingData>
+export type ItemsDayDataFilters = {
+  from: number
+  rarity?: Rarity
+  category?: WearableCategory
+  network?: Network
+  sortBy?: ItemsDayDataSortBy
+}
+
+export enum ItemsDayDataTimeframe {
+  DAY = 'day',
+  WEEK = 'week',
+  MONTH = 'month',
+  ALL = 'all',
+}
+
+export type RankingItem = {
+  itemId: string
+  sales: number
+  volume: string
+}
+
+export interface IItemsDayDataComponent {
+  fetch(filters: ItemsDayDataFilters): Promise<RankingItem[]>
+  count(filters: ItemsDayDataFilters): Promise<number>
+}
+
+export type ItemsDayDataFragment = {
+  id: string
+  date: number
+  sales: number
+  volume: string
+  searchWearableCategory: string
+  searchWearableRarity: string
 }
