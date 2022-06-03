@@ -1,12 +1,14 @@
 import { Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { getUniqueItemsFromItemsDayData } from '../../logic/rankings'
+import { FetchOptions } from '../merger/types'
 import {
   IItemsDayDataComponent,
-  ItemsDayDataFilters,
   ItemsDayDataFragment,
+  RankingsFilters,
+  RankingsSortBy,
 } from './types'
-import { getItemsDayDataQuery, getItemsDayDataTotal } from './utils'
+import { getItemsDayDataQuery, getItemsDayDataTotalQuery } from './utils'
 
 export function createRankingsComponent(options: {
   subgraph: ISubgraphComponent
@@ -14,45 +16,55 @@ export function createRankingsComponent(options: {
 }): IItemsDayDataComponent {
   const { subgraph, network } = options
 
-  function isValid(network: Network, filters: ItemsDayDataFilters) {
+  function isValid(network: Network, filters: RankingsFilters) {
     return (
       // Querying a different network to the component's one is not valid
       !filters.network || filters.network === network
     )
   }
 
-  async function fetch(filters: ItemsDayDataFilters) {
+  async function fetch(filters: FetchOptions<RankingsFilters, RankingsSortBy>) {
     if (!isValid(network, filters)) {
       return []
     }
 
     const { from } = filters
 
-    const query =
-      from === 0 ? getItemsDayDataTotal(filters) : getItemsDayDataQuery(filters)
+    const isFetchingAllTimeResults = from === 0
 
     const { rankings: fragments } = await subgraph.query<{
       rankings: ItemsDayDataFragment[]
-    }>(query)
+    }>(
+      isFetchingAllTimeResults
+        ? getItemsDayDataTotalQuery(filters)
+        : getItemsDayDataQuery(filters)
+    )
 
-    const rankingItems =
-      from === 0 ? fragments : getUniqueItemsFromItemsDayData(fragments)
+    const rankingItems = isFetchingAllTimeResults
+      ? fragments
+      : getUniqueItemsFromItemsDayData(fragments)
 
-    return Object.values(rankingItems)
+    return Object.values(rankingItems).slice(
+      0,
+      isFetchingAllTimeResults ? undefined : filters.first
+    )
   }
 
-  async function count(filters: ItemsDayDataFilters) {
+  async function count(filters: RankingsFilters) {
     if (!isValid(network, filters)) {
       return 0
     }
 
     const { from } = filters
+    const isFetchingAllTimeResults = from === 0
 
-    const query =
-      from === 0 ? getItemsDayDataTotal(filters) : getItemsDayDataQuery(filters)
     const { analytics: fragments } = await subgraph.query<{
       analytics: ItemsDayDataFragment[]
-    }>(query)
+    }>(
+      isFetchingAllTimeResults
+        ? getItemsDayDataTotalQuery(filters)
+        : getItemsDayDataQuery(filters)
+    )
 
     return fragments.length
   }

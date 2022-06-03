@@ -5,14 +5,14 @@ import { getTimestampFromTimeframe } from '../../ports/analyticsDayData/utils'
 import { createRankingsComponent } from '../../ports/rankings/component'
 import {
   IItemsDayDataComponent,
-  ItemsDayDataFilters,
   ItemsDayDataFragment,
-  ItemsDayDataSortBy,
+  RankingsFilters,
+  RankingsSortBy,
 } from '../../ports/rankings/types'
 import { getUniqueItemsFromItemsDayData } from '../../logic/rankings'
 import {
   getItemsDayDataQuery,
-  getItemsDayDataTotal,
+  getItemsDayDataTotalQuery,
 } from '../../ports/rankings/utils'
 
 test('rankings component', function ({ components }) {
@@ -31,14 +31,14 @@ test('rankings component', function ({ components }) {
       describe('and sorted by volume', () => {
         let graphResponse: { rankings: ItemsDayDataFragment[] }
         let timeframe: AnalyticsTimeframe
-        let filters: ItemsDayDataFilters
+        let filters: RankingsFilters
 
         beforeEach(() => {
           const { collectionsSubgraph } = components
           timeframe = AnalyticsTimeframe.WEEK
           filters = {
             from: getTimestampFromTimeframe(timeframe),
-            sortBy: ItemsDayDataSortBy.MOST_VOLUME,
+            sortBy: RankingsSortBy.MOST_VOLUME,
           }
           graphResponse = {
             rankings: [
@@ -95,14 +95,14 @@ test('rankings component', function ({ components }) {
       describe('and sorted by sales', () => {
         let graphResponse: { rankings: ItemsDayDataFragment[] }
         let timeframe: AnalyticsTimeframe
-        let filters: ItemsDayDataFilters
+        let filters: RankingsFilters
 
         beforeEach(() => {
           const { collectionsSubgraph } = components
           timeframe = AnalyticsTimeframe.WEEK
           filters = {
             from: getTimestampFromTimeframe(timeframe),
-            sortBy: ItemsDayDataSortBy.MOST_SALES,
+            sortBy: RankingsSortBy.MOST_SALES,
           }
           graphResponse = {
             rankings: [
@@ -161,14 +161,14 @@ test('rankings component', function ({ components }) {
       describe('and sorted by volume', () => {
         let graphResponse: { rankings: ItemsDayDataFragment[] }
         let timeframe: AnalyticsTimeframe
-        let filters: ItemsDayDataFilters
+        let filters: RankingsFilters
 
         beforeEach(() => {
           const { collectionsSubgraph } = components
           timeframe = AnalyticsTimeframe.ALL
           filters = {
             from: getTimestampFromTimeframe(timeframe),
-            sortBy: ItemsDayDataSortBy.MOST_VOLUME,
+            sortBy: RankingsSortBy.MOST_VOLUME,
           }
           graphResponse = {
             rankings: [
@@ -227,7 +227,7 @@ test('rankings component', function ({ components }) {
           )
 
           expect(collectionsSubgraph.query).toHaveBeenCalledWith(
-            getItemsDayDataTotal(filters)
+            getItemsDayDataTotalQuery(filters)
           )
         })
       })
@@ -235,14 +235,14 @@ test('rankings component', function ({ components }) {
       describe('and sorted by sales', () => {
         let graphResponse: { rankings: ItemsDayDataFragment[] }
         let timeframe: AnalyticsTimeframe
-        let filters: ItemsDayDataFilters
+        let filters: RankingsFilters
 
         beforeEach(() => {
           const { collectionsSubgraph } = components
           timeframe = AnalyticsTimeframe.ALL
           filters = {
             from: getTimestampFromTimeframe(timeframe),
-            sortBy: ItemsDayDataSortBy.MOST_SALES,
+            sortBy: RankingsSortBy.MOST_SALES,
           }
           graphResponse = {
             rankings: [
@@ -331,7 +331,7 @@ test('rankings component', function ({ components }) {
           )
 
           expect(collectionsSubgraph.query).toHaveBeenCalledWith(
-            getItemsDayDataTotal(filters)
+            getItemsDayDataTotalQuery(filters)
           )
         })
       })

@@ -1,8 +1,4 @@
-import {
-  ItemsDayDataFilters,
-  ItemsDayDataSortBy,
-  ItemsDayDataTimeframe,
-} from './types'
+import { RankingsFilters, RankingsSortBy, ItemsDayDataTimeframe } from './types'
 
 export const getItemsDayDataFragment = () => `
   fragment itemsDayDataFragment on ItemsDayData {
@@ -20,7 +16,7 @@ export const getItemsTotalFragment = () => `
   }
 `
 
-function getQueryParams(filters: ItemsDayDataFilters) {
+function getQueryParams(filters: RankingsFilters) {
   const { from, category, rarity, sortBy } = filters
   const where: string[] = []
 
@@ -42,11 +38,11 @@ function getQueryParams(filters: ItemsDayDataFilters) {
   let orderBy: string
   let orderDirection: string
   switch (sortBy) {
-    case ItemsDayDataSortBy.MOST_SALES:
+    case RankingsSortBy.MOST_SALES:
       orderBy = 'sales'
       orderDirection = 'desc'
       break
-    case ItemsDayDataSortBy.MOST_VOLUME:
+    case RankingsSortBy.MOST_VOLUME:
       orderBy = 'volume'
       orderDirection = 'desc'
       break
@@ -57,13 +53,14 @@ function getQueryParams(filters: ItemsDayDataFilters) {
   return { where, orderBy, orderDirection }
 }
 
-export function getItemsDayDataQuery(filters: ItemsDayDataFilters) {
+export function getItemsDayDataQuery(filters: RankingsFilters) {
   const { where, orderBy, orderDirection } = getQueryParams(filters)
 
   return `
     query ItemsDayData {
       rankings: itemsDayDatas(orderBy: ${orderBy}, 
-        orderDirection: ${orderDirection}, , where: { ${where.join('\n')} }) {
+        orderDirection: ${orderDirection}, 
+        where: { ${where.join('\n')} }) {
         ...itemsDayDataFragment
       }
     }
@@ -71,12 +68,16 @@ export function getItemsDayDataQuery(filters: ItemsDayDataFilters) {
   `
 }
 
-export function getItemsDayDataTotal(filters: ItemsDayDataFilters) {
+export function getItemsDayDataTotalQuery(filters: RankingsFilters) {
+  console.log('filters: ', filters)
   const { where, orderBy, orderDirection } = getQueryParams(filters)
   return `
     query ItemsDayTotalData{
-      rankings: items(orderBy: ${orderBy}, 
-        orderDirection: ${orderDirection}, , where: { ${where.join('\n')} }) {
+      rankings: items(
+        ${filters.first ? `first: ${filters.first}` : ''}
+        orderBy: ${orderBy}, 
+        orderDirection: ${orderDirection},
+        where: { ${where.join('\n')} }) {
           ...itemsDayDataFragment
       }
     }

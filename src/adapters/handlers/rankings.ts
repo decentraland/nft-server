@@ -4,7 +4,7 @@ import { Params } from '../../logic/http/params'
 import { asJSON } from '../../logic/http/response'
 import { AnalyticsTimeframe } from '../../ports/analyticsDayData/types'
 import { getTimestampFromTimeframe } from '../../ports/analyticsDayData/utils'
-import { ItemsDayDataSortBy } from '../../ports/rankings/types'
+import { RankingsSortBy } from '../../ports/rankings/types'
 import { AppComponents, Context } from '../../types'
 
 export function createRankingsHandler(
@@ -15,10 +15,8 @@ export function createRankingsHandler(
   return async (context) => {
     const { timeframe } = context.params
     const params = new Params(context.url.searchParams)
-    const sortBy = params.getValue<ItemsDayDataSortBy>(
-      'sortBy',
-      ItemsDayDataSortBy
-    )
+    const first = params.getNumber('first')
+    const sortBy = params.getValue<RankingsSortBy>('sortBy', RankingsSortBy)
     const category = params.getValue<WearableCategory>(
       'category',
       WearableCategory
@@ -28,6 +26,7 @@ export function createRankingsHandler(
     return asJSON(async () => ({
       data: await rankings.fetch({
         from: getTimestampFromTimeframe(timeframe as AnalyticsTimeframe),
+        first,
         sortBy,
         category,
         rarity,
