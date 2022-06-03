@@ -1,5 +1,5 @@
 import BN from 'bn.js'
-import { getAccumulatedAnalyticsData } from '../../../src/logic/volume'
+import { getAccumulatedAnalyticsData } from '../../logic/volume'
 import { AnalyticsDataFragment } from '../../ports/analyticsDayData/types'
 
 describe('getAccumulatedAnalyticsData', () => {
