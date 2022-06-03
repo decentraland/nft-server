@@ -358,3 +358,78 @@ type Contract = {
 - `sortBy`: Sort results. Possible values: `name`.
 - `category`: Filter by `NFTCategory`. Possible values: `parcel`, `estate`, `wearable`, `ens`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
+
+## Analytics
+
+**Endpoint**: `/v1/analytics/:timeframe`
+
+**Type**:
+
+```ts
+type AnalyticsDayData = {
+    id: string;
+    date: number;
+    sales: number;
+    volume: string;
+    creatorsEarnings: string;
+    daoEarnings: string;
+};
+```
+
+**URL Params**:
+- `timeframe`: The timeframe within the analytic data was gather. Possible values: `day` | `week` | `mont` | `all`
+
+
+## Volume
+
+**Endpoint**: `/v1/volume/:timeframe`
+
+**Type**:
+
+```ts
+type VolumeData = {
+    sales: number;
+    volume: string;
+    creatorsEarnings: string;
+    daoEarnings: string;
+}
+```
+
+**URL Params**:
+- `timeframe`: The timeframe within the analytic data was gather. Possible values: `day` | `week` | `mont` | `all`
+
+## Trendings
+
+**Endpoint**: `/v1/trendings`
+
+**Type**:
+
+```ts
+type Item = {
+    id: string;
+    name: string;
+    thumbnail: string;
+    url: string;
+    category: NFTCategory;
+    contractAddress: string;
+    itemId: string;
+    rarity: Rarity;
+    price: string;
+    available: number;
+    isOnSale: boolean;
+    creator: string;
+    beneficiary: string | null;
+    createdAt: number;
+    updatedAt: number;
+    reviewedAt: number;
+    soldAt: number;
+    data: NFT['data'];
+    network: Network;
+    chainId: ChainId;
+}
+```
+
+**Query Params**:
+- `size`: The amount of trending items to return
+
+
