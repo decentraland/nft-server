@@ -21,7 +21,7 @@ export function createTrendingsComponent(
 ): ITrendingsComponent {
   async function fetchTrendingSales(skip: number) {
     const query = getTrendingsQuery(
-      { from: getDateXDaysAgo(2).getTime(), first: 1000, skip },
+      { from: getDateXDaysAgo(1).getTime(), first: 1000, skip },
       false
     )
     const { sales: fragments } = await collectionsSubgraph.query<{
@@ -47,10 +47,10 @@ export function createTrendingsComponent(
     let trendingSales: Record<string, number> = {}
     let retries = 0
     let skip = 0
-    let remainingSales = undefined
+    let remainingSales = 1000
 
     // iterate until we complete a whole page of items or reach max retries
-    while (remainingSales !== 0 && retries < MAX_RETRIES) {
+    while (remainingSales === 1000 && retries < MAX_RETRIES) {
       const salesResponse = await fetchTrendingSales(skip)
       sales = [...sales, ...salesResponse]
       remainingSales = salesResponse.length

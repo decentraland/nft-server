@@ -93,13 +93,14 @@ test('trendings component', function ({ components }) {
           ...getSalesOfSameItem(80),
           ...getSalesOfSameItem(90),
           ...getSalesOfSameItem(100),
+          ...getSalesOfSameItem(2000),
         ]
         salesResponse = [...getSalesWithBigPrice(10), ...salesOfSameItems]
         Array.from(
-          { length: Math.ceil(salesResponse.length / 150) },
+          { length: Math.ceil(salesResponse.length / 1000) },
           (_, i) => {
             jest.spyOn(collectionsSubgraph, 'query').mockResolvedValueOnce({
-              sales: salesResponse.slice(i * 150, (i + 1) * 150),
+              sales: salesResponse.slice(i * 1000, (i + 1) * 1000),
             })
           }
         )
@@ -163,17 +164,17 @@ test('trendings component', function ({ components }) {
           expect.arrayContaining(notTrendingItemsWithMostSales)
         )
         // assert the retry calls
-        // asked for 5 pages
+        // asked for 3 pages
         const { collectionsSubgraph } = components
-        expect(collectionsSubgraph.query).toHaveBeenCalledTimes(5)
+        expect(collectionsSubgraph.query).toHaveBeenCalledTimes(3)
         Array.from(
-          { length: Math.ceil(salesResponse.length / 150) }, // the mock is returning 150 results, let's pretend they're 1000
+          { length: Math.ceil(salesResponse.length / 1000) }, // the mock is returning 10000 results
           (_, i) => {
             expect(collectionsSubgraph.query).toHaveBeenCalledWith(
               getTrendingsQuery({
-                from: getDateXDaysAgo(2).getTime(),
+                from: getDateXDaysAgo(1).getTime(),
                 first: 1000,
-                skip: 1000 * (i + 1), // 1000 is the max number of results per page
+                skip: 1000 * i, // 1000 is the max number of results per page
               })
             )
           }
