@@ -1,19 +1,39 @@
 import seedrandom from 'seedrandom'
-import { Item, Sale, SaleFilters, SaleSortBy } from '@dcl/schemas'
-
-import { IMergerComponent } from '../merger/types'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
+import { Item, Sale } from '@dcl/schemas'
 import { getDateXDaysAgo } from '../analyticsDayData/utils'
 import { IItemsComponent } from '../items/types'
 import { ITrendingsComponent, TrendingFilters } from './types'
+import {
+  fromTrendingSaleFragment,
+  getTrendingsQuery,
+  TrendingSaleFragment,
+} from './utils'
 
 const DEFAULT_SIZE = 20
+const MAX_RETRIES = 5
 export const SALES_CUT = 0.6
 export const VOLUME_CUT = 0.4
 
 export function createTrendingsComponent(
-  salesComponent: IMergerComponent<Sale, SaleFilters, SaleSortBy>,
+  collectionsSubgraph: ISubgraphComponent,
   itemsComponent: IItemsComponent
 ): ITrendingsComponent {
+  async function fetchTrendingSales(skip: number) {
+    const query = getTrendingsQuery(
+      { from: getDateXDaysAgo(1).getTime(), first: 1000, skip },
+      false
+    )
+    const { sales: fragments } = await collectionsSubgraph.query<{
+      sales: TrendingSaleFragment[]
+    }>(query)
+
+    const sales = fragments.map((fragment) =>
+      fromTrendingSaleFragment(fragment)
+    )
+
+    return sales
+  }
   /**
    * The fetch will return the trending NFTs based on the sales amount and volume.
    * The current logic gets the 60% with more sales and the 40% with more traded volume. Then uses seedrandom to shuffle the concatenated array in a deterministic order.
@@ -21,33 +41,43 @@ export function createTrendingsComponent(
    * @returns NFT
    */
   async function fetch(filters: TrendingFilters) {
-    // Fetch all sales from the past 24hs
-    const sales = await salesComponent.fetch({
-      from: getDateXDaysAgo(2).getTime(),
-      sortBy: SaleSortBy.MOST_EXPENSIVE, // sort by volume
-    })
+    // Fetch all sales from the past 48hs
+    let sales: Pick<Sale, 'itemId' | 'contractAddress'>[] = []
+    let items: Item[] = []
+    let trendingSales: Record<string, number> = {}
+    let retries = 0
+    let skip = 0
+    let remainingSales = 1000
 
-    // Get trending sales by amount of sales
-    const trendingSales = sales.reduce((acc, sale) => {
-      if (sale.itemId) {
-        const key = `${sale.contractAddress}-${sale.itemId}`
-        acc[key] = (acc[key] || 0) + 1
-      }
-      return acc
-    }, {} as Record<string, number>)
+    // iterate until we complete a whole page of items or reach max retries
+    while (remainingSales === 1000 && retries < MAX_RETRIES) {
+      const salesResponse = await fetchTrendingSales(skip)
+      sales = [...sales, ...salesResponse]
+      remainingSales = salesResponse.length
+      skip += 1000
+      retries++
+      // Get trending sales by amount of sales
+      trendingSales = sales.reduce((acc, sale) => {
+        if (sale.itemId) {
+          const key = `${sale.contractAddress}-${sale.itemId}`
+          acc[key] = (acc[key] || 0) + 1
+        }
+        return acc
+      }, {} as Record<string, number>)
 
-    // Fetch all the items from those 24hs sales
-    const items = (
-      await Promise.all(
-        Object.keys(trendingSales).map((key) => {
-          const [contractAddress, itemId] = key.split('-')
-          return itemsComponent.fetch({
-            contractAddress,
-            itemId: itemId || undefined,
+      // Fetch all the items from those 48hs sales
+      items = (
+        await Promise.all(
+          Object.keys(trendingSales).map((key) => {
+            const [contractAddress, itemId] = key.split('-')
+            return itemsComponent.fetch({
+              contractAddress,
+              itemId: itemId || undefined,
+            })
           })
-        })
-      )
-    ).reduce((a, b) => a.concat(b), []) // flatten the array of arrays
+        )
+      ).reduce((a, b) => a.concat(b), []) // flatten the array of arrays
+    }
 
     const trendingBySales: Item[] = []
     new Map(

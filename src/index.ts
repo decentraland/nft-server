@@ -345,7 +345,7 @@ async function initComponents(): Promise<AppComponents> {
   })
 
   // trendings
-  const trendings = createTrendingsComponent(sales, items)
+  const trendings = createTrendingsComponent(collectionsSubgraph, items)
 
   // analytics day data for the marketplace subgraph
   const marketplaceAnalyticsDayData = createAnalyticsDayDataComponent({
