@@ -1,4 +1,5 @@
 import { Network, NFTCategory, Rarity, Sale, SaleType } from '@dcl/schemas'
+import { getDateXDaysAgo } from '../../ports/analyticsDayData/utils'
 import {
   createTrendingsComponent,
   SALES_CUT,
@@ -70,12 +71,23 @@ const getItem = (contractAddress: string, itemId: string) => ({
   soldAt: 1653899245000,
 })
 
+const RESULTS_PAGE_SIZE = 10
+
 test('trendings component', function ({ components }) {
   let trendingsComponent: ITrendingsComponent
 
   beforeEach(() => {
     const { sales, items } = components
     trendingsComponent = createTrendingsComponent(sales, items)
+  })
+
+  beforeAll(() => {
+    jest.useFakeTimers('modern')
+    jest.setSystemTime(new Date(2020, 3, 1))
+  })
+
+  afterAll(() => {
+    jest.useRealTimers()
   })
 
   describe('when fetching the trendings', () => {
@@ -85,7 +97,7 @@ test('trendings component', function ({ components }) {
       let salesOfSameItems: Sale[]
       beforeEach(() => {
         const { sales, items } = components
-        filters = { size: 10 }
+        filters = { size: RESULTS_PAGE_SIZE }
         // 10 items with tons of small sales
         // 10 items with really big volumes
         // result should be 40% of those big volumes sorted by their sizes and 60% of the ones with more sales
@@ -102,8 +114,18 @@ test('trendings component', function ({ components }) {
           ...getSalesOfSameItem(100),
         ]
         salesResponse = [...getSalesWithBigPrice(10), ...salesOfSameItems]
+        Array.from(
+          { length: Math.ceil(salesResponse.length / 150) },
+          (_, i) => {
+            jest
+              .spyOn(sales, 'fetch')
+              .mockResolvedValueOnce(
+                salesResponse.slice(i * 150, (i + 1) * 150)
+              )
+          }
+        )
+        jest.spyOn(sales, 'fetch').mockResolvedValueOnce([])
 
-        jest.spyOn(sales, 'fetch').mockResolvedValueOnce(salesResponse)
         jest
           .spyOn(items, 'fetch')
           .mockImplementation(({ contractAddress, itemId }) =>
@@ -152,6 +174,20 @@ test('trendings component', function ({ components }) {
         // the rest of the big amount of sales items shouldn't be in the trendings array
         expect(trendings).not.toEqual(
           expect.arrayContaining(notTrendingItemsWithMostSales)
+        )
+        // assert the retry calls
+        // asked for 5 pages
+        const { sales } = components
+        expect(sales.fetch).toHaveBeenCalledTimes(5)
+        Array.from(
+          { length: Math.ceil(salesResponse.length / 150) }, // the mock is returning 150 results, let's pretend they're 1000
+          (_, i) => {
+            expect(sales.fetch).toHaveBeenCalledWith({
+              from: getDateXDaysAgo(2).getTime(),
+              first: 1000,
+              skip: 1000 * i, // 1000 is the max number of results per page
+            })
+          }
         )
       })
     })

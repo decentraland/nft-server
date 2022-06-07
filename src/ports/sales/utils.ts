@@ -142,14 +142,14 @@ export function getSalesQuery(
     where.push(`searchContractAddress: "${contractAddress}"`)
   }
 
-  const max = 1000
-  const total = isCount
-    ? max
-    : typeof first !== 'undefined'
-    ? typeof skip !== 'undefined'
-      ? skip + first
-      : first
-    : max
+  // const max = 1000
+  // const total = isCount
+  //   ? max
+  //   : typeof first !== 'undefined'
+  //   ? typeof skip !== 'undefined'
+  //     ? skip + first
+  //     : first
+  //   : max
 
   let orderBy: string
   let orderDirection: string
@@ -170,7 +170,8 @@ export function getSalesQuery(
   return `
     query Sales {
       sales(
-        first: ${total}, 
+        first: ${first}, 
+        ${skip ? `skip: ${skip}` : ''}
         orderBy: ${orderBy}, 
         orderDirection: ${orderDirection}, 
         where: {
