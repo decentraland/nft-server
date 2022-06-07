@@ -448,6 +448,7 @@ type RankingItem = {
 
 **URL Params**:
 - `timeframe`: The timeframe within the analytic data was gather. Possible values: `day` | `week` | `mont` | `all`
+- `entity`: The entity that wants to get ranked. Possible values: `items` | `creators` | `collectors`
 
 
 **Query Params**:
