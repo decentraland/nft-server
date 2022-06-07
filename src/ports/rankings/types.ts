@@ -1,4 +1,4 @@
-import { Network, Rarity, WearableCategory } from '@dcl/schemas'
+import { Account, Network, Rarity, WearableCategory } from '@dcl/schemas'
 import { FetchOptions } from '../merger/types'
 
 export enum RankingsSortBy {
@@ -22,21 +22,60 @@ export enum ItemsDayDataTimeframe {
   ALL = 'all',
 }
 
-export type RankingItem = {
-  id: string
-  sales: number
-  volume: string
-}
-
-export interface IItemsDayDataComponent {
-  fetch(
-    filters: FetchOptions<RankingsFilters, RankingsSortBy>
-  ): Promise<RankingItem[]>
-  count(filters: RankingsFilters): Promise<number>
-}
-
 export type ItemsDayDataFragment = {
   id: string
   sales: number
   volume: string
+}
+
+export type CreatorsDayDataFragment = {
+  id: string
+  sales: number
+  volume: string
+  collections: number
+  uniqueCollectors: string[]
+}
+
+export type CollectorsDayDataFragment = {
+  id: string
+  purchases: number
+  volume: string
+  uniqueItems: string[]
+  mythicItems: string[]
+}
+
+export type RankingFragment =
+  | ItemsDayDataFragment
+  | CreatorsDayDataFragment
+  | CollectorsDayDataFragment
+
+export type ItemRank = ItemsDayDataFragment
+
+export type CreatorRank = Pick<Account, 'id'> & {
+  sales: number
+  volume: string
+  collections: number
+  uniqueCollectors: number
+}
+export type CollectorRank = Pick<Account, 'id'> & {
+  mythicItems: number
+  uniqueItems: number
+  purchases: number
+  volume: string
+}
+
+export type RankingEntityResponse = ItemRank | CreatorRank | CollectorRank
+
+export enum RankingEntity {
+  ITEMS = 'items',
+  CREATORS = 'creators',
+  COLLECTORS = 'collectors',
+}
+
+export interface IItemsDayDataComponent {
+  fetch(
+    entity: RankingEntity,
+    filters: FetchOptions<RankingsFilters, RankingsSortBy>
+  ): Promise<RankingEntityResponse[]>
+  count(entity: RankingEntity, filters: RankingsFilters): Promise<number>
 }

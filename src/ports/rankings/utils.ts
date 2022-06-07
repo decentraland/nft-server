@@ -1,4 +1,9 @@
-import { RankingsFilters, RankingsSortBy, ItemsDayDataTimeframe } from './types'
+import {
+  RankingsFilters,
+  RankingsSortBy,
+  ItemsDayDataTimeframe,
+  RankingEntity,
+} from './types'
 
 export const getItemsDayDataFragment = () => `
   fragment itemsDayDataFragment on ItemsDayData {
@@ -16,7 +21,7 @@ export const getItemsTotalFragment = () => `
   }
 `
 
-function getQueryParams(filters: RankingsFilters) {
+function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
   const { from, category, rarity, sortBy } = filters
   const where: string[] = []
 
@@ -39,12 +44,28 @@ function getQueryParams(filters: RankingsFilters) {
   let orderDirection: string
   switch (sortBy) {
     case RankingsSortBy.MOST_SALES:
-      orderBy = 'sales'
-      orderDirection = 'desc'
+      if (entity === RankingEntity.COLLECTORS) {
+        orderBy = 'purchases'
+        orderDirection = 'desc'
+      } else {
+        orderBy = 'sales'
+        orderDirection = 'desc'
+      }
       break
     case RankingsSortBy.MOST_VOLUME:
-      orderBy = 'volume'
-      orderDirection = 'desc'
+      if (entity === RankingEntity.COLLECTORS && from === 0) {
+        // for accounts the field is "spent"
+        orderBy = 'spent'
+        orderDirection = 'desc'
+      } else if (entity === RankingEntity.CREATORS && from === 0) {
+        // for accounts the field is "earned"
+        orderBy = 'earned'
+        orderDirection = 'desc'
+      } else {
+        orderBy = 'volume'
+        orderDirection = 'desc'
+      }
+
       break
     default:
       orderBy = 'volume'
@@ -54,35 +75,32 @@ function getQueryParams(filters: RankingsFilters) {
 }
 
 export function getItemsDayDataQuery(filters: RankingsFilters) {
-  const { where, orderBy, orderDirection } = getQueryParams(filters)
+  const { where, orderBy, orderDirection } = getQueryParams(
+    RankingEntity.ITEMS,
+    filters
+  )
 
-  return `
-    query ItemsDayData {
-      rankings: itemsDayDatas(orderBy: ${orderBy}, 
-        orderDirection: ${orderDirection}, 
-        where: { ${where.join('\n')} }) {
-        ...itemsDayDataFragment
+  return filters.from === 0
+    ? `query ItemsDayTotalData{
+        rankings: items(
+          ${filters.first ? `first: ${filters.first}` : ''}
+          orderBy: ${orderBy}, 
+          orderDirection: ${orderDirection},
+          where: { ${where.join('\n')} }) {
+            ...itemsDayDataFragment
+        }
       }
-    }
-    ${getItemsDayDataFragment()}
-  `
-}
-
-export function getItemsDayDataTotalQuery(filters: RankingsFilters) {
-  console.log('filters: ', filters)
-  const { where, orderBy, orderDirection } = getQueryParams(filters)
-  return `
-    query ItemsDayTotalData{
-      rankings: items(
-        ${filters.first ? `first: ${filters.first}` : ''}
-        orderBy: ${orderBy}, 
-        orderDirection: ${orderDirection},
-        where: { ${where.join('\n')} }) {
+      ${getItemsTotalFragment()}
+    `
+    : `query ItemsDayData {
+        rankings: itemsDayDatas(orderBy: ${orderBy}, 
+          orderDirection: ${orderDirection}, 
+          where: { ${where.join('\n')} }) {
           ...itemsDayDataFragment
+        }
       }
-    }
-    ${getItemsTotalFragment()}
-  `
+      ${getItemsDayDataFragment()}
+    `
 }
 
 export function getDateXDaysAgo(numOfDays: number, date = new Date()) {
@@ -106,4 +124,102 @@ export function getTimestampFromTimeframe(timeframe: ItemsDayDataTimeframe) {
     default:
       return 0
   }
+}
+
+// Creators
+export const getCreatorsDayDataFragment = () => `
+  fragment creatorsDayDataFragment on CreatorsDayData {
+    id
+    sales
+    volume
+    collections
+    uniqueCollectors
+  }
+`
+
+export const getCreatorsTotalFragment = () => `
+  fragment creatorsDayDataFragment on Account {
+    id
+    sales
+    volume: earned
+    collections
+    uniqueCollectors
+  }
+`
+
+export function getCreatorsDayDataQuery(filters: RankingsFilters) {
+  const { where, orderBy, orderDirection } = getQueryParams(
+    RankingEntity.CREATORS,
+    filters
+  )
+
+  return filters.from === 0
+    ? `query CreatorsTotalDayData{
+        rankings: accounts(
+          ${filters.first ? `first: ${filters.first}` : ''}
+          orderBy: ${orderBy}, 
+          orderDirection: ${orderDirection},
+          where: { ${where.join('\n')} }) {
+            ...creatorsDayDataFragment
+        }
+      }
+      ${getCreatorsTotalFragment()}`
+    : `query CreatorsDayData {
+        rankings: creatorsDayDatas(orderBy: ${orderBy}, 
+          orderDirection: ${orderDirection}, 
+          where: { ${where.join('\n')} }) {
+          ...creatorsDayDataFragment
+        }
+      }
+      ${getCreatorsDayDataFragment()}
+    `
+}
+
+// Collectors
+export const getCollectorsDayDataFragment = () => `
+  fragment collectorsDayDataFragment on CollectorsDayData {
+    id
+    purchases
+    volume
+    uniqueItems
+    mythicItems
+  }
+`
+
+export const getCollectorsTotalFragment = () => `
+  fragment collectorsDayDataFragment on Account {
+    id
+    purchases
+    volume: spent
+    uniqueItems
+    mythicItems
+  }
+`
+
+export function getCollectorsDayDataQuery(filters: RankingsFilters) {
+  const { where, orderBy, orderDirection } = getQueryParams(
+    RankingEntity.COLLECTORS,
+    filters
+  )
+
+  return filters.from === 0
+    ? `query CollectorsTotalDayData{
+        rankings: accounts(
+          ${filters.first ? `first: ${filters.first}` : ''}
+          orderBy: ${orderBy}, 
+          orderDirection: ${orderDirection},
+          where: { ${where.join('\n')} }) {
+            ...collectorsDayDataFragment
+        }
+      }
+      ${getCollectorsTotalFragment()}`
+    : `query CollectorsDayData {
+        rankings: collectorsDayDatas(orderBy: ${orderBy}, 
+          orderDirection: ${orderDirection}, 
+          where: { ${where.join('\n')} }) {
+          ...collectorsDayDataFragment
+        }
+      }
+      ${getCollectorsDayDataFragment()}
+    `
 }
