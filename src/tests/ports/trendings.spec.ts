@@ -1,4 +1,4 @@
-import { Network, NFTCategory, Rarity, Sale, SaleType } from '@dcl/schemas'
+import { Network, NFTCategory, Rarity } from '@dcl/schemas'
 import { getDateXDaysAgo } from '../../ports/analyticsDayData/utils'
 import {
   createTrendingsComponent,
@@ -9,42 +9,23 @@ import {
   ITrendingsComponent,
   TrendingFilters,
 } from '../../ports/trendings/types'
+import {
+  getTrendingsQuery,
+  TrendingSaleFragment,
+} from '../../ports/trendings/utils'
 import { test } from '../components'
 
 const getSalesWithBigPrice = (qty: number) =>
   Array.from({ length: qty }, (_, i) => ({
-    id: `sale-matic-11${i}`,
-    type: SaleType.MINT,
-    buyer: '0x747c6f502272129bf1ba872a1903045b837ee86c',
-    seller: '0x8cff6832174091dae86f0244e3fd92d4ced2fe07',
-    itemId: '3',
-    tokenId:
-      '315936875005671560093754083051011296956685286201647333762932932700',
-    contractAddress: `0xbigPrice${i}`,
-    price: `${i}000000000000000000000`,
-    timestamp: 1653911010000,
-    txHash:
-      '0x62ab5ed2368919967d48e1649a76d78a7c1e7b52a9c5e282d3ce7866c5110425',
-    network: Network.MATIC,
-    chainId: 137,
+    searchItemId: '3',
+    searchContractAddress: `0xbigPrice${i}`,
   }))
 
 const getSalesOfSameItem = (qty: number) =>
   Array.from({ length: qty }, (_, i) => ({
     id: `sale-matic-21${i}`,
-    type: SaleType.MINT,
-    buyer: '0x747c6f502272129bf1ba872a1903045b837ee86c',
-    seller: '0x8cff6832174091dae86f0244e3fd92d4ced2fe07',
-    itemId: '3',
-    tokenId:
-      '315936875005671560093754083051011296956685286201647333762932932700',
-    contractAddress: `0xsameItemSale${qty}`,
-    price: '10000000000000',
-    timestamp: 1653911010000,
-    txHash:
-      '0x62ab5ed2368919967d48e1649a76d78a7c1e7b52a9c5e282d3ce7866c5110425',
-    network: Network.MATIC,
-    chainId: 137,
+    searchItemId: '3',
+    searchContractAddress: `0xsameItemSale${qty}`,
   }))
 
 const getItem = (contractAddress: string, itemId: string) => ({
@@ -77,8 +58,8 @@ test('trendings component', function ({ components }) {
   let trendingsComponent: ITrendingsComponent
 
   beforeEach(() => {
-    const { sales, items } = components
-    trendingsComponent = createTrendingsComponent(sales, items)
+    const { collectionsSubgraph, items } = components
+    trendingsComponent = createTrendingsComponent(collectionsSubgraph, items)
   })
 
   beforeAll(() => {
@@ -92,11 +73,11 @@ test('trendings component', function ({ components }) {
 
   describe('when fetching the trendings', () => {
     describe('and a size is passed as parameter', () => {
-      let salesResponse: Sale[]
+      let salesResponse: TrendingSaleFragment[]
       let filters: TrendingFilters
-      let salesOfSameItems: Sale[]
+      let salesOfSameItems: TrendingSaleFragment[]
       beforeEach(() => {
-        const { sales, items } = components
+        const { items, collectionsSubgraph } = components
         filters = { size: RESULTS_PAGE_SIZE }
         // 10 items with tons of small sales
         // 10 items with really big volumes
@@ -117,14 +98,14 @@ test('trendings component', function ({ components }) {
         Array.from(
           { length: Math.ceil(salesResponse.length / 150) },
           (_, i) => {
-            jest
-              .spyOn(sales, 'fetch')
-              .mockResolvedValueOnce(
-                salesResponse.slice(i * 150, (i + 1) * 150)
-              )
+            jest.spyOn(collectionsSubgraph, 'query').mockResolvedValueOnce({
+              sales: salesResponse.slice(i * 150, (i + 1) * 150),
+            })
           }
         )
-        jest.spyOn(sales, 'fetch').mockResolvedValueOnce([])
+        jest
+          .spyOn(collectionsSubgraph, 'query')
+          .mockResolvedValueOnce({ sales: [] })
 
         jest
           .spyOn(items, 'fetch')
@@ -137,11 +118,11 @@ test('trendings component', function ({ components }) {
         const trendings = await trendingsComponent.fetch(filters)
         const trendingItemsWithMostVolume = getSalesWithBigPrice(10)
           .slice(0, VOLUME_CUT * 10) //the big volume sales with most volume
-          .map((sale) => getItem(sale.contractAddress, sale.itemId))
+          .map((sale) => getItem(sale.searchContractAddress, sale.searchItemId))
 
         const notTrendingItemsWithMostVolume = getSalesWithBigPrice(10)
           .slice(-(1 - VOLUME_CUT) * 10) //the big volume sales with less volume
-          .map((sale) => getItem(sale.contractAddress, sale.itemId))
+          .map((sale) => getItem(sale.searchContractAddress, sale.searchItemId))
 
         // 40% of the big volumes items should be in the trendings array
         expect(trendings).toEqual(
@@ -156,16 +137,22 @@ test('trendings component', function ({ components }) {
         const mostSales = salesOfSameItems.filter(
           (value, index, self) =>
             index ===
-            self.findIndex((t) => t.contractAddress === value.contractAddress)
+            self.findIndex(
+              (t) => t.searchContractAddress === value.searchContractAddress
+            )
         )
 
         const trendingItemsWithMostSales = mostSales
           .slice(-SALES_CUT * 10) // get the ones with most sales
-          .map((sale) => getItem(sale.contractAddress, sale.itemId!))
+          .map((sale) =>
+            getItem(sale.searchContractAddress, sale.searchItemId!)
+          )
 
         const notTrendingItemsWithMostSales = mostSales
           .slice(0, (1 - SALES_CUT) * 10) // get the ones with less sales
-          .map((sale) => getItem(sale.contractAddress, sale.itemId!))
+          .map((sale) =>
+            getItem(sale.searchContractAddress, sale.searchItemId!)
+          )
 
         // 60% of the big amount of sales items should be in the trendings array
         expect(trendings).toEqual(
@@ -177,16 +164,18 @@ test('trendings component', function ({ components }) {
         )
         // assert the retry calls
         // asked for 5 pages
-        const { sales } = components
-        expect(sales.fetch).toHaveBeenCalledTimes(5)
+        const { collectionsSubgraph } = components
+        expect(collectionsSubgraph.query).toHaveBeenCalledTimes(5)
         Array.from(
           { length: Math.ceil(salesResponse.length / 150) }, // the mock is returning 150 results, let's pretend they're 1000
           (_, i) => {
-            expect(sales.fetch).toHaveBeenCalledWith({
-              from: getDateXDaysAgo(2).getTime(),
-              first: 1000,
-              skip: 1000 * i, // 1000 is the max number of results per page
-            })
+            expect(collectionsSubgraph.query).toHaveBeenCalledWith(
+              getTrendingsQuery({
+                from: getDateXDaysAgo(2).getTime(),
+                first: 1000,
+                skip: 1000 * (i + 1), // 1000 is the max number of results per page
+              })
+            )
           }
         )
       })
