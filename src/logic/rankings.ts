@@ -87,10 +87,10 @@ export function getUniqueCollectorsFromCollectorsDayData(
       const rankingColllector = acc[collectorAddress]
       if (rankingColllector) {
         rankingColllector.purchases += collectorDayData.purchases
-        rankingColllector.mythicItems = [
+        rankingColllector.creatorsSupported = [
           ...new Set([
-            ...rankingColllector.mythicItems,
-            ...collectorDayData.mythicItems,
+            ...rankingColllector.creatorsSupported,
+            ...collectorDayData.creatorsSupported,
           ]),
         ]
         rankingColllector.uniqueItems = [
@@ -117,7 +117,7 @@ export function getUniqueCollectorsFromCollectorsDayData(
     acc[collectorAddress] = {
       ...collectorDayData,
       uniqueItems: collectorDayData.uniqueItems.length,
-      mythicItems: collectorDayData.mythicItems.length,
+      creatorsSupported: collectorDayData.creatorsSupported.length,
     }
     return acc
   }, {} as Record<string, CollectorRank>)

@@ -1,25 +1,17 @@
 import { Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
-import {
-  getUniqueCollectorsFromCollectorsDayData,
-  getUniqueCreatorsFromCreatorsDayData,
-  getUniqueItemsFromItemsDayData,
-} from '../../logic/rankings'
 import { FetchOptions } from '../merger/types'
 import {
-  CollectorsDayDataFragment,
-  CreatorsDayDataFragment,
   IItemsDayDataComponent,
-  ItemsDayDataFragment,
   RankingEntity,
   RankingFragment,
   RankingsFilters,
   RankingsSortBy,
 } from './types'
 import {
-  getCollectorsDayDataQuery,
-  getCreatorsDayDataQuery,
-  getItemsDayDataQuery,
+  consolidateRankingResults,
+  getRankingQuery,
+  sortRankResults,
 } from './utils'
 
 export function createRankingsComponent(options: {
@@ -35,55 +27,22 @@ export function createRankingsComponent(options: {
     )
   }
 
-  function _getRankingQuery(entity: RankingEntity, filters: RankingsFilters) {
-    switch (entity) {
-      case RankingEntity.ITEMS:
-        return getItemsDayDataQuery(filters)
-      case RankingEntity.CREATORS:
-        return getCreatorsDayDataQuery(filters)
-      case RankingEntity.COLLECTORS:
-        return getCollectorsDayDataQuery(filters)
-    }
-  }
-
-  function _consolidateResults(
-    entity: RankingEntity,
-    fragments: RankingFragment[],
-    filters: RankingsFilters
-  ) {
-    switch (entity) {
-      case RankingEntity.ITEMS:
-        return getUniqueItemsFromItemsDayData(
-          fragments as ItemsDayDataFragment[],
-          filters
-        )
-      case RankingEntity.CREATORS:
-        return getUniqueCreatorsFromCreatorsDayData(
-          fragments as CreatorsDayDataFragment[]
-        )
-      case RankingEntity.COLLECTORS:
-        return getUniqueCollectorsFromCollectorsDayData(
-          fragments as CollectorsDayDataFragment[]
-        )
-    }
-  }
-
   async function _fetchRanking(
     entity: RankingEntity,
     filters: RankingsFilters
   ) {
     const isFetchingAllTimeResults = filters.from === 0
-    const query = _getRankingQuery(entity, filters)
+    const query = getRankingQuery(entity, filters)
     const { rankings: fragments } = await subgraph.query<{
       rankings: RankingFragment[]
     }>(query)
 
-    const results = _consolidateResults(entity, fragments, filters)
+    const results = consolidateRankingResults(entity, fragments, filters)
+    const sortedResults = isFetchingAllTimeResults
+      ? Object.values(results)
+      : sortRankResults(entity, Object.values(results), filters.sortBy)
 
-    return Object.values(results).slice(
-      0,
-      isFetchingAllTimeResults ? undefined : filters.first
-    )
+    return sortedResults.slice(0, filters.first)
   }
 
   async function fetch(

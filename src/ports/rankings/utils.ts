@@ -1,8 +1,22 @@
+import BN from 'bn.js'
+import {
+  getUniqueCollectorsFromCollectorsDayData,
+  getUniqueCreatorsFromCreatorsDayData,
+  getUniqueItemsFromItemsDayData,
+} from '../../logic/rankings'
 import {
   RankingsFilters,
   RankingsSortBy,
   ItemsDayDataTimeframe,
   RankingEntity,
+  RankingEntityResponse,
+  ItemRank,
+  CreatorRank,
+  CollectorRank,
+  RankingFragment,
+  ItemsDayDataFragment,
+  CollectorsDayDataFragment,
+  CreatorsDayDataFragment,
 } from './types'
 
 export const getItemsDayDataFragment = () => `
@@ -72,6 +86,42 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
       orderDirection = 'desc'
   }
   return { where, orderBy, orderDirection }
+}
+
+export function getRankingQuery(
+  entity: RankingEntity,
+  filters: RankingsFilters
+) {
+  switch (entity) {
+    case RankingEntity.ITEMS:
+      return getItemsDayDataQuery(filters)
+    case RankingEntity.CREATORS:
+      return getCreatorsDayDataQuery(filters)
+    case RankingEntity.COLLECTORS:
+      return getCollectorsDayDataQuery(filters)
+  }
+}
+
+export function consolidateRankingResults(
+  entity: RankingEntity,
+  fragments: RankingFragment[],
+  filters: RankingsFilters
+) {
+  switch (entity) {
+    case RankingEntity.ITEMS:
+      return getUniqueItemsFromItemsDayData(
+        fragments as ItemsDayDataFragment[],
+        filters
+      )
+    case RankingEntity.CREATORS:
+      return getUniqueCreatorsFromCreatorsDayData(
+        fragments as CreatorsDayDataFragment[]
+      )
+    case RankingEntity.COLLECTORS:
+      return getUniqueCollectorsFromCollectorsDayData(
+        fragments as CollectorsDayDataFragment[]
+      )
+  }
 }
 
 export function getItemsDayDataQuery(filters: RankingsFilters) {
@@ -182,7 +232,7 @@ export const getCollectorsDayDataFragment = () => `
     purchases
     volume
     uniqueItems
-    mythicItems
+    creatorsSupported
   }
 `
 
@@ -192,7 +242,7 @@ export const getCollectorsTotalFragment = () => `
     purchases
     volume: spent
     uniqueItems
-    mythicItems
+    creatorsSupported
   }
 `
 
@@ -222,4 +272,38 @@ export function getCollectorsDayDataQuery(filters: RankingsFilters) {
       }
       ${getCollectorsDayDataFragment()}
     `
+}
+
+export function sortRankResults(
+  entity: RankingEntity,
+  ranks: RankingEntityResponse[],
+  sortBy: RankingsSortBy = RankingsSortBy.MOST_VOLUME
+): RankingEntityResponse[] {
+  switch (entity) {
+    case RankingEntity.ITEMS:
+      return (ranks as ItemRank[]).sort((a: ItemRank, b: ItemRank) =>
+        sortBy === RankingsSortBy.MOST_SALES
+          ? b.sales - a.sales
+          : new BN(b.volume).gt(new BN(a.volume))
+          ? 1
+          : -1
+      )
+    case RankingEntity.CREATORS:
+      return (ranks as CreatorRank[]).sort((a: CreatorRank, b: CreatorRank) =>
+        sortBy === RankingsSortBy.MOST_SALES
+          ? b.sales - a.sales
+          : new BN(b.volume).gt(new BN(a.volume))
+          ? 1
+          : -1
+      )
+    case RankingEntity.COLLECTORS:
+      return (ranks as CollectorRank[]).sort(
+        (a: CollectorRank, b: CollectorRank) =>
+          sortBy === RankingsSortBy.MOST_SALES
+            ? b.purchases - a.purchases
+            : new BN(b.volume).gt(new BN(a.volume))
+            ? 1
+            : -1
+      )
+  }
 }

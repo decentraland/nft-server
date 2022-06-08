@@ -41,7 +41,7 @@ export type CollectorsDayDataFragment = {
   purchases: number
   volume: string
   uniqueItems: string[]
-  mythicItems: string[]
+  creatorsSupported: string[]
 }
 
 export type RankingFragment =
@@ -58,10 +58,10 @@ export type CreatorRank = Pick<Account, 'id'> & {
   uniqueCollectors: number
 }
 export type CollectorRank = Pick<Account, 'id'> & {
-  mythicItems: number
   uniqueItems: number
   purchases: number
   volume: string
+  creatorsSupported: number
 }
 
 export type RankingEntityResponse = ItemRank | CreatorRank | CollectorRank
