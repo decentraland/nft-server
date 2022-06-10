@@ -54,8 +54,8 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
     where.push(`date_gt: ${Math.round(from / 1000)}`)
   }
 
-  let orderBy: string
-  let orderDirection: string
+  let orderBy = 'purchases'
+  let orderDirection = 'desc'
   switch (sortBy) {
     case RankingsSortBy.MOST_SALES:
       if (entity === RankingEntity.COLLECTORS) {
@@ -67,23 +67,16 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
       }
       break
     case RankingsSortBy.MOST_VOLUME:
-      if (entity === RankingEntity.COLLECTORS && from === 0) {
+      if (entity === RankingEntity.COLLECTORS) {
         // for accounts the field is "spent"
         orderBy = 'spent'
         orderDirection = 'desc'
-      } else if (entity === RankingEntity.CREATORS && from === 0) {
+      } else {
         // for accounts the field is "earned"
         orderBy = 'earned'
         orderDirection = 'desc'
-      } else {
-        orderBy = 'volume'
-        orderDirection = 'desc'
       }
-
       break
-    default:
-      orderBy = 'volume'
-      orderDirection = 'desc'
   }
   return { where, orderBy, orderDirection }
 }
@@ -178,12 +171,12 @@ export function getTimestampFromTimeframe(timeframe: ItemsDayDataTimeframe) {
 
 // Creators
 export const getCreatorsDayDataFragment = () => `
-  fragment creatorsDayDataFragment on CreatorsDayData {
+  fragment creatorsDayDataFragment on AccountsDayData {
     id
     sales
-    volume
+    earned
     collections
-    uniqueCollectors
+    uniqueCollectorsTotal
   }
 `
 
@@ -191,9 +184,9 @@ export const getCreatorsTotalFragment = () => `
   fragment creatorsDayDataFragment on Account {
     id
     sales
-    volume: earned
+    earned
     collections
-    uniqueCollectors
+    uniqueCollectorsTotal
   }
 `
 
@@ -214,8 +207,8 @@ export function getCreatorsDayDataQuery(filters: RankingsFilters) {
         }
       }
       ${getCreatorsTotalFragment()}`
-    : `query CreatorsDayData {
-        rankings: creatorsDayDatas(orderBy: ${orderBy}, 
+    : `query AccountsDayData {
+        rankings: accountsDayDatas(orderBy: ${orderBy}, 
           orderDirection: ${orderDirection}, 
           where: { ${where.join('\n')} }) {
           ...creatorsDayDataFragment
@@ -227,12 +220,12 @@ export function getCreatorsDayDataQuery(filters: RankingsFilters) {
 
 // Collectors
 export const getCollectorsDayDataFragment = () => `
-  fragment collectorsDayDataFragment on CollectorsDayData {
+  fragment collectorsDayDataFragment on AccountsDayData {
     id
     purchases
-    volume
-    uniqueItems
-    creatorsSupported
+    spent
+    uniqueAndMythicItems
+    creatorsSupportedTotal
   }
 `
 
@@ -240,9 +233,9 @@ export const getCollectorsTotalFragment = () => `
   fragment collectorsDayDataFragment on Account {
     id
     purchases
-    volume: spent
-    uniqueItems
-    creatorsSupported
+    spent
+    uniqueAndMythicItems
+    creatorsSupportedTotal
   }
 `
 
@@ -263,7 +256,7 @@ export function getCollectorsDayDataQuery(filters: RankingsFilters) {
         }
       }
       ${getCollectorsTotalFragment()}`
-    : `query CollectorsDayData {
+    : `query AccountsDayData {
         rankings: collectorsDayDatas(orderBy: ${orderBy}, 
           orderDirection: ${orderDirection}, 
           where: { ${where.join('\n')} }) {

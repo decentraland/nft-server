@@ -27,10 +27,7 @@ export function createRankingsComponent(options: {
     )
   }
 
-  async function _fetchRanking(
-    entity: RankingEntity,
-    filters: RankingsFilters
-  ) {
+  async function fetchRanking(entity: RankingEntity, filters: RankingsFilters) {
     const isFetchingAllTimeResults = filters.from === 0
     const query = getRankingQuery(entity, filters)
     const { rankings: fragments } = await subgraph.query<{
@@ -53,14 +50,14 @@ export function createRankingsComponent(options: {
       return []
     }
 
-    return _fetchRanking(entity, filters)
+    return fetchRanking(entity, filters)
   }
 
   async function count(entity: RankingEntity, filters: RankingsFilters) {
     if (!isValid(network, filters)) {
       return 0
     }
-    const ranking = await _fetchRanking(entity, filters)
+    const ranking = await fetchRanking(entity, filters)
     return ranking.length
   }
 

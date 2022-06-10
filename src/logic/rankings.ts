@@ -52,12 +52,6 @@ export function getUniqueCreatorsFromCreatorsDayData(
       rankingCreator.volume = new BN(rankingCreator.volume)
         .add(new BN(creatorDayData.volume))
         .toString()
-      rankingCreator.uniqueCollectors = [
-        ...new Set([
-          ...rankingCreator.uniqueCollectors,
-          ...creatorDayData.uniqueCollectors,
-        ]),
-      ]
     } else {
       acc[creatorAddress] = { ...creatorDayData, id: creatorAddress }
     }
@@ -68,7 +62,7 @@ export function getUniqueCreatorsFromCreatorsDayData(
     const creatorsAddress = creatorDayData.id
     acc[creatorsAddress] = {
       ...creatorDayData,
-      uniqueCollectors: creatorDayData.uniqueCollectors.length,
+      uniqueCollectors: creatorDayData.uniqueCollectorsTotal,
     }
     return acc
   }, {} as Record<string, CreatorRank>)
@@ -87,18 +81,6 @@ export function getUniqueCollectorsFromCollectorsDayData(
       const rankingColllector = acc[collectorAddress]
       if (rankingColllector) {
         rankingColllector.purchases += collectorDayData.purchases
-        rankingColllector.creatorsSupported = [
-          ...new Set([
-            ...rankingColllector.creatorsSupported,
-            ...collectorDayData.creatorsSupported,
-          ]),
-        ]
-        rankingColllector.uniqueItems = [
-          ...new Set([
-            ...rankingColllector.uniqueItems,
-            ...collectorDayData.uniqueItems,
-          ]),
-        ]
         rankingColllector.volume = new BN(rankingColllector.volume)
           .add(new BN(collectorDayData.volume))
           .toString()
@@ -116,8 +98,8 @@ export function getUniqueCollectorsFromCollectorsDayData(
     const collectorAddress = collectorDayData.id
     acc[collectorAddress] = {
       ...collectorDayData,
-      uniqueItems: collectorDayData.uniqueItems.length,
-      creatorsSupported: collectorDayData.creatorsSupported.length,
+      uniqueAndMythicItems: collectorDayData.uniqueAndMythicItems.length,
+      creatorsSupported: collectorDayData.creatorsSupportedTotal,
     }
     return acc
   }, {} as Record<string, CollectorRank>)

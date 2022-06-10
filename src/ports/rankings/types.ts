@@ -33,15 +33,15 @@ export type CreatorsDayDataFragment = {
   sales: number
   volume: string
   collections: number
-  uniqueCollectors: string[]
+  uniqueCollectorsTotal: number
 }
 
 export type CollectorsDayDataFragment = {
   id: string
   purchases: number
   volume: string
-  uniqueItems: string[]
-  creatorsSupported: string[]
+  uniqueAndMythicItems: string[]
+  creatorsSupportedTotal: number
 }
 
 export type RankingFragment =
@@ -58,7 +58,7 @@ export type CreatorRank = Pick<Account, 'id'> & {
   uniqueCollectors: number
 }
 export type CollectorRank = Pick<Account, 'id'> & {
-  uniqueItems: number
+  uniqueAndMythicItems: number
   purchases: number
   volume: string
   creatorsSupported: number
