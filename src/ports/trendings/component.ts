@@ -1,3 +1,4 @@
+import BN from 'bn.js'
 import seedrandom from 'seedrandom'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { Item, Sale } from '@dcl/schemas'
@@ -5,6 +6,7 @@ import { getDateXDaysAgo } from '../analyticsDayData/utils'
 import { IItemsComponent } from '../items/types'
 import { ITrendingsComponent, TrendingFilters } from './types'
 import {
+  findItemByItemId,
   fromTrendingSaleFragment,
   getTrendingsQuery,
   TrendingSaleFragment,
@@ -56,7 +58,7 @@ export function createTrendingsComponent(
       remainingSales = salesResponse.length
       skip += 1000
       retries++
-      // Get trending sales by amount of sales
+      // Get trending sales by amount of sales per item
       trendingSales = sales.reduce((acc, sale) => {
         if (sale.itemId) {
           const key = `${sale.contractAddress}-${sale.itemId}`
@@ -81,17 +83,13 @@ export function createTrendingsComponent(
 
     const trendingBySales: Item[] = []
     new Map(
-      [...Object.entries(trendingSales)].sort((a, b) => b[1] - a[1])
-    ).forEach((_value, key) =>
-      trendingBySales.push(
-        items.find(
-          (item) =>
-            key.split('-')[0] === item.contractAddress &&
-            key.split('-')[1] === item.itemId
-        )!
-      )
-    )
-
+      [...Object.entries(trendingSales)].sort((a, b) => b[1] - a[1]) // sort by sales amount
+    ).forEach((_value, key) => {
+      const itemFromSale = findItemByItemId(items, key)
+      if (itemFromSale?.isOnSale) {
+        trendingBySales.push(itemFromSale)
+      }
+    })
     // Get 60% of the trending sales by amount
     const slicedTrendingBySales = trendingBySales.slice(
       0,
@@ -100,21 +98,29 @@ export function createTrendingsComponent(
 
     // Get the trending ones by volume, making sure is not being repeated with the one from the trending sales.
     // It will iterate over sales which is already ordered by volume as it was used as the SortBy parameter.
-    const trendingByVolume: Item[] = sales
-      .map((sale) => {
-        const itemFound = items.find(
-          (item) =>
-            item.contractAddress === sale.contractAddress &&
-            item.itemId === sale.itemId
+    const trendingByVolume: Item[] = []
+    new Map(
+      [...Object.entries(trendingSales)].sort((a, b) => {
+        const itemA = findItemByItemId(items, a[0])
+        const itemB = findItemByItemId(items, b[0])
+        return new BN(itemB!.price)
+          .mul(new BN(b[1]))
+          .gt(new BN(itemA!.price).mul(new BN(a[1])))
+          ? 1
+          : -1
+      }) // sort by sales amount
+    ).forEach((_value, key) => {
+      const itemFromSale = findItemByItemId(items, key)
+      // if it's on sale and not already included in the trenging by sales array, we push it to the by volume one
+      if (
+        itemFromSale?.isOnSale &&
+        !slicedTrendingBySales.find(
+          (trendingItemBySales) => trendingItemBySales.id === itemFromSale.id
         )
-        return !!itemFound &&
-          !slicedTrendingBySales.find(
-            (trendingBySalesNFT) => trendingBySalesNFT.id === itemFound.id
-          )
-          ? itemFound
-          : undefined
-      })
-      .filter((item): item is Item => !!item) // filter out the undefined ones
+      ) {
+        trendingByVolume.push(itemFromSale)
+      }
+    })
 
     // Get 40% of the trending sales by volume
     const slicedTrendingByVolume = trendingByVolume.slice(

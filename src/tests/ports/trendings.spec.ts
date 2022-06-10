@@ -15,17 +15,17 @@ import {
 } from '../../ports/trendings/utils'
 import { test } from '../components'
 
-const getSalesWithBigPrice = (qty: number) =>
+const getSalesWithBigPrice = (qty: number, isOnSale = true) =>
   Array.from({ length: qty }, (_, i) => ({
     searchItemId: '3',
-    searchContractAddress: `0xbigPrice${i}`,
+    searchContractAddress: `0xbigPrice${i}${isOnSale ? 'onSale' : ''}`,
   }))
 
-const getSalesOfSameItem = (qty: number) =>
+const getSalesOfSameItem = (qty: number, isOnSale = true) =>
   Array.from({ length: qty }, (_, i) => ({
     id: `sale-matic-21${i}`,
     searchItemId: '3',
-    searchContractAddress: `0xsameItemSale${qty}`,
+    searchContractAddress: `0xsameItemSale${qty}${isOnSale ? 'onSale' : ''}`,
   }))
 
 const getItem = (contractAddress: string, itemId: string) => ({
@@ -39,9 +39,9 @@ const getItem = (contractAddress: string, itemId: string) => ({
   itemId,
   beneficiary: '0xedae96f7739af8a7fb16e2a888c1e578e1328299',
   rarity: Rarity.EPIC,
-  price: '1000000000',
+  price: contractAddress.includes('bigPrice') ? '10000000000000' : '1000000000',
   available: 998,
-  isOnSale: true,
+  isOnSale: contractAddress.includes('onSale'),
   creator: '0xedae96f7739af8a7fb16e2a888c1e578e1328299',
   data: { wearable: {} as any },
   network: Network.MATIC,
@@ -94,6 +94,7 @@ test('trendings component', function ({ components }) {
           ...getSalesOfSameItem(90),
           ...getSalesOfSameItem(100),
           ...getSalesOfSameItem(2000),
+          ...getSalesOfSameItem(2100, false), // one with a ton of sales, but not in sale anymore
         ]
         salesResponse = [...getSalesWithBigPrice(10), ...salesOfSameItems]
         Array.from(
@@ -118,7 +119,7 @@ test('trendings component', function ({ components }) {
       it('should fetch the data and return the trending results by sales and volume shuffled', async () => {
         const trendings = await trendingsComponent.fetch(filters)
         const trendingItemsWithMostVolume = getSalesWithBigPrice(10)
-          .slice(0, VOLUME_CUT * 10) //the big volume sales with most volume
+          .slice(-VOLUME_CUT * 10) //the big volume sales with most volume
           .map((sale) => getItem(sale.searchContractAddress, sale.searchItemId))
 
         const notTrendingItemsWithMostVolume = getSalesWithBigPrice(10)
@@ -143,7 +144,20 @@ test('trendings component', function ({ components }) {
             )
         )
 
+        const trendingItemButNotInSale = mostSales.filter(
+          (sale) =>
+            !getItem(sale.searchContractAddress, sale.searchItemId).isOnSale
+        )
+        // the trendings but not in sale, should not be part of the results
+        expect(trendings).not.toEqual(
+          expect.arrayContaining(trendingItemButNotInSale)
+        )
+
         const trendingItemsWithMostSales = mostSales
+          .filter(
+            (sale) =>
+              getItem(sale.searchContractAddress, sale.searchItemId).isOnSale
+          ) // only the onSale items should appear in the trending
           .slice(-SALES_CUT * 10) // get the ones with most sales
           .map((sale) =>
             getItem(sale.searchContractAddress, sale.searchItemId!)
@@ -163,10 +177,11 @@ test('trendings component', function ({ components }) {
         expect(trendings).not.toEqual(
           expect.arrayContaining(notTrendingItemsWithMostSales)
         )
-        // assert the retry calls
-        // asked for 3 pages
+        // assert the retry calls, it should ask for all pages
         const { collectionsSubgraph } = components
-        expect(collectionsSubgraph.query).toHaveBeenCalledTimes(3)
+        expect(collectionsSubgraph.query).toHaveBeenCalledTimes(
+          Math.ceil(salesResponse.length / 1000)
+        )
         Array.from(
           { length: Math.ceil(salesResponse.length / 1000) }, // the mock is returning 10000 results
           (_, i) => {
