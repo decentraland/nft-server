@@ -56,6 +56,9 @@ export function getDateXDaysAgo(numOfDays: number, date = new Date()) {
   const daysAgo = new Date(date.getTime())
 
   daysAgo.setDate(date.getDate() - numOfDays)
+  daysAgo.setHours(0)
+  daysAgo.setMinutes(0)
+  daysAgo.setSeconds(0)
 
   return daysAgo
 }

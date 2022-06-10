@@ -1,3 +1,4 @@
+import { Item } from '@dcl/schemas'
 import { TrendingFilters } from './types'
 
 export type TrendingSaleFragment = {
@@ -42,4 +43,11 @@ export function getTrendingsQuery(filters: TrendingFilters, isCount = false) {
       }
       ${isCount ? '' : getTrendingSaleFragment()}
     `
+}
+
+export function findItemByItemId(items: Item[], id: string) {
+  const [contractAddress, itemId] = id.split('-')
+  return items.find(
+    (item) => contractAddress === item.contractAddress && itemId === item.itemId
+  )
 }
