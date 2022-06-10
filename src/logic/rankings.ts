@@ -49,8 +49,8 @@ export function getUniqueCreatorsFromCreatorsDayData(
     if (rankingCreator) {
       rankingCreator.collections += creatorDayData.collections
       rankingCreator.sales += creatorDayData.sales
-      rankingCreator.volume = new BN(rankingCreator.volume)
-        .add(new BN(creatorDayData.volume))
+      rankingCreator.earned = new BN(rankingCreator.earned)
+        .add(new BN(creatorDayData.earned))
         .toString()
     } else {
       acc[creatorAddress] = { ...creatorDayData, id: creatorAddress }
@@ -81,8 +81,8 @@ export function getUniqueCollectorsFromCollectorsDayData(
       const rankingColllector = acc[collectorAddress]
       if (rankingColllector) {
         rankingColllector.purchases += collectorDayData.purchases
-        rankingColllector.volume = new BN(rankingColllector.volume)
-          .add(new BN(collectorDayData.volume))
+        rankingColllector.spent = new BN(rankingColllector.spent)
+          .add(new BN(collectorDayData.spent))
           .toString()
       } else {
         acc[collectorAddress] = {

@@ -53,15 +53,14 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
   if (from) {
     where.push(`date_gt: ${Math.round(from / 1000)}`)
   }
-
-  let orderBy = 'purchases'
+  let orderBy = 'volume'
   let orderDirection = 'desc'
   switch (sortBy) {
     case RankingsSortBy.MOST_SALES:
       if (entity === RankingEntity.COLLECTORS) {
         orderBy = 'purchases'
         orderDirection = 'desc'
-      } else {
+      } else if (entity === RankingEntity.CREATORS) {
         orderBy = 'sales'
         orderDirection = 'desc'
       }
@@ -71,7 +70,7 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
         // for accounts the field is "spent"
         orderBy = 'spent'
         orderDirection = 'desc'
-      } else {
+      } else if (entity === RankingEntity.CREATORS) {
         // for accounts the field is "earned"
         orderBy = 'earned'
         orderDirection = 'desc'
@@ -257,7 +256,7 @@ export function getCollectorsDayDataQuery(filters: RankingsFilters) {
       }
       ${getCollectorsTotalFragment()}`
     : `query AccountsDayData {
-        rankings: collectorsDayDatas(orderBy: ${orderBy}, 
+        rankings: accountsDayDatas(orderBy: ${orderBy}, 
           orderDirection: ${orderDirection}, 
           where: { ${where.join('\n')} }) {
           ...collectorsDayDataFragment
@@ -277,7 +276,7 @@ export function sortRankResults(
       return (ranks as ItemRank[]).sort((a: ItemRank, b: ItemRank) =>
         sortBy === RankingsSortBy.MOST_SALES
           ? b.sales - a.sales
-          : new BN(b.volume).gt(new BN(a.volume))
+          : new BN(a.volume).lt(new BN(b.volume))
           ? 1
           : -1
       )
@@ -285,7 +284,7 @@ export function sortRankResults(
       return (ranks as CreatorRank[]).sort((a: CreatorRank, b: CreatorRank) =>
         sortBy === RankingsSortBy.MOST_SALES
           ? b.sales - a.sales
-          : new BN(b.volume).gt(new BN(a.volume))
+          : new BN(a.earned).lt(new BN(b.earned))
           ? 1
           : -1
       )
@@ -294,7 +293,7 @@ export function sortRankResults(
         (a: CollectorRank, b: CollectorRank) =>
           sortBy === RankingsSortBy.MOST_SALES
             ? b.purchases - a.purchases
-            : new BN(b.volume).gt(new BN(a.volume))
+            : new BN(a.spent).lt(new BN(b.spent))
             ? 1
             : -1
       )
