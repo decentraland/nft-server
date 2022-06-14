@@ -39,7 +39,7 @@ export async function setupRoutes(globalContext: GlobalContext) {
   router.get('/accounts', createAccountsHandler(components))
   router.get('/analytics/:timeframe', createAnalyticsDataHandler(components))
   router.get('/volume/:timeframe', createVolumeHandler(components))
-  router.get('/rankings/:timeframe', createRankingsHandler(components))
+  router.get('/rankings/:entity/:timeframe', createRankingsHandler(components))
   router.get('/trendings', createTrendingHandler(components))
   router.get(
     '/contracts/:contractAddress/tokens/:tokenId',

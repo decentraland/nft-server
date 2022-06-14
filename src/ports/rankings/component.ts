@@ -1,12 +1,18 @@
 import { Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
-import { getUniqueItemsFromItemsDayData } from '../../logic/rankings'
+import { FetchOptions } from '../merger/types'
 import {
   IItemsDayDataComponent,
-  ItemsDayDataFilters,
-  ItemsDayDataFragment,
+  RankingEntity,
+  RankingFragment,
+  RankingsFilters,
+  RankingsSortBy,
 } from './types'
-import { getItemsDayDataQuery, getItemsDayDataTotal } from './utils'
+import {
+  consolidateRankingResults,
+  getRankingQuery,
+  sortRankResults,
+} from './utils'
 
 export function createRankingsComponent(options: {
   subgraph: ISubgraphComponent
@@ -14,47 +20,45 @@ export function createRankingsComponent(options: {
 }): IItemsDayDataComponent {
   const { subgraph, network } = options
 
-  function isValid(network: Network, filters: ItemsDayDataFilters) {
+  function isValid(network: Network, filters: RankingsFilters) {
     return (
       // Querying a different network to the component's one is not valid
       !filters.network || filters.network === network
     )
   }
 
-  async function fetch(filters: ItemsDayDataFilters) {
+  async function fetchRanking(entity: RankingEntity, filters: RankingsFilters) {
+    const isFetchingAllTimeResults = filters.from === 0
+    const query = getRankingQuery(entity, filters)
+    const { rankings: fragments } = await subgraph.query<{
+      rankings: RankingFragment[]
+    }>(query)
+
+    const results = consolidateRankingResults(entity, fragments, filters)
+    const sortedResults = isFetchingAllTimeResults
+      ? Object.values(results)
+      : sortRankResults(entity, Object.values(results), filters.sortBy)
+
+    return sortedResults.slice(0, filters.first)
+  }
+
+  async function fetch(
+    entity: RankingEntity,
+    filters: FetchOptions<RankingsFilters, RankingsSortBy>
+  ) {
     if (!isValid(network, filters)) {
       return []
     }
 
-    const { from } = filters
-
-    const query =
-      from === 0 ? getItemsDayDataTotal(filters) : getItemsDayDataQuery(filters)
-
-    const { rankings: fragments } = await subgraph.query<{
-      rankings: ItemsDayDataFragment[]
-    }>(query)
-
-    const rankingItems =
-      from === 0 ? fragments : getUniqueItemsFromItemsDayData(fragments)
-
-    return Object.values(rankingItems)
+    return fetchRanking(entity, filters)
   }
 
-  async function count(filters: ItemsDayDataFilters) {
+  async function count(entity: RankingEntity, filters: RankingsFilters) {
     if (!isValid(network, filters)) {
       return 0
     }
-
-    const { from } = filters
-
-    const query =
-      from === 0 ? getItemsDayDataTotal(filters) : getItemsDayDataQuery(filters)
-    const { analytics: fragments } = await subgraph.query<{
-      analytics: ItemsDayDataFragment[]
-    }>(query)
-
-    return fragments.length
+    const ranking = await fetchRanking(entity, filters)
+    return ranking.length
   }
 
   return {

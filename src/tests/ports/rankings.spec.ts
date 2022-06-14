@@ -5,15 +5,13 @@ import { getTimestampFromTimeframe } from '../../ports/analyticsDayData/utils'
 import { createRankingsComponent } from '../../ports/rankings/component'
 import {
   IItemsDayDataComponent,
-  ItemsDayDataFilters,
   ItemsDayDataFragment,
-  ItemsDayDataSortBy,
+  RankingEntity,
+  RankingsFilters,
+  RankingsSortBy,
 } from '../../ports/rankings/types'
 import { getUniqueItemsFromItemsDayData } from '../../logic/rankings'
-import {
-  getItemsDayDataQuery,
-  getItemsDayDataTotal,
-} from '../../ports/rankings/utils'
+import { getItemsDayDataQuery } from '../../ports/rankings/utils'
 
 test('rankings component', function ({ components }) {
   let rankingsComponent: IItemsDayDataComponent
@@ -31,14 +29,14 @@ test('rankings component', function ({ components }) {
       describe('and sorted by volume', () => {
         let graphResponse: { rankings: ItemsDayDataFragment[] }
         let timeframe: AnalyticsTimeframe
-        let filters: ItemsDayDataFilters
+        let filters: RankingsFilters
 
         beforeEach(() => {
           const { collectionsSubgraph } = components
           timeframe = AnalyticsTimeframe.WEEK
           filters = {
             from: getTimestampFromTimeframe(timeframe),
-            sortBy: ItemsDayDataSortBy.MOST_VOLUME,
+            sortBy: RankingsSortBy.MOST_VOLUME,
           }
           graphResponse = {
             rankings: [
@@ -82,9 +80,11 @@ test('rankings component', function ({ components }) {
 
         it('should fetch the data and return the accumulated result sorted by volume', async () => {
           const { collectionsSubgraph } = components
-          expect(await rankingsComponent.fetch(filters)).toEqual(
+          expect(
+            await rankingsComponent.fetch(RankingEntity.ITEMS, filters)
+          ).toEqual(
             Object.values(
-              getUniqueItemsFromItemsDayData(graphResponse.rankings)
+              getUniqueItemsFromItemsDayData(graphResponse.rankings, filters)
             )
           )
           expect(collectionsSubgraph.query).toHaveBeenCalledWith(
@@ -95,14 +95,14 @@ test('rankings component', function ({ components }) {
       describe('and sorted by sales', () => {
         let graphResponse: { rankings: ItemsDayDataFragment[] }
         let timeframe: AnalyticsTimeframe
-        let filters: ItemsDayDataFilters
+        let filters: RankingsFilters
 
         beforeEach(() => {
           const { collectionsSubgraph } = components
           timeframe = AnalyticsTimeframe.WEEK
           filters = {
             from: getTimestampFromTimeframe(timeframe),
-            sortBy: ItemsDayDataSortBy.MOST_SALES,
+            sortBy: RankingsSortBy.MOST_SALES,
           }
           graphResponse = {
             rankings: [
@@ -146,9 +146,11 @@ test('rankings component', function ({ components }) {
 
         it('should fetch the data and return the accumulated result sorted by volume', async () => {
           const { collectionsSubgraph } = components
-          expect(await rankingsComponent.fetch(filters)).toEqual(
+          expect(
+            await rankingsComponent.fetch(RankingEntity.ITEMS, filters)
+          ).toEqual(
             Object.values(
-              getUniqueItemsFromItemsDayData(graphResponse.rankings)
+              getUniqueItemsFromItemsDayData(graphResponse.rankings, filters)
             )
           )
           expect(collectionsSubgraph.query).toHaveBeenCalledWith(
@@ -161,14 +163,14 @@ test('rankings component', function ({ components }) {
       describe('and sorted by volume', () => {
         let graphResponse: { rankings: ItemsDayDataFragment[] }
         let timeframe: AnalyticsTimeframe
-        let filters: ItemsDayDataFilters
+        let filters: RankingsFilters
 
         beforeEach(() => {
           const { collectionsSubgraph } = components
           timeframe = AnalyticsTimeframe.ALL
           filters = {
             from: getTimestampFromTimeframe(timeframe),
-            sortBy: ItemsDayDataSortBy.MOST_VOLUME,
+            sortBy: RankingsSortBy.MOST_VOLUME,
           }
           graphResponse = {
             rankings: [
@@ -222,12 +224,12 @@ test('rankings component', function ({ components }) {
 
         it('should fetch the data and return the accumulated result sorted by volume', async () => {
           const { collectionsSubgraph } = components
-          expect(await rankingsComponent.fetch(filters)).toEqual(
-            Object.values(graphResponse.rankings)
-          )
+          expect(
+            await rankingsComponent.fetch(RankingEntity.ITEMS, filters)
+          ).toEqual(Object.values(graphResponse.rankings))
 
           expect(collectionsSubgraph.query).toHaveBeenCalledWith(
-            getItemsDayDataTotal(filters)
+            getItemsDayDataQuery(filters)
           )
         })
       })
@@ -235,14 +237,14 @@ test('rankings component', function ({ components }) {
       describe('and sorted by sales', () => {
         let graphResponse: { rankings: ItemsDayDataFragment[] }
         let timeframe: AnalyticsTimeframe
-        let filters: ItemsDayDataFilters
+        let filters: RankingsFilters
 
         beforeEach(() => {
           const { collectionsSubgraph } = components
           timeframe = AnalyticsTimeframe.ALL
           filters = {
             from: getTimestampFromTimeframe(timeframe),
-            sortBy: ItemsDayDataSortBy.MOST_SALES,
+            sortBy: RankingsSortBy.MOST_SALES,
           }
           graphResponse = {
             rankings: [
@@ -326,12 +328,12 @@ test('rankings component', function ({ components }) {
 
         it('should fetch the data and return the accumulated result sorted by volume', async () => {
           const { collectionsSubgraph } = components
-          expect(await rankingsComponent.fetch(filters)).toEqual(
-            Object.values(graphResponse.rankings)
-          )
+          expect(
+            await rankingsComponent.fetch(RankingEntity.ITEMS, filters)
+          ).toEqual(Object.values(graphResponse.rankings))
 
           expect(collectionsSubgraph.query).toHaveBeenCalledWith(
-            getItemsDayDataTotal(filters)
+            getItemsDayDataQuery(filters)
           )
         })
       })

@@ -377,7 +377,7 @@ type AnalyticsDayData = {
 ```
 
 **URL Params**:
-- `timeframe`: The timeframe within the analytic data was gather. Possible values: `day` | `week` | `mont` | `all`
+- `timeframe`: The timeframe within the analytic data was gather. Possible values: `day` | `week` | `month` | `all`
 
 
 ## Volume
@@ -396,7 +396,7 @@ type VolumeData = {
 ```
 
 **URL Params**:
-- `timeframe`: The timeframe within the analytic data was gather. Possible values: `day` | `week` | `mont` | `all`
+- `timeframe`: The timeframe within the analytic data was gather. Possible values: `day` | `week` | `month` | `all`
 
 ## Trendings
 
@@ -432,4 +432,26 @@ type Item = {
 **Query Params**:
 - `size`: The amount of trending items to return
 
+## Rankings
 
+**Endpoint**: `/v1/rankings/:timeframe`
+
+**Type**:
+
+```ts
+type RankingItem = {
+    id: string;
+    sales: number;
+    volume: string;
+}
+```
+
+**URL Params**:
+- `timeframe`: The timeframe within the analytic data was gather. Possible values: `day` | `week` | `month` | `all`
+- `entity`: The entity that wants to get ranked. Possible values: `items` | `creators` | `collectors`
+
+
+**Query Params**:
+- `first`: Limit the number of results. Type: number.
+- `rarity`: Filter the results by the rarity. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
+- `category`: Filter the results by wearable category. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`, `skin`.

@@ -45,7 +45,9 @@ describe('getUniqueItemsFromItemsDayData', () => {
       ]
     })
     it('should return the accumulated data by adding them', () => {
-      expect(getUniqueItemsFromItemsDayData(fragments)).toStrictEqual({
+      expect(
+        getUniqueItemsFromItemsDayData(fragments, { from: 123 })
+      ).toStrictEqual({
         '0x1c8592d12157f1a63c8b207588488bfd7c3eac33-0': {
           id: '0x1c8592d12157f1a63c8b207588488bfd7c3eac33-0',
           sales: 3,
