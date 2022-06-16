@@ -16,7 +16,7 @@ export function createSalesHandler(
     const skip = params.getNumber('skip')
     const sortBy = params.getValue<SaleSortBy>('sortBy', SaleSortBy)
     const type = params.getValue<SaleType>('type', SaleType)
-    const category = params.getValue<NFTCategory>('category', NFTCategory)
+    const categories = params.getList<NFTCategory>('category', NFTCategory)
     const seller = params.getAddress('seller')
     const buyer = params.getAddress('buyer')
     const contractAddress = params.getAddress('contractAddress')
@@ -34,7 +34,7 @@ export function createSalesHandler(
         skip,
         sortBy,
         type,
-        category,
+        categories,
         seller,
         buyer,
         contractAddress,

@@ -262,7 +262,7 @@ export type Sale = {
 - `skip`: Skip results. Type: `number`.
 - `sortBy`: Sort results. Possible values: `recently_sold`, `most_expensive`.
 - `type`: Filter by sale type. Possible values: `order`, `bid`, `mint`.
-- `category`: Filter by NFT category. Possible values: `parcel`, `estate`, `ens`, `wearable`.
+- `category`: Filter by NFT category. It supports multiple values by adding the query param multiple times. Possible values: `parcel`, `estate`, `ens`, `wearable`.
 - `seller`: Filter by seller. Type: `address`.
 - `buyer`: Filter by buyer. Type: `address`.
 - `contractAddress`: Filter results by contract address. Type: `address`.

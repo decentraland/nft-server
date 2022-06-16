@@ -1,6 +1,7 @@
 import BN from 'bn.js'
-import { config as configDotEnvFile } from 'dotenv'
 import nodeFetch from 'node-fetch'
+import { config as configDotEnvFile } from 'dotenv'
+configDotEnvFile() // load env file before other imports because some of them use env variables
 import {
   Account,
   AccountFilters,
@@ -106,8 +107,6 @@ import { createRankingsComponent } from './ports/rankings/component'
 import { createTrendingsComponent } from './ports/trendings/component'
 
 async function initComponents(): Promise<AppComponents> {
-  configDotEnvFile()
-
   // Default config
   const defaultValues: Partial<AppConfig> = {
     HTTP_SERVER_PORT: process.env.HTTP_SERVER_PORT || '5000',
