@@ -35,14 +35,14 @@ export = async function main() {
         value:
           env === 'prd' || env === 'stg'
             ? 'https://api.thegraph.com/subgraphs/name/decentraland/marketplace'
-            : 'https://api.thegraph.com/subgraphs/name/juanmahidalgo/marketplace-ropsten',
+            : 'https://api.thegraph.com/subgraphs/name/decentraland/marketplace-ropsten',
       },
       {
         name: 'COLLECTIONS_SUBGRAPH_URL',
         value:
           env === 'prd' || env === 'stg'
             ? 'https://api.thegraph.com/subgraphs/name/decentraland/collections-matic-mainnet'
-            : 'https://api.thegraph.com/subgraphs/name/juanmahidalgo/collections-matic-mumbai',
+            : 'https://api.thegraph.com/subgraphs/name/decentraland/collections-matic-mumbai',
       },
       {
         name: 'MIN_SALE_VALUE_IN_WEI',

@@ -51,7 +51,7 @@ export function getSalesQuery(
     skip,
     sortBy,
     type,
-    category,
+    categories,
     buyer,
     seller,
     contractAddress,
@@ -101,8 +101,12 @@ export function getSalesQuery(
     where.push(`price_lt: "${maxPrice}"`)
   }
 
-  if (category) {
-    where.push(`searchCategory: "${category}"`)
+  if (categories) {
+    where.push(
+      `searchCategory_in: [${categories
+        .map((category) => `"${category}"`)
+        .join(',')}]`
+    )
   }
 
   if (contractAddress) {
