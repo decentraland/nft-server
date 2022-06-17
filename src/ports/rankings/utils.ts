@@ -42,6 +42,11 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
   if (category) {
     where.push(`searchWearableCategory: ${category}`)
   }
+  if (entity === RankingEntity.CREATORS) {
+    where.push('sales_gt: 0')
+  } else if (entity === RankingEntity.COLLECTORS) {
+    where.push('purchases_gt: 0')
+  }
   if (rarity) {
     if (from === 0) {
       // if it fetches the Item entity
