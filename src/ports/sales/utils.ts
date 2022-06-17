@@ -1,13 +1,4 @@
-import {
-  ChainId,
-  Network,
-  NFTCategory,
-  Sale,
-  SaleFilters,
-  SaleSortBy,
-} from '@dcl/schemas'
-import { getMarketplaceChainId } from '../../logic/chainIds'
-import { getMarketplaceContracts } from '../../logic/contracts'
+import { ChainId, Network, Sale, SaleFilters, SaleSortBy } from '@dcl/schemas'
 import { SaleFragment } from './types'
 
 export const SALE_DEFAULT_SORT_BY = SaleSortBy.RECENTLY_SOLD
@@ -50,17 +41,6 @@ export const getSaleFragment = (network: Network) => `
   }
 `
 
-const marketplaceContracts = getMarketplaceContracts(getMarketplaceChainId())
-const parcelAddress = marketplaceContracts.find(
-  (contract) => contract.category === NFTCategory.PARCEL
-)?.address
-const estateAddress = marketplaceContracts.find(
-  (contract) => contract.category === NFTCategory.ESTATE
-)?.address
-const ensAddress = marketplaceContracts.find(
-  (contract) => contract.category === NFTCategory.ENS
-)?.address
-
 export function getSalesQuery(
   filters: SaleFilters,
   isCount = false,
@@ -71,7 +51,7 @@ export function getSalesQuery(
     skip,
     sortBy,
     type,
-    category,
+    categories,
     buyer,
     seller,
     contractAddress,
@@ -121,24 +101,15 @@ export function getSalesQuery(
     where.push(`price_lt: "${maxPrice}"`)
   }
 
-  if (category) {
-    switch (category) {
-      case NFTCategory.PARCEL:
-        where.push(`searchContractAddress: "${parcelAddress}"`)
-        break
-      case NFTCategory.ESTATE:
-        where.push(`searchContractAddress: "${estateAddress}"`)
-        break
-      case NFTCategory.ENS:
-        where.push(`searchContractAddress: "${ensAddress}"`)
-        break
-      case NFTCategory.WEARABLE:
-        where.push(
-          `searchContractAddress_not_in: ["${parcelAddress}", "${estateAddress}", "${ensAddress}"] `
-        )
-        break
-    }
-  } else if (contractAddress) {
+  if (categories) {
+    where.push(
+      `searchCategory_in: [${categories
+        .map((category) => `"${category}"`)
+        .join(',')}]`
+    )
+  }
+
+  if (contractAddress) {
     where.push(`searchContractAddress: "${contractAddress}"`)
   }
 
