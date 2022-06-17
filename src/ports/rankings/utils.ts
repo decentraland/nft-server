@@ -65,7 +65,7 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
       if (entity === RankingEntity.COLLECTORS) {
         orderBy = 'purchases'
         orderDirection = 'desc'
-      } else if (entity === RankingEntity.CREATORS) {
+      } else {
         orderBy = 'sales'
         orderDirection = 'desc'
       }
