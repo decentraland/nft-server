@@ -47,7 +47,12 @@ export function getUniqueCreatorsFromCreatorsDayData(
 
     const rankingCreator = acc[creatorAddress]
     if (rankingCreator) {
-      rankingCreator.collections += creatorDayData.collections
+      rankingCreator.uniqueCollectionsSales = [
+        ...new Set([
+          ...rankingCreator.uniqueCollectionsSales,
+          ...creatorDayData.uniqueCollectionsSales,
+        ]),
+      ]
       rankingCreator.sales += creatorDayData.sales
       rankingCreator.earned = new BN(rankingCreator.earned)
         .add(new BN(creatorDayData.earned))
@@ -60,9 +65,13 @@ export function getUniqueCreatorsFromCreatorsDayData(
 
   return Object.values(accumulated).reduce((acc, creatorDayData) => {
     const creatorsAddress = creatorDayData.id
+    const { id, earned, sales, uniqueCollectorsTotal, uniqueCollectionsSales } = creatorDayData
     acc[creatorsAddress] = {
-      ...creatorDayData,
-      uniqueCollectors: creatorDayData.uniqueCollectorsTotal,
+      id,
+      sales,
+      earned,
+      uniqueCollectors: uniqueCollectorsTotal,
+      collections: uniqueCollectionsSales.length,
     }
     return acc
   }, {} as Record<string, CreatorRank>)
