@@ -179,7 +179,7 @@ export const getCreatorsDayDataFragment = () => `
     id
     sales
     earned
-    collections
+    uniqueCollectionsSales
     uniqueCollectorsTotal
   }
 `
