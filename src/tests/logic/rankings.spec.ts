@@ -156,4 +156,57 @@ describe('getUniqueCreatorsFromCreatorsDayData', () => {
       })
     })
   })
+  describe('when providing fragments coming out from the Account entity', () => {
+    let fragments: CreatorsDayDataFragment[]
+    beforeEach(() => {
+      fragments = [
+        {
+          id: '19142-0x1c8592d12157f1a63c8b207588488bfd7c3eac33',
+          sales: 3,
+          earned: '330000000000000000000',
+          uniqueCollectionsSales: 1,
+          uniqueCollectorsTotal: 1,
+        },
+        {
+          id: '19142-0x5c8bf33e673dc712ba62c5459e59dd9a15d458ff',
+          sales: 2,
+          earned: '330000000000000000000',
+          uniqueCollectionsSales: 2,
+          uniqueCollectorsTotal: 2,
+        },
+        {
+          id: '19145-0x52c98c80a5aad12056596d3b2dd4139c327bc501',
+          sales: 1,
+          earned: '330000000000000000000',
+          uniqueCollectionsSales: 3,
+          uniqueCollectorsTotal: 1,
+        },
+      ]
+    })
+    it('should return the accumulated data by adding them', () => {
+      expect(getUniqueCreatorsFromCreatorsDayData(fragments)).toStrictEqual({
+        '0x1c8592d12157f1a63c8b207588488bfd7c3eac33': {
+          id: '0x1c8592d12157f1a63c8b207588488bfd7c3eac33',
+          sales: 3,
+          earned: '330000000000000000000',
+          collections: 1,
+          uniqueCollectors: 1,
+        },
+        '0x5c8bf33e673dc712ba62c5459e59dd9a15d458ff': {
+          id: '0x5c8bf33e673dc712ba62c5459e59dd9a15d458ff',
+          sales: 2,
+          earned: '330000000000000000000',
+          collections: 2,
+          uniqueCollectors: 2,
+        },
+        '0x52c98c80a5aad12056596d3b2dd4139c327bc501': {
+          id: '0x52c98c80a5aad12056596d3b2dd4139c327bc501',
+          sales: 1,
+          earned: '330000000000000000000',
+          collections: 3,
+          uniqueCollectors: 1,
+        },
+      })
+    })
+  })
 })

@@ -32,7 +32,7 @@ export type CreatorsDayDataFragment = {
   id: string
   sales: number
   earned: string
-  uniqueCollectionsSales: string[]
+  uniqueCollectionsSales: string[] | number
   uniqueCollectorsTotal: number
 }
 
