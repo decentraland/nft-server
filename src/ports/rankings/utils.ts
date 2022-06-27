@@ -189,7 +189,7 @@ export const getCreatorsTotalFragment = () => `
     id
     sales
     earned
-    collections
+    uniqueCollectionsSales: collections
     uniqueCollectorsTotal
   }
 `
