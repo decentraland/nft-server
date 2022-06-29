@@ -44,6 +44,9 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
   }
   if (entity === RankingEntity.CREATORS) {
     where.push('sales_gt: 0')
+    if (from === 0) {
+      where.push('collections_gt: 0')
+    }
   } else if (entity === RankingEntity.COLLECTORS) {
     where.push('purchases_gt: 0')
   }
