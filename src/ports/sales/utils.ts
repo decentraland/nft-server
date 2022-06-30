@@ -101,7 +101,7 @@ export function getSalesQuery(
     where.push(`price_lt: "${maxPrice}"`)
   }
 
-  if (categories) {
+  if (categories?.length && network === Network.MATIC) {
     where.push(
       `searchCategory_in: [${categories
         .map((category) => `"${category}"`)
