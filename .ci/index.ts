@@ -12,18 +12,6 @@ export = async function main() {
 
   const hostname = 'nft-api.decentraland.' + envTLD
 
-  new cloudflare.PageRule('trendings-cache', {
-    target: `${hostname}/trendings`,
-    zoneId: getZoneId(),
-    actions: {
-      alwaysOnline: 'on',
-      cacheLevel: 'cache_everything',
-      cacheTtlByStatuses: [{ codes: '200', ttl: 3600 /* an hour */ }],
-      edgeCacheTtl: 3600 /* an hour */,
-      browserCacheTtl: '31536000' /* an hour */,
-    },
-  })
-
   const nftAPI = await createFargateTask(
     `nft-api`,
     image,
@@ -91,6 +79,18 @@ export = async function main() {
   )
 
   const publicUrl = nftAPI.endpoint
+
+  new cloudflare.PageRule('trendings-cache', {
+    target: `${publicUrl}/trendings`,
+    zoneId: getZoneId(),
+    actions: {
+      alwaysOnline: 'on',
+      cacheLevel: 'cache_everything',
+      cacheTtlByStatuses: [{ codes: '200', ttl: 3600 /* an hour */ }],
+      edgeCacheTtl: 3600 /* an hour */,
+      browserCacheTtl: '31536000' /* an hour */,
+    },
+  })
 
   return {
     publicUrl,
