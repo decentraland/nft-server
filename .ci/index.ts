@@ -1,4 +1,6 @@
 import * as pulumi from '@pulumi/pulumi'
+import * as cloudflare from '@pulumi/cloudflare'
+import { getZoneId } from 'dcl-ops-lib/cloudflare'
 import { createFargateTask } from 'dcl-ops-lib/createFargateTask'
 import { env, envTLD } from 'dcl-ops-lib/domain'
 
@@ -9,6 +11,18 @@ export = async function main() {
   const image = `decentraland/nft-server:${revision}`
 
   const hostname = 'nft-api.decentraland.' + envTLD
+
+  new cloudflare.PageRule('trendings-cache', {
+    target: `${hostname}/trendings`,
+    zoneId: getZoneId(),
+    actions: {
+      alwaysOnline: 'on',
+      cacheLevel: 'cache_everything',
+      cacheTtlByStatuses: [{ codes: '200', ttl: 3600 /* an hour */ }],
+      edgeCacheTtl: 3600 /* an hour */,
+      browserCacheTtl: '31536000' /* an hour */,
+    },
+  })
 
   const nftAPI = await createFargateTask(
     `nft-api`,
