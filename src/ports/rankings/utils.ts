@@ -68,6 +68,9 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
       if (entity === RankingEntity.COLLECTORS) {
         orderBy = 'purchases'
         orderDirection = 'desc'
+      } else if (from === 0 && entity === RankingEntity.CREATORS) {
+        orderBy = 'primarySales'
+        orderDirection = 'desc'
       } else {
         orderBy = 'sales'
         orderDirection = 'desc'
@@ -80,7 +83,7 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
         orderDirection = 'desc'
       } else if (entity === RankingEntity.CREATORS) {
         // for accounts the field is "earned"
-        orderBy = 'earned'
+        orderBy = from === 0 ? 'primarySalesEarned' : 'earned'
         orderDirection = 'desc'
       }
       break
@@ -190,8 +193,8 @@ export const getCreatorsDayDataFragment = () => `
 export const getCreatorsTotalFragment = () => `
   fragment creatorsDayDataFragment on Account {
     id
-    sales
-    earned
+    sales: primarySales
+    earned: primarySalesEarned
     uniqueCollectionsSales: collections
     uniqueCollectorsTotal
   }
