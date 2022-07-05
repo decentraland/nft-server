@@ -6,6 +6,8 @@ import { env, envTLD } from 'dcl-ops-lib/domain'
 
 const prometheusStack = new pulumi.StackReference(`prometheus-${env}`)
 
+const API_VERSION = 'v1'
+
 export = async function main() {
   const revision = process.env['CI_COMMIT_SHA']
   const image = `decentraland/nft-server:${revision}`
@@ -20,7 +22,7 @@ export = async function main() {
       { name: 'hostname', value: `nft-server-${env}` },
       { name: 'name', value: `nft-server-${env}` },
       { name: 'NODE_ENV', value: 'production' },
-      { name: 'API_VERSION', value: 'v1' },
+      { name: 'API_VERSION', value: API_VERSION },
       { name: 'SERVER_PORT', value: '5000' },
       { name: 'CORS_ORIGIN', value: '*' },
       { name: 'CORS_METHOD', value: '*' },
@@ -81,7 +83,7 @@ export = async function main() {
   const publicUrl = nftAPI.endpoint
 
   new cloudflare.PageRule('trendings-cache', {
-    target: `${publicUrl}/trendings`,
+    target: `${publicUrl}/${API_VERSION}/trendings`,
     zoneId: getZoneId(),
     actions: {
       alwaysOnline: 'on',
