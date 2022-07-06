@@ -4,14 +4,25 @@ import { getZoneId } from 'dcl-ops-lib/cloudflare'
 import { createFargateTask } from 'dcl-ops-lib/createFargateTask'
 import { env, envTLD } from 'dcl-ops-lib/domain'
 
-
 const API_VERSION = 'v1'
+
+const getCloudflareDomain = (env: string) => {
+  switch (env) {
+    case 'stg':
+      return '.today'
+    case 'prod':
+      return '.org'
+    default:
+      return '.zone'
+  }
+}
 
 export = async function main() {
   const revision = process.env['CI_COMMIT_SHA']
   const image = `decentraland/nft-server:${revision}`
 
-  const hostname = 'nft-api.decentraland.' + envTLD
+  const baseHostname = 'nft-api.decentraland.'
+  const hostname = baseHostname + envTLD
   const prometheus = await prometheusStack()
   const nftAPI = await createFargateTask(
     `nft-api`,
@@ -82,7 +93,9 @@ export = async function main() {
   const publicUrl = nftAPI.endpoint
 
   new cloudflare.PageRule('trendings-cache', {
-    target: `${publicUrl}/${API_VERSION}/trendings`,
+    target: `${baseHostname}${getCloudflareDomain(
+      env
+    )}/${API_VERSION}/trendings`,
     zoneId: getZoneId(),
     actions: {
       alwaysOnline: 'on',
