@@ -100,9 +100,9 @@ export = async function main() {
     actions: {
       alwaysOnline: 'on',
       cacheLevel: 'cache_everything',
-      cacheTtlByStatuses: [{ codes: '200', ttl: 3600 /* an hour */ }],
-      edgeCacheTtl: 3600 /* an hour */,
-      browserCacheTtl: '3600' /* an hour */,
+      cacheTtlByStatuses: [{ codes: '200', ttl: 31536000 /* a year */ }],
+      edgeCacheTtl: 31536000 /* a year */,
+      browserCacheTtl: '31536000' /* a year */,
     },
   })
 
