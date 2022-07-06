@@ -90,7 +90,7 @@ export = async function main() {
       cacheLevel: 'cache_everything',
       cacheTtlByStatuses: [{ codes: '200', ttl: 3600 /* an hour */ }],
       edgeCacheTtl: 3600 /* an hour */,
-      browserCacheTtl: '31536000' /* an hour */,
+      browserCacheTtl: '3600' /* an hour */,
     },
   })
 
