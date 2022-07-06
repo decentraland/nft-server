@@ -1,10 +1,9 @@
-import * as pulumi from '@pulumi/pulumi'
 import * as cloudflare from '@pulumi/cloudflare'
+import { prometheusStack } from 'dcl-ops-lib/prometheus'
 import { getZoneId } from 'dcl-ops-lib/cloudflare'
 import { createFargateTask } from 'dcl-ops-lib/createFargateTask'
 import { env, envTLD } from 'dcl-ops-lib/domain'
 
-const prometheusStack = new pulumi.StackReference(`prometheus-${env}`)
 
 const API_VERSION = 'v1'
 
@@ -13,7 +12,7 @@ export = async function main() {
   const image = `decentraland/nft-server:${revision}`
 
   const hostname = 'nft-api.decentraland.' + envTLD
-
+  const prometheus = await prometheusStack()
   const nftAPI = await createFargateTask(
     `nft-api`,
     image,
@@ -54,7 +53,7 @@ export = async function main() {
       },
       {
         name: 'WKC_METRICS_BEARER_TOKEN',
-        value: prometheusStack.getOutput('serviceMetricsBearerToken'),
+        value: prometheus.getOutput('serviceMetricsBearerToken'),
       },
     ],
     hostname,
