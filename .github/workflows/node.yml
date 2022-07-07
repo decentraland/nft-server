@@ -1,4 +1,4 @@
-name: CI
+name: node
 
 on:
   push:
@@ -12,10 +12,10 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16.x
+          cache: npm
       - name: install
         run: npm ci
       - name: build
         run: npm run build
       - name: test
-        run: npm run test:coverage
-        if: ${{ always() }}
+        run: npm run test
