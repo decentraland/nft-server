@@ -1,9 +1,0 @@
-{
-  "name": "nft-server-build",
-  "devDependencies": {
-    "@types/node": "^16.11.35"
-  },
-  "dependencies": {
-    "dcl-ops-lib": "^5.24.0"
-  }
-}
