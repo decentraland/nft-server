@@ -99,7 +99,7 @@ export = async function main() {
     zoneId: getZoneId(),
     actions: {
       alwaysOnline: 'on',
-      cacheLevel: 'cache_everything',
+      cacheLevel: 'cacheEverything',
       cacheTtlByStatuses: [{ codes: '200', ttl: 31536000 /* a year */ }],
       edgeCacheTtl: 31536000 /* a year */,
       browserCacheTtl: '31536000' /* a year */,
