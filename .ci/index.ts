@@ -91,22 +91,24 @@ export = async function main() {
   )
 
   const publicUrl = nftAPI.endpoint
-
-  new cloudflare.PageRule('trendings-cache', {
+  const pageRuleConfig = {
     target: `${baseHostname}${getCloudflareDomain(
       env
     )}/${API_VERSION}/trendings`,
     zoneId: getZoneId(),
     actions: {
       alwaysOnline: 'on',
-      cacheLevel: 'cacheEverything',
+      cacheLevel: 'cache_everything',
       cacheTtlByStatuses: [{ codes: '200', ttl: 31536000 /* a year */ }],
       edgeCacheTtl: 31536000 /* a year */,
       browserCacheTtl: '31536000' /* a year */,
     },
-  })
+  }
+
+  new cloudflare.PageRule('trendings-cache', pageRuleConfig)
 
   return {
     publicUrl,
+    pageRuleConfig,
   }
 }
