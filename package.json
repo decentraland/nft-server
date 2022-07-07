@@ -45,7 +45,7 @@
     "sql-template-strings": "^2.2.2",
     "sqlite": "^4.0.19",
     "sqlite3": "^5.0.8",
-    "ts-node": "^9.1.1",
+    "ts-node": "^10.8.2",
     "typescript": "^4.3.4"
   },
   "devDependencies": {
