@@ -91,8 +91,7 @@ export = async function main() {
   )
 
   const publicUrl = nftAPI.endpoint
-
-  new cloudflare.PageRule('trendings-cache', {
+  const pageRuleConfig = {
     target: `${baseHostname}${getCloudflareDomain(
       env
     )}/${API_VERSION}/trendings`,
@@ -104,9 +103,12 @@ export = async function main() {
       edgeCacheTtl: 31536000 /* a year */,
       browserCacheTtl: '31536000' /* a year */,
     },
-  })
+  }
+
+  new cloudflare.PageRule('trendings-cache', pageRuleConfig)
 
   return {
     publicUrl,
+    pageRuleConfig,
   }
 }
