@@ -9,11 +9,11 @@ const API_VERSION = 'v1'
 const getCloudflareDomain = (env: string) => {
   switch (env) {
     case 'stg':
-      return '.today'
+      return 'today'
     case 'prod':
-      return '.org'
+      return 'org'
     default:
-      return '.zone'
+      return 'zone'
   }
 }
 
@@ -91,7 +91,7 @@ export = async function main() {
   )
 
   const publicUrl = nftAPI.endpoint
-  const pageRuleConfig = {
+  const trendingsPageRuleConfig = {
     target: `${baseHostname}${getCloudflareDomain(
       env
     )}/${API_VERSION}/trendings`,
@@ -99,16 +99,15 @@ export = async function main() {
     actions: {
       alwaysOnline: 'on',
       cacheLevel: 'cache_everything',
-      cacheTtlByStatuses: [{ codes: '200', ttl: 31536000 /* a year */ }],
-      edgeCacheTtl: 31536000 /* a year */,
-      browserCacheTtl: '31536000' /* a year */,
+      cacheTtlByStatuses: [{ codes: '200', ttl: 3600 /* an hour */ }],
+      edgeCacheTtl: 3600 /* an hour */,
+      browserCacheTtl: '3600' /* an hour */,
     },
   }
 
-  new cloudflare.PageRule('trendings-cache', pageRuleConfig)
+  new cloudflare.PageRule('trendings-cache', trendingsPageRuleConfig)
 
   return {
     publicUrl,
-    pageRuleConfig,
   }
 }
