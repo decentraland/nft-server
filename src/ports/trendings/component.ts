@@ -103,9 +103,9 @@ export function createTrendingsComponent(
       [...Object.entries(trendingSales)].sort((a, b) => {
         const itemA = findItemByItemId(items, a[0])
         const itemB = findItemByItemId(items, b[0])
-        return new BN(itemB!.price)
+        return !!itemA && !!itemB && new BN(itemB.price)
           .mul(new BN(b[1]))
-          .gt(new BN(itemA!.price).mul(new BN(a[1])))
+          .gt(new BN(itemA.price).mul(new BN(a[1])))
           ? 1
           : -1
       }) // sort by sales amount
