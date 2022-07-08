@@ -35,7 +35,7 @@
     "@well-known-components/metrics": "^1.1.1",
     "@well-known-components/thegraph-component": "^1.1.0",
     "ajv": "^7.1.1",
-    "bn.js": "^5.2.0",
+    "bn.js": "^5.2.1",
     "continuation-local-storage": "^3.2.1",
     "cuid": "^2.1.8",
     "dotenv": "^8.2.0",
