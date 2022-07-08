@@ -11,10 +11,17 @@ export function createTrendingHandler(
   return async (context) => {
     const params = new Params(context.url.searchParams)
 
+    const responseHeaders = {
+      'Cache-Control': 'public,max-age=3600,s-maxage=3600',
+    }
+
     const size = params.getNumber('size')
 
-    return asJSON(async () => ({
-      data: await trendings.fetch({ size }),
-    }))
+    return asJSON(
+      async () => ({
+        data: await trendings.fetch({ size }),
+      }),
+      responseHeaders
+    )
   }
 }
