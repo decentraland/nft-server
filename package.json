@@ -40,7 +40,7 @@
     "cuid": "^2.1.8",
     "dotenv": "^8.2.0",
     "fp-future": "^1.0.1",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.2.9",
     "seedrandom": "^3.0.5",
     "sql-template-strings": "^2.2.2",
     "sqlite": "^4.0.19",
