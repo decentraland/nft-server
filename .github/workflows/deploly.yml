@@ -30,6 +30,6 @@ jobs:
         uses: decentraland/dcl-deploy-action@main
         with:
           dockerImage: 'quay.io/decentraland/nft-server:${{ inputs.tag }}'
-          serviceName: 'nft-server'
+          serviceName: 'nft-api'
           env: ${{ inputs.deployment-environment }}
           token: ${{ secrets.GITHUB_TOKEN }}
