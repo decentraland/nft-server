@@ -50,7 +50,7 @@ import { AppComponents, AppConfig, GlobalContext } from './types'
 import { createBidsComponent } from './ports/bids/component'
 import { createOrdersComponent } from './ports/orders/component'
 import { createMergerComponent } from './ports/merger/component'
-import { SortDirection } from './ports/merger/types'
+import { IMergerComponent, SortDirection } from './ports/merger/types'
 import { getMarketplaceChainId, getCollectionsChainId } from './logic/chainIds'
 import { createOrdersSource } from './adapters/sources/orders'
 import { createContractsComponent } from './ports/contracts/compontent'
@@ -122,6 +122,9 @@ async function initComponents(): Promise<AppComponents> {
     origin: await config.getString('CORS_ORIGIN'),
     method: await config.getString('CORS_METHOD'),
   }
+
+  // FF_RENTALS
+  const isRentalsEnabled = (await config.getNumber('FF_RENTALS')) === 1
 
   const requestSession = createRequestSessionComponent()
   const logs = createLogComponent({ requestSession })
@@ -274,17 +277,27 @@ async function initComponents(): Promise<AppComponents> {
     SIGNATURES_SERVER_URL
   )
 
+  const nftSources: IMergerComponent.Source<
+    NFTResult,
+    NFTFilters,
+    NFTSortBy
+  >[] = [
+    createNFTsSource(marketplaceNFTs, {
+      shouldFetch: marketplaceShouldFetch,
+      isRentalsEnabled,
+      rentals: rentalComponent,
+    }),
+    createNFTsSource(collectionsNFTs, {
+      shouldFetch: collectionsShouldFetch,
+    }),
+  ]
+
+  if (isRentalsEnabled) {
+    nftSources.push(createRentalsNFTSource(rentalComponent, marketplaceNFTs))
+  }
+
   const nfts = createMergerComponent<NFTResult, NFTFilters, NFTSortBy>({
-    sources: [
-      createNFTsSource(marketplaceNFTs, {
-        shouldFetch: marketplaceShouldFetch,
-        rentals: rentalComponent,
-      }),
-      createNFTsSource(collectionsNFTs, {
-        shouldFetch: collectionsShouldFetch,
-      }),
-      createRentalsNFTSource(rentalComponent, marketplaceNFTs),
-    ],
+    sources: nftSources,
     defaultSortBy: NFT_DEFAULT_SORT_BY,
     directions: {
       [NFTSortBy.CHEAPEST]: SortDirection.ASC,

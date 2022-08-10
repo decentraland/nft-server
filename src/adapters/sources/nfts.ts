@@ -11,6 +11,7 @@ import { IRentalsComponent } from '../../ports/rentals/types'
 export function createNFTsSource(
   nfts: INFTsComponent,
   options?: {
+    isRentalsEnabled?: boolean
     rentals?: IRentalsComponent
     shouldFetch?: (options: NFTFilters) => boolean
   }
@@ -18,7 +19,7 @@ export function createNFTsSource(
   async function enhanceNFTsWithRentalListings(
     nftResults: NFTResult[]
   ): Promise<NFTResult[]> {
-    if (!options || !options.rentals) {
+    if (!options || !options.rentals || !options.isRentalsEnabled) {
       return nftResults
     }
 

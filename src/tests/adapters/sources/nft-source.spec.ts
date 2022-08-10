@@ -19,6 +19,7 @@ let nftSource: IMergerComponent.Source<NFTResult, NFTFilters, NFTSortBy>
 let options: {
   rentals?: IRentalsComponent
   shouldFetch?: (options: NFTFilters) => boolean
+  isRentalsEnabled?: boolean
 }
 let fetchMock: jest.Mock
 let fetchOneMock: jest.Mock
@@ -43,6 +44,7 @@ beforeEach(() => {
 
   options = {
     shouldFetch: shouldFetchMock,
+    isRentalsEnabled: true,
     rentals: {
       getRentalsListings: getRentalsListingsMock,
       getOpenRentalsListingsOfNFTs: getOpenRentalsListingsOfNFTsMock,
@@ -200,6 +202,72 @@ describe('when fetching nfts', () => {
           }))
           .map(convertNFTResultToSortableResult)
       )
+    })
+  })
+
+  describe('and the should fetch optional function is set but rentals is not enabled', () => {
+    let nfts: NFTResult[]
+    let result: Sortable<NFTResult, NFTSortBy>[]
+
+    beforeEach(async () => {
+      nfts = Array.from({ length: 2 }, (_, i) => ({
+        nft: {
+          id: `${NFTCategory.PARCEL}-0x2-${i.toString()}`,
+          contractAddress: '0x2',
+          tokenId: i.toString(),
+          name: `name-${i}`,
+          category: NFTCategory.PARCEL,
+          createdAt: Date.now(),
+          soldAt: Date.now(),
+        } as NFT,
+        order: null,
+        rental: null,
+      }))
+      fetchMock.mockResolvedValueOnce(nfts)
+      shouldFetchMock.mockReturnValueOnce(true)
+      options.isRentalsEnabled = false
+      result = await nftSource.fetch({})
+    })
+
+    it('should resolve to a list of NFTs', () => {
+      expect(result).toEqual(nfts.map(convertNFTResultToSortableResult))
+    })
+
+    it('should not enhance the NFTs with rentals', () => {
+      expect(getOpenRentalsListingsOfNFTsMock).not.toHaveBeenCalled()
+    })
+  })
+
+  describe("and the should fetch optional function is set but there's no specification if rentals is enabled", () => {
+    let nfts: NFTResult[]
+    let result: Sortable<NFTResult, NFTSortBy>[]
+
+    beforeEach(async () => {
+      nfts = Array.from({ length: 2 }, (_, i) => ({
+        nft: {
+          id: `${NFTCategory.PARCEL}-0x2-${i.toString()}`,
+          contractAddress: '0x2',
+          tokenId: i.toString(),
+          name: `name-${i}`,
+          category: NFTCategory.PARCEL,
+          createdAt: Date.now(),
+          soldAt: Date.now(),
+        } as NFT,
+        order: null,
+        rental: null,
+      }))
+      fetchMock.mockResolvedValueOnce(nfts)
+      shouldFetchMock.mockReturnValueOnce(true)
+      options.isRentalsEnabled = undefined
+      result = await nftSource.fetch({})
+    })
+
+    it('should resolve to a list of NFTs', () => {
+      expect(result).toEqual(nfts.map(convertNFTResultToSortableResult))
+    })
+
+    it('should not enhance the NFTs with rentals', () => {
+      expect(getOpenRentalsListingsOfNFTsMock).not.toHaveBeenCalled()
     })
   })
 
