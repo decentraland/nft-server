@@ -27,6 +27,7 @@ export function createNFTsHandler(
     const isOnSale = params.getBoolean('isOnSale')
     const search = params.getString('search')
     const isLand = params.getBoolean('isLand')
+    const isOnRent = params.getBoolean('isOnRent')
     const isWearableHead = params.getBoolean('isWearableHead')
     const isWearableAccessory = params.getBoolean('isWearableAccessory')
     const isWearableSmart = params.getBoolean('isWearableSmart')
@@ -60,6 +61,7 @@ export function createNFTsHandler(
         category,
         owner,
         isOnSale,
+        isOnRent,
         search,
         isLand,
         isWearableHead,

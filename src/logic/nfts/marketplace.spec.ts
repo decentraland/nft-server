@@ -2,6 +2,8 @@ import { NFTCategory } from '@dcl/schemas'
 import {
   fromMarketplaceNFTFragment,
   MarketplaceNFTFragment,
+  marketplaceShouldFetch,
+  PROHIBITED_SORT_BYS,
 } from './marketplace'
 
 describe('when building a result from the marketplace fragment', () => {
@@ -103,6 +105,16 @@ describe('when building a result from the marketplace fragment', () => {
       const parcelEstate = result.nft.data.parcel!.estate
 
       expect(parcelEstate).toBeNull()
+    })
+  })
+})
+
+describe('when deciding if the marketplace should fetch', () => {
+  PROHIBITED_SORT_BYS.forEach((sortBy) => {
+    describe(`and the filter to sort by is ${sortBy} which is not permitted`, () => {
+      it('should return false', () => {
+        expect(marketplaceShouldFetch({ sortBy })).toBe(false)
+      })
     })
   })
 })

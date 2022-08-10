@@ -105,6 +105,8 @@ import { main } from './service'
 import { createVolumeComponent } from './ports/volume/component'
 import { createRankingsComponent } from './ports/rankings/component'
 import { createTrendingsComponent } from './ports/trendings/component'
+import { createRentalsComponent } from './ports/rentals/components'
+import { createRentalsNFTSource } from './adapters/sources/rentals'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -245,7 +247,6 @@ async function initComponents(): Promise<AppComponents> {
   // nfts
   const marketplaceNFTs = createNFTComponent({
     subgraph: marketplaceSubgraph,
-    shouldFetch: marketplaceShouldFetch,
     fragmentName: 'marketplaceFragment',
     getFragment: getMarketplaceFragment,
     fromFragment: fromMarketplaceNFTFragment,
@@ -256,7 +257,6 @@ async function initComponents(): Promise<AppComponents> {
 
   const collectionsNFTs = createNFTComponent({
     subgraph: collectionsSubgraph,
-    shouldFetch: collectionsShouldFetch,
     fragmentName: 'collectionsFragment',
     getFragment: getCollectionsFragment,
     fromFragment: fromCollectionsFragment,
@@ -265,10 +265,25 @@ async function initComponents(): Promise<AppComponents> {
     getExtraVariables: getCollectionsExtraVariables,
   })
 
+  // Rentals component
+  const SIGNATURES_SERVER_URL = await config.requireString(
+    'SIGNATURES_SERVER_URL'
+  )
+  const rentalComponent = createRentalsComponent(
+    { fetch },
+    SIGNATURES_SERVER_URL
+  )
+
   const nfts = createMergerComponent<NFTResult, NFTFilters, NFTSortBy>({
     sources: [
-      createNFTsSource(marketplaceNFTs),
-      createNFTsSource(collectionsNFTs),
+      createNFTsSource(marketplaceNFTs, {
+        shouldFetch: marketplaceShouldFetch,
+        rentals: rentalComponent,
+      }),
+      createNFTsSource(collectionsNFTs, {
+        shouldFetch: collectionsShouldFetch,
+      }),
+      createRentalsNFTSource(rentalComponent, marketplaceNFTs),
     ],
     defaultSortBy: NFT_DEFAULT_SORT_BY,
     directions: {
@@ -277,6 +292,11 @@ async function initComponents(): Promise<AppComponents> {
       [NFTSortBy.NEWEST]: SortDirection.DESC,
       [NFTSortBy.RECENTLY_LISTED]: SortDirection.DESC,
       [NFTSortBy.RECENTLY_SOLD]: SortDirection.DESC,
+      // Rentals directions
+      [NFTSortBy.MAX_RENTAL_PRICE]: SortDirection.DESC,
+      [NFTSortBy.MIN_RENTAL_PRICE]: SortDirection.ASC,
+      [NFTSortBy.RENTAL_DATE]: SortDirection.DESC,
+      [NFTSortBy.RENTAL_LISTING_DATE]: SortDirection.DESC,
     },
     maxCount: 1000,
   })

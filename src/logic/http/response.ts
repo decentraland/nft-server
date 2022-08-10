@@ -1,4 +1,5 @@
 import { IHttpServerComponent } from '@well-known-components/interfaces'
+import { HeadersInit } from 'node-fetch'
 
 export class HttpError extends Error {
   constructor(message: string, public code: number) {

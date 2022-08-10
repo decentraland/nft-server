@@ -15,6 +15,13 @@ import { getMarketplaceChainId } from '../chainIds'
 import { isExpired } from '../expiration'
 import { capitalize } from '../string'
 
+export const PROHIBITED_SORT_BYS = [
+  NFTSortBy.MAX_RENTAL_PRICE,
+  NFTSortBy.MIN_RENTAL_PRICE,
+  NFTSortBy.RENTAL_LISTING_DATE,
+  NFTSortBy.RENTAL_DATE,
+]
+
 export const getMarketplaceFields = () => `
   fragment marketplaceFields on NFT {
     id
@@ -209,13 +216,13 @@ export function fromMarketplaceNFTFragment(
       chainId: getMarketplaceChainId(),
       createdAt: +fragment.createdAt * 1000,
       updatedAt: +fragment.updatedAt * 1000,
-      //@ts-ignore
       soldAt: +fragment.soldAt * 1000,
     },
     order:
       fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
         ? fromMarketplaceOrderFragment(fragment.activeOrder)
         : null,
+    rental: null,
   }
 
   // remove undefined data
@@ -253,11 +260,16 @@ export function fromMarketplaceOrderFragment(fragment: OrderFragment) {
 }
 
 export function marketplaceShouldFetch(filters: NFTFilters) {
+  const hasAProhibitedSortBySet =
+    filters.sortBy &&
+    PROHIBITED_SORT_BYS.includes((filters.sortBy as unknown) as NFTSortBy)
   if (
     (filters.network && filters.network !== Network.ETHEREUM) ||
+    filters.category === NFTCategory.EMOTE ||
     filters.itemId ||
     filters.isWearableSmart ||
-    filters.category === NFTCategory.EMOTE
+    filters.isOnRent ||
+    hasAProhibitedSortBySet
   ) {
     return false
   }

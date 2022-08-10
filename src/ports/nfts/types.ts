@@ -1,8 +1,9 @@
-import { NFT, NFTFilters, Order } from '@dcl/schemas'
+import { NFT, NFTFilters, Order, RentalListing } from '@dcl/schemas'
 
 export type NFTResult = {
   nft: NFT
   order: Order | null
+  rental: RentalListing | null
 }
 
 export type QueryVariables = Omit<NFTFilters, 'sortBy'> & {
@@ -13,5 +14,6 @@ export type QueryVariables = Omit<NFTFilters, 'sortBy'> & {
 
 export interface INFTsComponent {
   fetch(filters: NFTFilters): Promise<NFTResult[]>
+  fetchOne(contractAddress: string, tokenId: string): Promise<NFTResult | null>
   count(filters: NFTFilters): Promise<number>
 }
