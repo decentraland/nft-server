@@ -87,7 +87,7 @@ export function createRentalsComponent(
     return Object.entries(parameters)
       .filter(([_, value]) => Boolean(value))
       .map(([key, value], index) => {
-        let param: string = `${index === 0 ? '?' : ''}`
+        let param: string = index === 0 ? '?' : ''
         if (Array.isArray(value)) {
           param = `${param}${value.map((val) => `${key}=${val}`).join('&')}`
         } else {
