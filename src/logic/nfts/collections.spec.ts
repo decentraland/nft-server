@@ -63,7 +63,7 @@ describe('when building a result from the collections subgraph fragment', () => 
         emote: {
           name: 'Fashion Pose',
           description: 'Some engaging description',
-          category: EmoteCategory.SIMPLE,
+          category: EmoteCategory.DANCE,
           rarity: Rarity.LEGENDARY,
           bodyShapes: [BodyShape.MALE, BodyShape.FEMALE],
         },
@@ -75,7 +75,7 @@ describe('when building a result from the collections subgraph fragment', () => 
       expect(result.nft.category).toBe(NFTCategory.EMOTE)
       expect(result.nft.data.emote).toEqual({
         description: 'Some engaging description',
-        category: EmoteCategory.SIMPLE,
+        category: EmoteCategory.DANCE,
         bodyShapes: [BodyShape.MALE, BodyShape.FEMALE],
         rarity: Rarity.LEGENDARY,
       })
