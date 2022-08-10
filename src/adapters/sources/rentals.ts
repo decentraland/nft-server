@@ -66,7 +66,7 @@ export function createRentalsNFTSource(
     return results.data.total
   }
 
-  async function fetchWithCount(
+  async function fetchAndCount(
     filters: NFTFilters
   ): Promise<{ data: Sortable<NFTResult, NFTSortBy>[]; count: number }> {
     if (!shouldFetch(filters)) {
@@ -86,6 +86,6 @@ export function createRentalsNFTSource(
   return {
     fetch,
     count,
-    fetchWithCount,
+    fetchAndCount,
   }
 }

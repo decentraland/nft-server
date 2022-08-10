@@ -109,8 +109,8 @@ export function createMergerComponent<
       count: number
     }[] = await Promise.all(
       sources.map(async (source) => {
-        if (source.fetchWithCount) {
-          return source.fetchWithCount(options)
+        if (source.fetchAndCount) {
+          return source.fetchAndCount(options)
         }
         return {
           data: await source.fetch(options),

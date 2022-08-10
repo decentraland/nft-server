@@ -167,7 +167,7 @@ describe('when fetching and counting rented nfts', () => {
   describe("and it shouldn't fetch rented nfts", () => {
     it('should return an empty array of data and count as zero', () => {
       return expect(
-        rentalsNFTSource.fetchWithCount!({ isOnSale: true })
+        rentalsNFTSource.fetchAndCount!({ isOnSale: true })
       ).resolves.toEqual({
         data: [],
         count: 0,
@@ -211,7 +211,7 @@ describe('when fetching and counting rented nfts', () => {
 
     it('should return the count and the fetched nfts', () => {
       return expect(
-        rentalsNFTSource.fetchWithCount!({ isOnRent: true })
+        rentalsNFTSource.fetchAndCount!({ isOnRent: true })
       ).resolves.toEqual({
         data: nftResults
           .map((nftResult, i) => ({
@@ -233,7 +233,7 @@ describe('when fetching and counting rented nfts', () => {
 
     it('should reject propagating the error', () => {
       return expect(
-        rentalsNFTSource.fetchWithCount!({ isOnRent: true })
+        rentalsNFTSource.fetchAndCount!({ isOnRent: true })
       ).rejects.toThrowError('An error occurred')
     })
   })
