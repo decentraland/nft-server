@@ -119,9 +119,11 @@ export function createRentalsComponent(
   async function getOpenRentalsListingsOfNFTs(
     nftIds: string[]
   ): Promise<RentalListing[]> {
-    const baseUrl = `${rentalsUrl}/rentals-listings${buildGetRentalsParameters({
-      status: RentalStatus.OPEN,
-    })}`
+    const baseUrl = `${rentalsUrl}/v1/rentals-listings${buildGetRentalsParameters(
+      {
+        status: RentalStatus.OPEN,
+      }
+    )}`
     const limit = pLimit(MAX_CONCURRENT_REQUEST)
 
     // Build URLs to get all the queried NFTs
@@ -175,7 +177,7 @@ export function createRentalsComponent(
     const parameters = buildGetRentalsParameters(filters)
 
     const response = await fetchComponent.fetch(
-      `${rentalsUrl}/rentals-listings${parameters}`
+      `${rentalsUrl}/v1/rentals-listings${parameters}`
     )
 
     if (!response.ok) {
