@@ -1,3 +1,4 @@
+import { URLSearchParams } from 'url'
 import { isAddress } from '../address'
 
 type Values = { [key: string]: string | Function | object }

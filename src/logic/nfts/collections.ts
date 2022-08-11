@@ -204,6 +204,7 @@ export function fromCollectionsFragment(
       fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
         ? fromCollectionsOrderFragment(fragment.activeOrder)
         : null,
+    rental: null,
   }
 
   return result

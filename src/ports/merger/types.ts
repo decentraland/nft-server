@@ -52,5 +52,8 @@ export namespace IMergerComponent {
       filters: FetchOptions<Options, SortBy>
     ): Promise<Sortable<Result, SortBy>[]>
     count(filters: FetchOptions<Options, SortBy>): Promise<number>
+    fetchAndCount?(
+      filters: FetchOptions<Options, SortBy>
+    ): Promise<{ data: Sortable<Result, SortBy>[]; count: number }>
   }
 }

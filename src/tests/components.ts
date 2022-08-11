@@ -11,7 +11,10 @@ import {
 } from '@well-known-components/thegraph-component'
 import { createMetricsComponent } from '@well-known-components/metrics'
 import { createLogComponent } from '@well-known-components/logger'
-import { createRunner } from '@well-known-components/test-helpers'
+import {
+  createLocalFetchCompoment,
+  createRunner,
+} from '@well-known-components/test-helpers'
 import { main } from '../../src/service'
 import { AppComponents, GlobalContext } from '../types'
 import {
@@ -103,6 +106,7 @@ import { ACCOUNT_DEFAULT_SORT_BY } from '../ports/accounts/utils'
 import { createVolumeComponent } from '../ports/volume/component'
 import { createTrendingsComponent } from '../ports/trendings/component'
 import { createRankingsComponent } from '../ports/rankings/component'
+import { createRentalsComponent } from '../ports/rentals/components'
 
 // start TCP port for listeners
 let lastUsedPort = 19000 + parseInt(process.env.JEST_WORKER_ID || '1') * 1000
@@ -135,6 +139,7 @@ export async function initComponents(): Promise<AppComponents> {
   // chain ids
   const marketplaceChainId = getMarketplaceChainId()
   const collectionsChainId = getCollectionsChainId()
+  const signaturesServer = await config.requireString('SIGNATURES_SERVER_URL')
 
   const cors = {
     origin: await config.getString('CORS_ORIGIN'),
@@ -249,7 +254,6 @@ export async function initComponents(): Promise<AppComponents> {
   // nfts
   const marketplaceNFTs = createNFTComponent({
     subgraph: marketplaceSubgraph,
-    shouldFetch: marketplaceShouldFetch,
     fragmentName: 'marketplaceFragment',
     getFragment: getMarketplaceFragment,
     fromFragment: fromMarketplaceNFTFragment,
@@ -260,7 +264,6 @@ export async function initComponents(): Promise<AppComponents> {
 
   const collectionsNFTs = createNFTComponent({
     subgraph: collectionsSubgraph,
-    shouldFetch: collectionsShouldFetch,
     fragmentName: 'collectionsFragment',
     getFragment: getCollectionsFragment,
     fromFragment: fromCollectionsFragment,
@@ -269,10 +272,22 @@ export async function initComponents(): Promise<AppComponents> {
     getExtraVariables: getCollectionsExtraVariables,
   })
 
+  const fetchComponent = await createLocalFetchCompoment(config)
+
+  const rentals = createRentalsComponent(
+    { fetch: fetchComponent },
+    signaturesServer
+  )
+
   const nfts = createMergerComponent<NFTResult, NFTFilters, NFTSortBy>({
     sources: [
-      createNFTsSource(marketplaceNFTs),
-      createNFTsSource(collectionsNFTs),
+      createNFTsSource(marketplaceNFTs, {
+        shouldFetch: marketplaceShouldFetch,
+        rentals,
+      }),
+      createNFTsSource(collectionsNFTs, {
+        shouldFetch: collectionsShouldFetch,
+      }),
     ],
     defaultSortBy: NFT_DEFAULT_SORT_BY,
     directions: {
@@ -281,6 +296,11 @@ export async function initComponents(): Promise<AppComponents> {
       [NFTSortBy.NEWEST]: SortDirection.DESC,
       [NFTSortBy.RECENTLY_LISTED]: SortDirection.DESC,
       [NFTSortBy.RECENTLY_SOLD]: SortDirection.DESC,
+      // Rentals
+      [NFTSortBy.MAX_RENTAL_PRICE]: SortDirection.DESC,
+      [NFTSortBy.MIN_RENTAL_PRICE]: SortDirection.ASC,
+      [NFTSortBy.RENTAL_DATE]: SortDirection.DESC,
+      [NFTSortBy.RENTAL_LISTING_DATE]: SortDirection.DESC,
     },
     maxCount: 1000,
   })
