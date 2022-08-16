@@ -120,7 +120,7 @@ async function initComponents(): Promise<AppComponents> {
 
   const cors = {
     origin: await config.getString('CORS_ORIGIN'),
-    method: await config.getString('CORS_METHOD'),
+    methods: await config.getString('CORS_METHOD'),
   }
 
   // FF_RENTALS

@@ -41,6 +41,12 @@ export function createNFTsSource(
 
     return nftResults.map((nftResult) => ({
       ...nftResult,
+      nft: {
+        ...nftResult.nft,
+        openRentalId: rentalsByNftId[buildNftId(nftResult)]
+          ? rentalsByNftId[buildNftId(nftResult)].id
+          : null,
+      },
       rental: rentalsByNftId[buildNftId(nftResult)] ?? null,
     }))
   }

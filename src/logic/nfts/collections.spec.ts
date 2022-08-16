@@ -37,6 +37,7 @@ describe('when building a result from the collections subgraph fragment', () => 
       itemBlockchainId: '0',
       issuedId: '1',
       activeOrder: null,
+      openRentalId: null,
     }
   })
 

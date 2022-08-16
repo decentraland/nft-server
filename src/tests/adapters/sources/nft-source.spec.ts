@@ -77,6 +77,7 @@ describe('when fetching nfts', () => {
       nftsWithoutRentals = Array.from({ length: 2 }, (_, i) => ({
         nft: {
           id: `${NFTCategory.PARCEL}-0x0-${i.toString()}`,
+          openRentalId: null,
           name: `no-rental-name-${i}`,
           contractAddress: '0x0',
           tokenId: i.toString(),
@@ -90,6 +91,7 @@ describe('when fetching nfts', () => {
       nftsThatAreNotLAND = Array.from({ length: 2 }, (_, i) => ({
         nft: {
           id: `${NFTCategory.ENS}-0x1-${i.toString()}`,
+          openRentalId: null,
           name: `no-land-name-${i}`,
           contractAddress: '0x1',
           tokenId: i.toString(),
@@ -103,6 +105,7 @@ describe('when fetching nfts', () => {
       nftsWithRentals = Array.from({ length: 2 }, (_, i) => ({
         nft: {
           id: `${NFTCategory.PARCEL}-0x2-${i.toString()}`,
+          openRentalId: `rental-${i}`,
           contractAddress: '0x2',
           tokenId: i.toString(),
           name: `with-land-name-${i}`,
@@ -166,6 +169,7 @@ describe('when fetching nfts', () => {
       nfts = Array.from({ length: 2 }, (_, i) => ({
         nft: {
           id: `${NFTCategory.PARCEL}-0x2-${i.toString()}`,
+          openRentalId: `rental-${i}`,
           contractAddress: '0x2',
           tokenId: i.toString(),
           name: `name-${i}`,
@@ -213,6 +217,7 @@ describe('when fetching nfts', () => {
       nfts = Array.from({ length: 2 }, (_, i) => ({
         nft: {
           id: `${NFTCategory.PARCEL}-0x2-${i.toString()}`,
+          openRentalId: null,
           contractAddress: '0x2',
           tokenId: i.toString(),
           name: `name-${i}`,
@@ -246,6 +251,7 @@ describe('when fetching nfts', () => {
       nfts = Array.from({ length: 2 }, (_, i) => ({
         nft: {
           id: `${NFTCategory.PARCEL}-0x2-${i.toString()}`,
+          openRentalId: null,
           contractAddress: '0x2',
           tokenId: i.toString(),
           name: `name-${i}`,
@@ -290,6 +296,7 @@ describe('when fetching nfts', () => {
       nfts = Array.from({ length: 2 }, (_, i) => ({
         nft: {
           id: `${NFTCategory.PARCEL}-0x2-${i.toString()}`,
+          openRentalId: null,
           name: `no-rental-name-${i}`,
           contractAddress: '0x0',
           tokenId: i.toString(),
@@ -321,6 +328,7 @@ describe('when fetching nfts', () => {
       nfts = Array.from({ length: 2 }, (_, i) => ({
         nft: {
           id: `${NFTCategory.PARCEL}-0x2-${i.toString()}`,
+          openRentalId: null,
           contractAddress: '0x2',
           tokenId: i.toString(),
           name: `name-${i}`,

@@ -163,6 +163,7 @@ export function fromMarketplaceNFTFragment(
         fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
           ? fragment.activeOrder.id
           : null,
+      openRentalId: null,
       owner: fragment.owner.address.toLowerCase(),
       name: fragment.name || capitalize(fragment.category),
       image: fragment.image || '',

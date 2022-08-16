@@ -33,6 +33,7 @@ export function createRentalsNFTSource(
 
         return {
           ...nftResult,
+          nft: { ...nftResult.nft, openRentalId: rental.id },
           rental,
         }
       })
