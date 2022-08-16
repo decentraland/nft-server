@@ -366,34 +366,34 @@ export function getMarketplaceContracts(chainId: ChainId): Contract[] {
         },
       ]
     }
-    case ChainId.ETHEREUM_ROPSTEN: {
+    case ChainId.ETHEREUM_GOERLI: {
       return [
         {
           name: 'LAND',
-          address: '0x7a73483784ab79257bb11b96fd62a2c3ae4fb75b',
+          address: '0x25b6B4bac4aDB582a0ABd475439dA6730777Fbf7',
           category: NFTCategory.PARCEL,
           network: Network.ETHEREUM,
-          chainId: ChainId.ETHEREUM_ROPSTEN,
+          chainId: ChainId.ETHEREUM_GOERLI,
         },
         {
           name: 'Estates',
-          address: '0x124bf28a423b2ca80b3846c3aa0eb944fe7ebb95',
+          address: '0xC9A46712E6913c24d15b46fF12221a79c4e251DC',
           category: NFTCategory.ESTATE,
           network: Network.ETHEREUM,
-          chainId: ChainId.ETHEREUM_ROPSTEN,
+          chainId: ChainId.ETHEREUM_GOERLI,
         },
         {
           name: 'Names',
-          address: '0xeb6f5d94d79f0750781cc962908b161b95192f53',
+          address: '0x6b8da2752827cf926215b43bb8E46Fd7b9dDac35',
           category: NFTCategory.ENS,
           network: Network.ETHEREUM,
-          chainId: ChainId.ETHEREUM_ROPSTEN,
+          chainId: ChainId.ETHEREUM_GOERLI,
         },
         {
           name: 'Exclusive Masks',
-          address: '0x30ae57840b0e9b8ea55334083d53d80b2cfe80e0',
+          address: '0x1f0880E0b4514DC58e68B9BE91693bFA8C067ac1',
           network: Network.ETHEREUM,
-          chainId: ChainId.ETHEREUM_ROPSTEN,
+          chainId: ChainId.ETHEREUM_GOERLI,
           category: NFTCategory.WEARABLE,
         },
       ]
