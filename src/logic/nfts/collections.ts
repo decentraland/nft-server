@@ -186,6 +186,7 @@ export function fromCollectionsFragment(
         fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
           ? fragment.activeOrder.id
           : null,
+      openRentalId: null,
       owner: fragment.owner.address.toLowerCase(),
       name,
       image: fragment.image,

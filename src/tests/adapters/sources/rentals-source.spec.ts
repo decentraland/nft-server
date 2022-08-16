@@ -68,6 +68,7 @@ describe('when fetching rented nfts', () => {
       nftResults = rentalsResponse.data.results.map((rental) => ({
         nft: {
           name: `nft-${rental.id}`,
+          openRentalId: rental.id,
           createdAt: Date.now(),
           soldAt: Date.now(),
         } as NFT,
@@ -196,6 +197,7 @@ describe('when fetching and counting rented nfts', () => {
       nftResults = rentalsResponse.data.results.map((rental) => ({
         nft: {
           name: `nft-${rental.id}`,
+          openRentalId: rental.id,
           createdAt: Date.now(),
           soldAt: Date.now(),
         } as NFT,
