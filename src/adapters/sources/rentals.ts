@@ -21,25 +21,28 @@ export function createRentalsNFTSource(
   async function enhanceRentalListing(
     rentals: RentalListing[]
   ): Promise<Sortable<NFTResult, NFTSortBy>[]> {
-    const nftResults: NFTResult[] = await Promise.all(
-      rentals.map(async (rental) => {
-        const nftResult = await nfts.fetchOne(
-          rental.contractAddress,
-          rental.tokenId
-        )
-        if (!nftResult) {
+    const tokenIdsOfRentals = rentals.map((rental) => rental.tokenId)
+    const nftResultsOfRentals = await nfts.fetchByTokenIds(tokenIdsOfRentals)
+    const nftResultsOfRentalsById = Object.fromEntries(
+      nftResultsOfRentals.map((nft) => [nft.nft.id, nft])
+    )
+
+    return rentals
+      .map((rental) => {
+        if (!nftResultsOfRentalsById[rental.nftId]) {
           throw new Error('NFT for the rental listing was not found')
         }
 
         return {
-          ...nftResult,
-          nft: { ...nftResult.nft, openRentalId: rental.id },
+          ...nftResultsOfRentalsById[rental.nftId],
+          nft: {
+            ...nftResultsOfRentalsById[rental.nftId].nft,
+            openRentalId: rental.id,
+          },
           rental,
         }
       })
-    )
-
-    return nftResults.map(convertNFTResultToSortableResult)
+      .map(convertNFTResultToSortableResult)
   }
 
   async function fetch(
