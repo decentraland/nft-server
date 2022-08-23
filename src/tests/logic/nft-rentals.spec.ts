@@ -5,11 +5,13 @@ import {
   shouldFetch,
 } from '../../logic/nfts/rentals'
 
-describe('when checking if the rental should be checked', () => {
+describe('when checking if the rental should be fetched', () => {
   PROHIBITED_FILTERS.forEach((filter) => {
     describe(`and the filter ${filter} is set which is prohibited`, () => {
       it('should return false', () => {
-        expect(shouldFetch({ [filter]: true, isOnRent: true })).toBe(false)
+        expect(
+          shouldFetch({ [filter]: true, isOnRent: true, isLand: true })
+        ).toBe(false)
       })
     })
   })
@@ -17,7 +19,9 @@ describe('when checking if the rental should be checked', () => {
   PROHIBITED_SORTING.forEach((sortBy) => {
     describe(`and the sort by filter is set to ${sortBy} which is prohibited`, () => {
       it('should return false', () => {
-        expect(shouldFetch({ sortBy, isOnRent: true })).toBe(false)
+        expect(shouldFetch({ sortBy, isOnRent: true, isLand: true })).toBe(
+          false
+        )
       })
     })
   })
@@ -43,15 +47,21 @@ describe('when checking if the rental should be checked', () => {
     })
   })
 
-  describe('and the isOnRent filter is not true', () => {
+  describe('and the isOnRent filter is not true but the isLand one is', () => {
     it('should return false', () => {
-      expect(shouldFetch({ isOnRent: false })).toBe(false)
+      expect(shouldFetch({ isOnRent: false, isLand: true })).toBe(false)
     })
   })
 
-  describe('and the isOnRent filter is set to true', () => {
+  describe('and the isOnRent and isLand filter are set to true', () => {
     it('should return true', () => {
-      expect(shouldFetch({ isOnRent: true })).toBe(true)
+      expect(shouldFetch({ isOnRent: true, isLand: true })).toBe(true)
+    })
+  })
+
+  describe('and the isOnRent filter is set but isLand is set to false', () => {
+    it('should return false', () => {
+      expect(shouldFetch({ isOnRent: true, isLand: false })).toBe(false)
     })
   })
   ;[(NFTCategory.ESTATE, NFTCategory.PARCEL)].forEach((category) => {
@@ -73,7 +83,9 @@ describe('when checking if the rental should be checked', () => {
   ].forEach((filter) => {
     describe(`and the filter ${filter} filter is set which is permitted`, () => {
       it('should return true', () => {
-        expect(shouldFetch({ isOnRent: true, [filter]: true })).toBe(true)
+        expect(
+          shouldFetch({ isOnRent: true, isLand: true, [filter]: true })
+        ).toBe(true)
       })
     })
   })

@@ -201,9 +201,9 @@ export function getByTokenIdQuery(
   getFragment: () => string
 ) {
   return `
-  query NFTByTokenId($tokenIds: String) {
+  query NFTByTokenId($tokenIds: [String!]) {
     nfts(
-      where: { id_in: $tokenIds: [String!] }
+      where: { id_in: $tokenIds }
       first: 1000
       ) {
         ...${fragmentName}

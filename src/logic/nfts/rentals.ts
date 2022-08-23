@@ -31,8 +31,7 @@ export function shouldFetch(filters: NFTFilters): boolean {
     filters.category &&
     filters.category !== NFTCategory.ESTATE &&
     filters.category !== NFTCategory.PARCEL
-  const landFilterIsSetAndIsNotLAND =
-    filters.isLand !== undefined && !filters.isLand
+  const categoriesIsNotSetAndIsNotLand = !filters.category && !filters.isLand
   const prohibitedFilterIsSet = PROHIBITED_FILTERS.some(
     (prohibitedFilter) =>
       setFilters.includes(prohibitedFilter) &&
@@ -46,7 +45,7 @@ export function shouldFetch(filters: NFTFilters): boolean {
       prohibitedSortingIsSet ||
       prohibitedFilterIsSet ||
       categoriesIsSetAndIsNotLAND ||
-      landFilterIsSetAndIsNotLAND
+      categoriesIsNotSetAndIsNotLand
     ) && Boolean(filters.isOnRent)
   )
 }
