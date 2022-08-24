@@ -24,9 +24,14 @@ export function createRentalsNFTSource(
   ): Promise<Sortable<NFTResult, NFTSortBy>[]> {
     const tokenIdsOfRentals = rentals.map((rental) => rental.nftId)
     const nftResultsOfRentals = await nfts.fetchByTokenIds(tokenIdsOfRentals)
-    const nftResultsOfRentalsById = Object.fromEntries(
-      nftResultsOfRentals.map((nft) => [nft.nft.id, nft])
+    const nftResultsOfRentalsById = nftResultsOfRentals.reduce(
+      (accumulator, nftResult) => {
+        accumulator[nftResult.nft.id] = nftResult
+        return accumulator
+      },
+      {} as Record<string, NFTResult>
     )
+
     return rentals
       .map((rental) => {
         let nftResultForRental =
