@@ -23,6 +23,7 @@ let options: {
 }
 let fetchMock: jest.Mock
 let fetchOneMock: jest.Mock
+let fetchByTokenIdsMock: jest.Mock
 let countMock: jest.Mock
 let shouldFetchMock: jest.Mock
 let getRentalsListingsMock: jest.Mock
@@ -30,6 +31,7 @@ let getOpenRentalsListingsOfNFTsMock: jest.Mock
 
 beforeEach(() => {
   fetchMock = jest.fn()
+  fetchByTokenIdsMock = jest.fn()
   countMock = jest.fn()
   fetchOneMock = jest.fn()
   shouldFetchMock = jest.fn()
@@ -39,6 +41,7 @@ beforeEach(() => {
   nftComponentMock = {
     fetch: fetchMock,
     fetchOne: fetchOneMock,
+    fetchByTokenIds: fetchByTokenIdsMock,
     count: countMock,
   }
 

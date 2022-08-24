@@ -15,5 +15,6 @@ export type QueryVariables = Omit<NFTFilters, 'sortBy'> & {
 export interface INFTsComponent {
   fetch(filters: NFTFilters): Promise<NFTResult[]>
   fetchOne(contractAddress: string, tokenId: string): Promise<NFTResult | null>
+  fetchByTokenIds(tokenIds: string[]): Promise<NFTResult[]>
   count(filters: NFTFilters): Promise<number>
 }

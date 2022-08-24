@@ -12,6 +12,7 @@ import {
   Sortable,
 } from '../../ports/merger/types'
 import { INFTsComponent, NFTResult } from '../../ports/nfts/types'
+import { getId } from '../../ports/nfts/utils'
 import { IRentalsComponent } from '../../ports/rentals/types'
 
 export function createRentalsNFTSource(
@@ -21,25 +22,34 @@ export function createRentalsNFTSource(
   async function enhanceRentalListing(
     rentals: RentalListing[]
   ): Promise<Sortable<NFTResult, NFTSortBy>[]> {
-    const nftResults: NFTResult[] = await Promise.all(
-      rentals.map(async (rental) => {
-        const nftResult = await nfts.fetchOne(
-          rental.contractAddress,
-          rental.tokenId
-        )
-        if (!nftResult) {
+    const tokenIdsOfRentals = rentals.map((rental) => rental.nftId)
+    const nftResultsOfRentals = await nfts.fetchByTokenIds(tokenIdsOfRentals)
+    const nftResultsOfRentalsById = nftResultsOfRentals.reduce(
+      (accumulator, nftResult) => {
+        accumulator[nftResult.nft.id] = nftResult
+        return accumulator
+      },
+      {} as Record<string, NFTResult>
+    )
+
+    return rentals
+      .map((rental) => {
+        let nftResultForRental =
+          nftResultsOfRentalsById[getId(rental.contractAddress, rental.tokenId)]
+        if (!nftResultForRental) {
           throw new Error('NFT for the rental listing was not found')
         }
 
         return {
-          ...nftResult,
-          nft: { ...nftResult.nft, openRentalId: rental.id },
+          ...nftResultForRental,
+          nft: {
+            ...nftResultForRental.nft,
+            openRentalId: rental.id,
+          },
           rental,
         }
       })
-    )
-
-    return nftResults.map(convertNFTResultToSortableResult)
+      .map(convertNFTResultToSortableResult)
   }
 
   async function fetch(

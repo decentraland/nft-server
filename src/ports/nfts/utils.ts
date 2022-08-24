@@ -196,6 +196,23 @@ export function getFetchOneQuery(
     `
 }
 
+export function getByTokenIdQuery(
+  fragmentName: string,
+  getFragment: () => string
+) {
+  return `
+  query NFTByTokenId($tokenIds: [String!]) {
+    nfts(
+      where: { id_in: $tokenIds }
+      first: 1000
+      ) {
+        ...${fragmentName}
+      }
+    }
+    ${getFragment()}
+    `
+}
+
 export function getId(contractAddress: string, tokenId: string) {
   return `${contractAddress}-${tokenId}`
 }

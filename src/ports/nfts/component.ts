@@ -1,7 +1,12 @@
 import { NFTFilters, NFTSortBy } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { INFTsComponent, NFTResult } from './types'
-import { getFetchOneQuery, getFetchQuery, getQueryVariables } from './utils'
+import {
+  getByTokenIdQuery,
+  getFetchOneQuery,
+  getFetchQuery,
+  getQueryVariables,
+} from './utils'
 
 export function createNFTComponent<T extends { id: string }>(options: {
   subgraph: ISubgraphComponent
@@ -81,9 +86,25 @@ export function createNFTComponent<T extends { id: string }>(options: {
     }
   }
 
+  /**
+   * Fetches up to 1000 NFTs by their token IDs.
+   */
+  async function fetchByTokenIds(tokenIds: string[]): Promise<NFTResult[]> {
+    const query = getByTokenIdQuery(fragmentName, getFragment)
+    const variables = {
+      tokenIds,
+    }
+    const { nfts } = await subgraph.query<{
+      nfts: T[]
+    }>(query, variables)
+
+    return nfts.map(fromFragment)
+  }
+
   return {
     fetch,
     fetchOne,
+    fetchByTokenIds,
     count,
   }
 }

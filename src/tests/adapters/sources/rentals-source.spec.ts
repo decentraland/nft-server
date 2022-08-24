@@ -5,6 +5,7 @@ import { SignaturesServerPaginatedResponse } from '../../../ports/rentals/types'
 import { INFTsComponent, NFTResult } from '../../../ports/nfts/types'
 import { IRentalsComponent } from '../../../ports/rentals/types'
 import { convertNFTResultToSortableResult } from '../../../logic/nfts/utils'
+import { getId } from '../../../ports/nfts/utils'
 
 let rentalsNFTSource: IMergerComponent.Source<NFTResult, NFTFilters, NFTSortBy>
 let rentalsComponentMock: IRentalsComponent
@@ -13,12 +14,14 @@ let getRentalsListingsMock: jest.Mock
 let getOpenRentalsListingsOfNFTsMock: jest.Mock
 let fetchMock: jest.Mock
 let fetchOneMock: jest.Mock
+let fetchByTokenIdsMock: jest.Mock
 let countMock: jest.Mock
 let rentalsResponse: SignaturesServerPaginatedResponse<RentalListing[]>
 let nftResults: NFTResult[]
 
 beforeEach(() => {
   getRentalsListingsMock = jest.fn()
+  fetchByTokenIdsMock = jest.fn()
   getOpenRentalsListingsOfNFTsMock = jest.fn()
   fetchMock = jest.fn()
   fetchOneMock = jest.fn()
@@ -30,6 +33,7 @@ beforeEach(() => {
   nftsComponentsMock = {
     fetch: fetchMock,
     fetchOne: fetchOneMock,
+    fetchByTokenIds: fetchByTokenIdsMock,
     count: countMock,
   }
   rentalsNFTSource = createRentalsNFTSource(
@@ -54,6 +58,7 @@ describe('when fetching rented nfts', () => {
         data: {
           results: Array.from({ length: 5 }, (_, i) => ({
             id: i.toString(),
+            nftId: `parcel-${i}`,
             contractAddress: `contractAddress-${i}`,
             tokenId: `tokenId-${i}`,
             startedAt: Date.now(),
@@ -67,7 +72,10 @@ describe('when fetching rented nfts', () => {
       }
       nftResults = rentalsResponse.data.results.map((rental) => ({
         nft: {
+          id: getId(rental.contractAddress, rental.tokenId),
           name: `nft-${rental.id}`,
+          contractAddress: `contractAddress-${rental.id}`,
+          tokenId: `tokenId-${rental.id}`,
           openRentalId: rental.id,
           createdAt: Date.now(),
           soldAt: Date.now(),
@@ -75,16 +83,13 @@ describe('when fetching rented nfts', () => {
         order: null,
         rental: null,
       }))
-      rentalsResponse.data.results.forEach((_, i) => {
-        fetchOneMock.mockResolvedValueOnce(nftResults[i])
-      })
-
+      fetchByTokenIdsMock.mockResolvedValueOnce(nftResults)
       getRentalsListingsMock.mockResolvedValueOnce(rentalsResponse)
     })
 
-    it('should return the fetched nfts', () => {
+    it('should return the fetched nfts', async () => {
       return expect(
-        rentalsNFTSource.fetch!({ isOnRent: true })
+        rentalsNFTSource.fetch!({ isOnRent: true, isLand: true })
       ).resolves.toEqual(
         nftResults
           .map((nftResult, i) => ({
@@ -105,7 +110,7 @@ describe('when fetching rented nfts', () => {
 
     it('should reject propagating the error', () => {
       return expect(
-        rentalsNFTSource.fetch!({ isOnRent: true })
+        rentalsNFTSource.fetch!({ isOnRent: true, isLand: true })
       ).rejects.toThrowError('An error occurred')
     })
   })
@@ -127,6 +132,7 @@ describe('when counting rented nfts', () => {
         data: {
           results: Array.from({ length: 5 }, (_, i) => ({
             id: i.toString(),
+            nftId: `nft-id-${i}`,
             contractAddress: `contractAddress-${i}`,
             tokenId: `tokenId-${i}`,
             startedAt: Date.now(),
@@ -144,7 +150,7 @@ describe('when counting rented nfts', () => {
 
     it('should return the number of fetched nfts', () => {
       return expect(
-        rentalsNFTSource.count({ isOnRent: true })
+        rentalsNFTSource.count({ isOnRent: true, isLand: true })
       ).resolves.toEqual(rentalsResponse.data.total)
     })
   })
@@ -158,7 +164,7 @@ describe('when counting rented nfts', () => {
 
     it('should reject propagating the error', () => {
       return expect(
-        rentalsNFTSource.count!({ isOnRent: true })
+        rentalsNFTSource.count!({ isOnRent: true, isLand: true })
       ).rejects.toThrowError('An error occurred')
     })
   })
@@ -183,6 +189,7 @@ describe('when fetching and counting rented nfts', () => {
         data: {
           results: Array.from({ length: 5 }, (_, i) => ({
             id: i.toString(),
+            nftId: `parcel-${i}`,
             contractAddress: `contractAddress-${i}`,
             tokenId: `tokenId-${i}`,
             startedAt: Date.now(),
@@ -196,6 +203,7 @@ describe('when fetching and counting rented nfts', () => {
       }
       nftResults = rentalsResponse.data.results.map((rental) => ({
         nft: {
+          id: getId(rental.contractAddress, rental.tokenId),
           name: `nft-${rental.id}`,
           openRentalId: rental.id,
           createdAt: Date.now(),
@@ -204,16 +212,14 @@ describe('when fetching and counting rented nfts', () => {
         order: null,
         rental: null,
       }))
-      rentalsResponse.data.results.forEach((_, i) => {
-        fetchOneMock.mockResolvedValueOnce(nftResults[i])
-      })
 
+      fetchByTokenIdsMock.mockResolvedValueOnce(nftResults)
       getRentalsListingsMock.mockResolvedValueOnce(rentalsResponse)
     })
 
     it('should return the count and the fetched nfts', () => {
       return expect(
-        rentalsNFTSource.fetchAndCount!({ isOnRent: true })
+        rentalsNFTSource.fetchAndCount!({ isOnRent: true, isLand: true })
       ).resolves.toEqual({
         data: nftResults
           .map((nftResult, i) => ({
@@ -235,7 +241,7 @@ describe('when fetching and counting rented nfts', () => {
 
     it('should reject propagating the error', () => {
       return expect(
-        rentalsNFTSource.fetchAndCount!({ isOnRent: true })
+        rentalsNFTSource.fetchAndCount!({ isOnRent: true, isLand: true })
       ).rejects.toThrowError('An error occurred')
     })
   })
