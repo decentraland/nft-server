@@ -367,18 +367,18 @@ type Contract = {
 
 ```ts
 type AnalyticsDayData = {
-    id: string;
-    date: number;
-    sales: number;
-    volume: string;
-    creatorsEarnings: string;
-    daoEarnings: string;
-};
+  id: string
+  date: number
+  sales: number
+  volume: string
+  creatorsEarnings: string
+  daoEarnings: string
+}
 ```
 
 **URL Params**:
-- `timeframe`: The timeframe within the analytic data was gather. Possible values: `day` | `week` | `month` | `all`
 
+- `timeframe`: The timeframe within the analytic data was gather. Possible values: `day` | `week` | `month` | `all`
 
 ## Volume
 
@@ -388,14 +388,15 @@ type AnalyticsDayData = {
 
 ```ts
 type VolumeData = {
-    sales: number;
-    volume: string;
-    creatorsEarnings: string;
-    daoEarnings: string;
+  sales: number
+  volume: string
+  creatorsEarnings: string
+  daoEarnings: string
 }
 ```
 
 **URL Params**:
+
 - `timeframe`: The timeframe within the analytic data was gather. Possible values: `day` | `week` | `month` | `all`
 
 ## Trendings
@@ -406,30 +407,31 @@ type VolumeData = {
 
 ```ts
 type Item = {
-    id: string;
-    name: string;
-    thumbnail: string;
-    url: string;
-    category: NFTCategory;
-    contractAddress: string;
-    itemId: string;
-    rarity: Rarity;
-    price: string;
-    available: number;
-    isOnSale: boolean;
-    creator: string;
-    beneficiary: string | null;
-    createdAt: number;
-    updatedAt: number;
-    reviewedAt: number;
-    soldAt: number;
-    data: NFT['data'];
-    network: Network;
-    chainId: ChainId;
+  id: string
+  name: string
+  thumbnail: string
+  url: string
+  category: NFTCategory
+  contractAddress: string
+  itemId: string
+  rarity: Rarity
+  price: string
+  available: number
+  isOnSale: boolean
+  creator: string
+  beneficiary: string | null
+  createdAt: number
+  updatedAt: number
+  reviewedAt: number
+  soldAt: number
+  data: NFT['data']
+  network: Network
+  chainId: ChainId
 }
 ```
 
 **Query Params**:
+
 - `size`: The amount of trending items to return
 
 ## Rankings
@@ -440,18 +442,21 @@ type Item = {
 
 ```ts
 type RankingItem = {
-    id: string;
-    sales: number;
-    volume: string;
+  id: string
+  sales: number
+  volume: string
 }
 ```
 
 **URL Params**:
+
 - `timeframe`: The timeframe within the analytic data was gather. Possible values: `day` | `week` | `month` | `all`
 - `entity`: The entity that wants to get ranked. Possible values: `items` | `creators` | `collectors`
 
-
 **Query Params**:
+
 - `first`: Limit the number of results. Type: number.
 - `rarity`: Filter the results by the rarity. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
 - `category`: Filter the results by wearable category. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`, `skin`.
+
+.
