@@ -458,5 +458,3 @@ type RankingItem = {
 - `first`: Limit the number of results. Type: number.
 - `rarity`: Filter the results by the rarity. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
 - `category`: Filter the results by wearable category. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`, `skin`.
-
-.
