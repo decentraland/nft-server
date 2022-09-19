@@ -40,9 +40,9 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
   const where: string[] = []
 
   if (entity === RankingEntity.WEARABLES) {
-    where.push(`searchEmoteCategory: null`)
+    where.push('searchEmoteCategory: null')
   } else if (entity === RankingEntity.EMOTES) {
-    where.push(`searchWearableCategory: null`)
+    where.push('searchWearableCategory: null')
   }
 
   if (category) {
