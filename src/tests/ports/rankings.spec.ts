@@ -81,14 +81,14 @@ test('rankings component', function ({ components }) {
         it('should fetch the data and return the accumulated result sorted by volume', async () => {
           const { collectionsSubgraph } = components
           expect(
-            await rankingsComponent.fetch(RankingEntity.ITEMS, filters)
+            await rankingsComponent.fetch(RankingEntity.WEARABLES, filters)
           ).toEqual(
             Object.values(
               getUniqueItemsFromItemsDayData(graphResponse.rankings, filters)
             )
           )
           expect(collectionsSubgraph.query).toHaveBeenCalledWith(
-            getItemsDayDataQuery(filters)
+            getItemsDayDataQuery(RankingEntity.WEARABLES, filters)
           )
         })
       })
@@ -147,14 +147,14 @@ test('rankings component', function ({ components }) {
         it('should fetch the data and return the accumulated result sorted by volume', async () => {
           const { collectionsSubgraph } = components
           expect(
-            await rankingsComponent.fetch(RankingEntity.ITEMS, filters)
+            await rankingsComponent.fetch(RankingEntity.WEARABLES, filters)
           ).toEqual(
             Object.values(
               getUniqueItemsFromItemsDayData(graphResponse.rankings, filters)
             )
           )
           expect(collectionsSubgraph.query).toHaveBeenCalledWith(
-            getItemsDayDataQuery(filters)
+            getItemsDayDataQuery(RankingEntity.WEARABLES, filters)
           )
         })
       })
@@ -225,11 +225,11 @@ test('rankings component', function ({ components }) {
         it('should fetch the data and return the accumulated result sorted by volume', async () => {
           const { collectionsSubgraph } = components
           expect(
-            await rankingsComponent.fetch(RankingEntity.ITEMS, filters)
+            await rankingsComponent.fetch(RankingEntity.WEARABLES, filters)
           ).toEqual(Object.values(graphResponse.rankings))
 
           expect(collectionsSubgraph.query).toHaveBeenCalledWith(
-            getItemsDayDataQuery(filters)
+            getItemsDayDataQuery(RankingEntity.WEARABLES, filters)
           )
         })
       })
@@ -329,11 +329,11 @@ test('rankings component', function ({ components }) {
         it('should fetch the data and return the accumulated result sorted by volume', async () => {
           const { collectionsSubgraph } = components
           expect(
-            await rankingsComponent.fetch(RankingEntity.ITEMS, filters)
+            await rankingsComponent.fetch(RankingEntity.WEARABLES, filters)
           ).toEqual(Object.values(graphResponse.rankings))
 
           expect(collectionsSubgraph.query).toHaveBeenCalledWith(
-            getItemsDayDataQuery(filters)
+            getItemsDayDataQuery(RankingEntity.WEARABLES, filters)
           )
         })
       })

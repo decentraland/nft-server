@@ -39,8 +39,18 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
   const { from, category, rarity, sortBy } = filters
   const where: string[] = []
 
+  if (entity === RankingEntity.WEARABLES) {
+    where.push('searchEmoteCategory: null')
+  } else if (entity === RankingEntity.EMOTES) {
+    where.push('searchWearableCategory: null')
+  }
+
   if (category) {
-    where.push(`searchWearableCategory: ${category}`)
+    where.push(
+      entity === RankingEntity.WEARABLES
+        ? `searchWearableCategory: ${category}`
+        : `searchEmoteCategory: ${category}`
+    )
   }
   if (entity === RankingEntity.CREATORS) {
     where.push('sales_gt: 0')
@@ -96,8 +106,10 @@ export function getRankingQuery(
   filters: RankingsFilters
 ) {
   switch (entity) {
-    case RankingEntity.ITEMS:
-      return getItemsDayDataQuery(filters)
+    case RankingEntity.WEARABLES:
+      return getItemsDayDataQuery(RankingEntity.WEARABLES, filters)
+    case RankingEntity.EMOTES:
+      return getItemsDayDataQuery(RankingEntity.EMOTES, filters)
     case RankingEntity.CREATORS:
       return getCreatorsDayDataQuery(filters)
     case RankingEntity.COLLECTORS:
@@ -111,7 +123,8 @@ export function consolidateRankingResults(
   filters: RankingsFilters
 ) {
   switch (entity) {
-    case RankingEntity.ITEMS:
+    case RankingEntity.WEARABLES:
+    case RankingEntity.EMOTES:
       return getUniqueItemsFromItemsDayData(
         fragments as ItemsDayDataFragment[],
         filters
@@ -127,11 +140,11 @@ export function consolidateRankingResults(
   }
 }
 
-export function getItemsDayDataQuery(filters: RankingsFilters) {
-  const { where, orderBy, orderDirection } = getQueryParams(
-    RankingEntity.ITEMS,
-    filters
-  )
+export function getItemsDayDataQuery(
+  entity: RankingEntity,
+  filters: RankingsFilters
+) {
+  const { where, orderBy, orderDirection } = getQueryParams(entity, filters)
 
   return filters.from === 0
     ? `query ItemsDayTotalData{
@@ -283,7 +296,8 @@ export function sortRankResults(
   sortBy: RankingsSortBy = RankingsSortBy.MOST_VOLUME
 ): RankingEntityResponse[] {
   switch (entity) {
-    case RankingEntity.ITEMS:
+    case RankingEntity.EMOTES:
+    case RankingEntity.WEARABLES:
       return (ranks as ItemRank[]).sort((a: ItemRank, b: ItemRank) =>
         sortBy === RankingsSortBy.MOST_SALES
           ? b.sales - a.sales
