@@ -1,4 +1,4 @@
-import { Rarity, WearableCategory } from '@dcl/schemas'
+import { EmoteCategory, Rarity, WearableCategory } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { Params } from '../../logic/http/params'
 import { asJSON } from '../../logic/http/response'
@@ -19,9 +19,9 @@ export function createRankingsHandler(
     const params = new Params(context.url.searchParams)
     const first = params.getNumber('first')
     const sortBy = params.getValue<RankingsSortBy>('sortBy', RankingsSortBy)
-    const category = params.getValue<WearableCategory>(
+    const category = params.getValue<WearableCategory | EmoteCategory>(
       'category',
-      WearableCategory
+      { ...WearableCategory, ...EmoteCategory }
     )
     const rarity = params.getValue<Rarity>('rarity', Rarity)
 
