@@ -11,6 +11,7 @@ import {
 import {
   consolidateRankingResults,
   getRankingQuery,
+  MAX_RESULTS,
   sortRankResults,
 } from './utils'
 
@@ -29,12 +30,19 @@ export function createRankingsComponent(options: {
 
   async function fetchRanking(entity: RankingEntity, filters: RankingsFilters) {
     const isFetchingAllTimeResults = filters.from === 0
-    const query = getRankingQuery(entity, filters)
-    const { rankings: fragments } = await subgraph.query<{
-      rankings: RankingFragment[]
-    }>(query)
-
-    const results = consolidateRankingResults(entity, fragments, filters)
+    let page = 0
+    let rankingFragments: RankingFragment[] = []
+    while (true) {
+      const query = getRankingQuery(entity, filters, page++)
+      const { rankings: fragments } = await subgraph.query<{
+        rankings: RankingFragment[]
+      }>(query)
+      rankingFragments = [...rankingFragments, ...fragments]
+      if (fragments.length < MAX_RESULTS) {
+        break
+      }
+    }
+    const results = consolidateRankingResults(entity, rankingFragments, filters)
     const sortedResults = isFetchingAllTimeResults
       ? Object.values(results)
       : sortRankResults(entity, Object.values(results), filters.sortBy)
