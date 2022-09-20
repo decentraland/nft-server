@@ -189,14 +189,6 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     where.push(`searchText_contains: "${search.trim().toLowerCase()}"`)
   }
 
-  if (rarities && rarities.length > 0) {
-    where.push(
-      `searchWearableRarity_in: [${rarities
-        .map((rarity) => `"${rarity}"`)
-        .join(',')}]`
-    )
-  }
-
   if (contractAddress) {
     where.push(`collection: "${contractAddress}"`)
   }
@@ -242,6 +234,14 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     if (isWearableSmart) {
       where.push(`itemType: smart_wearable_v1`)
     }
+
+    if (rarities && rarities.length > 0) {
+      where.push(
+        `searchWearableRarity_in: [${rarities
+          .map((rarity) => `"${rarity}"`)
+          .join(',')}]`
+      )
+    }
   }
 
   if (!category || category === NFTCategory.EMOTE) {
@@ -260,6 +260,14 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       } else if (hasMale && hasFemale) {
         where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
       }
+    }
+
+    if (rarities && rarities.length > 0) {
+      where.push(
+        `searchEmoteRarity_in: [${rarities
+          .map((rarity) => `"${rarity}"`)
+          .join(',')}]`
+      )
     }
   }
 
