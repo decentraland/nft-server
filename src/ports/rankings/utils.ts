@@ -106,7 +106,7 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
 export function getRankingQuery(
   entity: RankingEntity,
   filters: RankingsFilters,
-  page: number
+  page = 0
 ) {
   switch (entity) {
     case RankingEntity.WEARABLES:
@@ -146,7 +146,7 @@ export function consolidateRankingResults(
 export function getItemsDayDataQuery(
   entity: RankingEntity,
   filters: RankingsFilters,
-  page: number
+  page = 0
 ) {
   const { where, orderBy, orderDirection } = getQueryParams(entity, filters)
 
@@ -219,10 +219,7 @@ export const getCreatorsTotalFragment = () => `
   }
 `
 
-export function getCreatorsDayDataQuery(
-  filters: RankingsFilters,
-  page: number
-) {
+export function getCreatorsDayDataQuery(filters: RankingsFilters, page = 0) {
   const { where, orderBy, orderDirection } = getQueryParams(
     RankingEntity.CREATORS,
     filters
@@ -273,10 +270,7 @@ export const getCollectorsTotalFragment = () => `
   }
 `
 
-export function getCollectorsDayDataQuery(
-  filters: RankingsFilters,
-  page: number
-) {
+export function getCollectorsDayDataQuery(filters: RankingsFilters, page = 0) {
   const { where, orderBy, orderDirection } = getQueryParams(
     RankingEntity.COLLECTORS,
     filters
