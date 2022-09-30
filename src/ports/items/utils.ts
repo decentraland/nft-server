@@ -1,6 +1,7 @@
 import BN from 'bn.js'
 import {
   ChainId,
+  EmotePlayMode,
   Item,
   ItemFilters,
   ItemSortBy,
@@ -260,6 +261,12 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       } else if (hasMale && hasFemale) {
         where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
       }
+    }
+
+    if (filters.emotePlayMode && (filters.emotePlayMode as EmotePlayMode)) {
+      where.push(
+        `searchEmoteLoop: ${filters.emotePlayMode === EmotePlayMode.LOOP}`
+      )
     }
 
     if (rarities && rarities.length > 0) {
