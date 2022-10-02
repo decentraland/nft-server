@@ -53,7 +53,8 @@ export function fromItemFragment(
           category: fragment.metadata.emote!.category,
           bodyShapes: fragment.searchEmoteBodyShapes!,
           rarity: fragment.rarity,
-        },
+          loop: fragment.metadata.emote!.loop,
+        } as any, // TODO: remove this any
       }
       break
     }
@@ -113,6 +114,7 @@ export const getItemFragment = () => `
         name
         description
         category
+        loop
       }
     }
     searchWearableBodyShapes
@@ -263,7 +265,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       }
     }
 
-    if (filters.emotePlayMode && (filters.emotePlayMode as EmotePlayMode)) {
+    if (filters.emotePlayMode) {
       where.push(
         `searchEmoteLoop: ${filters.emotePlayMode === EmotePlayMode.LOOP}`
       )

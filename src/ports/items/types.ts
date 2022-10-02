@@ -36,6 +36,7 @@ export type ItemFragment = {
       name: string
       description: string
       category: EmoteCategory
+      loop: boolean
     } | null
   }
   searchWearableBodyShapes: BodyShape[] | null

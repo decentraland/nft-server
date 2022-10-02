@@ -41,6 +41,7 @@ export const getCollectionsFields = () => `
         category
         rarity
         bodyShapes
+        loop
       }
     }
     createdAt
@@ -99,6 +100,7 @@ export type CollectionsFields = Omit<
       category: EmoteCategory
       rarity: Rarity
       bodyShapes: BodyShape[]
+      loop: boolean
     } | null
   }
   createdAt: string
@@ -167,7 +169,8 @@ export function fromCollectionsFragment(
           category: fragment.metadata.emote!.category,
           description: fragment.metadata.emote!.description,
           rarity: fragment.metadata.emote!.rarity,
-        },
+          loop: fragment.metadata.emote!.loop,
+        } as any, // TODO: update schemas and remove this `any` 
       }
       break
     }
