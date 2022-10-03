@@ -170,7 +170,7 @@ export function fromCollectionsFragment(
           description: fragment.metadata.emote!.description,
           rarity: fragment.metadata.emote!.rarity,
           loop: fragment.metadata.emote!.loop,
-        } as any, // TODO: update schemas and remove this `any` 
+        },
       }
       break
     }

@@ -54,7 +54,7 @@ export function fromItemFragment(
           bodyShapes: fragment.searchEmoteBodyShapes!,
           rarity: fragment.rarity,
           loop: fragment.metadata.emote!.loop,
-        } as any, // TODO: remove this any
+        },
       }
       break
     }
