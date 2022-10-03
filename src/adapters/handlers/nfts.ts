@@ -1,5 +1,6 @@
 import {
   EmoteCategory,
+  EmotePlayMode,
   Network,
   NFTCategory,
   NFTSortBy,
@@ -47,6 +48,7 @@ export function createNFTsHandler(
       'emoteGender',
       WearableGender
     )
+    const emotePlayMode = params.getValue<EmotePlayMode>('emotePlayMode', EmotePlayMode)
     const contractAddresses = params.getAddressList('contractAddress')
     const tokenId = params.getString('tokenId')
     const itemRarities = params.getList<Rarity>('itemRarity', Rarity)
@@ -71,6 +73,7 @@ export function createNFTsHandler(
         wearableGenders,
         emoteCategory,
         emoteGenders,
+        emotePlayMode,
         contractAddresses,
         tokenId,
         itemRarities,

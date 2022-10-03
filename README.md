@@ -111,8 +111,9 @@ type Item = {
 - `isWearableSmart`: Only return smart wearables. Type `boolean`.
 - `wearableCategory`: Filter results by `WearableCategory`. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`, `skin`.
 - `wearableGender`: Filter results by `WearableGender`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`.
-- `emoteCategory`: Filter results by `EmoteCategory`. Possible values: `simple`,`loop`.
+- `emoteCategory`: Filter results by `EmoteCategory`. Possible values: `dance`, `stunt`, `greetings`, `fun`, `poses`, `reactions`, `horror`, `miscellaneous`.
 - `emoteGender`: Filter results by `WearableGender`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`.
+- `emotePlayMode`: Filter results by `EmotePlayMode`. Possible values: `simple`, `loop`
 - `contractAddress`: Filter results by contract address. Type: `address`.
 - `itemId`: Filter results by `itemId`. Type: `string`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.

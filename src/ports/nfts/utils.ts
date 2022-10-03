@@ -1,4 +1,5 @@
 import {
+  EmotePlayMode,
   NFTCategory,
   NFTFilters,
   NFTSortBy,
@@ -146,6 +147,12 @@ export function getFetchQuery(
       } else if (hasMale && hasFemale) {
         where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
       }
+    }
+
+    if (filters.emotePlayMode) {
+      where.push(
+        `searchEmoteLoop: ${filters.emotePlayMode === EmotePlayMode.LOOP}`
+      )
     }
 
     if (filters.itemRarities && filters.itemRarities.length > 0) {

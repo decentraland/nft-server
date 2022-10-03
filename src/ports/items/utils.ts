@@ -1,6 +1,7 @@
 import BN from 'bn.js'
 import {
   ChainId,
+  EmotePlayMode,
   Item,
   ItemFilters,
   ItemSortBy,
@@ -52,6 +53,7 @@ export function fromItemFragment(
           category: fragment.metadata.emote!.category,
           bodyShapes: fragment.searchEmoteBodyShapes!,
           rarity: fragment.rarity,
+          loop: fragment.metadata.emote!.loop,
         },
       }
       break
@@ -112,6 +114,7 @@ export const getItemFragment = () => `
         name
         description
         category
+        loop
       }
     }
     searchWearableBodyShapes
@@ -260,6 +263,12 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       } else if (hasMale && hasFemale) {
         where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
       }
+    }
+
+    if (filters.emotePlayMode) {
+      where.push(
+        `searchEmoteLoop: ${filters.emotePlayMode === EmotePlayMode.LOOP}`
+      )
     }
 
     if (rarities && rarities.length > 0) {

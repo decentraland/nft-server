@@ -151,6 +151,7 @@ describe('when fetching emotes', () => {
           category: EmoteCategory.DANCE,
           rarity: Rarity.COMMON,
           bodyShapes: [BodyShape.MALE, BodyShape.FEMALE],
+          loop: false,
         },
       },
       createdAt: Date.now().toString(),
