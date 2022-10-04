@@ -114,7 +114,7 @@ type Item = {
 - `emoteCategory`: Filter results by `EmoteCategory`. Possible values: `dance`, `stunt`, `greetings`, `fun`, `poses`, `reactions`, `horror`, `miscellaneous`.
 - `emoteGender`: Filter results by `WearableGender`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`.
 - `emotePlayMode`: Filter results by `EmotePlayMode`. Possible values: `simple`, `loop`
-- `contractAddress`: Filter results by contract address. Type: `address`.
+- `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
 - `itemId`: Filter results by `itemId`. Type: `string`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 
@@ -459,5 +459,3 @@ type RankingItem = {
 - `first`: Limit the number of results. Type: number.
 - `rarity`: Filter the results by the rarity. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
 - `category`: Filter the results by wearable category. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`, `skin`.
-
-.

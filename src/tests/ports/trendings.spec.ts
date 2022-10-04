@@ -111,8 +111,8 @@ test('trendings component', function ({ components }) {
 
         jest
           .spyOn(items, 'fetch')
-          .mockImplementation(({ contractAddress, itemId }) =>
-            Promise.resolve([getItem(contractAddress!, itemId!)])
+          .mockImplementation(({ contractAddresses, itemId }) =>
+            Promise.resolve([getItem(contractAddresses![0], itemId!)])
           )
       })
 
