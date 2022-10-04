@@ -146,7 +146,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     wearableGenders,
     emoteCategory,
     emoteGenders,
-    contractAddresses,
+    contractAddress,
     itemId,
   } = filters as ItemFilters
 
@@ -192,12 +192,8 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     where.push(`searchText_contains: "${search.trim().toLowerCase()}"`)
   }
 
-  if (contractAddresses) {
-    where.push(
-      `collection_in: [${contractAddresses
-        .map((contractAddress) => `"${contractAddress}"`)
-        .join(',')}]`
-    )
+  if (contractAddress) {
+    where.push(`collection: "${contractAddress}"`)
   }
 
   if (itemId) {

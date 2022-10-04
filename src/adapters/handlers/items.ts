@@ -48,11 +48,8 @@ export function createItemsHandler(
       'emoteGender',
       WearableGender
     )
-    const emotePlayMode = params.getValue<EmotePlayMode>(
-      'emotePlayMode',
-      EmotePlayMode
-    )
-    const contractAddresses = params.getList('contractAddress')
+    const emotePlayMode = params.getValue<EmotePlayMode>('emotePlayMode', EmotePlayMode)
+    const contractAddress = params.getAddress('contractAddress')
     const itemId = params.getString('itemId')
     const network = params.getValue<Network>('network', Network)
 
@@ -74,7 +71,7 @@ export function createItemsHandler(
         emoteCategory,
         emoteGenders,
         emotePlayMode,
-        contractAddresses,
+        contractAddress,
         itemId,
         isWearableSmart,
         network,
