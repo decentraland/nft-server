@@ -4,6 +4,7 @@ import {
   NFTCategory,
   NFTSortBy,
   Rarity,
+  RentalStatus,
   WearableCategory,
   WearableGender,
 } from '@dcl/schemas'
@@ -28,6 +29,7 @@ export function createNFTsHandler(
     const search = params.getString('search')
     const isLand = params.getBoolean('isLand')
     const isOnRent = params.getBoolean('isOnRent')
+    const status = params.getList<RentalStatus>('status', RentalStatus)
     const isWearableHead = params.getBoolean('isWearableHead')
     const isWearableAccessory = params.getBoolean('isWearableAccessory')
     const isWearableSmart = params.getBoolean('isWearableSmart')
@@ -76,6 +78,7 @@ export function createNFTsHandler(
         itemRarities,
         itemId,
         network,
+        status,
       })
     )
   }
@@ -89,11 +92,24 @@ export function createNFTHandler(
   const { nfts } = components
   return async (context) => {
     const { contractAddress, tokenId } = context.params
-
+    console.log('Search params', context.url.searchParams)
+    const queryParameters = new Params(context.url.searchParams)
+    console.log('Query parameters', queryParameters)
+    const singleStatus = queryParameters.getValue<RentalStatus>(
+      'status',
+      RentalStatus
+    )
+    const status = queryParameters.getList<RentalStatus>('status', RentalStatus)
+    console.log('================ Getting status =============', status)
+    console.log(
+      '================ Getting single status =============',
+      singleStatus
+    )
     return asJSON(async () => {
       const results = await nfts.fetch({
         contractAddresses: [contractAddress],
         tokenId,
+        status,
       })
 
       if (results.length === 0) {

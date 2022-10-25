@@ -41,8 +41,10 @@ export class Params {
     defaultValue?: T
   ) {
     const value = this.getString(key, defaultValue)
+    console.log('Getting value', value)
     if (value) {
       const validValues = this.getValidValues(values)
+      console.log('Getting valid value', validValues)
       if (validValues.length === 0 || validValues.includes(value as T)) {
         return value as T
       }

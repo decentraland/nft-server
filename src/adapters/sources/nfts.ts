@@ -1,4 +1,9 @@
-import { NFTFilters, NFTSortBy, RentalListing } from '@dcl/schemas'
+import {
+  NFTFilters,
+  NFTSortBy,
+  RentalListing,
+  RentalStatus,
+} from '@dcl/schemas'
 import {
   buildNftId,
   convertNFTResultToSortableResult,
@@ -17,16 +22,18 @@ export function createNFTsSource(
   }
 ): IMergerComponent.Source<NFTResult, NFTFilters, NFTSortBy> {
   async function enhanceNFTsWithRentalListings(
-    nftResults: NFTResult[]
+    nftResults: NFTResult[],
+    nftFilters: NFTFilters
   ): Promise<NFTResult[]> {
     if (!options || !options.rentals || !options.isRentalsEnabled) {
       return nftResults
     }
 
-    const rentalListings = await options.rentals.getOpenRentalsListingsOfNFTs(
+    const rentalListings = await options.rentals.getRentalsListingsOfNFTs(
       nftResults
         .filter((nftResult) => isLAND(nftResult))
-        .map((nftResult) => buildNftId(nftResult))
+        .map((nftResult) => buildNftId(nftResult)),
+      nftFilters.status ?? [RentalStatus.OPEN]
     )
 
     const rentalsByNftId: Record<string, RentalListing> = rentalListings.reduce(
@@ -57,10 +64,9 @@ export function createNFTsSource(
     }
 
     const results = await nfts.fetch(filters)
-    const enhancedResultsWithRentals = await enhanceNFTsWithRentalListings(
-      results
+    return (await enhanceNFTsWithRentalListings(results, filters)).map(
+      convertNFTResultToSortableResult
     )
-    return enhancedResultsWithRentals.map(convertNFTResultToSortableResult)
   }
 
   async function count(filters: FetchOptions<NFTFilters, NFTSortBy>) {

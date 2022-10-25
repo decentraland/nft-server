@@ -46,7 +46,10 @@ export function createRentalsComponent(
     parameters.lessor = filters.owner
     parameters.tenant = filters.tenant
     // If the status is not specified, always ask for the open rentals
-    parameters.status = filters.status ?? RentalStatus.OPEN
+    parameters.status =
+      filters.status && filters.status.length > 0
+        ? filters.status
+        : [RentalStatus.OPEN]
     parameters.tokenId = filters.tokenId
     parameters.network = filters.network
 
@@ -116,12 +119,13 @@ export function createRentalsComponent(
     )
   }
 
-  async function getOpenRentalsListingsOfNFTs(
-    nftIds: string[]
+  async function getRentalsListingsOfNFTs(
+    nftIds: string[],
+    status?: RentalStatus[]
   ): Promise<RentalListing[]> {
     const baseUrl = `${rentalsUrl}/v1/rentals-listings${buildGetRentalsParameters(
       {
-        status: RentalStatus.OPEN,
+        status,
       }
     )}`
     const limit = pLimit(MAX_CONCURRENT_REQUEST)
@@ -199,6 +203,6 @@ export function createRentalsComponent(
 
   return {
     getRentalsListings,
-    getOpenRentalsListingsOfNFTs,
+    getRentalsListingsOfNFTs,
   }
 }
