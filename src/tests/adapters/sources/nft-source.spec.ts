@@ -137,7 +137,7 @@ describe('when fetching nfts', () => {
       shouldFetchMock.mockReturnValueOnce(true)
       fetchMock.mockResolvedValueOnce(allNfts)
       getRentalsListingsOfNFTsMock.mockResolvedValueOnce(rentalListings)
-      result = await nftSource.fetch({ status: [RentalStatus.EXECUTED] })
+      result = await nftSource.fetch({})
     })
 
     it('should resolve to a list of NFTs enhanced with their rental', () => {
@@ -161,7 +161,7 @@ describe('when fetching nfts', () => {
         [...nftsWithoutRentals, ...nftsWithRentals].map(
           (nftResults) => nftResults.nft.id
         ),
-        [RentalStatus.EXECUTED]
+        [RentalStatus.OPEN]
       )
     })
   })
