@@ -159,9 +159,9 @@ describe('when fetching nfts', () => {
     it('should have queried the rentals of all LAND nfts', async () => {
       expect(getRentalsListingsOfNFTsMock).toHaveBeenCalledWith(
         [...nftsWithoutRentals, ...nftsWithRentals].map(
-          (nftResults) => nftResults.nft.id,
-          [RentalStatus.EXECUTED]
-        )
+          (nftResults) => nftResults.nft.id
+        ),
+        [RentalStatus.EXECUTED]
       )
     })
   })
