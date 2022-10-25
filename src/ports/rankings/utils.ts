@@ -19,6 +19,8 @@ import {
   CreatorsDayDataFragment,
 } from './types'
 
+export const MAX_RESULTS = 1000
+
 export const getItemsDayDataFragment = () => `
   fragment itemsDayDataFragment on ItemsDayData {
     id
@@ -39,8 +41,18 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
   const { from, category, rarity, sortBy } = filters
   const where: string[] = []
 
+  if (entity === RankingEntity.WEARABLES) {
+    where.push('searchEmoteCategory: null')
+  } else if (entity === RankingEntity.EMOTES) {
+    where.push('searchWearableCategory: null')
+  }
+
   if (category) {
-    where.push(`searchWearableCategory: ${category}`)
+    where.push(
+      entity === RankingEntity.WEARABLES
+        ? `searchWearableCategory: ${category}`
+        : `searchEmoteCategory: ${category}`
+    )
   }
   if (entity === RankingEntity.CREATORS) {
     where.push('sales_gt: 0')
@@ -93,15 +105,18 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
 
 export function getRankingQuery(
   entity: RankingEntity,
-  filters: RankingsFilters
+  filters: RankingsFilters,
+  page = 0
 ) {
   switch (entity) {
-    case RankingEntity.ITEMS:
-      return getItemsDayDataQuery(filters)
+    case RankingEntity.WEARABLES:
+      return getItemsDayDataQuery(RankingEntity.WEARABLES, filters, page)
+    case RankingEntity.EMOTES:
+      return getItemsDayDataQuery(RankingEntity.EMOTES, filters, page)
     case RankingEntity.CREATORS:
-      return getCreatorsDayDataQuery(filters)
+      return getCreatorsDayDataQuery(filters, page)
     case RankingEntity.COLLECTORS:
-      return getCollectorsDayDataQuery(filters)
+      return getCollectorsDayDataQuery(filters, page)
   }
 }
 
@@ -111,7 +126,8 @@ export function consolidateRankingResults(
   filters: RankingsFilters
 ) {
   switch (entity) {
-    case RankingEntity.ITEMS:
+    case RankingEntity.WEARABLES:
+    case RankingEntity.EMOTES:
       return getUniqueItemsFromItemsDayData(
         fragments as ItemsDayDataFragment[],
         filters
@@ -127,11 +143,12 @@ export function consolidateRankingResults(
   }
 }
 
-export function getItemsDayDataQuery(filters: RankingsFilters) {
-  const { where, orderBy, orderDirection } = getQueryParams(
-    RankingEntity.ITEMS,
-    filters
-  )
+export function getItemsDayDataQuery(
+  entity: RankingEntity,
+  filters: RankingsFilters,
+  page = 0
+) {
+  const { where, orderBy, orderDirection } = getQueryParams(entity, filters)
 
   return filters.from === 0
     ? `query ItemsDayTotalData{
@@ -147,6 +164,8 @@ export function getItemsDayDataQuery(filters: RankingsFilters) {
     `
     : `query ItemsDayData {
         rankings: itemsDayDatas(orderBy: ${orderBy}, 
+          first: ${MAX_RESULTS},
+          skip: ${MAX_RESULTS * page}
           orderDirection: ${orderDirection}, 
           where: { ${where.join('\n')} }) {
           ...itemsDayDataFragment
@@ -200,7 +219,7 @@ export const getCreatorsTotalFragment = () => `
   }
 `
 
-export function getCreatorsDayDataQuery(filters: RankingsFilters) {
+export function getCreatorsDayDataQuery(filters: RankingsFilters, page = 0) {
   const { where, orderBy, orderDirection } = getQueryParams(
     RankingEntity.CREATORS,
     filters
@@ -219,6 +238,8 @@ export function getCreatorsDayDataQuery(filters: RankingsFilters) {
       ${getCreatorsTotalFragment()}`
     : `query AccountsDayData {
         rankings: accountsDayDatas(orderBy: ${orderBy}, 
+          first: ${MAX_RESULTS},
+          skip: ${MAX_RESULTS * page}
           orderDirection: ${orderDirection}, 
           where: { ${where.join('\n')} }) {
           ...creatorsDayDataFragment
@@ -249,7 +270,7 @@ export const getCollectorsTotalFragment = () => `
   }
 `
 
-export function getCollectorsDayDataQuery(filters: RankingsFilters) {
+export function getCollectorsDayDataQuery(filters: RankingsFilters, page = 0) {
   const { where, orderBy, orderDirection } = getQueryParams(
     RankingEntity.COLLECTORS,
     filters
@@ -268,6 +289,8 @@ export function getCollectorsDayDataQuery(filters: RankingsFilters) {
       ${getCollectorsTotalFragment()}`
     : `query AccountsDayData {
         rankings: accountsDayDatas(orderBy: ${orderBy}, 
+          first: ${MAX_RESULTS},
+          skip: ${MAX_RESULTS * page}
           orderDirection: ${orderDirection}, 
           where: { ${where.join('\n')} }) {
           ...collectorsDayDataFragment
@@ -283,7 +306,8 @@ export function sortRankResults(
   sortBy: RankingsSortBy = RankingsSortBy.MOST_VOLUME
 ): RankingEntityResponse[] {
   switch (entity) {
-    case RankingEntity.ITEMS:
+    case RankingEntity.EMOTES:
+    case RankingEntity.WEARABLES:
       return (ranks as ItemRank[]).sort((a: ItemRank, b: ItemRank) =>
         sortBy === RankingsSortBy.MOST_SALES
           ? b.sales - a.sales

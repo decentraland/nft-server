@@ -1,5 +1,6 @@
 import { ChainId, Contract, Network, NFTCategory } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
+import { FragmentItemType, ItemFragment } from '../ports/items/types'
 
 const MAX_RESULTS = 1000
 
@@ -10,6 +11,9 @@ const getCollectionsQuery = (page: number) => `
 }, where: { isApproved: true }) {
       name
       id
+      items {
+        itemType
+      }
     }
   }
 `
@@ -24,17 +28,40 @@ export async function getCollectionsContracts(
 
   while (true) {
     const { collections } = await subgraph.query<{
-      collections: { id: string; name: string }[]
+      collections: { id: string; name: string; items: ItemFragment[] }[]
     }>(getCollectionsQuery(page++))
 
-    for (const { id: address, name } of collections) {
-      contracts.push({
-        name,
-        address,
-        category: NFTCategory.WEARABLE,
-        network,
-        chainId,
-      })
+    for (const { id: address, name, items } of collections) {
+      const hasEmotes = items.some(
+        (item: ItemFragment) => item.itemType === FragmentItemType.EMOTE_V1
+      )
+      const hasWearables = items.some((item: ItemFragment) =>
+        [
+          FragmentItemType.WEARABLE_V1,
+          FragmentItemType.WEARABLE_V2,
+          FragmentItemType.SMART_WEARABLE_V1,
+        ].includes(item.itemType)
+      )
+
+      if (hasWearables) {
+        contracts.push({
+          name,
+          address,
+          category: NFTCategory.WEARABLE,
+          network,
+          chainId,
+        })
+      }
+
+      if (hasEmotes) {
+        contracts.push({
+          name,
+          address,
+          category: NFTCategory.EMOTE,
+          network,
+          chainId,
+        })
+      }
     }
 
     if (collections.length < MAX_RESULTS) {

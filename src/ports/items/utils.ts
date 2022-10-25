@@ -1,6 +1,7 @@
 import BN from 'bn.js'
 import {
   ChainId,
+  EmotePlayMode,
   Item,
   ItemFilters,
   ItemSortBy,
@@ -52,6 +53,7 @@ export function fromItemFragment(
           category: fragment.metadata.emote!.category,
           bodyShapes: fragment.searchEmoteBodyShapes!,
           rarity: fragment.rarity,
+          loop: fragment.metadata.emote!.loop,
         },
       }
       break
@@ -112,6 +114,7 @@ export const getItemFragment = () => `
         name
         description
         category
+        loop
       }
     }
     searchWearableBodyShapes
@@ -143,7 +146,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     wearableGenders,
     emoteCategory,
     emoteGenders,
-    contractAddress,
+    contractAddresses,
     itemId,
   } = filters as ItemFilters
 
@@ -189,16 +192,12 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     where.push(`searchText_contains: "${search.trim().toLowerCase()}"`)
   }
 
-  if (rarities && rarities.length > 0) {
+  if (contractAddresses && contractAddresses.length > 0) {
     where.push(
-      `searchWearableRarity_in: [${rarities
-        .map((rarity) => `"${rarity}"`)
+      `collection_in: [${contractAddresses
+        .map((contractAddress) => `"${contractAddress}"`)
         .join(',')}]`
     )
-  }
-
-  if (contractAddress) {
-    where.push(`collection: "${contractAddress}"`)
   }
 
   if (itemId) {
@@ -242,6 +241,14 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     if (isWearableSmart) {
       where.push(`itemType: smart_wearable_v1`)
     }
+
+    if (rarities && rarities.length > 0) {
+      where.push(
+        `searchWearableRarity_in: [${rarities
+          .map((rarity) => `"${rarity}"`)
+          .join(',')}]`
+      )
+    }
   }
 
   if (!category || category === NFTCategory.EMOTE) {
@@ -260,6 +267,20 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       } else if (hasMale && hasFemale) {
         where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
       }
+    }
+
+    if (filters.emotePlayMode) {
+      where.push(
+        `searchEmoteLoop: ${filters.emotePlayMode === EmotePlayMode.LOOP}`
+      )
+    }
+
+    if (rarities && rarities.length > 0) {
+      where.push(
+        `searchEmoteRarity_in: [${rarities
+          .map((rarity) => `"${rarity}"`)
+          .join(',')}]`
+      )
     }
   }
 

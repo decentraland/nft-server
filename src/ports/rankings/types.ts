@@ -1,4 +1,10 @@
-import { Account, Network, Rarity, WearableCategory } from '@dcl/schemas'
+import {
+  Account,
+  EmoteCategory,
+  Network,
+  Rarity,
+  WearableCategory,
+} from '@dcl/schemas'
 import { FetchOptions } from '../merger/types'
 
 export enum RankingsSortBy {
@@ -10,7 +16,7 @@ export type RankingsFilters = {
   from: number
   first?: number
   rarity?: Rarity
-  category?: WearableCategory
+  category?: WearableCategory | EmoteCategory
   network?: Network
   sortBy?: RankingsSortBy
 }
@@ -67,7 +73,8 @@ export type CollectorRank = Pick<Account, 'id'> & {
 export type RankingEntityResponse = ItemRank | CreatorRank | CollectorRank
 
 export enum RankingEntity {
-  ITEMS = 'items',
+  WEARABLES = 'wearables',
+  EMOTES = 'emotes',
   CREATORS = 'creators',
   COLLECTORS = 'collectors',
 }

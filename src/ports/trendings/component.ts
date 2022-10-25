@@ -73,7 +73,7 @@ export function createTrendingsComponent(
           Object.keys(trendingSales).map((key) => {
             const [contractAddress, itemId] = key.split('-')
             return itemsComponent.fetch({
-              contractAddress,
+              contractAddresses: [contractAddress],
               itemId: itemId || undefined,
             })
           })
@@ -103,7 +103,13 @@ export function createTrendingsComponent(
       [...Object.entries(trendingSales)].sort((a, b) => {
         const itemA = findItemByItemId(items, a[0])
         const itemB = findItemByItemId(items, b[0])
-        return !!itemA && !!itemB && new BN(itemB.price)
+        if (!itemA) {
+          return 1
+        }
+        if (!itemB) {
+          return -1
+        }
+        return new BN(itemB.price)
           .mul(new BN(b[1]))
           .gt(new BN(itemA.price).mul(new BN(a[1])))
           ? 1

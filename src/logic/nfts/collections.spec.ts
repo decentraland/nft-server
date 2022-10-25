@@ -67,6 +67,7 @@ describe('when building a result from the collections subgraph fragment', () => 
           category: EmoteCategory.DANCE,
           rarity: Rarity.LEGENDARY,
           bodyShapes: [BodyShape.MALE, BodyShape.FEMALE],
+          loop: false,
         },
       }
     })
@@ -79,6 +80,7 @@ describe('when building a result from the collections subgraph fragment', () => 
         category: EmoteCategory.DANCE,
         bodyShapes: [BodyShape.MALE, BodyShape.FEMALE],
         rarity: Rarity.LEGENDARY,
+        loop: false
       })
     })
   })

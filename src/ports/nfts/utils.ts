@@ -1,4 +1,5 @@
 import {
+  EmotePlayMode,
   NFTCategory,
   NFTFilters,
   NFTSortBy,
@@ -83,14 +84,6 @@ export function getFetchQuery(
     where.push(`searchText_contains: "${filters.search.trim().toLowerCase()}"`)
   }
 
-  if (filters.itemRarities && filters.itemRarities.length > 0) {
-    where.push(
-      `searchWearableRarity_in: [${filters.itemRarities
-        .map((rarity) => `"${rarity}"`)
-        .join(',')}]`
-    )
-  }
-
   if (filters.contractAddresses && filters.contractAddresses.length > 0) {
     where.push(
       `contractAddress_in: [${filters.contractAddresses
@@ -128,6 +121,14 @@ export function getFetchQuery(
         where.push(`searchWearableBodyShapes_contains: [BaseMale, BaseFemale]`)
       }
     }
+
+    if (filters.itemRarities && filters.itemRarities.length > 0) {
+      where.push(
+        `searchWearableRarity_in: [${filters.itemRarities
+          .map((rarity) => `"${rarity}"`)
+          .join(',')}]`
+      )
+    }
   }
 
   if (!filters.category || filters.category === NFTCategory.EMOTE) {
@@ -146,6 +147,20 @@ export function getFetchQuery(
       } else if (hasMale && hasFemale) {
         where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
       }
+    }
+
+    if (filters.emotePlayMode) {
+      where.push(
+        `searchEmoteLoop: ${filters.emotePlayMode === EmotePlayMode.LOOP}`
+      )
+    }
+
+    if (filters.itemRarities && filters.itemRarities.length > 0) {
+      where.push(
+        `searchEmoteRarity_in: [${filters.itemRarities
+          .map((rarity) => `"${rarity}"`)
+          .join(',')}]`
+      )
     }
   }
 
