@@ -270,6 +270,7 @@ export function marketplaceShouldFetch(filters: NFTFilters) {
     filters.itemId ||
     filters.isWearableSmart ||
     filters.isOnRent ||
+    filters.status !== undefined ||
     hasAProhibitedSortBySet
   ) {
     return false

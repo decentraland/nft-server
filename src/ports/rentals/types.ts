@@ -7,7 +7,7 @@ export type IRentalsComponent = {
 
   getRentalsListingsOfNFTs(
     nftIds: string[],
-    status?: RentalStatus[]
+    status?: RentalStatus | RentalStatus[]
   ): Promise<RentalListing[]>
 }
 

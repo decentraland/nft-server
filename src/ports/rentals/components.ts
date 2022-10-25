@@ -46,10 +46,13 @@ export function createRentalsComponent(
     parameters.lessor = filters.owner
     parameters.tenant = filters.tenant
     // If the status is not specified, always ask for the open rentals
-    parameters.status =
-      filters.status && filters.status.length > 0
-        ? filters.status
-        : [RentalStatus.OPEN]
+    if (!filters.status) {
+      parameters.status = [RentalStatus.OPEN]
+    } else if (Array.isArray(filters.status) && filters.status.length > 0) {
+      parameters.status = filters.status
+    } else {
+      parameters.status = [filters.status as RentalStatus]
+    }
     parameters.tokenId = filters.tokenId
     parameters.network = filters.network
 
@@ -121,7 +124,7 @@ export function createRentalsComponent(
 
   async function getRentalsListingsOfNFTs(
     nftIds: string[],
-    status?: RentalStatus[]
+    status?: RentalStatus | RentalStatus[]
   ): Promise<RentalListing[]> {
     const baseUrl = `${rentalsUrl}/v1/rentals-listings${buildGetRentalsParameters(
       {

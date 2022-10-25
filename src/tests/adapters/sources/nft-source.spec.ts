@@ -4,6 +4,7 @@ import {
   NFTFilters,
   NFTSortBy,
   RentalListing,
+  RentalStatus,
 } from '@dcl/schemas'
 import { createNFTsSource } from '../../../adapters/sources/nfts'
 import {
@@ -27,7 +28,7 @@ let fetchByTokenIdsMock: jest.Mock
 let countMock: jest.Mock
 let shouldFetchMock: jest.Mock
 let getRentalsListingsMock: jest.Mock
-let getOpenRentalsListingsOfNFTsMock: jest.Mock
+let getRentalsListingsOfNFTsMock: jest.Mock
 
 beforeEach(() => {
   fetchMock = jest.fn()
@@ -36,7 +37,7 @@ beforeEach(() => {
   fetchOneMock = jest.fn()
   shouldFetchMock = jest.fn()
   getRentalsListingsMock = jest.fn()
-  getOpenRentalsListingsOfNFTsMock = jest.fn()
+  getRentalsListingsOfNFTsMock = jest.fn()
 
   nftComponentMock = {
     fetch: fetchMock,
@@ -50,7 +51,7 @@ beforeEach(() => {
     isRentalsEnabled: true,
     rentals: {
       getRentalsListings: getRentalsListingsMock,
-      getOpenRentalsListingsOfNFTs: getOpenRentalsListingsOfNFTsMock,
+      getRentalsListingsOfNFTs: getRentalsListingsOfNFTsMock,
     },
   }
 
@@ -135,8 +136,8 @@ describe('when fetching nfts', () => {
       )
       shouldFetchMock.mockReturnValueOnce(true)
       fetchMock.mockResolvedValueOnce(allNfts)
-      getOpenRentalsListingsOfNFTsMock.mockResolvedValueOnce(rentalListings)
-      result = await nftSource.fetch({})
+      getRentalsListingsOfNFTsMock.mockResolvedValueOnce(rentalListings)
+      result = await nftSource.fetch({ status: [RentalStatus.EXECUTED] })
     })
 
     it('should resolve to a list of NFTs enhanced with their rental', () => {
@@ -156,9 +157,10 @@ describe('when fetching nfts', () => {
     })
 
     it('should have queried the rentals of all LAND nfts', async () => {
-      expect(getOpenRentalsListingsOfNFTsMock).toHaveBeenCalledWith(
+      expect(getRentalsListingsOfNFTsMock).toHaveBeenCalledWith(
         [...nftsWithoutRentals, ...nftsWithRentals].map(
-          (nftResults) => nftResults.nft.id
+          (nftResults) => nftResults.nft.id,
+          [RentalStatus.EXECUTED]
         )
       )
     })
@@ -193,7 +195,7 @@ describe('when fetching nfts', () => {
           } as RentalListing)
       )
       fetchMock.mockResolvedValueOnce(nfts)
-      getOpenRentalsListingsOfNFTsMock.mockResolvedValueOnce(rentalListings)
+      getRentalsListingsOfNFTsMock.mockResolvedValueOnce(rentalListings)
       options.shouldFetch = undefined
     })
 
@@ -242,7 +244,7 @@ describe('when fetching nfts', () => {
     })
 
     it('should not enhance the NFTs with rentals', () => {
-      expect(getOpenRentalsListingsOfNFTsMock).not.toHaveBeenCalled()
+      expect(getRentalsListingsOfNFTsMock).not.toHaveBeenCalled()
     })
   })
 
@@ -276,7 +278,7 @@ describe('when fetching nfts', () => {
     })
 
     it('should not enhance the NFTs with rentals', () => {
-      expect(getOpenRentalsListingsOfNFTsMock).not.toHaveBeenCalled()
+      expect(getRentalsListingsOfNFTsMock).not.toHaveBeenCalled()
     })
   })
 
@@ -312,7 +314,7 @@ describe('when fetching nfts', () => {
       }))
       shouldFetchMock.mockReturnValueOnce(true)
       fetchMock.mockResolvedValueOnce(nfts)
-      getOpenRentalsListingsOfNFTsMock.mockRejectedValueOnce(
+      getRentalsListingsOfNFTsMock.mockRejectedValueOnce(
         new Error('An error occurred')
       )
     })

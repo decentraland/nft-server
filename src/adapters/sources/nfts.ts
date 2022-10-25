@@ -1,9 +1,4 @@
-import {
-  NFTFilters,
-  NFTSortBy,
-  RentalListing,
-  RentalStatus,
-} from '@dcl/schemas'
+import { NFTFilters, NFTSortBy, RentalListing } from '@dcl/schemas'
 import {
   buildNftId,
   convertNFTResultToSortableResult,
@@ -33,7 +28,7 @@ export function createNFTsSource(
       nftResults
         .filter((nftResult) => isLAND(nftResult))
         .map((nftResult) => buildNftId(nftResult)),
-      nftFilters.status ?? [RentalStatus.OPEN]
+      nftFilters.status
     )
 
     const rentalsByNftId: Record<string, RentalListing> = rentalListings.reduce(
