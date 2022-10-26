@@ -251,7 +251,6 @@ export function getCollectionsExtraWhere(options: NFTFilters) {
 export function collectionsShouldFetch(filters: NFTFilters) {
   if (
     filters.isLand ||
-    filters.status !== undefined ||
     (filters.network && filters.network !== Network.MATIC) ||
     (filters.category &&
       filters.category !== NFTCategory.WEARABLE &&

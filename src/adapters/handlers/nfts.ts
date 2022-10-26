@@ -58,7 +58,7 @@ export function createNFTsHandler(
     const itemRarities = params.getList<Rarity>('itemRarity', Rarity)
     const itemId = params.getString('itemId')
     const network = params.getValue<Network>('network', Network)
-    const status = params.getList<RentalStatus>('status', RentalStatus)
+    const rentalStatus = params.getList<RentalStatus>('status', RentalStatus)
 
     return asJSON(() =>
       nfts.fetchAndCount({
@@ -84,7 +84,7 @@ export function createNFTsHandler(
         itemRarities,
         itemId,
         network,
-        status,
+        rentalStatus,
       })
     )
   }
@@ -99,12 +99,15 @@ export function createNFTHandler(
   return async (context) => {
     const { contractAddress, tokenId } = context.params
     const queryParameters = new Params(context.url.searchParams)
-    const status = queryParameters.getList<RentalStatus>('status', RentalStatus)
+    const rentalStatus = queryParameters.getList<RentalStatus>(
+      'rentalStatus',
+      RentalStatus
+    )
     return asJSON(async () => {
       const results = await nfts.fetch({
         contractAddresses: [contractAddress],
         tokenId,
-        status,
+        rentalStatus,
       })
 
       if (results.length === 0) {

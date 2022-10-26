@@ -46,12 +46,15 @@ export function createRentalsComponent(
     parameters.lessor = filters.owner
     parameters.tenant = filters.tenant
     // If the status is not specified, always ask for the open rentals
-    if (!filters.status) {
+    if (!filters.rentalStatus) {
       parameters.status = [RentalStatus.OPEN]
-    } else if (Array.isArray(filters.status) && filters.status.length > 0) {
-      parameters.status = filters.status
+    } else if (
+      Array.isArray(filters.rentalStatus) &&
+      filters.rentalStatus.length > 0
+    ) {
+      parameters.status = filters.rentalStatus
     } else {
-      parameters.status = [filters.status as RentalStatus]
+      parameters.status = [filters.rentalStatus as RentalStatus]
     }
     parameters.tokenId = filters.tokenId
     parameters.network = filters.network

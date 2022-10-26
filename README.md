@@ -30,6 +30,7 @@ type NFT = {
   contractAddress: string
   tokenId: string
   activeOrderId: string | null
+  activeRentalId: string | null
   owner: string
   name: string
   category: NFTCategory
@@ -42,6 +43,8 @@ type NFT = {
   chainId: ChainId
   createdAt: number
   updatedAt: number
+  order: Order | null
+  rental: Rental | null
 }
 ```
 
@@ -65,6 +68,8 @@ type NFT = {
 - `itemRarity`: Filter results by `Rarity`. It supports multiple values by adding the query param multiple times. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
 - `itemId`: Filter results by `itemId`. Type `string`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
+- `isOnRent`: Filter results by NFTs that are on rent. Possible values: `true`, `false`
+- `rentalStatus`: Filter results by `Rental status`. Can be used only when querying NFTs that are on rent using the `isOnRent` flag. Possible values: `open`, `executed`, `claimed`, `cancelled`.
 
 ## Items
 
