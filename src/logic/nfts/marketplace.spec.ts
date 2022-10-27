@@ -1,4 +1,4 @@
-import { NFTCategory } from '@dcl/schemas'
+import { NFTCategory, RentalStatus } from '@dcl/schemas'
 import {
   fromMarketplaceNFTFragment,
   MarketplaceNFTFragment,
@@ -110,11 +110,45 @@ describe('when building a result from the marketplace fragment', () => {
 })
 
 describe('when deciding if the marketplace should fetch', () => {
+  let rentalStatus: RentalStatus[] | undefined
+
   PROHIBITED_SORT_BYS.forEach((sortBy) => {
     describe(`and the filter to sort by is ${sortBy} which is not permitted`, () => {
       it('should return false', () => {
         expect(marketplaceShouldFetch({ sortBy })).toBe(false)
       })
+    })
+  })
+
+  describe('and the filter rentalStatus is set and no prohibited sort by is set', () => {
+    describe('and the list of rental statuses is empty', () => {
+      beforeEach(() => {
+        rentalStatus = []
+      })
+
+      it('should return true', () => {
+        expect(marketplaceShouldFetch({ rentalStatus })).toBe(true)
+      })
+    })
+
+    describe('and the list of rental statuses is not empty', () => {
+      beforeEach(() => {
+        rentalStatus = [RentalStatus.CLAIMED]
+      })
+
+      it('should return false', () => {
+        expect(marketplaceShouldFetch({ rentalStatus })).toBe(false)
+      })
+    })
+  })
+
+  describe('and the filter rentalStatus is not set and no prohibited sort by is set', () => {
+    beforeEach(() => {
+      rentalStatus = undefined
+    })
+
+    it('should return false', () => {
+      expect(marketplaceShouldFetch({ rentalStatus })).toBe(true)
     })
   })
 })
