@@ -1,9 +1,4 @@
-import {
-  NFTFilters,
-  NFTSortBy,
-  RentalListing,
-  RentalStatus,
-} from '@dcl/schemas'
+import { NFTFilters, NFTSortBy, RentalListing } from '@dcl/schemas'
 import { shouldFetch } from '../../logic/nfts/rentals'
 import { convertNFTResultToSortableResult } from '../../logic/nfts/utils'
 import {
@@ -59,10 +54,7 @@ export function createRentalsNFTSource(
       return []
     }
 
-    const paginatedRentalListings = await rentals.getRentalsListings({
-      ...filters,
-      status: RentalStatus.OPEN,
-    })
+    const paginatedRentalListings = await rentals.getRentalsListings(filters)
     return enhanceRentalListing(paginatedRentalListings.data.results)
   }
 

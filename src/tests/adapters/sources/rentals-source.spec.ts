@@ -11,7 +11,7 @@ let rentalsNFTSource: IMergerComponent.Source<NFTResult, NFTFilters, NFTSortBy>
 let rentalsComponentMock: IRentalsComponent
 let nftsComponentsMock: INFTsComponent
 let getRentalsListingsMock: jest.Mock
-let getOpenRentalsListingsOfNFTsMock: jest.Mock
+let getRentalsListingsOfNFTsMock: jest.Mock
 let fetchMock: jest.Mock
 let fetchOneMock: jest.Mock
 let fetchByTokenIdsMock: jest.Mock
@@ -22,13 +22,13 @@ let nftResults: NFTResult[]
 beforeEach(() => {
   getRentalsListingsMock = jest.fn()
   fetchByTokenIdsMock = jest.fn()
-  getOpenRentalsListingsOfNFTsMock = jest.fn()
+  getRentalsListingsOfNFTsMock = jest.fn()
   fetchMock = jest.fn()
   fetchOneMock = jest.fn()
   countMock = jest.fn()
   rentalsComponentMock = {
     getRentalsListings: getRentalsListingsMock,
-    getOpenRentalsListingsOfNFTs: getOpenRentalsListingsOfNFTsMock,
+    getRentalsListingsOfNFTs: getRentalsListingsOfNFTsMock,
   }
   nftsComponentsMock = {
     fetch: fetchMock,

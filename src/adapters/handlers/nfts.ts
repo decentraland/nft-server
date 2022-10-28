@@ -5,6 +5,7 @@ import {
   NFTCategory,
   NFTSortBy,
   Rarity,
+  RentalStatus,
   WearableCategory,
   WearableGender,
 } from '@dcl/schemas'
@@ -48,12 +49,19 @@ export function createNFTsHandler(
       'emoteGender',
       WearableGender
     )
-    const emotePlayMode = params.getValue<EmotePlayMode>('emotePlayMode', EmotePlayMode)
+    const emotePlayMode = params.getValue<EmotePlayMode>(
+      'emotePlayMode',
+      EmotePlayMode
+    )
     const contractAddresses = params.getAddressList('contractAddress')
     const tokenId = params.getString('tokenId')
     const itemRarities = params.getList<Rarity>('itemRarity', Rarity)
     const itemId = params.getString('itemId')
     const network = params.getValue<Network>('network', Network)
+    const rentalStatus = params.getList<RentalStatus>(
+      'rentalStatus',
+      RentalStatus
+    )
 
     return asJSON(() =>
       nfts.fetchAndCount({
@@ -79,6 +87,7 @@ export function createNFTsHandler(
         itemRarities,
         itemId,
         network,
+        rentalStatus,
       })
     )
   }
@@ -92,11 +101,16 @@ export function createNFTHandler(
   const { nfts } = components
   return async (context) => {
     const { contractAddress, tokenId } = context.params
-
+    const queryParameters = new Params(context.url.searchParams)
+    const rentalStatus = queryParameters.getList<RentalStatus>(
+      'rentalStatus',
+      RentalStatus
+    )
     return asJSON(async () => {
       const results = await nfts.fetch({
         contractAddresses: [contractAddress],
         tokenId,
+        rentalStatus,
       })
 
       if (results.length === 0) {

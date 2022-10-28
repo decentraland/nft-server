@@ -191,7 +191,7 @@ describe('when getting rental listings', () => {
         contractAddresses: filter.contractAddresses,
         tokenId: filter.tokenId,
         network: filter.network,
-        status: RentalStatus.OPEN,
+        status: [RentalStatus.OPEN],
       }
     })
 
@@ -250,7 +250,7 @@ describe('when getting the open rental listings by NFT id', () => {
         json: jest.fn().mockResolvedValueOnce(response),
       })
 
-      result = await rentalsComponent.getOpenRentalsListingsOfNFTs(rentalIds)
+      result = await rentalsComponent.getRentalsListingsOfNFTs(rentalIds)
     })
 
     it('should fetch and return the rental listings once', () => {
@@ -307,7 +307,7 @@ describe('when getting the open rental listings by NFT id', () => {
         })
       })
 
-      result = await rentalsComponent.getOpenRentalsListingsOfNFTs(rentalIds)
+      result = await rentalsComponent.getRentalsListingsOfNFTs(rentalIds)
     })
 
     it('should fetch and return the rental listings twice', () => {
@@ -344,7 +344,7 @@ describe('when getting the open rental listings by NFT id', () => {
 
     it('should throw an error with the message returned in the JSON message', () => {
       return expect(
-        rentalsComponent.getOpenRentalsListingsOfNFTs(rentalIds)
+        rentalsComponent.getRentalsListingsOfNFTs(rentalIds)
       ).rejects.toThrowError(error)
     })
   })

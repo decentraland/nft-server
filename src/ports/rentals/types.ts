@@ -1,11 +1,14 @@
-import { NFTFilters, RentalListing } from '@dcl/schemas'
+import { NFTFilters, RentalListing, RentalStatus } from '@dcl/schemas'
 
 export type IRentalsComponent = {
   getRentalsListings(
     filters: NFTFilters
   ): Promise<SignaturesServerPaginatedResponse<RentalListing[]>>
 
-  getOpenRentalsListingsOfNFTs(nftIds?: string[]): Promise<RentalListing[]>
+  getRentalsListingsOfNFTs(
+    nftIds: string[],
+    status?: RentalStatus | RentalStatus[]
+  ): Promise<RentalListing[]>
 }
 
 export type SignaturesServerPaginatedResponse<T> = {
