@@ -11,8 +11,11 @@ import {
 } from '@dcl/schemas'
 import pLimit from 'p-limit'
 import { IFetchComponent } from '@well-known-components/http-server'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import {
+  GetRentalAssetFilters,
   IRentalsComponent,
+  RentalAsset,
   SignaturesServerErrorResponse,
   SignaturesServerPaginatedResponse,
 } from './types'
@@ -23,7 +26,8 @@ const MAX_URL_LENGTH = 2048
 
 export function createRentalsComponent(
   { fetch: fetchComponent }: { fetch: IFetchComponent },
-  rentalsUrl: string
+  rentalsUrl: string,
+  rentalsSubgraph: ISubgraphComponent
 ): IRentalsComponent {
   function buildGetRentalsParameters(
     filters: NFTFilters &
@@ -56,7 +60,11 @@ export function createRentalsComponent(
     } else {
       parameters.status = [filters.rentalStatus as RentalStatus]
     }
-    parameters.tokenId = filters.tokenId
+
+    if (filters.tokenIds) {
+      parameters.tokenId = filters.tokenIds[0]
+    }
+
     parameters.network = filters.network
 
     switch (filters.sortBy) {
@@ -207,8 +215,29 @@ export function createRentalsComponent(
     return parsedResult
   }
 
+  async function getRentalAssets(
+    _filters: GetRentalAssetFilters
+  ): Promise<RentalAsset[]> {
+    const { rentalAssets } = await rentalsSubgraph.query<{
+      rentalAssets: RentalAsset[]
+    }>(`
+      {
+        rentalAssets {
+          id
+          contractAddress
+          tokenId
+          lessor
+          isClaimed
+        }
+      }
+    `)
+
+    return rentalAssets
+  }
+
   return {
     getRentalsListings,
     getRentalsListingsOfNFTs,
+    getRentalAssets,
   }
 }

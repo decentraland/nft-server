@@ -107,6 +107,7 @@ import { createRankingsComponent } from './ports/rankings/component'
 import { createTrendingsComponent } from './ports/trendings/component'
 import { createRentalsComponent } from './ports/rentals/components'
 import { createRentalsNFTSource } from './adapters/sources/rentals'
+import { createRentalsNFTComponent } from './ports/nfts/rentalsNFTComponent'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -160,6 +161,11 @@ async function initComponents(): Promise<AppComponents> {
   const collectionsSubgraph = await createSubgraphComponent(
     { logs, config, fetch, metrics },
     await config.requireString('COLLECTIONS_SUBGRAPH_URL')
+  )
+
+  const rentalsSubgraph = await createSubgraphComponent(
+    { logs, config, fetch, metrics },
+    await config.requireString('RENTALS_SUBGRAPH_URL')
   )
 
   // orders
@@ -247,6 +253,17 @@ async function initComponents(): Promise<AppComponents> {
     },
   })
 
+  // Rentals component
+  const SIGNATURES_SERVER_URL = await config.requireString(
+    'SIGNATURES_SERVER_URL'
+  )
+
+  const rentalsComponent = createRentalsComponent(
+    { fetch },
+    SIGNATURES_SERVER_URL,
+    rentalsSubgraph
+  )
+
   // nfts
   const marketplaceNFTs = createNFTComponent({
     subgraph: marketplaceSubgraph,
@@ -268,14 +285,10 @@ async function initComponents(): Promise<AppComponents> {
     getExtraVariables: getCollectionsExtraVariables,
   })
 
-  // Rentals component
-  const SIGNATURES_SERVER_URL = await config.requireString(
-    'SIGNATURES_SERVER_URL'
-  )
-  const rentalComponent = createRentalsComponent(
-    { fetch },
-    SIGNATURES_SERVER_URL
-  )
+  const rentalsNFTs = createRentalsNFTComponent({
+    rentalsComponent: rentalsComponent,
+    marketplaceNFTsComponent: marketplaceNFTs,
+  })
 
   const nftSources: IMergerComponent.Source<
     NFTResult,
@@ -285,15 +298,20 @@ async function initComponents(): Promise<AppComponents> {
     createNFTsSource(marketplaceNFTs, {
       shouldFetch: marketplaceShouldFetch,
       isRentalsEnabled,
-      rentals: rentalComponent,
+      rentals: rentalsComponent,
     }),
     createNFTsSource(collectionsNFTs, {
       shouldFetch: collectionsShouldFetch,
     }),
+    createNFTsSource(rentalsNFTs, {
+      shouldFetch: marketplaceShouldFetch,
+      isRentalsEnabled,
+      rentals: rentalsComponent,
+    }),
   ]
 
   if (isRentalsEnabled) {
-    nftSources.push(createRentalsNFTSource(rentalComponent, marketplaceNFTs))
+    nftSources.push(createRentalsNFTSource(rentalsComponent, marketplaceNFTs))
   }
 
   const nfts = createMergerComponent<NFTResult, NFTFilters, NFTSortBy>({
