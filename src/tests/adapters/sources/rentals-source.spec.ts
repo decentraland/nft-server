@@ -29,6 +29,7 @@ beforeEach(() => {
   rentalsComponentMock = {
     getRentalsListings: getRentalsListingsMock,
     getRentalsListingsOfNFTs: getRentalsListingsOfNFTsMock,
+    getRentalAssets: jest.fn(),
   }
   nftsComponentsMock = {
     fetch: fetchMock,

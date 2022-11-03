@@ -52,6 +52,7 @@ beforeEach(() => {
     rentals: {
       getRentalsListings: getRentalsListingsMock,
       getRentalsListingsOfNFTs: getRentalsListingsOfNFTsMock,
+      getRentalAssets: jest.fn(),
     },
   }
 

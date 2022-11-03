@@ -84,7 +84,7 @@ export function getFetchQuery(
     where.push(`searchText_contains: "${filters.search.trim().toLowerCase()}"`)
   }
 
-  if (filters.contractAddresses && filters.contractAddresses.length > 0) {
+  if (filters.contractAddresses) {
     where.push(
       `contractAddress_in: [${filters.contractAddresses
         .map((contract) => `"${contract}"`)

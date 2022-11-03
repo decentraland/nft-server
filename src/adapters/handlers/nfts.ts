@@ -53,8 +53,21 @@ export function createNFTsHandler(
       'emotePlayMode',
       EmotePlayMode
     )
-    const contractAddresses = params.getAddressList('contractAddress')
-    const tokenIds = params.getList('tokenId')
+
+    let contractAddresses: string[] | undefined = params.getAddressList(
+      'contractAddress'
+    )
+
+    if (contractAddresses.length === 0) {
+      contractAddresses = undefined
+    }
+
+    let tokenIds: string[] | undefined = params.getList('tokenId')
+
+    if (tokenIds.length === 0) {
+      tokenIds = undefined
+    }
+
     const itemRarities = params.getList<Rarity>('itemRarity', Rarity)
     const itemId = params.getString('itemId')
     const network = params.getValue<Network>('network', Network)
