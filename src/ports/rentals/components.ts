@@ -221,7 +221,7 @@ export function createRentalsComponent(
     function getSubgraphQueryOptions() {
       const where: string[] = []
 
-      function tryAdd(xs: string[] | undefined, name: string) {
+      function handleList(xs: string[] | undefined, name: string) {
         if (xs) {
           if (xs.length === 1) {
             where.push(`${name}:"${xs[0]}"`)
@@ -231,9 +231,13 @@ export function createRentalsComponent(
         }
       }
 
-      tryAdd(filters.contractAddresses, 'contractAddress')
-      tryAdd(filters.tokenIds, 'tokenId')
-      tryAdd(filters.lessors, 'lessor')
+      handleList(filters.contractAddresses, 'contractAddress')
+      handleList(filters.tokenIds, 'tokenId')
+      handleList(filters.lessors, 'lessor')
+
+      if (filters.isClaimed !== undefined) {
+        where.push(`isClaimed:${filters.isClaimed}`)
+      }
 
       if (where.length === 0) {
         return ''

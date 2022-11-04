@@ -42,4 +42,5 @@ export type GetRentalAssetFilters = {
   contractAddresses?: string[]
   tokenIds?: string[]
   lessors?: string[]
+  isClaimed?: boolean
 }

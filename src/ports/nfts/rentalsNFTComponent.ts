@@ -22,6 +22,7 @@ export function createRentalsNFTComponent(options: {
       lessors: [options.owner],
       contractAddresses,
       tokenIds: options.tokenIds,
+      isClaimed: false,
     })
 
     delete options.owner

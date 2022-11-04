@@ -92,6 +92,18 @@ export function getFetchQuery(
     )
   }
 
+  if (filters.tokenIds) {
+    if (filters.tokenIds.length === 1) {
+      where.push(`tokenId: "${filters.tokenIds[0]}"`)
+    } else {
+      where.push(
+        `tokenId_in: [${filters.tokenIds
+          .map((tokenId) => `"${tokenId}"`)
+          .join(',')}]`
+      )
+    }
+  }
+
   if (filters.sortBy === NFTSortBy.RECENTLY_SOLD) {
     where.push(`soldAt_not: null`)
   }
