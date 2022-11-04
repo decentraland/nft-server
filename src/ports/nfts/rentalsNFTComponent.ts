@@ -14,12 +14,8 @@ export function createRentalsNFTComponent(options: {
   } = options
 
   async function fetch(options: NFTFilters): Promise<NFTResult[]> {
-    if (!options.owner || !options.isLand) {
-      return []
-    }
-
     const rentalAssets = await rentalsComponent.getRentalAssets({
-      lessors: [options.owner],
+      lessors: [options.owner!],
       contractAddresses,
       tokenIds: options.tokenIds,
       isClaimed: false,

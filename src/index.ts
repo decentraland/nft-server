@@ -73,6 +73,7 @@ import {
   getCollectionsFragment,
   getCollectionsOrderBy,
 } from './logic/nfts/collections'
+import { rentalNFTsShouldFetch } from './logic/nfts/rentals'
 import { NFTResult } from './ports/nfts/types'
 import { NFT_DEFAULT_SORT_BY } from './ports/nfts/utils'
 import { createNFTsSource } from './adapters/sources/nfts'
@@ -310,7 +311,7 @@ async function initComponents(): Promise<AppComponents> {
       shouldFetch: collectionsShouldFetch,
     }),
     createNFTsSource(rentalsNFTs, {
-      shouldFetch: marketplaceShouldFetch,
+      shouldFetch: rentalNFTsShouldFetch,
       isRentalsEnabled,
       rentals: rentalsComponent,
     }),
