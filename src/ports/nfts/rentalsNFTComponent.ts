@@ -5,8 +5,13 @@ import { INFTsComponent, NFTResult } from './types'
 export function createRentalsNFTComponent(options: {
   rentalsComponent: IRentalsComponent
   marketplaceNFTsComponent: INFTsComponent
+  contractAddresses: string[]
 }): INFTsComponent {
-  const { rentalsComponent, marketplaceNFTsComponent } = options
+  const {
+    rentalsComponent,
+    marketplaceNFTsComponent,
+    contractAddresses,
+  } = options
 
   async function fetch(options: NFTFilters): Promise<NFTResult[]> {
     if (!options.owner || !options.isLand) {
@@ -15,12 +20,13 @@ export function createRentalsNFTComponent(options: {
 
     const rentalAssets = await rentalsComponent.getRentalAssets({
       lessors: [options.owner],
-      contractAddresses: options.contractAddresses,
+      contractAddresses,
       tokenIds: options.tokenIds,
     })
 
     delete options.owner
     options.tokenIds = rentalAssets.map((asset) => asset.tokenId)
+    options.contractAddresses = contractAddresses
 
     return marketplaceNFTsComponent.fetch(options)
   }

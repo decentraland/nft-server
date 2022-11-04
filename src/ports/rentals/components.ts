@@ -216,13 +216,37 @@ export function createRentalsComponent(
   }
 
   async function getRentalAssets(
-    _filters: GetRentalAssetFilters
+    filters: GetRentalAssetFilters
   ): Promise<RentalAsset[]> {
+    function getSubgraphQueryOptions() {
+      const where: string[] = []
+
+      function tryAdd(xs: string[] | undefined, name: string) {
+        if (xs) {
+          if (xs.length === 1) {
+            where.push(`${name}:"${xs[0]}"`)
+          } else {
+            where.push(`${name}_in:[${xs.map((x) => `"${x}"`).join(',')}]`)
+          }
+        }
+      }
+
+      tryAdd(filters.contractAddresses, 'contractAddress')
+      tryAdd(filters.tokenIds, 'tokenId')
+      tryAdd(filters.lessors, 'lessor')
+
+      if (where.length === 0) {
+        return ''
+      }
+
+      return `(where:{${where.join(',')}})`
+    }
+
     const { rentalAssets } = await rentalsSubgraph.query<{
       rentalAssets: RentalAsset[]
     }>(`
       {
-        rentalAssets {
+        rentalAssets${getSubgraphQueryOptions()} {
           id
           contractAddress
           tokenId

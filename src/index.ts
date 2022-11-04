@@ -288,6 +288,12 @@ async function initComponents(): Promise<AppComponents> {
   const rentalsNFTs = createRentalsNFTComponent({
     rentalsComponent: rentalsComponent,
     marketplaceNFTsComponent: marketplaceNFTs,
+    contractAddresses: (() =>
+      getMarketplaceContracts(marketplaceChainId)
+        .filter(
+          (contract) => contract.name === 'LAND' || contract.name === 'Estates'
+        )
+        .map((contract) => contract.address.toLowerCase()))(),
   })
 
   const nftSources: IMergerComponent.Source<
