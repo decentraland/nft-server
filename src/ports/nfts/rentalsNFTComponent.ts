@@ -28,8 +28,8 @@ export function createRentalsNFTComponent(options: {
     return marketplaceNFTsComponent.fetch(options)
   }
 
-  async function count(_options: NFTFilters): Promise<number> {
-    return 0
+  async function count(options: NFTFilters): Promise<number> {
+    return (await fetch(options)).length
   }
 
   async function fetchOne(
