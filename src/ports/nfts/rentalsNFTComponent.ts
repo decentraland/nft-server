@@ -1,5 +1,5 @@
 import { NFTFilters } from '@dcl/schemas'
-import { IRentalsComponent } from '../rentals/types'
+import { IRentalsComponent, RentalAsset } from '../rentals/types'
 import { INFTsComponent, NFTResult } from './types'
 
 export function createRentalsNFTComponent(options: {
@@ -13,8 +13,8 @@ export function createRentalsNFTComponent(options: {
     contractAddresses,
   } = options
 
-  async function fetch(options: NFTFilters): Promise<NFTResult[]> {
-    const rentalAssets = await rentalsComponent.getRentalAssets({
+  async function getRentalAssets(options: NFTFilters): Promise<RentalAsset[]> {
+    return rentalsComponent.getRentalAssets({
       lessors: [options.owner!],
       contractAddresses,
       tokenIds: options.tokenIds,
@@ -22,16 +22,27 @@ export function createRentalsNFTComponent(options: {
       first: options.first,
       skip: options.skip,
     })
+  }
 
+  function updateOptionsForMarketplaceComponent(
+    options: NFTFilters,
+    rentalAssets: RentalAsset[]
+  ) {
     delete options.owner
     options.tokenIds = rentalAssets.map((asset) => asset.tokenId)
     options.contractAddresses = contractAddresses
+  }
 
+  async function fetch(options: NFTFilters): Promise<NFTResult[]> {
+    const rentalAssets = await getRentalAssets(options)
+    updateOptionsForMarketplaceComponent(options, rentalAssets)
     return marketplaceNFTsComponent.fetch(options)
   }
 
   async function count(options: NFTFilters): Promise<number> {
-    return (await fetch(options)).length
+    const rentalAssets = await getRentalAssets(options)
+    updateOptionsForMarketplaceComponent(options, rentalAssets)
+    return marketplaceNFTsComponent.count(options)
   }
 
   async function fetchOne(
