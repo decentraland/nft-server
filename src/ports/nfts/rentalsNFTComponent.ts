@@ -2,6 +2,10 @@ import { NFTFilters } from '@dcl/schemas'
 import { IRentalsComponent, RentalAsset } from '../rentals/types'
 import { INFTsComponent, NFTResult } from './types'
 
+// The recommended maximum amount of elements a subgraph filter_in can handle.
+// For example, if we had a tokenId_in filter, the maximum amount of tokenIds provided would be this number.
+const MAX_SUBGRAPH_QUERY_IN_ELEMENTS = 500
+
 /**
  * This component allows users to retrieve Lands and Estates by owner that are currently owned by the rentals contract.
  * Once a rental starts, the asset is transferred to the rentals contract, so when we want to use the nft server to retrieve
@@ -31,8 +35,11 @@ export function createRentalsNFTComponent(options: {
       contractAddresses,
       tokenIds: options.tokenIds,
       isClaimed: false,
-      first: options.first,
-      skip: options.skip,
+      // In order to avoid pagination issues, we need to fetch all the assets for this owner in the rentals subgraph.
+      // The number is determined by the maximum recommended number of entries a filter_in query can have.
+      // It is improbable that any user will have more than 500 Lands or Estates on rent. But in the case that they do,
+      // retrieved data might be incomplete 💀
+      first: MAX_SUBGRAPH_QUERY_IN_ELEMENTS,
     })
   }
 
