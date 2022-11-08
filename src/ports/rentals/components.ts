@@ -219,9 +219,13 @@ export function createRentalsComponent(
     filters: GetRentalAssetFilters
   ): Promise<RentalAsset[]> {
     function getSubgraphQueryOptions() {
+      const queryOptions: string[] = []
+
+      // Where
+
       const where: string[] = []
 
-      function handleList(xs: string[] | undefined, name: string) {
+      function mapListToFilter(xs: string[] | undefined, name: string) {
         if (xs) {
           if (xs.length === 1) {
             where.push(`${name}:"${xs[0]}"`)
@@ -231,19 +235,35 @@ export function createRentalsComponent(
         }
       }
 
-      handleList(filters.contractAddresses, 'contractAddress')
-      handleList(filters.tokenIds, 'tokenId')
-      handleList(filters.lessors, 'lessor')
+      mapListToFilter(filters.contractAddresses, 'contractAddress')
+      mapListToFilter(filters.tokenIds, 'tokenId')
+      mapListToFilter(filters.lessors, 'lessor')
 
       if (filters.isClaimed !== undefined) {
         where.push(`isClaimed:${filters.isClaimed}`)
       }
 
-      if (where.length === 0) {
+      if (where.length > 0) {
+        queryOptions.push(`where:{${where.join(',')}}`)
+      }
+
+      // First
+
+      if (filters.first !== undefined) {
+        queryOptions.push(`first:${filters.first}`)
+      }
+
+      // Skip
+
+      if (filters.skip !== undefined) {
+        queryOptions.push(`skip:${filters.skip}`)
+      }
+
+      if (queryOptions.length === 0) {
         return ''
       }
 
-      return `(where:{${where.join(',')}})`
+      return `(${queryOptions.join(',')})`
     }
 
     const { rentalAssets } = await rentalsSubgraph.query<{

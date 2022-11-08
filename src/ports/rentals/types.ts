@@ -43,4 +43,6 @@ export type GetRentalAssetFilters = {
   tokenIds?: string[]
   lessors?: string[]
   isClaimed?: boolean
+  first?: number
+  skip?: number
 }
