@@ -55,10 +55,6 @@ export function createNFTComponent<T extends { id: string }>(options: {
         options.tokenIds[0]
       )
       return nft ? [nft] : []
-    } else if (options.tokenIds?.length === 1 && !options.contractAddresses) {
-      throw new Error(
-        'You need to provide a "contractAddress" as well when filtering by "tokenId"'
-      )
     }
 
     const fetchFragments = getFragmentFetcher(options)
