@@ -73,7 +73,6 @@ import {
   getCollectionsFragment,
   getCollectionsOrderBy,
 } from './logic/nfts/collections'
-import { rentalNFTsShouldFetch } from './logic/nfts/rentals'
 import { NFTResult } from './ports/nfts/types'
 import { NFT_DEFAULT_SORT_BY } from './ports/nfts/utils'
 import { createNFTsSource } from './adapters/sources/nfts'
@@ -111,6 +110,7 @@ import { createRentalsNFTSource } from './adapters/sources/rentals'
 import {
   createRentalsNFTComponent,
   getLandAndEstateContractAddresses,
+  rentalNFTComponentShouldFetch,
 } from './ports/nfts/rentalsNFTComponent'
 
 async function initComponents(): Promise<AppComponents> {
@@ -310,15 +310,17 @@ async function initComponents(): Promise<AppComponents> {
     createNFTsSource(collectionsNFTs, {
       shouldFetch: collectionsShouldFetch,
     }),
-    createNFTsSource(rentalsNFTs, {
-      shouldFetch: rentalNFTsShouldFetch,
-      isRentalsEnabled,
-      rentals: rentalsComponent,
-    }),
   ]
 
   if (isRentalsEnabled) {
     nftSources.push(createRentalsNFTSource(rentalsComponent, marketplaceNFTs))
+    nftSources.push(
+      createNFTsSource(rentalsNFTs, {
+        shouldFetch: rentalNFTComponentShouldFetch,
+        isRentalsEnabled,
+        rentals: rentalsComponent,
+      })
+    )
   }
 
   const nfts = createMergerComponent<NFTResult, NFTFilters, NFTSortBy>({

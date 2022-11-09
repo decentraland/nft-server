@@ -49,7 +49,3 @@ export function shouldFetch(filters: NFTFilters): boolean {
     ) && Boolean(filters.isOnRent)
   )
 }
-
-export function rentalNFTsShouldFetch(filters: NFTFilters): boolean {
-  return !!filters.isLand && !!filters.owner
-}

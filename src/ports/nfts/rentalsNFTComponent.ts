@@ -124,3 +124,8 @@ export function getLandAndEstateContractAddresses(
     estate,
   }
 }
+
+// Util function that determines if the rentals nft component should be used.
+export function rentalNFTComponentShouldFetch(filters: NFTFilters): boolean {
+  return !!filters.isLand && !!filters.owner
+}
