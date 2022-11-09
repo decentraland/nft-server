@@ -20,10 +20,7 @@ const MAX_SUBGRAPH_QUERY_IN_ELEMENTS = 500
 export function createRentalsNFTComponent(options: {
   rentalsComponent: IRentalsComponent
   marketplaceNFTsComponent: INFTsComponent
-  contractAddresses: {
-    land: string
-    estate: string
-  }
+  contractAddresses: { land: string; estate: string }
 }): INFTsComponent {
   const {
     rentalsComponent,
@@ -34,13 +31,14 @@ export function createRentalsNFTComponent(options: {
   // Query the rentals subgraph to obtain a list of assets where the provided options.owner is the lessor.
   async function getRentalAssets(options: NFTFilters): Promise<RentalAsset[]> {
     return rentalsComponent.getRentalAssets({
+      // This component is always called when owner is present, so we can assume owner is present here.
       lessors: [options.owner!],
       contractAddresses: [contractAddresses.land, contractAddresses.estate],
       isClaimed: false,
       // In order to avoid pagination issues, we need to fetch all the assets for this owner in the rentals subgraph.
       // The number is determined by the maximum recommended number of entries a filter_in query can have.
-      // It is improbable that any user will have more than 500 Lands or Estates on rent. But in the case that they do,
-      // retrieved data might be incomplete 💀
+      // It is improbable that any user will have more than MAX_SUBGRAPH_QUERY_IN_ELEMENTS Lands or Estates on rent.
+      //But in the case that they do, retrieved data might be incomplete 💀
       first: MAX_SUBGRAPH_QUERY_IN_ELEMENTS,
     })
   }
@@ -52,11 +50,9 @@ export function createRentalsNFTComponent(options: {
   ): NFTFilters {
     // Copy the original options to avoid mutating it as they are used on other calls.
     const options = { ...originalOptions }
-    // The owner was used to query the rentals subgraph.
-    // We need to remove it from here because the owner for the provided rental assets will be the rentals contract.
-    // If we kept the owner here, the query to the marketplace subgraph would return invalid data.
+    // We don't need the owner anymore as we already used it to query the rentals subgraph.
     delete options.owner
-    // Set the tokenIds we want to query the marketplace subgraph with.
+    // Set the ids of the assets we will be looking for in the marketplace subgraph.
     options.ids = rentalAssets.map((asset) => {
       if (asset.contractAddress === contractAddresses.land) {
         return `parcel-${asset.id}`
