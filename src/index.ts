@@ -108,7 +108,10 @@ import { createRankingsComponent } from './ports/rankings/component'
 import { createTrendingsComponent } from './ports/trendings/component'
 import { createRentalsComponent } from './ports/rentals/components'
 import { createRentalsNFTSource } from './adapters/sources/rentals'
-import { createRentalsNFTComponent } from './ports/nfts/rentalsNFTComponent'
+import {
+  createRentalsNFTComponent,
+  getLandAndEstateContractAddresses,
+} from './ports/nfts/rentalsNFTComponent'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -289,29 +292,9 @@ async function initComponents(): Promise<AppComponents> {
   const rentalsNFTs = createRentalsNFTComponent({
     rentalsComponent: rentalsComponent,
     marketplaceNFTsComponent: marketplaceNFTs,
-    contractAddresses: (() => {
-      let land: string | undefined
-      let estate: string | undefined
-
-      const marketplaceContracts = getMarketplaceContracts(marketplaceChainId)
-
-      for (const contract of marketplaceContracts) {
-        if (contract.name === 'LAND') {
-          land = contract.address.toLowerCase()
-        } else if (contract.name === 'Estates') {
-          estate = contract.address.toLowerCase()
-        }
-      }
-
-      if (!land || !estate) {
-        throw new Error('Land and Estate contracts are required')
-      }
-
-      return {
-        land,
-        estate,
-      }
-    })(),
+    contractAddresses: getLandAndEstateContractAddresses(
+      getMarketplaceContracts(marketplaceChainId)
+    ),
   })
 
   const nftSources: IMergerComponent.Source<

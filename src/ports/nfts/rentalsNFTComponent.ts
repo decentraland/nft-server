@@ -1,4 +1,4 @@
-import { NFTFilters } from '@dcl/schemas'
+import { Contract, NFTFilters } from '@dcl/schemas'
 import { IRentalsComponent, RentalAsset } from '../rentals/types'
 import { INFTsComponent, NFTResult } from './types'
 
@@ -20,7 +20,7 @@ const MAX_SUBGRAPH_QUERY_IN_ELEMENTS = 500
 export function createRentalsNFTComponent(options: {
   rentalsComponent: IRentalsComponent
   marketplaceNFTsComponent: INFTsComponent
-  contractAddresses: { land: string; estate: string }
+  contractAddresses: ReturnType<typeof getLandAndEstateContractAddresses>
 }): INFTsComponent {
   const {
     rentalsComponent,
@@ -96,5 +96,31 @@ export function createRentalsNFTComponent(options: {
     fetchOne,
     fetchByTokenIds,
     count,
+  }
+}
+
+// From a list of contracts return the addresses of the land and estate contracts.
+// Will throw an error if the addresses are not found.
+export function getLandAndEstateContractAddresses(
+  contracts: Contract[]
+): { land: string; estate: string } {
+  let land: string | undefined
+  let estate: string | undefined
+
+  for (const contract of contracts) {
+    if (contract.name === 'LAND') {
+      land = contract.address.toLowerCase()
+    } else if (contract.name === 'Estates') {
+      estate = contract.address.toLowerCase()
+    }
+  }
+
+  if (!land || !estate) {
+    throw new Error('Land and Estate contracts are required')
+  }
+
+  return {
+    land,
+    estate,
   }
 }
