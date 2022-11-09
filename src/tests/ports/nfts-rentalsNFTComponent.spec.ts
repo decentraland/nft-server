@@ -1,6 +1,8 @@
+import { NFTFilters } from '@dcl/schemas'
 import {
   createRentalsNFTComponent,
   MAX_SUBGRAPH_QUERY_IN_ELEMENTS,
+  rentalNFTComponentShouldFetch,
 } from '../../ports/nfts/rentalsNFTComponent'
 import { INFTsComponent } from '../../ports/nfts/types'
 import { IRentalsComponent, RentalAsset } from '../../ports/rentals/types'
@@ -251,6 +253,54 @@ describe('when counting nfts', () => {
       const result = await rentalsNFTComponent.count({})
 
       expect(result).toBe(1)
+    })
+  })
+})
+
+describe('when calling rentalNFTComponentShouldFetch', () => {
+  let filters: NFTFilters
+
+  beforeEach(() => {
+    filters = {
+      owner: 'owner',
+      isOnRent: false,
+      isLand: true,
+    }
+  })
+
+  describe('when called without owner', () => {
+    beforeEach(() => {
+      delete filters.owner
+    })
+
+    it('should return false', () => {
+      expect(rentalNFTComponentShouldFetch(filters)).toBeFalsy()
+    })
+  })
+
+  describe('when called with isLand as false owner', () => {
+    beforeEach(() => {
+      filters.isLand = false
+    })
+
+    it('should return false', () => {
+      expect(rentalNFTComponentShouldFetch(filters)).toBeFalsy()
+    })
+  })
+
+  describe('when called with isOnRent as true', () => {
+    beforeEach(() => {
+      filters.isOnRent = true
+    })
+
+    it('should return false', () => {
+      expect(rentalNFTComponentShouldFetch(filters)).toBeFalsy()
+    })
+  })
+
+  describe('when called with the right filters', () => {
+    it('should return true', () => {
+      expect(rentalNFTComponentShouldFetch(filters)).toBeTruthy()
     })
   })
 })
