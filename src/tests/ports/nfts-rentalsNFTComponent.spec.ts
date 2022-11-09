@@ -151,4 +151,106 @@ describe('when fetching nfts', () => {
       })
     })
   })
+
+  describe('when marketplaceNFTsComponent returns a single nft', () => {
+    let mockNft = { id: 'some-nft' }
+
+    beforeEach(() => {
+      mockMarketplaceNFTsComponent.fetch = jest
+        .fn()
+        .mockResolvedValue([mockNft])
+    })
+
+    it('should finally return an array with that nft', async () => {
+      const result = await rentalsNFTComponent.fetch({})
+
+      expect(result).toEqual([mockNft])
+    })
+  })
+})
+
+describe('when counting nfts', () => {
+  describe('when calling count from the marketplaceNFTsComponent', () => {
+    describe('when getRentalAssets has returned one rental asset that is a land', () => {
+      let rentalAssetTokenId: string
+      let rentalAsset: RentalAsset
+
+      beforeEach(() => {
+        rentalAssetTokenId = 'tokenId'
+        rentalAsset = {
+          id: `${mockContractAddresses.land}-${rentalAssetTokenId}`,
+          contractAddress: mockContractAddresses.land,
+          tokenId: rentalAssetTokenId,
+          isClaimed: false,
+          lessor: 'owner',
+        }
+
+        mockRentalsComponent.getRentalAssets = jest
+          .fn()
+          .mockResolvedValue([rentalAsset])
+      })
+
+      it('should call fetch with ids based on the obtained rental asset that is a land', async () => {
+        await rentalsNFTComponent.count({})
+
+        expect(mockMarketplaceNFTsComponent.count).toHaveBeenCalledWith(
+          expect.objectContaining({
+            ids: [`parcel-${rentalAsset.id}`],
+          })
+        )
+      })
+
+      it('should call fetch without owner in the filters', async () => {
+        await rentalsNFTComponent.count({ owner: 'owner' })
+
+        expect(mockMarketplaceNFTsComponent.count).not.toHaveBeenCalledWith(
+          expect.objectContaining({
+            owner: 'owner',
+          })
+        )
+      })
+    })
+
+    describe('when getRentalAssets has returned one rental asset that is an estate', () => {
+      let rentalAssetTokenId: string
+      let rentalAsset: RentalAsset
+
+      beforeEach(() => {
+        rentalAssetTokenId = 'tokenId'
+        rentalAsset = {
+          id: `${mockContractAddresses.estate}-${rentalAssetTokenId}`,
+          contractAddress: mockContractAddresses.estate,
+          tokenId: rentalAssetTokenId,
+          isClaimed: false,
+          lessor: 'owner',
+        }
+
+        mockRentalsComponent.getRentalAssets = jest
+          .fn()
+          .mockResolvedValue([rentalAsset])
+      })
+
+      it('should call fetch with ids based on the obtained rental asset that is an estate', async () => {
+        await rentalsNFTComponent.count({})
+
+        expect(mockMarketplaceNFTsComponent.count).toHaveBeenCalledWith(
+          expect.objectContaining({
+            ids: [`estate-${rentalAsset.id}`],
+          })
+        )
+      })
+    })
+  })
+
+  describe('when marketplaceNFTsComponent returns a count of 1', () => {
+    beforeEach(() => {
+      mockMarketplaceNFTsComponent.count = jest.fn().mockResolvedValue(1)
+    })
+
+    it('should finally return a count of 1', async () => {
+      const result = await rentalsNFTComponent.count({})
+
+      expect(result).toBe(1)
+    })
+  })
 })
