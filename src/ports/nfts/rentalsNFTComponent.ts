@@ -118,7 +118,7 @@ export function getLandAndEstateContractAddresses(
   }
 
   if (!land || !estate) {
-    throw new Error('Land and Estate contracts are required')
+    throw new Error('LAND and Estates contracts are required')
   }
 
   return {

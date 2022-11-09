@@ -1,6 +1,7 @@
-import { NFTFilters } from '@dcl/schemas'
+import { Contract, NFTFilters } from '@dcl/schemas'
 import {
   createRentalsNFTComponent,
+  getLandAndEstateContractAddresses,
   MAX_SUBGRAPH_QUERY_IN_ELEMENTS,
   rentalNFTComponentShouldFetch,
 } from '../../ports/nfts/rentalsNFTComponent'
@@ -301,6 +302,56 @@ describe('when calling rentalNFTComponentShouldFetch', () => {
   describe('when called with the right filters', () => {
     it('should return true', () => {
       expect(rentalNFTComponentShouldFetch(filters)).toBeTruthy()
+    })
+  })
+})
+
+describe('when calling getLandAndEstateContractAddresses', () => {
+  let contracts: Contract[]
+
+  beforeEach(() => {
+    contracts = [
+      {
+        name: 'LAND',
+        address: 'LAND_ADDRESS',
+      },
+      {
+        name: 'Estates',
+        address: 'ESTATES_ADDRESS',
+      },
+    ] as Contract[]
+  })
+
+  describe("when the provided contracts don't contain LAND", () => {
+    beforeEach(() => {
+      contracts = [contracts[1]]
+    })
+
+    it('should throw an error indicating a contract is missing', () => {
+      expect(() => getLandAndEstateContractAddresses(contracts)).toThrowError(
+        'LAND and Estates contracts are required'
+      )
+    })
+  })
+
+  describe("when the provided contracts don't contain Estates", () => {
+    beforeEach(() => {
+      contracts = [contracts[0]]
+    })
+
+    it('should throw an error indicating a contract is missing', () => {
+      expect(() => getLandAndEstateContractAddresses(contracts)).toThrowError(
+        'LAND and Estates contracts are required'
+      )
+    })
+  })
+
+  describe('when the provided contracts contain both LAND and Estates', () => {
+    it('should return an object with their addresses lower cased', () => {
+      expect(getLandAndEstateContractAddresses(contracts)).toEqual({
+        land: contracts[0].address.toLowerCase(),
+        estate: contracts[1].address.toLowerCase(),
+      })
     })
   })
 })
