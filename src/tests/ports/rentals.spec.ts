@@ -181,7 +181,7 @@ describe('when getting rental listings', () => {
         isOnRent: true,
         search: 'Some text',
         contractAddresses: ['0x01'],
-        tokenIds: ['aTokenId'],
+        tokenId: 'aTokenId',
         itemId: 'anItemId',
         network: Network.ETHEREUM,
       }
@@ -195,7 +195,7 @@ describe('when getting rental listings', () => {
         lessor: filter.owner,
         text: filter.search,
         contractAddresses: filter.contractAddresses,
-        tokenId: filter.tokenIds?.[0],
+        tokenId: filter.tokenId,
         network: filter.network,
         status: [RentalStatus.OPEN],
       }

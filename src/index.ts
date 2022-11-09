@@ -289,12 +289,29 @@ async function initComponents(): Promise<AppComponents> {
   const rentalsNFTs = createRentalsNFTComponent({
     rentalsComponent: rentalsComponent,
     marketplaceNFTsComponent: marketplaceNFTs,
-    contractAddresses: (() =>
-      getMarketplaceContracts(marketplaceChainId)
-        .filter(
-          (contract) => contract.name === 'LAND' || contract.name === 'Estates'
-        )
-        .map((contract) => contract.address.toLowerCase()))(),
+    contractAddresses: (() => {
+      let land: string | undefined
+      let estate: string | undefined
+
+      const marketplaceContracts = getMarketplaceContracts(marketplaceChainId)
+
+      for (const contract of marketplaceContracts) {
+        if (contract.name === 'LAND') {
+          land = contract.address.toLowerCase()
+        } else if (contract.name === 'Estates') {
+          estate = contract.address.toLowerCase()
+        }
+      }
+
+      if (!land || !estate) {
+        throw new Error('Land and Estate contracts are required')
+      }
+
+      return {
+        land,
+        estate,
+      }
+    })(),
   })
 
   const nftSources: IMergerComponent.Source<

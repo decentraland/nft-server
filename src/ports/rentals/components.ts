@@ -61,10 +61,7 @@ export function createRentalsComponent(
       parameters.status = [filters.rentalStatus as RentalStatus]
     }
 
-    if (filters.tokenIds) {
-      parameters.tokenId = filters.tokenIds[0]
-    }
-
+    parameters.tokenId = filters.tokenId
     parameters.network = filters.network
 
     switch (filters.sortBy) {
@@ -221,12 +218,10 @@ export function createRentalsComponent(
     function getSubgraphQueryOptions() {
       const queryOptions: string[] = []
 
-      // Where
-
       const where: string[] = []
 
       function mapListToFilter(xs: string[] | undefined, name: string) {
-        if (xs) {
+        if (xs && xs.length > 0) {
           if (xs.length === 1) {
             where.push(`${name}:"${xs[0]}"`)
           } else {
@@ -247,13 +242,9 @@ export function createRentalsComponent(
         queryOptions.push(`where:{${where.join(',')}}`)
       }
 
-      // First
-
       if (filters.first !== undefined) {
         queryOptions.push(`first:${filters.first}`)
       }
-
-      // Skip
 
       if (filters.skip !== undefined) {
         queryOptions.push(`skip:${filters.skip}`)

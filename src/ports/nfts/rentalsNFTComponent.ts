@@ -20,7 +20,10 @@ const MAX_SUBGRAPH_QUERY_IN_ELEMENTS = 500
 export function createRentalsNFTComponent(options: {
   rentalsComponent: IRentalsComponent
   marketplaceNFTsComponent: INFTsComponent
-  contractAddresses: string[]
+  contractAddresses: {
+    land: string
+    estate: string
+  }
 }): INFTsComponent {
   const {
     rentalsComponent,
@@ -32,8 +35,7 @@ export function createRentalsNFTComponent(options: {
   async function getRentalAssets(options: NFTFilters): Promise<RentalAsset[]> {
     return rentalsComponent.getRentalAssets({
       lessors: [options.owner!],
-      contractAddresses,
-      tokenIds: options.tokenIds,
+      contractAddresses: [contractAddresses.land, contractAddresses.estate],
       isClaimed: false,
       // In order to avoid pagination issues, we need to fetch all the assets for this owner in the rentals subgraph.
       // The number is determined by the maximum recommended number of entries a filter_in query can have.
@@ -55,9 +57,13 @@ export function createRentalsNFTComponent(options: {
     // If we kept the owner here, the query to the marketplace subgraph would return invalid data.
     delete options.owner
     // Set the tokenIds we want to query the marketplace subgraph with.
-    options.tokenIds = rentalAssets.map((asset) => asset.tokenId)
-    // We want to query the marketplace subgraph with the contract addresses of the Land and Estate contracts only.
-    options.contractAddresses = contractAddresses
+    options.ids = rentalAssets.map((asset) => {
+      if (asset.contractAddress === contractAddresses.land) {
+        return `parcel-${asset.id}`
+      } else {
+        return `estate-${asset.id}`
+      }
+    })
 
     return options
   }

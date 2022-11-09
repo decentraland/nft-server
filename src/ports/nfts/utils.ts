@@ -84,7 +84,7 @@ export function getFetchQuery(
     where.push(`searchText_contains: "${filters.search.trim().toLowerCase()}"`)
   }
 
-  if (filters.contractAddresses) {
+  if (filters.contractAddresses && filters.contractAddresses.length > 0) {
     where.push(
       `contractAddress_in: [${filters.contractAddresses
         .map((contract) => `"${contract}"`)
@@ -92,15 +92,11 @@ export function getFetchQuery(
     )
   }
 
-  if (filters.tokenIds) {
-    if (filters.tokenIds.length === 1) {
-      where.push(`tokenId: "${filters.tokenIds[0]}"`)
+  if (filters.ids && filters.ids.length > 0) {
+    if (filters.ids.length === 1) {
+      where.push(`id: "${filters.ids[0]}"`)
     } else {
-      where.push(
-        `tokenId_in: [${filters.tokenIds
-          .map((tokenId) => `"${tokenId}"`)
-          .join(',')}]`
-      )
+      where.push(`id_in: [${filters.ids.map((id) => `"${id}"`).join(', ')}]`)
     }
   }
 

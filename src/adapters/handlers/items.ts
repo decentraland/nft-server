@@ -52,15 +52,7 @@ export function createItemsHandler(
       'emotePlayMode',
       EmotePlayMode
     )
-
-    let contractAddresses: string[] | undefined = params.getList(
-      'contractAddress'
-    )
-
-    if (contractAddresses.length === 0) {
-      contractAddresses = undefined
-    }
-
+    const contractAddresses = params.getList('contractAddress')
     const itemId = params.getString('itemId')
     const network = params.getValue<Network>('network', Network)
 
