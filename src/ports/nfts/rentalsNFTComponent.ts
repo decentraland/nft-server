@@ -56,7 +56,9 @@ export function createRentalsNFTComponent(options: {
     options.ids = rentalAssets.map((asset) => {
       if (asset.contractAddress === contractAddresses.land) {
         return `parcel-${asset.id}`
-      } else {
+      }
+      // The rental assets should be either of type Land or Estate, so we can assume that if it's not a Land, it's an Estate.
+      else {
         return `estate-${asset.id}`
       }
     })
