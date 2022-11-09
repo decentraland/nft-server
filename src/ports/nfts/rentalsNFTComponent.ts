@@ -4,7 +4,7 @@ import { INFTsComponent, NFTResult } from './types'
 
 // The recommended maximum amount of elements a subgraph filter_in can handle.
 // For example, if we had a tokenId_in filter, the maximum amount of tokenIds provided would be this number.
-const MAX_SUBGRAPH_QUERY_IN_ELEMENTS = 500
+export const MAX_SUBGRAPH_QUERY_IN_ELEMENTS = 500
 
 /**
  * This component allows users to retrieve Lands and Estates by owner that are currently owned by the rentals contract.
