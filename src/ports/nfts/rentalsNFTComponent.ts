@@ -44,10 +44,12 @@ export function createRentalsNFTComponent(options: {
   }
 
   // Update the provided options with the data obtained from the rentals subgraph.
-  function updateOptionsForMarketplaceComponent(
-    options: NFTFilters,
+  function makeOptionsForMarketplaceComponent(
+    originalOptions: NFTFilters,
     rentalAssets: RentalAsset[]
-  ) {
+  ): NFTFilters {
+    // Copy the original options to avoid mutating it as they are used on other calls.
+    const options = { ...originalOptions }
     // The owner was used to query the rentals subgraph.
     // We need to remove it from here because the owner for the provided rental assets will be the rentals contract.
     // If we kept the owner here, the query to the marketplace subgraph would return invalid data.
@@ -56,20 +58,22 @@ export function createRentalsNFTComponent(options: {
     options.tokenIds = rentalAssets.map((asset) => asset.tokenId)
     // We want to query the marketplace subgraph with the contract addresses of the Land and Estate contracts only.
     options.contractAddresses = contractAddresses
+
+    return options
   }
 
   // Fetch the Lands and Estates previously owned by the options.owner that are currently in the rentals contract and return their nft data.
   async function fetch(options: NFTFilters): Promise<NFTResult[]> {
     const rentalAssets = await getRentalAssets(options)
-    updateOptionsForMarketplaceComponent(options, rentalAssets)
-    return marketplaceNFTsComponent.fetch(options)
+    const mktOptions = makeOptionsForMarketplaceComponent(options, rentalAssets)
+    return marketplaceNFTsComponent.fetch(mktOptions)
   }
 
   // Count the Lands and Estates previously owned by the options.owner that are currently in the rentals contract and return their nft data.
   async function count(options: NFTFilters): Promise<number> {
     const rentalAssets = await getRentalAssets(options)
-    updateOptionsForMarketplaceComponent(options, rentalAssets)
-    return marketplaceNFTsComponent.count(options)
+    const mktOptions = makeOptionsForMarketplaceComponent(options, rentalAssets)
+    return marketplaceNFTsComponent.count(mktOptions)
   }
 
   // This function is currently not needed for the current use cases of this component so it will always return null.
