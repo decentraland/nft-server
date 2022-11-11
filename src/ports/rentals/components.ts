@@ -222,7 +222,7 @@ export function createRentalsComponent(
 
       if (filters.contractAddresses && filters.contractAddresses.length > 1) {
         where.push(
-          `$contractAddress_in:[${filters.contractAddresses
+          `contractAddress_in:[${filters.contractAddresses
             .map((contractAddress) => `"${contractAddress}"`)
             .join(',')}]`
         )
@@ -230,7 +230,7 @@ export function createRentalsComponent(
 
       if (filters.tokenIds && filters.tokenIds.length > 1) {
         where.push(
-          `$tokenId_in:[${filters.tokenIds
+          `tokenId_in:[${filters.tokenIds
             .map((tokenId) => `"${tokenId}"`)
             .join(',')}]`
         )
@@ -238,7 +238,7 @@ export function createRentalsComponent(
 
       if (filters.lessors && filters.lessors.length > 1) {
         where.push(
-          `$lessor_in:[${filters.lessors
+          `lessor_in:[${filters.lessors
             .map((lessor) => `"${lessor}"`)
             .join(',')}]`
         )
