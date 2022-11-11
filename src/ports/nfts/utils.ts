@@ -93,11 +93,7 @@ export function getFetchQuery(
   }
 
   if (filters.ids && filters.ids.length > 0) {
-    if (filters.ids.length === 1) {
-      where.push(`id: "${filters.ids[0]}"`)
-    } else {
-      where.push(`id_in: [${filters.ids.map((id) => `"${id}"`).join(', ')}]`)
-    }
+    where.push(`id_in: [${filters.ids.map((id) => `"${id}"`).join(', ')}]`)
   }
 
   if (filters.sortBy === NFTSortBy.RECENTLY_SOLD) {
