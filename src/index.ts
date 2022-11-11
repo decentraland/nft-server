@@ -290,7 +290,7 @@ async function initComponents(): Promise<AppComponents> {
   })
 
   const rentalsNFTs = createRentalsNFTComponent({
-    rentalsComponent: rentalsComponent,
+    rentalsComponent,
     marketplaceNFTsComponent: marketplaceNFTs,
     contractAddresses: getLandAndEstateContractAddresses(
       getMarketplaceContracts(marketplaceChainId)
