@@ -220,19 +220,29 @@ export function createRentalsComponent(
 
       const where: string[] = []
 
-      function mapListToFilter(xs: string[] | undefined, name: string) {
-        if (xs && xs.length > 0) {
-          if (xs.length === 1) {
-            where.push(`${name}:"${xs[0]}"`)
-          } else {
-            where.push(`${name}_in:[${xs.map((x) => `"${x}"`).join(',')}]`)
-          }
-        }
+      if (filters.contractAddresses && filters.contractAddresses.length > 1) {
+        where.push(
+          `$contractAddress_in:[${filters.contractAddresses
+            .map((contractAddress) => `"${contractAddress}"`)
+            .join(',')}]`
+        )
       }
 
-      mapListToFilter(filters.contractAddresses, 'contractAddress')
-      mapListToFilter(filters.tokenIds, 'tokenId')
-      mapListToFilter(filters.lessors, 'lessor')
+      if (filters.tokenIds && filters.tokenIds.length > 1) {
+        where.push(
+          `$tokenId_in:[${filters.tokenIds
+            .map((tokenId) => `"${tokenId}"`)
+            .join(',')}]`
+        )
+      }
+
+      if (filters.lessors && filters.lessors.length > 1) {
+        where.push(
+          `$lessor_in:[${filters.lessors
+            .map((lessor) => `"${lessor}"`)
+            .join(',')}]`
+        )
+      }
 
       if (filters.isClaimed !== undefined) {
         where.push(`isClaimed:${filters.isClaimed}`)
