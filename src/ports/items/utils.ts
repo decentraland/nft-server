@@ -192,7 +192,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     where.push(`searchText_contains: "${search.trim().toLowerCase()}"`)
   }
 
-  if (contractAddresses) {
+  if (contractAddresses && contractAddresses.length > 0) {
     where.push(
       `collection_in: [${contractAddresses
         .map((contractAddress) => `"${contractAddress}"`)
