@@ -18,6 +18,7 @@ export function createNFTsSource(
   options?: {
     isRentalsEnabled?: boolean
     rentals?: IRentalsComponent
+    rentalStatus?: RentalStatus[]
     shouldFetch?: (options: NFTFilters) => boolean
   }
 ): IMergerComponent.Source<NFTResult, NFTFilters, NFTSortBy> {
@@ -32,7 +33,7 @@ export function createNFTsSource(
       nftResults
         .filter((nftResult) => isLAND(nftResult))
         .map((nftResult) => buildNftId(nftResult)),
-      [RentalStatus.OPEN]
+      options.rentalStatus
     )
 
     const rentalsByNftId: Record<string, RentalListing> = rentalListings.reduce(

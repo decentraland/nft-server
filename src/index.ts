@@ -33,6 +33,7 @@ import {
   AnalyticsDayData,
   AnalyticsDayDataFilters,
   AnalyticsDayDataSortBy,
+  RentalStatus,
 } from '@dcl/schemas'
 import { createConfigComponent } from '@well-known-components/env-config-provider'
 import {
@@ -306,6 +307,7 @@ async function initComponents(): Promise<AppComponents> {
       shouldFetch: marketplaceShouldFetch,
       isRentalsEnabled,
       rentals: rentalsComponent,
+      rentalStatus: [RentalStatus.OPEN],
     }),
     createNFTsSource(collectionsNFTs, {
       shouldFetch: collectionsShouldFetch,
@@ -319,6 +321,7 @@ async function initComponents(): Promise<AppComponents> {
         shouldFetch: rentalNFTComponentShouldFetch,
         isRentalsEnabled,
         rentals: rentalsComponent,
+        rentalStatus: [RentalStatus.OPEN, RentalStatus.EXECUTED],
       })
     )
   }

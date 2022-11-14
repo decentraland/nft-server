@@ -19,6 +19,7 @@ let nftComponentMock: INFTsComponent
 let nftSource: IMergerComponent.Source<NFTResult, NFTFilters, NFTSortBy>
 let options: {
   rentals?: IRentalsComponent
+  rentalStatus?: RentalStatus[]
   shouldFetch?: (options: NFTFilters) => boolean
   isRentalsEnabled?: boolean
 }
@@ -54,6 +55,7 @@ beforeEach(() => {
       getRentalsListingsOfNFTs: getRentalsListingsOfNFTsMock,
       getRentalAssets: jest.fn(),
     },
+    rentalStatus: [RentalStatus.OPEN],
   }
 
   nftSource = createNFTsSource(nftComponentMock, options)

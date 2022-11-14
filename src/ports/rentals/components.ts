@@ -136,7 +136,7 @@ export function createRentalsComponent(
   ): Promise<RentalListing[]> {
     const baseUrl = `${rentalsUrl}/v1/rentals-listings${buildGetRentalsParameters(
       {
-        status,
+        rentalStatus: status,
       }
     )}`
     const limit = pLimit(MAX_CONCURRENT_REQUEST)
