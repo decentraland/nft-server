@@ -164,10 +164,8 @@ describe('when fetching nfts', () => {
         .mockResolvedValue([mockNft])
     })
 
-    it('should finally return an array with that nft', async () => {
-      const result = await rentalsNFTComponent.fetch({})
-
-      expect(result).toEqual([mockNft])
+    it('should finally return an array with that nft', () => {
+     return expect(rentalsNFTComponent.fetch({})).resolves.toEqual([mockNft])
     })
   })
 })
