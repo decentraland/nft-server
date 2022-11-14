@@ -49,16 +49,18 @@ export function createRentalsComponent(
         : undefined
     parameters.lessor = filters.owner
     parameters.tenant = filters.tenant
-    // If the status is not specified, always ask for the open rentals
-    if (!filters.rentalStatus) {
-      parameters.status = [RentalStatus.OPEN]
-    } else if (
-      Array.isArray(filters.rentalStatus) &&
-      filters.rentalStatus.length > 0
-    ) {
-      parameters.status = filters.rentalStatus
-    } else {
-      parameters.status = [filters.rentalStatus as RentalStatus]
+
+    // OPEN rentals will be queried by default.
+    parameters.status = [RentalStatus.OPEN]
+
+    if (filters.rentalStatus) {
+      if (Array.isArray(filters.rentalStatus)) {
+        if (filters.rentalStatus.length > 0) {
+          parameters.status = filters.rentalStatus
+        }
+      } else {
+        parameters.status = [filters.rentalStatus]
+      }
     }
 
     parameters.tokenId = filters.tokenId
@@ -136,7 +138,7 @@ export function createRentalsComponent(
   ): Promise<RentalListing[]> {
     const baseUrl = `${rentalsUrl}/v1/rentals-listings${buildGetRentalsParameters(
       {
-        status,
+        rentalStatus: status,
       }
     )}`
     const limit = pLimit(MAX_CONCURRENT_REQUEST)
