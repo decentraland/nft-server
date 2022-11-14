@@ -203,7 +203,7 @@ describe('when counting nfts', () => {
         )
       })
 
-      it('should call fetch without owner in the filters', async () => {
+      it('should call count without owner in the filters', async () => {
         await rentalsNFTComponent.count({ owner: 'owner' })
 
         expect(mockMarketplaceNFTsComponent.count).not.toHaveBeenCalledWith(
