@@ -107,7 +107,7 @@ import { createRankingsComponent } from './ports/rankings/component'
 import { createTrendingsComponent } from './ports/trendings/component'
 import { createRentalsComponent } from './ports/rentals/components'
 import { createRentalsNFTSource } from './adapters/sources/rentals'
-import { createRentalsNFTComponent } from './ports/nfts/rentalsNFTComponent'
+import { createRentalsNFTComponent } from './ports/rentalNFTs/component'
 import {
   getLandAndEstateContractAddresses,
   rentalNFTComponentShouldFetch,

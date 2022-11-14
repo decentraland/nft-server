@@ -1,7 +1,7 @@
 import { NFTFilters } from '@dcl/schemas'
 import { getLandAndEstateContractAddresses } from '../../logic/nfts/rentals'
+import { INFTsComponent, NFTResult } from '../nfts/types'
 import { IRentalsComponent, RentalAsset } from '../rentals/types'
-import { INFTsComponent, NFTResult } from './types'
 
 // The recommended maximum amount of elements a subgraph filter_in can handle.
 // For example, if we had a tokenId_in filter, the maximum amount of tokenIds provided would be this number.

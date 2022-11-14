@@ -1,8 +1,8 @@
+import { INFTsComponent } from '../../ports/nfts/types'
 import {
   createRentalsNFTComponent,
   MAX_SUBGRAPH_QUERY_IN_ELEMENTS,
-} from '../../ports/nfts/rentalsNFTComponent'
-import { INFTsComponent } from '../../ports/nfts/types'
+} from '../../ports/rentalNFTs/component'
 import { IRentalsComponent, RentalAsset } from '../../ports/rentals/types'
 
 let mockMarketplaceNFTsComponent: INFTsComponent
