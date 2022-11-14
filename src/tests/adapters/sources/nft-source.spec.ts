@@ -52,6 +52,7 @@ beforeEach(() => {
     rentals: {
       getRentalsListings: getRentalsListingsMock,
       getRentalsListingsOfNFTs: getRentalsListingsOfNFTsMock,
+      getRentalAssets: jest.fn(),
     },
   }
 
@@ -137,7 +138,9 @@ describe('when fetching nfts', () => {
       shouldFetchMock.mockReturnValueOnce(true)
       fetchMock.mockResolvedValueOnce(allNfts)
       getRentalsListingsOfNFTsMock.mockResolvedValueOnce(rentalListings)
-      result = await nftSource.fetch({})
+      result = await nftSource.fetch({
+        rentalStatus: [RentalStatus.OPEN, RentalStatus.EXECUTED],
+      })
     })
 
     it('should resolve to a list of NFTs enhanced with their rental', () => {
@@ -161,7 +164,7 @@ describe('when fetching nfts', () => {
         [...nftsWithoutRentals, ...nftsWithRentals].map(
           (nftResults) => nftResults.nft.id
         ),
-        [RentalStatus.OPEN]
+        [RentalStatus.OPEN, RentalStatus.EXECUTED]
       )
     })
   })

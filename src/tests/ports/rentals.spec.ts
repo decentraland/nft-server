@@ -12,6 +12,7 @@ import {
   RentalStatus,
 } from '@dcl/schemas'
 import { IFetchComponent } from '@well-known-components/http-server'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { Response } from 'node-fetch'
 import { createRentalsComponent } from '../../ports/rentals/components'
 import {
@@ -25,6 +26,7 @@ const error = 'An error occurred'
 let fetchComponentMock: IFetchComponent
 let fetchResponse: Response
 let rentalsComponent: IRentalsComponent
+let rentalsSubgraph: ISubgraphComponent
 let fetchMock: jest.Mock
 
 describe('when getting rental listings', () => {
@@ -33,9 +35,13 @@ describe('when getting rental listings', () => {
     fetchComponentMock = {
       fetch: fetchMock,
     }
+    rentalsSubgraph = {
+      query: jest.fn(),
+    }
     rentalsComponent = createRentalsComponent(
       { fetch: fetchComponentMock },
-      rentalsURL
+      rentalsURL,
+      rentalsSubgraph
     )
   })
 
@@ -224,7 +230,8 @@ describe('when getting the open rental listings by NFT id', () => {
     }
     rentalsComponent = createRentalsComponent(
       { fetch: fetchComponentMock },
-      rentalsURL
+      rentalsURL,
+      rentalsSubgraph
     )
   })
 

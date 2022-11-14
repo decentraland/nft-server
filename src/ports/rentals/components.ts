@@ -11,8 +11,11 @@ import {
 } from '@dcl/schemas'
 import pLimit from 'p-limit'
 import { IFetchComponent } from '@well-known-components/http-server'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import {
+  GetRentalAssetFilters,
   IRentalsComponent,
+  RentalAsset,
   SignaturesServerErrorResponse,
   SignaturesServerPaginatedResponse,
 } from './types'
@@ -23,7 +26,8 @@ const MAX_URL_LENGTH = 2048
 
 export function createRentalsComponent(
   { fetch: fetchComponent }: { fetch: IFetchComponent },
-  rentalsUrl: string
+  rentalsUrl: string,
+  rentalsSubgraph: ISubgraphComponent
 ): IRentalsComponent {
   function buildGetRentalsParameters(
     filters: NFTFilters &
@@ -45,17 +49,20 @@ export function createRentalsComponent(
         : undefined
     parameters.lessor = filters.owner
     parameters.tenant = filters.tenant
-    // If the status is not specified, always ask for the open rentals
-    if (!filters.rentalStatus) {
-      parameters.status = [RentalStatus.OPEN]
-    } else if (
-      Array.isArray(filters.rentalStatus) &&
-      filters.rentalStatus.length > 0
-    ) {
-      parameters.status = filters.rentalStatus
-    } else {
-      parameters.status = [filters.rentalStatus as RentalStatus]
+
+    // OPEN rentals will be queried by default.
+    parameters.status = [RentalStatus.OPEN]
+
+    if (filters.rentalStatus) {
+      if (Array.isArray(filters.rentalStatus)) {
+        if (filters.rentalStatus.length > 0) {
+          parameters.status = filters.rentalStatus
+        }
+      } else {
+        parameters.status = [filters.rentalStatus]
+      }
     }
+
     parameters.tokenId = filters.tokenId
     parameters.network = filters.network
 
@@ -131,7 +138,7 @@ export function createRentalsComponent(
   ): Promise<RentalListing[]> {
     const baseUrl = `${rentalsUrl}/v1/rentals-listings${buildGetRentalsParameters(
       {
-        status,
+        rentalStatus: status,
       }
     )}`
     const limit = pLimit(MAX_CONCURRENT_REQUEST)
@@ -207,8 +214,81 @@ export function createRentalsComponent(
     return parsedResult
   }
 
+  async function getRentalAssets(
+    filters: GetRentalAssetFilters
+  ): Promise<RentalAsset[]> {
+    function getSubgraphQueryOptions() {
+      const queryOptions: string[] = []
+
+      const where: string[] = []
+
+      if (filters.contractAddresses && filters.contractAddresses.length > 1) {
+        where.push(
+          `contractAddress_in:[${filters.contractAddresses
+            .map((contractAddress) => `"${contractAddress}"`)
+            .join(',')}]`
+        )
+      }
+
+      if (filters.tokenIds && filters.tokenIds.length > 1) {
+        where.push(
+          `tokenId_in:[${filters.tokenIds
+            .map((tokenId) => `"${tokenId}"`)
+            .join(',')}]`
+        )
+      }
+
+      if (filters.lessors && filters.lessors.length > 1) {
+        where.push(
+          `lessor_in:[${filters.lessors
+            .map((lessor) => `"${lessor}"`)
+            .join(',')}]`
+        )
+      }
+
+      if (filters.isClaimed !== undefined) {
+        where.push(`isClaimed:${filters.isClaimed}`)
+      }
+
+      if (where.length > 0) {
+        queryOptions.push(`where:{${where.join(',')}}`)
+      }
+
+      if (filters.first !== undefined) {
+        queryOptions.push(`first:${filters.first}`)
+      }
+
+      if (filters.skip !== undefined) {
+        queryOptions.push(`skip:${filters.skip}`)
+      }
+
+      if (queryOptions.length === 0) {
+        return ''
+      }
+
+      return `(${queryOptions.join(',')})`
+    }
+
+    const { rentalAssets } = await rentalsSubgraph.query<{
+      rentalAssets: RentalAsset[]
+    }>(`
+      {
+        rentalAssets${getSubgraphQueryOptions()} {
+          id
+          contractAddress
+          tokenId
+          lessor
+          isClaimed
+        }
+      }
+    `)
+
+    return rentalAssets
+  }
+
   return {
     getRentalsListings,
     getRentalsListingsOfNFTs,
+    getRentalAssets,
   }
 }

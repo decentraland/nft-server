@@ -92,6 +92,10 @@ export function getFetchQuery(
     )
   }
 
+  if (filters.ids && filters.ids.length > 0) {
+    where.push(`id_in: [${filters.ids.map((id) => `"${id}"`).join(', ')}]`)
+  }
+
   if (filters.sortBy === NFTSortBy.RECENTLY_SOLD) {
     where.push(`soldAt_not: null`)
   }

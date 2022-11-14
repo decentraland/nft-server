@@ -166,6 +166,12 @@ export async function initComponents(): Promise<AppComponents> {
     { config, logs, fetch: { fetch: nodeFetch }, metrics },
     await config.requireString('COLLECTIONS_SUBGRAPH_URL')
   )
+
+  const rentalsSubgraph = await createSubgraphComponent(
+    { config, logs, fetch: { fetch: nodeFetch }, metrics },
+    await config.requireString('RENTALS_SUBGRAPH_URL')
+  )
+
   // orders
   const marketplaceOrders = createOrdersComponent({
     subgraph: marketplaceSubgraph,
@@ -276,7 +282,8 @@ export async function initComponents(): Promise<AppComponents> {
 
   const rentals = createRentalsComponent(
     { fetch: fetchComponent },
-    signaturesServer
+    signaturesServer,
+    rentalsSubgraph
   )
 
   const nfts = createMergerComponent<NFTResult, NFTFilters, NFTSortBy>({
