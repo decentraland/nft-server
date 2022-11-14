@@ -53,8 +53,6 @@ export function shouldFetch(filters: NFTFilters): boolean {
 /**
  * From a list of contracts return the addresses of the land and estate contracts.
  * Will throw an error if the addresses are not found.
- * @param contracts The list of contracts from which the land and estate contract addresses will be extracted
- * @returns An object with both the addresses of the land and estate contracts
  */
 export function getLandAndEstateContractAddresses(
   contracts: Contract[]
@@ -82,8 +80,6 @@ export function getLandAndEstateContractAddresses(
 
 /**
  * Util function that determines if the rentals nft component should be used.
- * @param filters The filters provided in the request which will determine if the rentals nft component should be used.
- * @returns true if the rentals nft component should be used, false otherwise.
  */
 export function rentalNFTComponentShouldFetch(filters: NFTFilters): boolean {
   return (
