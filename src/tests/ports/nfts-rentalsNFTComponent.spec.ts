@@ -231,7 +231,7 @@ describe('when counting nfts', () => {
           .mockResolvedValue([rentalAsset])
       })
 
-      it('should call fetch with ids based on the obtained rental asset that is an estate', async () => {
+      it('should call count with ids based on the obtained rental asset that is an estate', async () => {
         await rentalsNFTComponent.count({})
 
         expect(mockMarketplaceNFTsComponent.count).toHaveBeenCalledWith(
