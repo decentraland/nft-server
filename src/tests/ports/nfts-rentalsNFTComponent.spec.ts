@@ -277,7 +277,7 @@ describe('when calling rentalNFTComponentShouldFetch', () => {
     })
   })
 
-  describe('when called with isLand as false owner', () => {
+  describe('when called with isLand as false', () => {
     beforeEach(() => {
       filters.isLand = false
     })
