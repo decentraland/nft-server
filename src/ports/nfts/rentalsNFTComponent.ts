@@ -1,4 +1,5 @@
-import { Contract, NFTFilters } from '@dcl/schemas'
+import { NFTFilters } from '@dcl/schemas'
+import { getLandAndEstateContractAddresses } from '../../logic/nfts/rentals'
 import { IRentalsComponent, RentalAsset } from '../rentals/types'
 import { INFTsComponent, NFTResult } from './types'
 
@@ -99,42 +100,4 @@ export function createRentalsNFTComponent(options: {
     fetchByTokenIds,
     count,
   }
-}
-
-// From a list of contracts return the addresses of the land and estate contracts.
-// Will throw an error if the addresses are not found.
-export function getLandAndEstateContractAddresses(
-  contracts: Contract[]
-): { land: string; estate: string } {
-  let land: string | undefined
-  let estate: string | undefined
-
-  for (const contract of contracts) {
-    if (contract.name === 'LAND') {
-      land = contract.address.toLowerCase()
-    } else if (contract.name === 'Estates') {
-      estate = contract.address.toLowerCase()
-    }
-  }
-
-  if (!land || !estate) {
-    throw new Error('LAND and Estates contracts are required')
-  }
-
-  return {
-    land,
-    estate,
-  }
-}
-
-// Util function that determines if the rentals nft component should be used.
-export function rentalNFTComponentShouldFetch(filters: NFTFilters): boolean {
-  return (
-    // The lookup for assets on rent is done by another component.
-    !filters.isOnRent &&
-    // Only Lands and Estates can be locked in the rentals contract.
-    !!filters.isLand &&
-    // The rentals subgraph is queried mainly by lessor, se this param is required.
-    !!filters.owner
-  )
 }

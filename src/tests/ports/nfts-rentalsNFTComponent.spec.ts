@@ -1,9 +1,6 @@
-import { Contract, NFTFilters } from '@dcl/schemas'
 import {
   createRentalsNFTComponent,
-  getLandAndEstateContractAddresses,
   MAX_SUBGRAPH_QUERY_IN_ELEMENTS,
-  rentalNFTComponentShouldFetch,
 } from '../../ports/nfts/rentalsNFTComponent'
 import { INFTsComponent } from '../../ports/nfts/types'
 import { IRentalsComponent, RentalAsset } from '../../ports/rentals/types'
@@ -165,7 +162,7 @@ describe('when fetching nfts', () => {
     })
 
     it('should finally return an array with that nft', () => {
-     return expect(rentalsNFTComponent.fetch({})).resolves.toEqual([mockNft])
+      return expect(rentalsNFTComponent.fetch({})).resolves.toEqual([mockNft])
     })
   })
 })
@@ -252,104 +249,6 @@ describe('when counting nfts', () => {
       const result = await rentalsNFTComponent.count({})
 
       expect(result).toBe(1)
-    })
-  })
-})
-
-describe('when calling rentalNFTComponentShouldFetch', () => {
-  let filters: NFTFilters
-
-  beforeEach(() => {
-    filters = {
-      owner: 'owner',
-      isOnRent: false,
-      isLand: true,
-    }
-  })
-
-  describe('when called without owner', () => {
-    beforeEach(() => {
-      delete filters.owner
-    })
-
-    it('should return false', () => {
-      expect(rentalNFTComponentShouldFetch(filters)).toBeFalsy()
-    })
-  })
-
-  describe('when called with isLand as false', () => {
-    beforeEach(() => {
-      filters.isLand = false
-    })
-
-    it('should return false', () => {
-      expect(rentalNFTComponentShouldFetch(filters)).toBeFalsy()
-    })
-  })
-
-  describe('when called with isOnRent as true', () => {
-    beforeEach(() => {
-      filters.isOnRent = true
-    })
-
-    it('should return false', () => {
-      expect(rentalNFTComponentShouldFetch(filters)).toBeFalsy()
-    })
-  })
-
-  describe('when called with the right filters', () => {
-    it('should return true', () => {
-      expect(rentalNFTComponentShouldFetch(filters)).toBeTruthy()
-    })
-  })
-})
-
-describe('when calling getLandAndEstateContractAddresses', () => {
-  let contracts: Contract[]
-
-  beforeEach(() => {
-    contracts = [
-      {
-        name: 'LAND',
-        address: 'LAND_ADDRESS',
-      },
-      {
-        name: 'Estates',
-        address: 'ESTATES_ADDRESS',
-      },
-    ] as Contract[]
-  })
-
-  describe("when the provided contracts don't contain LAND", () => {
-    beforeEach(() => {
-      contracts = [contracts[1]]
-    })
-
-    it('should throw an error indicating a contract is missing', () => {
-      expect(() => getLandAndEstateContractAddresses(contracts)).toThrowError(
-        'LAND and Estates contracts are required'
-      )
-    })
-  })
-
-  describe("when the provided contracts don't contain Estates", () => {
-    beforeEach(() => {
-      contracts = [contracts[0]]
-    })
-
-    it('should throw an error indicating a contract is missing', () => {
-      expect(() => getLandAndEstateContractAddresses(contracts)).toThrowError(
-        'LAND and Estates contracts are required'
-      )
-    })
-  })
-
-  describe('when the provided contracts contain both LAND and Estates', () => {
-    it('should return an object with their addresses lower cased', () => {
-      expect(getLandAndEstateContractAddresses(contracts)).toEqual({
-        land: contracts[0].address.toLowerCase(),
-        estate: contracts[1].address.toLowerCase(),
-      })
     })
   })
 })

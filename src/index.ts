@@ -107,11 +107,11 @@ import { createRankingsComponent } from './ports/rankings/component'
 import { createTrendingsComponent } from './ports/trendings/component'
 import { createRentalsComponent } from './ports/rentals/components'
 import { createRentalsNFTSource } from './adapters/sources/rentals'
+import { createRentalsNFTComponent } from './ports/nfts/rentalsNFTComponent'
 import {
-  createRentalsNFTComponent,
   getLandAndEstateContractAddresses,
   rentalNFTComponentShouldFetch,
-} from './ports/nfts/rentalsNFTComponent'
+} from './logic/nfts/rentals'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
