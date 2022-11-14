@@ -29,11 +29,13 @@ export function createRentalsNFTComponent(options: {
     contractAddresses,
   } = options
 
-  // Query the rentals subgraph to obtain a list of assets where the provided options.owner is the lessor.
-  async function getRentalAssets(options: NFTFilters): Promise<RentalAsset[]> {
+  /**
+   * Query the rentals subgraph to obtain a list of assets where the provided filters.owner is the lessor.
+   */
+  async function getRentalAssets(filters: NFTFilters): Promise<RentalAsset[]> {
     return rentalsComponent.getRentalAssets({
       // This component is always called when owner is present, so we can assume owner is present here.
-      lessors: [options.owner!],
+      lessors: [filters.owner!],
       contractAddresses: [contractAddresses.land, contractAddresses.estate],
       isClaimed: false,
       // In order to avoid pagination issues, we need to fetch all the assets for this owner in the rentals subgraph.
@@ -44,17 +46,19 @@ export function createRentalsNFTComponent(options: {
     })
   }
 
-  // Update the provided options with the data obtained from the rentals subgraph.
-  function makeOptionsForMarketplaceComponent(
-    originalOptions: NFTFilters,
+  /**
+   * Update the provided filters with the data obtained from the rentals subgraph.
+   */
+  function makeFiltersForMarketplaceComponent(
+    originalFilters: NFTFilters,
     rentalAssets: RentalAsset[]
   ): NFTFilters {
-    // Copy the original options to avoid mutating it as they are used on other calls.
-    const options = { ...originalOptions }
+    // Copy the original filters to avoid mutating it as they are used on other calls.
+    const filters = { ...originalFilters }
     // We don't need the owner anymore as we already used it to query the rentals subgraph.
-    delete options.owner
+    delete filters.owner
     // Set the ids of the assets we will be looking for in the marketplace subgraph.
-    options.ids = rentalAssets.map((asset) => {
+    filters.ids = rentalAssets.map((asset) => {
       if (asset.contractAddress === contractAddresses.land) {
         return `parcel-${asset.id}`
       }
@@ -64,24 +68,30 @@ export function createRentalsNFTComponent(options: {
       }
     })
 
-    return options
+    return filters
   }
 
-  // Fetch the Lands and Estates previously owned by the options.owner that are currently in the rentals contract and return their nft data.
-  async function fetch(options: NFTFilters): Promise<NFTResult[]> {
-    const rentalAssets = await getRentalAssets(options)
-    const mktOptions = makeOptionsForMarketplaceComponent(options, rentalAssets)
-    return marketplaceNFTsComponent.fetch(mktOptions)
+  /**
+   * Fetch the Lands and Estates previously owned by the filters.owner that are currently in the rentals contract and return their nft data.
+   */
+  async function fetch(filters: NFTFilters): Promise<NFTResult[]> {
+    const rentalAssets = await getRentalAssets(filters)
+    const mktFilters = makeFiltersForMarketplaceComponent(filters, rentalAssets)
+    return marketplaceNFTsComponent.fetch(mktFilters)
   }
 
-  // Count the Lands and Estates previously owned by the options.owner that are currently in the rentals contract and return their nft data.
-  async function count(options: NFTFilters): Promise<number> {
-    const rentalAssets = await getRentalAssets(options)
-    const mktOptions = makeOptionsForMarketplaceComponent(options, rentalAssets)
-    return marketplaceNFTsComponent.count(mktOptions)
+  /**
+   * Count the Lands and Estates previously owned by the filters.owner that are currently in the rentals contract and return their nft data.
+   */
+  async function count(filters: NFTFilters): Promise<number> {
+    const rentalAssets = await getRentalAssets(filters)
+    const mktFilters = makeFiltersForMarketplaceComponent(filters, rentalAssets)
+    return marketplaceNFTsComponent.count(mktFilters)
   }
 
-  // This function is currently not needed for the current use cases of this component so it will always return null.
+  /**
+   * This function is currently not needed for the current use cases of this component so it will always return null.
+   */
   async function fetchOne(
     _contractAddress: string,
     _tokenId: string
@@ -89,7 +99,9 @@ export function createRentalsNFTComponent(options: {
     return null
   }
 
-  // This function is currently not needed for the current use cases of this component so it will always return an empty array.
+  /**
+   * This function is currently not needed for the current use cases of this component so it will always return an empty array.
+   */
   async function fetchByTokenIds(_tokenIds: string[]): Promise<NFTResult[]> {
     return []
   }
