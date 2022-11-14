@@ -38,7 +38,7 @@ export function createRentalsNFTComponent(options: {
       // In order to avoid pagination issues, we need to fetch all the assets for this owner in the rentals subgraph.
       // The number is determined by the maximum recommended number of entries a filter_in query can have.
       // It is improbable that any user will have more than MAX_SUBGRAPH_QUERY_IN_ELEMENTS Lands or Estates on rent.
-      //But in the case that they do, retrieved data might be incomplete 💀
+      // But in the case that they do, retrieved data might be incomplete 💀
       first: MAX_SUBGRAPH_QUERY_IN_ELEMENTS,
     })
   }
