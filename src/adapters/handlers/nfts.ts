@@ -58,10 +58,9 @@ export function createNFTsHandler(
     const itemRarities = params.getList<Rarity>('itemRarity', Rarity)
     const itemId = params.getString('itemId')
     const network = params.getValue<Network>('network', Network)
-    const rentalStatus = params.getList<RentalStatus>(
-      'rentalStatus',
-      RentalStatus
-    )
+    const rentalStatus = params
+      .getList<RentalStatus>('rentalStatus', RentalStatus)
+      .concat(params.getList<RentalStatus>('rentalStatus[]', RentalStatus)) // concats to support both ways of sending the array
 
     return asJSON(() =>
       nfts.fetchAndCount({
