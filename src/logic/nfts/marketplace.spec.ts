@@ -136,8 +136,8 @@ describe('when deciding if the marketplace should fetch', () => {
         rentalStatus = [RentalStatus.CLAIMED]
       })
 
-      it('should return false', () => {
-        expect(marketplaceShouldFetch({ rentalStatus })).toBe(false)
+      it('should return true', () => {
+        expect(marketplaceShouldFetch({ rentalStatus })).toBe(true)
       })
     })
   })
