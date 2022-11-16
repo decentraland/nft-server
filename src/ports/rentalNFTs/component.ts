@@ -76,8 +76,11 @@ export function createRentalsNFTComponent(options: {
    */
   async function fetch(filters: NFTFilters): Promise<NFTResult[]> {
     const rentalAssets = await getRentalAssets(filters)
-    const mktFilters = makeFiltersForMarketplaceComponent(filters, rentalAssets)
-    return marketplaceNFTsComponent.fetch(mktFilters)
+    return rentalAssets.length > 0
+      ? marketplaceNFTsComponent.fetch(
+          makeFiltersForMarketplaceComponent(filters, rentalAssets)
+        )
+      : []
   }
 
   /**
@@ -85,8 +88,11 @@ export function createRentalsNFTComponent(options: {
    */
   async function count(filters: NFTFilters): Promise<number> {
     const rentalAssets = await getRentalAssets(filters)
-    const mktFilters = makeFiltersForMarketplaceComponent(filters, rentalAssets)
-    return marketplaceNFTsComponent.count(mktFilters)
+    return rentalAssets.length > 0
+      ? marketplaceNFTsComponent.count(
+          makeFiltersForMarketplaceComponent(filters, rentalAssets)
+        )
+      : 0
   }
 
   /**

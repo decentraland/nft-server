@@ -222,7 +222,7 @@ export function createRentalsComponent(
 
       const where: string[] = []
 
-      if (filters.contractAddresses && filters.contractAddresses.length > 1) {
+      if (filters.contractAddresses && filters.contractAddresses.length > 0) {
         where.push(
           `contractAddress_in:[${filters.contractAddresses
             .map((contractAddress) => `"${contractAddress}"`)
@@ -230,7 +230,7 @@ export function createRentalsComponent(
         )
       }
 
-      if (filters.tokenIds && filters.tokenIds.length > 1) {
+      if (filters.tokenIds && filters.tokenIds.length > 0) {
         where.push(
           `tokenId_in:[${filters.tokenIds
             .map((tokenId) => `"${tokenId}"`)
@@ -238,7 +238,7 @@ export function createRentalsComponent(
         )
       }
 
-      if (filters.lessors && filters.lessors.length > 1) {
+      if (filters.lessors && filters.lessors.length > 0) {
         where.push(
           `lessor_in:[${filters.lessors
             .map((lessor) => `"${lessor}"`)
