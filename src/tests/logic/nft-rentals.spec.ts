@@ -147,6 +147,28 @@ describe('when calling rentalNFTComponentShouldFetch', () => {
     })
   })
 
+  describe('when called with a category that is parcel and no isLand', () => {
+    beforeEach(() => {
+      delete filters.isLand
+      filters.category = NFTCategory.PARCEL
+    })
+
+    it('should return true', () => {
+      expect(rentalNFTComponentShouldFetch(filters)).toBeTruthy()
+    })
+  })
+
+  describe('when called with a category that is estate and no isLand', () => {
+    beforeEach(() => {
+      delete filters.isLand
+      filters.category = NFTCategory.ESTATE
+    })
+
+    it('should return true', () => {
+      expect(rentalNFTComponentShouldFetch(filters)).toBeTruthy()
+    })
+  })
+
   describe('when called with the right filters', () => {
     it('should return true', () => {
       expect(rentalNFTComponentShouldFetch(filters)).toBeTruthy()
