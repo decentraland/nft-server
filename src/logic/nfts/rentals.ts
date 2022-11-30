@@ -86,7 +86,10 @@ export function rentalNFTComponentShouldFetch(filters: NFTFilters): boolean {
     // The lookup for assets on rent is done by another component.
     !filters.isOnRent &&
     // Only Lands and Estates can be locked in the rentals contract.
-    !!filters.isLand &&
+    (!!filters.isLand ||
+      (!!filters.category &&
+        (filters.category === NFTCategory.ESTATE ||
+          filters.category === NFTCategory.PARCEL))) &&
     // The rentals subgraph is queried mainly by lessor, se this param is required.
     !!filters.owner
   )

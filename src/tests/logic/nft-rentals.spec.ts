@@ -101,6 +101,7 @@ describe('when calling rentalNFTComponentShouldFetch', () => {
       owner: 'owner',
       isOnRent: false,
       isLand: true,
+      category: NFTCategory.ESTATE,
     }
   })
 
@@ -114,9 +115,10 @@ describe('when calling rentalNFTComponentShouldFetch', () => {
     })
   })
 
-  describe('when called with isLand as false', () => {
+  describe('when called with isLand as false and no category', () => {
     beforeEach(() => {
       filters.isLand = false
+      delete filters.category
     })
 
     it('should return false', () => {
@@ -131,6 +133,39 @@ describe('when calling rentalNFTComponentShouldFetch', () => {
 
     it('should return false', () => {
       expect(rentalNFTComponentShouldFetch(filters)).toBeFalsy()
+    })
+  })
+
+  describe('when called with a category that is not parcel/estate and no isLand', () => {
+    beforeEach(() => {
+      delete filters.isLand
+      filters.category = NFTCategory.EMOTE
+    })
+
+    it('should return false', () => {
+      expect(rentalNFTComponentShouldFetch(filters)).toBeFalsy()
+    })
+  })
+
+  describe('when called with a category that is parcel and no isLand', () => {
+    beforeEach(() => {
+      delete filters.isLand
+      filters.category = NFTCategory.PARCEL
+    })
+
+    it('should return true', () => {
+      expect(rentalNFTComponentShouldFetch(filters)).toBeTruthy()
+    })
+  })
+
+  describe('when called with a category that is estate and no isLand', () => {
+    beforeEach(() => {
+      delete filters.isLand
+      filters.category = NFTCategory.ESTATE
+    })
+
+    it('should return true', () => {
+      expect(rentalNFTComponentShouldFetch(filters)).toBeTruthy()
     })
   })
 
