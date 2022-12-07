@@ -167,6 +167,13 @@ async function initComponents(): Promise<AppComponents> {
     await config.requireString('COLLECTIONS_SUBGRAPH_URL')
   )
 
+  // Temp subgraph component that uses a different url.
+  // TODO: Remove it once the contracts endpoint issue is resolved.
+  const altCollectionsSubgraph = await createSubgraphComponent(
+    { logs, config, fetch, metrics },
+    await config.requireString('ALT_COLLECTIONS_SUBGRAPH_URL')
+  )
+
   const rentalsSubgraph = await createSubgraphComponent(
     { logs, config, fetch, metrics },
     await config.requireString('RENTALS_SUBGRAPH_URL')
@@ -235,7 +242,7 @@ async function initComponents(): Promise<AppComponents> {
   const collectionsContracts = createContractsComponent({
     getContracts: () =>
       getCollectionsContracts(
-        collectionsSubgraph,
+        altCollectionsSubgraph,
         Network.MATIC,
         collectionsChainId
       ),
