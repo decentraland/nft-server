@@ -40,6 +40,7 @@ export type MergerOptions<
   maxCount?: number
   mergerStrategy?: (a: Result, b: Result) => Result
   mergerEqualFn?: (a: Result, b: Result) => boolean
+  shouldMergeResults?: (options: Options) => boolean
 }
 
 export namespace IMergerComponent {

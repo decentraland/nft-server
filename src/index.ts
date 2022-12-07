@@ -111,6 +111,7 @@ import { createRentalsNFTComponent } from './ports/rentalNFTs/component'
 import {
   getLandAndEstateContractAddresses,
   rentalNFTComponentShouldFetch,
+  shouldFetch as shouldFetchRentalsFromSignatureServer,
 } from './logic/nfts/rentals'
 
 async function initComponents(): Promise<AppComponents> {
@@ -332,6 +333,8 @@ async function initComponents(): Promise<AppComponents> {
 
   const nfts = createMergerComponent<NFTResult, NFTFilters, NFTSortBy>({
     sources: nftSources,
+    shouldMergeResults: (options) =>
+      !shouldFetchRentalsFromSignatureServer(options),
     defaultSortBy: NFT_DEFAULT_SORT_BY,
     directions: {
       [NFTSortBy.CHEAPEST]: SortDirection.ASC,

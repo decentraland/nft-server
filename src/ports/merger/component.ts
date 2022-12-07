@@ -22,6 +22,7 @@ export function createMergerComponent<
     maxCount,
     mergerEqualFn,
     mergerStrategy,
+    shouldMergeResults,
   } = options
 
   function getOptionsWithDefaults(
@@ -121,10 +122,16 @@ export function createMergerComponent<
 
     const optionsWithDefaults = getOptionsWithDefaults(options)
 
-    const data = processFetchedData(
-      results.flatMap((result) => result.data),
-      optionsWithDefaults
-    )
+    const data =
+      shouldMergeResults && !shouldMergeResults(options)
+        ? results
+            .flatMap((result) => result.data)
+            .map((resultWrapper) => resultWrapper.result)
+        : processFetchedData(
+            results.flatMap((result) => result.data),
+            optionsWithDefaults
+          )
+
     const total = processCountData(results.map((results) => results.count))
 
     return { data, total }
