@@ -23,6 +23,8 @@ import { Response } from 'node-fetch'
 
 const MAX_CONCURRENT_REQUEST = 5
 const MAX_URL_LENGTH = 2048
+const DEFAULT_FIRST = 24
+const DEFAULT_OFFSET = 0
 
 export function createRentalsComponent(
   { fetch: fetchComponent }: { fetch: IFetchComponent },
@@ -34,13 +36,14 @@ export function createRentalsComponent(
       Pick<RentalsListingsFilterBy, 'tenant' | 'status' | 'nftIds'>
   ): string {
     const parameters: RentalsListingsFilterBy & {
-      page?: number
+      offset?: number
       limit?: number
       sortBy?: RentalsListingsSortBy
       sortDirection?: RentalsListingSortDirection
     } = {}
-    parameters.limit = filters.first
-    parameters.page = filters.skip
+
+    parameters.limit = filters.first ?? DEFAULT_FIRST
+    parameters.offset = filters.skip ?? DEFAULT_OFFSET
     parameters.text = filters.search
     parameters.category =
       filters.category === NFTCategory.PARCEL ||

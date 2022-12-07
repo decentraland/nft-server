@@ -149,7 +149,7 @@ describe('when getting rental listings', () => {
     let result: SignaturesServerPaginatedResponse<RentalListing[]>
     let filter: NFTFilters
     let expectedQueryParameters: RentalsListingsFilterBy & {
-      page?: number
+      offset?: number
       limit?: number
       sortBy?: RentalsListingsSortBy
       sortDirection?: RentalsListingSortDirection
@@ -188,7 +188,7 @@ describe('when getting rental listings', () => {
       result = await rentalsComponent.getRentalsListings(filter)
       expectedQueryParameters = {
         limit: filter.first,
-        page: filter.skip,
+        offset: filter.skip,
         sortBy: RentalsListingsSortBy.MAX_RENTAL_PRICE,
         sortDirection: RentalsListingSortDirection.ASC,
         category: (filter.category as unknown) as RentalsListingsFilterByCategory,
