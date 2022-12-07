@@ -80,10 +80,12 @@ export function createRentalsNFTSource(
     }
 
     const results = await rentals.getRentalsListings(filters)
-    return {
+    const returningResult = {
       data: await enhanceRentalListing(results.data.results),
       count: results.data.total,
     }
+
+    return returningResult
   }
 
   return {
