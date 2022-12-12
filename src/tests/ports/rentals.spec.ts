@@ -189,7 +189,7 @@ describe('when getting rental listings', () => {
       expectedQueryParameters = {
         limit: filter.first,
         offset: filter.skip,
-        sortBy: RentalsListingsSortBy.MAX_RENTAL_PRICE,
+        sortBy: RentalsListingsSortBy.MIN_RENTAL_PRICE,
         sortDirection: RentalsListingSortDirection.ASC,
         category: (filter.category as unknown) as RentalsListingsFilterByCategory,
         lessor: filter.owner,

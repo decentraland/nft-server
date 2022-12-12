@@ -80,10 +80,10 @@ export function createRentalsComponent(
         break
       case NFTSortBy.MAX_RENTAL_PRICE:
         parameters.sortBy = RentalsListingsSortBy.MAX_RENTAL_PRICE
-        parameters.sortDirection = RentalsListingSortDirection.DESC
+        parameters.sortDirection = RentalsListingSortDirection.ASC
         break
       case NFTSortBy.MIN_RENTAL_PRICE:
-        parameters.sortBy = RentalsListingsSortBy.MAX_RENTAL_PRICE
+        parameters.sortBy = RentalsListingsSortBy.MIN_RENTAL_PRICE
         parameters.sortDirection = RentalsListingSortDirection.ASC
         break
       case NFTSortBy.RENTAL_LISTING_DATE:
