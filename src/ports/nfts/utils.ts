@@ -84,6 +84,14 @@ export function getFetchQuery(
     where.push(`searchText_contains: "${filters.search.trim().toLowerCase()}"`)
   }
 
+  if (filters.maxPrice) {
+    where.push(`searchOrderPrice_lt: "${filters.maxPrice}"`)
+  }
+
+  if (filters.minPrice) {
+    where.push(`searchOrderPrice_gt: "${filters.minPrice}"`)
+  }
+
   if (filters.contractAddresses && filters.contractAddresses.length > 0) {
     where.push(
       `contractAddress_in: [${filters.contractAddresses
