@@ -62,11 +62,15 @@ export function createNFTsHandler(
     const rentalStatus = params
       .getList<RentalStatus>('rentalStatus', RentalStatus)
       .concat(params.getList<RentalStatus>('rentalStatus[]', RentalStatus)) // concats to support both ways of sending the array
-    const maxPriceParam = params.getString('maxPrice');
-    const maxPrice = maxPriceParam ? ethers.utils.parseEther(maxPriceParam).toString() : undefined;
-    const minPriceParam = params.getString('maxPrice');
-    const minPrice = minPriceParam ? ethers.utils.parseEther(minPriceParam).toString() : undefined
-  
+    const maxPriceParam = params.getString('maxPrice')
+    const maxPrice = maxPriceParam
+      ? ethers.utils.parseEther(maxPriceParam).toString()
+      : undefined
+    const minPriceParam = params.getString('minPrice')
+    const minPrice = minPriceParam
+      ? ethers.utils.parseEther(minPriceParam).toString()
+      : undefined
+
     return asJSON(() =>
       nfts.fetchAndCount({
         first,
@@ -93,7 +97,7 @@ export function createNFTsHandler(
         network,
         rentalStatus,
         maxPrice,
-        minPrice
+        minPrice,
       })
     )
   }
