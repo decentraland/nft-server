@@ -13,7 +13,6 @@ import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { AppComponents, Context } from '../../types'
 import { Params } from '../../logic/http/params'
 import { HttpError, asJSON } from '../../logic/http/response'
-import { ethers } from 'ethers'
 
 export function createNFTsHandler(
   components: Pick<AppComponents, 'logs' | 'nfts'>
@@ -62,14 +61,8 @@ export function createNFTsHandler(
     const rentalStatus = params
       .getList<RentalStatus>('rentalStatus', RentalStatus)
       .concat(params.getList<RentalStatus>('rentalStatus[]', RentalStatus)) // concats to support both ways of sending the array
-    const maxPriceParam = params.getString('maxPrice')
-    const maxPrice = maxPriceParam
-      ? ethers.utils.parseEther(maxPriceParam).toString()
-      : undefined
-    const minPriceParam = params.getString('minPrice')
-    const minPrice = minPriceParam
-      ? ethers.utils.parseEther(minPriceParam).toString()
-      : undefined
+    const maxPrice = params.getNumber('maxPrice')
+    const minPrice = params.getNumber('minPrice')
 
     return asJSON(() =>
       nfts.fetchAndCount({
