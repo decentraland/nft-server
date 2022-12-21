@@ -86,14 +86,12 @@ export function getFetchQuery(
   }
 
   if (filters.maxPrice) {
-    const parsedMaxPrice = filters.maxPrice.toLocaleString('en-US', { minimumFractionDigits: 18, useGrouping: false })
-    const maxPrice = ethers.utils.parseEther(parsedMaxPrice).toString()
+    const maxPrice = ethers.utils.parseEther(filters.maxPrice).toString()
     where.push(`searchOrderPrice_lt: "${maxPrice}"`)
   }
 
   if (filters.minPrice) {
-    const parsedMinPrice = filters.minPrice.toLocaleString('en-US', { minimumFractionDigits: 18, useGrouping: false })
-    const minPrice = ethers.utils.parseEther(parsedMinPrice).toString()
+    const minPrice = ethers.utils.parseEther(filters.minPrice).toString()
     where.push(`searchOrderPrice_gt: "${minPrice}"`)
   }
 
