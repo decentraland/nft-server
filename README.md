@@ -70,6 +70,8 @@ type NFT = {
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 - `isOnRent`: Filter results by NFTs that are on rent. Possible values: `true`, `false`
 - `rentalStatus`: Filter results by `Rental status`. Can be used only when querying NFTs that are on rent using the `isOnRent` flag. Possible values: `open`, `executed`, `claimed`, `cancelled`.
+- `minPrice`: Filter results by minimun price. Type: `number`
+- `maxPrice`: Filter results by max price. Type: `number`
 
 ## Items
 

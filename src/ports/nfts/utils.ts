@@ -5,6 +5,7 @@ import {
   NFTSortBy,
   WearableGender,
 } from '@dcl/schemas'
+import { ethers } from 'ethers'
 import { QueryVariables } from './types'
 
 export const NFT_DEFAULT_SORT_BY = NFTSortBy.NEWEST
@@ -82,6 +83,16 @@ export function getFetchQuery(
 
   if (filters.search) {
     where.push(`searchText_contains: "${filters.search.trim().toLowerCase()}"`)
+  }
+
+  if (filters.maxPrice) {
+    const maxPrice = ethers.utils.parseEther(filters.maxPrice).toString()
+    where.push(`searchOrderPrice_lt: "${maxPrice}"`)
+  }
+
+  if (filters.minPrice) {
+    const minPrice = ethers.utils.parseEther(filters.minPrice).toString()
+    where.push(`searchOrderPrice_gt: "${minPrice}"`)
   }
 
   if (filters.contractAddresses && filters.contractAddresses.length > 0) {
