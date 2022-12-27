@@ -64,8 +64,19 @@ export function createNFTsHandler(
     const maxPrice = params.getString('maxPrice')
     const minPrice = params.getString('minPrice')
 
-    return asJSON(() =>
-      nfts.fetchAndCount({
+    return asJSON(() => {
+      if (tokenId && !tokenId.match(`^[0-9]+$`)) {
+        throw new HttpError('Invalid token id, token ids must be numbers', 400)
+      }
+
+      if (tokenId && contractAddresses.length === 0) {
+        throw new HttpError(
+          "NFTs can't be queried by token id if no contract address is provided",
+          400
+        )
+      }
+
+      return nfts.fetchAndCount({
         first,
         skip,
         sortBy,
@@ -92,7 +103,7 @@ export function createNFTsHandler(
         maxPrice,
         minPrice,
       })
-    )
+    })
   }
 }
 
