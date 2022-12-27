@@ -46,7 +46,17 @@ export function createNFTComponent<T extends { id: string }>(options: {
   }
 
   async function fetch(options: NFTFilters): Promise<NFTResult[]> {
-    if (options.tokenId && options.contractAddresses) {
+    if (
+      options.tokenId &&
+      options.contractAddresses &&
+      options.contractAddresses.length > 0
+    ) {
+      console.log(
+        'Fetch: Going to fetch one',
+        options.contractAddresses,
+        options.tokenId,
+        fragmentName
+      )
       const nft = await fetchOne(options.contractAddresses[0], options.tokenId)
       return nft ? [nft] : []
     } else if (options.tokenId) {
