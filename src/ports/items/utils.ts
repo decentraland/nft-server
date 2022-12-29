@@ -1,4 +1,5 @@
 import BN from 'bn.js'
+import { ethers } from 'ethers'
 import {
   ChainId,
   EmotePlayMode,
@@ -148,6 +149,8 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     emoteGenders,
     contractAddresses,
     itemId,
+    minPrice,
+    maxPrice
   } = filters as ItemFilters
 
   const where: string[] = [`searchIsCollectionApproved: true`]
@@ -190,6 +193,16 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
 
   if (search) {
     where.push(`searchText_contains: "${search.trim().toLowerCase()}"`)
+  }
+
+  if (maxPrice) {
+    const maxPriceWei = ethers.utils.parseEther(maxPrice).toString()
+    where.push(`price_lte: "${maxPriceWei}"`)
+  }
+
+  if (minPrice) {
+    const minPriceWei = ethers.utils.parseEther(minPrice).toString()
+    where.push(`price_gte: "${minPriceWei}"`)
   }
 
   if (contractAddresses && contractAddresses.length > 0) {

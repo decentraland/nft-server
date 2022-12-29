@@ -55,6 +55,8 @@ export function createItemsHandler(
     const contractAddresses = params.getList('contractAddress')
     const itemId = params.getString('itemId')
     const network = params.getValue<Network>('network', Network)
+    const maxPrice = params.getString('maxPrice')
+    const minPrice = params.getString('minPrice')
 
     return asJSON(() =>
       items.fetchAndCount({
@@ -78,6 +80,8 @@ export function createItemsHandler(
         itemId,
         isWearableSmart,
         network,
+        minPrice,
+        maxPrice
       })
     )
   }
