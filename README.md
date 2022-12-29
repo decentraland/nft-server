@@ -123,6 +123,8 @@ type Item = {
 - `emotePlayMode`: Filter results by `EmotePlayMode`. Possible values: `simple`, `loop`
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
 - `itemId`: Filter results by `itemId`. Type: `string`.
+- `minPrice`: Return only sales with a price higher than this. Type `number`.
+- `maxPrice`: Return only sales with a price lower than this. Type `number`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 
 ## Orders
