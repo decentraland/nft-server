@@ -87,12 +87,12 @@ export function getFetchQuery(
 
   if (filters.maxPrice) {
     const maxPrice = ethers.utils.parseEther(filters.maxPrice).toString()
-    where.push(`searchOrderPrice_lt: "${maxPrice}"`)
+    where.push(`searchOrderPrice_lte: "${maxPrice}"`)
   }
 
   if (filters.minPrice) {
     const minPrice = ethers.utils.parseEther(filters.minPrice).toString()
-    where.push(`searchOrderPrice_gt: "${minPrice}"`)
+    where.push(`searchOrderPrice_gte: "${minPrice}"`)
   }
 
   if (filters.contractAddresses && filters.contractAddresses.length > 0) {

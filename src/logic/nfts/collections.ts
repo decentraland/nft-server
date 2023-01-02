@@ -7,6 +7,7 @@ import {
   NFTFilters,
   NFTSortBy,
   Rarity,
+  RentalStatus,
   WearableCategory,
 } from '@dcl/schemas'
 import { FragmentItemType } from '../../ports/items/types'
@@ -250,6 +251,9 @@ export function getCollectionsExtraWhere(options: NFTFilters) {
 
 export function collectionsShouldFetch(filters: NFTFilters) {
   if (
+    (Array.isArray(filters.rentalStatus) &&
+      (filters.rentalStatus as RentalStatus[]).length > 0) ||
+    (!Array.isArray(filters.rentalStatus) && filters.rentalStatus) ||
     filters.isLand ||
     (filters.network && filters.network !== Network.MATIC) ||
     (filters.category &&
