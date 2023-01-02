@@ -49,7 +49,7 @@ export function createNFTsHandler(
       'emoteGender',
       WearableGender
     )
-    const emotePlayMode = params.getValue<EmotePlayMode>(
+    const emotePlayMode = params.getList<EmotePlayMode>(
       'emotePlayMode',
       EmotePlayMode
     )

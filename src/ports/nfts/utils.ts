@@ -164,9 +164,9 @@ export function getFetchQuery(
       }
     }
 
-    if (filters.emotePlayMode) {
+    if (filters.emotePlayMode && filters.emotePlayMode.length === 1) {
       where.push(
-        `searchEmoteLoop: ${filters.emotePlayMode === EmotePlayMode.LOOP}`
+        `searchEmoteLoop: ${filters.emotePlayMode[0] === EmotePlayMode.LOOP}`
       )
     }
 
