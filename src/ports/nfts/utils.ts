@@ -163,7 +163,12 @@ export function getFetchQuery(
         where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
       }
     }
-
+  
+    /**
+     * If emotePlayMode length is more than 1 we are ignoring the filter. This is done like this because
+     * we are now saving the playMode as a boolean in the graph (loop), so 2 properties means we want all items
+     * This should change when we add more play mode types.
+     */
     if (filters.emotePlayMode && filters.emotePlayMode.length === 1) {
       where.push(
         `searchEmoteLoop: ${filters.emotePlayMode[0] === EmotePlayMode.LOOP}`
