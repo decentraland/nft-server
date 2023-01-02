@@ -150,7 +150,8 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     contractAddresses,
     itemId,
     minPrice,
-    maxPrice
+    maxPrice,
+    emotePlayMode
   } = filters as ItemFilters
 
   const where: string[] = [`searchIsCollectionApproved: true`]
@@ -282,9 +283,14 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       }
     }
 
-    if (filters.emotePlayMode) {
+    /**
+     * If emotePlayMode length is more than 1 we are ignoring the filter. This is done like this because
+     * we are now saving the playMode as a boolean in the graph (loop), so 2 properties means we want all items
+     * This should change when we add more play mode types.
+     */
+    if (emotePlayMode && emotePlayMode.length === 1) {
       where.push(
-        `searchEmoteLoop: ${filters.emotePlayMode === EmotePlayMode.LOOP}`
+        `searchEmoteLoop: ${emotePlayMode[0] === EmotePlayMode.LOOP}`
       )
     }
 
