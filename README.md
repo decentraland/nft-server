@@ -119,7 +119,7 @@ type Item = {
 - `wearableCategory`: Filter results by `WearableCategory`. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`, `skin`.
 - `wearableGender`: Filter results by `GenderFilterOption`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`, `unisex`.
 - `emoteCategory`: Filter results by `EmoteCategory`. Possible values: `dance`, `stunt`, `greetings`, `fun`, `poses`, `reactions`, `horror`, `miscellaneous`.
-- `emoteGender`: Filter results by `GenderFilterOption`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female` `unisex`.
+- `emoteGender`: Filter results by `GenderFilterOption`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`, `unisex`.
 - `emotePlayMode`: Filter results by `EmotePlayMode`. It supports multiple values by adding the query param multiple times. Possible values: `simple`, `loop`,
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
 - `itemId`: Filter results by `itemId`. Type: `string`.
