@@ -3,7 +3,7 @@ import {
   NFTCategory,
   NFTFilters,
   NFTSortBy,
-  WearableGender,
+  GenderFilterOption,
 } from '@dcl/schemas'
 import { ethers } from 'ethers'
 import { QueryVariables } from './types'
@@ -125,15 +125,34 @@ export function getFetchQuery(
     }
 
     if (filters.wearableGenders && filters.wearableGenders.length > 0) {
-      const hasMale = filters.wearableGenders.includes(WearableGender.MALE)
-      const hasFemale = filters.wearableGenders.includes(WearableGender.FEMALE)
+      const hasMale = filters.wearableGenders.includes(GenderFilterOption.MALE)
+      const hasFemale = filters.wearableGenders.includes(
+        GenderFilterOption.FEMALE
+      )
+      const hasUnisex = filters.wearableGenders.includes(
+        GenderFilterOption.UNISEX
+      )
 
-      if (hasMale && !hasFemale) {
-        where.push(`searchWearableBodyShapes: [BaseMale]`)
-      } else if (hasFemale && !hasMale) {
-        where.push(`searchWearableBodyShapes: [BaseFemale]`)
-      } else if (hasMale && hasFemale) {
-        where.push(`searchWearableBodyShapes_contains: [BaseMale, BaseFemale]`)
+      if (filters.wearableGenders.length === 1) {
+        if (hasMale) {
+          where.push(`searchWearableBodyShapes: [BaseMale]`)
+        } else if (hasFemale) {
+          where.push(`searchWearableBodyShapes: [BaseFemale]`)
+        } else if (hasUnisex) {
+          where.push(
+            `searchWearableBodyShapes_contains: [BaseMale, BaseFemale]`
+          )
+        }
+      } else if (filters.wearableGenders.length === 2) {
+        if (hasMale && hasFemale) {
+          where.push(
+            `searchWearableBodyShapes_contains: [BaseMale, BaseFemale]`
+          )
+        } else if (hasMale && hasUnisex) {
+          where.push(`searchWearableBodyShapes_contains: [BaseMale]`)
+        } else {
+          where.push(`searchWearableBodyShapes_contains: [BaseFemale]`)
+        }
       }
     }
 
@@ -152,18 +171,29 @@ export function getFetchQuery(
     }
 
     if (filters.emoteGenders && filters.emoteGenders.length > 0) {
-      const hasMale = filters.emoteGenders.includes(WearableGender.MALE)
-      const hasFemale = filters.emoteGenders.includes(WearableGender.FEMALE)
+      const hasMale = filters.emoteGenders.includes(GenderFilterOption.MALE)
+      const hasFemale = filters.emoteGenders.includes(GenderFilterOption.FEMALE)
+      const hasUnisex = filters.emoteGenders.includes(GenderFilterOption.UNISEX)
 
-      if (hasMale && !hasFemale) {
-        where.push(`searchEmoteBodyShapes: [BaseMale]`)
-      } else if (hasFemale && !hasMale) {
-        where.push(`searchEmoteBodyShapes: [BaseFemale]`)
-      } else if (hasMale && hasFemale) {
-        where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
+      if (filters.emoteGenders.length === 1) {
+        if (hasMale) {
+          where.push(`searchEmoteBodyShapes: [BaseMale]`)
+        } else if (hasFemale) {
+          where.push(`searchEmoteBodyShapes: [BaseFemale]`)
+        } else if (hasUnisex) {
+          where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
+        }
+      } else if (filters.emoteGenders.length === 2) {
+        if (hasMale && hasFemale) {
+          where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
+        } else if (hasMale && hasUnisex) {
+          where.push(`searchEmoteBodyShapes_contains: [BaseMale]`)
+        } else {
+          where.push(`searchEmoteBodyShapes_contains: [BaseFemale]`)
+        }
       }
     }
-  
+
     /**
      * If emotePlayMode length is more than 1 we are ignoring the filter. This is done like this because
      * we are now saving the playMode as a boolean in the graph (loop), so 2 properties means we want all items

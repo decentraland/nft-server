@@ -8,7 +8,7 @@ import {
   ItemSortBy,
   Network,
   NFTCategory,
-  WearableGender,
+  GenderFilterOption,
 } from '@dcl/schemas'
 import { ItemFragment, FragmentItemType } from './types'
 import { isAddressZero } from '../../logic/address'
@@ -151,8 +151,8 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     itemId,
     minPrice,
     maxPrice,
-    emotePlayMode
-  } = filters as ItemFilters
+    emotePlayMode,
+  } = filters
 
   const where: string[] = [`searchIsCollectionApproved: true`]
 
@@ -240,15 +240,30 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     }
 
     if (wearableGenders && wearableGenders.length > 0) {
-      const hasMale = wearableGenders.includes(WearableGender.MALE)
-      const hasFemale = wearableGenders.includes(WearableGender.FEMALE)
+      const hasMale = wearableGenders.includes(GenderFilterOption.MALE)
+      const hasFemale = wearableGenders.includes(GenderFilterOption.FEMALE)
+      const hasUnisex = wearableGenders.includes(GenderFilterOption.UNISEX)
 
-      if (hasMale && !hasFemale) {
-        where.push(`searchWearableBodyShapes: [BaseMale]`)
-      } else if (hasFemale && !hasMale) {
-        where.push(`searchWearableBodyShapes: [BaseFemale]`)
-      } else if (hasMale && hasFemale) {
-        where.push(`searchWearableBodyShapes_contains: [BaseMale, BaseFemale]`)
+      if (wearableGenders.length === 1) {
+        if (hasMale) {
+          where.push(`searchWearableBodyShapes: [BaseMale]`)
+        } else if (hasFemale) {
+          where.push(`searchWearableBodyShapes: [BaseFemale]`)
+        } else if (hasUnisex) {
+          where.push(
+            `searchWearableBodyShapes_contains: [BaseMale, BaseFemale]`
+          )
+        }
+      } else if (wearableGenders.length === 2) {
+        if (hasMale && hasFemale) {
+          where.push(
+            `searchWearableBodyShapes_contains: [BaseMale, BaseFemale]`
+          )
+        } else if (hasMale && hasUnisex) {
+          where.push(`searchWearableBodyShapes_contains: [BaseMale]`)
+        } else {
+          where.push(`searchWearableBodyShapes_contains: [BaseFemale]`)
+        }
       }
     }
 
@@ -271,15 +286,26 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     }
 
     if (emoteGenders && emoteGenders.length > 0) {
-      const hasMale = emoteGenders.includes(WearableGender.MALE)
-      const hasFemale = emoteGenders.includes(WearableGender.FEMALE)
+      const hasMale = emoteGenders.includes(GenderFilterOption.MALE)
+      const hasFemale = emoteGenders.includes(GenderFilterOption.FEMALE)
+      const hasUnisex = emoteGenders.includes(GenderFilterOption.UNISEX)
 
-      if (hasMale && !hasFemale) {
-        where.push(`searchEmoteBodyShapes: [BaseMale]`)
-      } else if (hasFemale && !hasMale) {
-        where.push(`searchEmoteBodyShapes: [BaseFemale]`)
-      } else if (hasMale && hasFemale) {
-        where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
+      if (emoteGenders.length === 1) {
+        if (hasMale) {
+          where.push(`searchEmoteBodyShapes: [BaseMale]`)
+        } else if (hasFemale) {
+          where.push(`searchEmoteBodyShapes: [BaseFemale]`)
+        } else if (hasUnisex) {
+          where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
+        }
+      } else if (emoteGenders.length === 2) {
+        if (hasMale && hasFemale) {
+          where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
+        } else if (hasMale && hasUnisex) {
+          where.push(`searchEmoteBodyShapes_contains: [BaseMale]`)
+        } else {
+          where.push(`searchEmoteBodyShapes_contains: [BaseFemale]`)
+        }
       }
     }
 
@@ -289,9 +315,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
      * This should change when we add more play mode types.
      */
     if (emotePlayMode && emotePlayMode.length === 1) {
-      where.push(
-        `searchEmoteLoop: ${emotePlayMode[0] === EmotePlayMode.LOOP}`
-      )
+      where.push(`searchEmoteLoop: ${emotePlayMode[0] === EmotePlayMode.LOOP}`)
     }
 
     if (rarities && rarities.length > 0) {
@@ -343,12 +367,12 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
 
   const query = `query Items {
     items(
-      first: ${total}, 
+      first: ${total},
       ${orderBy ? `orderBy: ${orderBy},` : ''}
       ${orderDirection ? `orderDirection: ${orderDirection},` : ''}
       where: {
         ${where.join('\n')}
-      }) 
+      })
     { ${isCount ? 'id' : `...itemFragment`} }
   }`
 
