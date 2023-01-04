@@ -8,10 +8,10 @@ import {
   ItemSortBy,
   Network,
   NFTCategory,
-  GenderFilterOption,
 } from '@dcl/schemas'
 import { ItemFragment, FragmentItemType } from './types'
 import { isAddressZero } from '../../logic/address'
+import { getGenderFilterQuery } from '../utils'
 
 export const ITEM_DEFAULT_SORT_BY = ItemSortBy.NEWEST
 
@@ -240,30 +240,9 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     }
 
     if (wearableGenders && wearableGenders.length > 0) {
-      const hasMale = wearableGenders.includes(GenderFilterOption.MALE)
-      const hasFemale = wearableGenders.includes(GenderFilterOption.FEMALE)
-      const hasUnisex = wearableGenders.includes(GenderFilterOption.UNISEX)
-
-      if (wearableGenders.length === 1) {
-        if (hasMale) {
-          where.push(`searchWearableBodyShapes: [BaseMale]`)
-        } else if (hasFemale) {
-          where.push(`searchWearableBodyShapes: [BaseFemale]`)
-        } else if (hasUnisex) {
-          where.push(
-            `searchWearableBodyShapes_contains: [BaseMale, BaseFemale]`
-          )
-        }
-      } else if (wearableGenders.length === 2) {
-        if (hasMale && hasFemale) {
-          where.push(
-            `searchWearableBodyShapes_contains: [BaseMale, BaseFemale]`
-          )
-        } else if (hasMale && hasUnisex) {
-          where.push(`searchWearableBodyShapes_contains: [BaseMale]`)
-        } else {
-          where.push(`searchWearableBodyShapes_contains: [BaseFemale]`)
-        }
+      const genderQuery = getGenderFilterQuery(wearableGenders, false)
+      if (genderQuery) {
+        where.push(genderQuery)
       }
     }
 
@@ -286,26 +265,9 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     }
 
     if (emoteGenders && emoteGenders.length > 0) {
-      const hasMale = emoteGenders.includes(GenderFilterOption.MALE)
-      const hasFemale = emoteGenders.includes(GenderFilterOption.FEMALE)
-      const hasUnisex = emoteGenders.includes(GenderFilterOption.UNISEX)
-
-      if (emoteGenders.length === 1) {
-        if (hasMale) {
-          where.push(`searchEmoteBodyShapes: [BaseMale]`)
-        } else if (hasFemale) {
-          where.push(`searchEmoteBodyShapes: [BaseFemale]`)
-        } else if (hasUnisex) {
-          where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
-        }
-      } else if (emoteGenders.length === 2) {
-        if (hasMale && hasFemale) {
-          where.push(`searchEmoteBodyShapes_contains: [BaseMale, BaseFemale]`)
-        } else if (hasMale && hasUnisex) {
-          where.push(`searchEmoteBodyShapes_contains: [BaseMale]`)
-        } else {
-          where.push(`searchEmoteBodyShapes_contains: [BaseFemale]`)
-        }
+      const genderQuery = getGenderFilterQuery(emoteGenders, true)
+      if (genderQuery) {
+        where.push(genderQuery)
       }
     }
 
