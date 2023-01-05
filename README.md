@@ -62,7 +62,7 @@ type NFT = {
 - `isWearableAccessory`: Only return results that their category is `wearable` and accessories (not a part of the body).
 - `isWearableSmart`: Only return smart wearables. Type `boolean`.
 - `wearableCategory`: Filter results by `WearableCategory`. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`, `skin`.
-- `wearableGender`: Filter results by `WearableGender`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`.
+- `wearableGender`: Filter results by `GenderFilterOption`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`, `unisex`.
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
 - `tokenId`: Filter results by `tokenId`. Type: `string`.
 - `itemRarity`: Filter results by `Rarity`. It supports multiple values by adding the query param multiple times. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
@@ -117,9 +117,9 @@ type Item = {
 - `isWearableAccessory`: Only return results that their category is `wearable` and accessories (not a part of the body).
 - `isWearableSmart`: Only return smart wearables. Type `boolean`.
 - `wearableCategory`: Filter results by `WearableCategory`. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`, `skin`.
-- `wearableGender`: Filter results by `WearableGender`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`.
+- `wearableGender`: Filter results by `GenderFilterOption`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`, `unisex`.
 - `emoteCategory`: Filter results by `EmoteCategory`. Possible values: `dance`, `stunt`, `greetings`, `fun`, `poses`, `reactions`, `horror`, `miscellaneous`.
-- `emoteGender`: Filter results by `WearableGender`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`.
+- `emoteGender`: Filter results by `GenderFilterOption`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`, `unisex`.
 - `emotePlayMode`: Filter results by `EmotePlayMode`. It supports multiple values by adding the query param multiple times. Possible values: `simple`, `loop`
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
 - `itemId`: Filter results by `itemId`. Type: `string`.

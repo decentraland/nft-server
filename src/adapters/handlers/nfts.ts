@@ -1,13 +1,13 @@
 import {
   EmoteCategory,
   EmotePlayMode,
+  GenderFilterOption,
   Network,
   NFTCategory,
   NFTSortBy,
   Rarity,
   RentalStatus,
   WearableCategory,
-  WearableGender,
 } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { AppComponents, Context } from '../../types'
@@ -37,17 +37,17 @@ export function createNFTsHandler(
       'wearableCategory',
       WearableCategory
     )
-    const wearableGenders = params.getList<WearableGender>(
+    const wearableGenders = params.getList<GenderFilterOption>(
       'wearableGender',
-      WearableGender
+      GenderFilterOption
     )
     const emoteCategory = params.getValue<EmoteCategory>(
       'emoteCategory',
       EmoteCategory
     )
-    const emoteGenders = params.getList<WearableGender>(
+    const emoteGenders = params.getList<GenderFilterOption>(
       'emoteGender',
-      WearableGender
+      GenderFilterOption
     )
     const emotePlayMode = params.getList<EmotePlayMode>(
       'emotePlayMode',
