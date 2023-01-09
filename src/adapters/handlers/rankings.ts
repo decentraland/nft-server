@@ -1,7 +1,7 @@
 import { EmoteCategory, Rarity, WearableCategory } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { Params } from '../../logic/http/params'
-import { asJSON } from '../../logic/http/response'
+import { asJSON, HttpError } from '../../logic/http/response'
 import { AnalyticsTimeframe } from '../../ports/analyticsDayData/types'
 import { getTimestampFromTimeframe } from '../../ports/analyticsDayData/utils'
 import { RankingEntity, RankingsSortBy } from '../../ports/rankings/types'
@@ -25,14 +25,28 @@ export function createRankingsHandler(
     )
     const rarity = params.getValue<Rarity>('rarity', Rarity)
 
-    return asJSON(async () => ({
-      data: await rankings.fetch(entity as RankingEntity, {
-        from: getTimestampFromTimeframe(timeframe as AnalyticsTimeframe),
-        first,
-        sortBy,
-        category,
-        rarity,
-      }),
-    }))
+    return asJSON(async () => {
+      const supportedEntities = Object.values(RankingEntity)
+
+      // @ts-ignore
+      if (!supportedEntities.includes(entity)) {
+        throw new HttpError(
+          `Entity not supported: ${entity}. Supported entities are: ${supportedEntities.join(
+            ', '
+          )}`,
+          400
+        )
+      }
+
+      return {
+        data: await rankings.fetch(entity as RankingEntity, {
+          from: getTimestampFromTimeframe(timeframe as AnalyticsTimeframe),
+          first,
+          sortBy,
+          category,
+          rarity,
+        }),
+      }
+    })
   }
 }
