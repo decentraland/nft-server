@@ -413,6 +413,7 @@ async function initComponents(): Promise<AppComponents> {
   // analytics day data for the marketplace subgraph
   const marketplaceAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: marketplaceSubgraph,
+    // TODO: Isn't this supposed to be ETHEREUM? marketplace subgraph is not on Polygon
     network: Network.MATIC,
   })
 
@@ -420,6 +421,12 @@ async function initComponents(): Promise<AppComponents> {
   const collectionsAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
+  })
+
+  // analytics day data for the rentals subgraph
+  const rentalsAnalyticsDayData = createAnalyticsDayDataComponent({
+    subgraph: rentalsSubgraph,
+    network: Network.ETHEREUM,
   })
 
   const analyticsData = createMergerComponent<
@@ -430,6 +437,7 @@ async function initComponents(): Promise<AppComponents> {
     sources: [
       createAnalyticsDayDataSource(marketplaceAnalyticsDayData),
       createAnalyticsDayDataSource(collectionsAnalyticsDayData),
+      createAnalyticsDayDataSource(rentalsAnalyticsDayData),
     ],
     defaultSortBy: AnalyticsDayDataSortBy.DATE,
     directions: {
