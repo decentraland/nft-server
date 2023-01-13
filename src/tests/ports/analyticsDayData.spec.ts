@@ -1,13 +1,11 @@
 import { AnalyticsDayDataFilters, Network } from '@dcl/schemas'
 import { test } from '../../../src/tests/components'
 import { createAnalyticsDayDataComponent } from '../../ports/analyticsDayData/component'
-import {
-  AnalyticsDataFragment,
-  IAnalyticsDayDataComponent,
-} from '../../ports/analyticsDayData/types'
+import { IAnalyticsDayDataComponent } from '../../ports/analyticsDayData/types'
 import {
   getAnalyticsDayDataQuery,
   getAnalyticsTotalDataQuery,
+  mapAnalyticsFragment,
 } from '../../ports/analyticsDayData/utils'
 
 test('analyticsDayData component', function ({ components }) {
@@ -18,13 +16,17 @@ test('analyticsDayData component', function ({ components }) {
     analyticsDayData = createAnalyticsDayDataComponent({
       network: Network.MATIC,
       subgraph: collectionsSubgraph,
+      getAnalyticsDayDataQuery,
+      getAnalyticsTotalDataQuery,
+      mapAnalyticsFragment,
     })
   })
 
   describe('when fetching', () => {
     describe('and the "from" filter is 0', () => {
       let filters: AnalyticsDayDataFilters
-      let graphResponse: AnalyticsDataFragment[]
+      let graphResponse: any[]
+
       beforeEach(() => {
         const { collectionsSubgraph } = components
         graphResponse = [
@@ -57,7 +59,8 @@ test('analyticsDayData component', function ({ components }) {
 
     describe('and the "from" filter is not 0', () => {
       let filters: AnalyticsDayDataFilters
-      let graphResponse: AnalyticsDataFragment[]
+      let graphResponse: any[]
+
       beforeEach(() => {
         const { collectionsSubgraph } = components
         graphResponse = [

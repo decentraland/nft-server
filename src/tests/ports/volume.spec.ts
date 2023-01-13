@@ -1,12 +1,10 @@
 import { test } from '../components'
 import { getAccumulatedAnalyticsData } from '../../logic/volume'
-import {
-  AnalyticsDataFragment,
-  AnalyticsTimeframe,
-} from '../../ports/analyticsDayData/types'
+import { AnalyticsTimeframe } from '../../ports/analyticsDayData/types'
 import { getTimestampFromTimeframe } from '../../ports/analyticsDayData/utils'
 import { IVolumeComponent } from '../../ports/volume/types'
 import { createVolumeComponent } from '../../ports/volume/component'
+import { AnalyticsDayData } from '@dcl/schemas'
 
 test('volume component', function ({ components }) {
   let volumeComponent: IVolumeComponent
@@ -27,13 +25,13 @@ test('volume component', function ({ components }) {
 
   describe('when fetching the rankings by timeframe', () => {
     describe('and one valid timeframe is passed', () => {
-      let graphResponse: AnalyticsDataFragment[]
+      let analyticsDataFetchResponse: AnalyticsDayData[]
       let timeframe: AnalyticsTimeframe
 
       beforeEach(() => {
         const { analyticsData } = components
         timeframe = AnalyticsTimeframe.WEEK
-        graphResponse = [
+        analyticsDataFetchResponse = [
           {
             id: '123',
             date: 123,
@@ -52,13 +50,15 @@ test('volume component', function ({ components }) {
           },
         ]
 
-        jest.spyOn(analyticsData, 'fetch').mockResolvedValueOnce(graphResponse)
+        jest
+          .spyOn(analyticsData, 'fetch')
+          .mockResolvedValueOnce(analyticsDataFetchResponse)
       })
 
       it('should fetch the data and return the accumulated result', async () => {
         const { analyticsData } = components
         expect(await volumeComponent.fetch(timeframe)).toEqual(
-          getAccumulatedAnalyticsData(graphResponse)
+          getAccumulatedAnalyticsData(analyticsDataFetchResponse)
         )
         expect(analyticsData.fetch).toHaveBeenCalledWith({
           from: getTimestampFromTimeframe(timeframe),
