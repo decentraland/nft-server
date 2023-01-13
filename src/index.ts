@@ -471,7 +471,6 @@ async function initComponents(): Promise<AppComponents> {
       id: dayData1.id, // id and date will be the same since they. We pick just the one from 'volume1'
       date: dayData1.date,
       sales: dayData1.sales + dayData2.sales,
-      rentals: dayData1.rentals + dayData2.rentals,
       volume: new BN(dayData1.volume).add(new BN(dayData2.volume)).toString(),
       daoEarnings: new BN(dayData1.daoEarnings)
         .add(new BN(dayData2.daoEarnings))
