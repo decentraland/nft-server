@@ -8,11 +8,6 @@ export enum AnalyticsTimeframe {
 }
 
 export interface IAnalyticsDayDataComponent {
-  fetch(filters: AnalyticsDayDataFilters): Promise<AnalyticsDataFragment[]>
+  fetch(filters: AnalyticsDayDataFilters): Promise<AnalyticsDayData[]>
   count(filters: AnalyticsDayDataFilters): Promise<number>
 }
-
-export type AnalyticsDataFragment = Pick<
-  AnalyticsDayData,
-  'id' | 'date' | 'sales' | 'volume' | 'creatorsEarnings' | 'daoEarnings'
->

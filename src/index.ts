@@ -118,6 +118,7 @@ import {
   getAnalyticsTotalDataQuery,
   getRentalsAnalyticsDayDataQuery,
   getRentalsAnalyticsTotalDataQuery,
+  mapAnalyticsFragment,
   mapRentalsAnalyticsFragment,
 } from './ports/analyticsDayData/utils'
 
@@ -422,18 +423,18 @@ async function initComponents(): Promise<AppComponents> {
     subgraph: marketplaceSubgraph,
     // TODO: Isn't this supposed to be ETHEREUM? marketplace subgraph is not on Polygon
     network: Network.MATIC,
-    getAnalyticsDayDataQuery: getAnalyticsDayDataQuery,
-    getAnalyticsTotalDataQuery: getAnalyticsTotalDataQuery,
-    mapFragment: (fragment) => fragment,
+    getAnalyticsDayDataQuery,
+    getAnalyticsTotalDataQuery,
+    mapAnalyticsFragment,
   })
 
   // analytics day data for the collections subgraph
   const collectionsAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
-    getAnalyticsDayDataQuery: getAnalyticsDayDataQuery,
-    getAnalyticsTotalDataQuery: getAnalyticsTotalDataQuery,
-    mapFragment: (fragment) => fragment,
+    getAnalyticsDayDataQuery,
+    getAnalyticsTotalDataQuery,
+    mapAnalyticsFragment,
   })
 
   // analytics day data for the rentals subgraph
@@ -442,7 +443,7 @@ async function initComponents(): Promise<AppComponents> {
     network: Network.ETHEREUM,
     getAnalyticsDayDataQuery: getRentalsAnalyticsDayDataQuery,
     getAnalyticsTotalDataQuery: getRentalsAnalyticsTotalDataQuery,
-    mapFragment: mapRentalsAnalyticsFragment,
+    mapAnalyticsFragment: mapRentalsAnalyticsFragment,
   })
 
   const analyticsData = createMergerComponent<
@@ -470,6 +471,7 @@ async function initComponents(): Promise<AppComponents> {
       id: dayData1.id, // id and date will be the same since they. We pick just the one from 'volume1'
       date: dayData1.date,
       sales: dayData1.sales + dayData2.sales,
+      rentals: dayData1.rentals + dayData2.rentals,
       volume: new BN(dayData1.volume).add(new BN(dayData2.volume)).toString(),
       daoEarnings: new BN(dayData1.daoEarnings)
         .add(new BN(dayData2.daoEarnings))

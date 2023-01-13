@@ -1,5 +1,5 @@
-import { AnalyticsDayDataFilters } from '@dcl/schemas'
-import { AnalyticsDataFragment, AnalyticsTimeframe } from './types'
+import { AnalyticsDayData, AnalyticsDayDataFilters } from '@dcl/schemas'
+import { AnalyticsTimeframe } from './types'
 
 export const getAnalyticsDayDataFragment = () => `
   fragment analyticsDayDataFragment on AnalyticsDayData {
@@ -50,6 +50,18 @@ export function getAnalyticsTotalDataQuery() {
     }
     ${getAnalyticsTotalDataFragment()}
   `
+}
+
+export function mapAnalyticsFragment(fragment: any): AnalyticsDayData {
+  return {
+    id: fragment.id,
+    date: fragment.date,
+    sales: fragment.sales,
+    rentals: 0,
+    volume: fragment.volume,
+    creatorsEarnings: fragment.creatorsEarnings,
+    daoEarnings: fragment.daoEarnings,
+  }
 }
 
 export function getDateXDaysAgo(numOfDays: number, date = new Date()) {
@@ -119,13 +131,12 @@ export function getRentalsAnalyticsTotalDataQuery() {
   `
 }
 
-export function mapRentalsAnalyticsFragment(
-  fragment: any
-): AnalyticsDataFragment {
+export function mapRentalsAnalyticsFragment(fragment: any): AnalyticsDayData {
   return {
-    id: fragment.id,
+    id: fragment.id === 'global' ? 'all' : fragment.id,
     date: fragment.date,
-    sales: fragment.rentals,
+    sales: 0,
+    rentals: fragment.rentals,
     volume: fragment.volume,
     creatorsEarnings: fragment.lessorEarnings,
     daoEarnings: fragment.feeCollectorEarnings,
