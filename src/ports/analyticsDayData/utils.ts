@@ -1,5 +1,5 @@
 import { AnalyticsDayDataFilters } from '@dcl/schemas'
-import { AnalyticsTimeframe } from './types'
+import { AnalyticsDataFragment, AnalyticsTimeframe } from './types'
 
 export const getAnalyticsDayDataFragment = () => `
   fragment analyticsDayDataFragment on AnalyticsDayData {
@@ -75,5 +75,59 @@ export function getTimestampFromTimeframe(timeframe: AnalyticsTimeframe) {
       return 0
     default:
       return 0
+  }
+}
+
+// Rentals
+
+export function getRentalsAnalyticsDayDataQuery(
+  filters: AnalyticsDayDataFilters
+) {
+  const { from } = filters
+
+  const where: string[] = []
+
+  if (from) {
+    where.push(`date_gt: ${Math.round(from / 1000)}`)
+  }
+
+  return `
+    query AnalyticsDayData {
+      analytics: analyticsDayDatas(where: { ${where.join('\n')} }) {
+        id
+        date
+        rentals
+        volume
+        lessorEarnings
+        feeCollectorEarnings
+      }
+    }
+  `
+}
+
+export function getRentalsAnalyticsTotalDataQuery() {
+  return `
+    query AnalyticsTotalData {
+      analytics: globals {
+        id
+        rentals
+        volume
+        lessorEarnings
+        feeCollectorEarnings
+      }
+    }
+  `
+}
+
+export function mapRentalsAnalyticsFragment(
+  fragment: any
+): AnalyticsDataFragment {
+  return {
+    id: fragment.id,
+    date: fragment.date,
+    sales: fragment.rentals,
+    volume: fragment.volume,
+    creatorsEarnings: fragment.lessorEarnings,
+    daoEarnings: fragment.feeCollectorEarnings,
   }
 }

@@ -113,6 +113,13 @@ import {
   rentalNFTComponentShouldFetch,
   shouldFetch as shouldFetchRentalsFromSignatureServer,
 } from './logic/nfts/rentals'
+import {
+  getAnalyticsDayDataQuery,
+  getAnalyticsTotalDataQuery,
+  getRentalsAnalyticsDayDataQuery,
+  getRentalsAnalyticsTotalDataQuery,
+  mapRentalsAnalyticsFragment,
+} from './ports/analyticsDayData/utils'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -415,18 +422,27 @@ async function initComponents(): Promise<AppComponents> {
     subgraph: marketplaceSubgraph,
     // TODO: Isn't this supposed to be ETHEREUM? marketplace subgraph is not on Polygon
     network: Network.MATIC,
+    getAnalyticsDayDataQuery: getAnalyticsDayDataQuery,
+    getAnalyticsTotalDataQuery: getAnalyticsTotalDataQuery,
+    mapFragment: (fragment) => fragment,
   })
 
   // analytics day data for the collections subgraph
   const collectionsAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
+    getAnalyticsDayDataQuery: getAnalyticsDayDataQuery,
+    getAnalyticsTotalDataQuery: getAnalyticsTotalDataQuery,
+    mapFragment: (fragment) => fragment,
   })
 
   // analytics day data for the rentals subgraph
   const rentalsAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: rentalsSubgraph,
     network: Network.ETHEREUM,
+    getAnalyticsDayDataQuery: getRentalsAnalyticsDayDataQuery,
+    getAnalyticsTotalDataQuery: getRentalsAnalyticsTotalDataQuery,
+    mapFragment: mapRentalsAnalyticsFragment,
   })
 
   const analyticsData = createMergerComponent<
