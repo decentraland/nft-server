@@ -1,5 +1,4 @@
 import { EmotePlayMode, NFTCategory, NFTFilters, NFTSortBy } from '@dcl/schemas'
-import { ethers } from 'ethers'
 import { getGenderFilterQuery } from '../utils'
 import { QueryVariables } from './types'
 

@@ -1,5 +1,4 @@
 import BN from 'bn.js'
-import { ethers } from 'ethers'
 import {
   ChainId,
   EmotePlayMode,
