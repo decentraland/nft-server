@@ -1,9 +1,4 @@
-import {
-  EmotePlayMode,
-  NFTCategory,
-  NFTFilters,
-  NFTSortBy,
-} from '@dcl/schemas'
+import { EmotePlayMode, NFTCategory, NFTFilters, NFTSortBy } from '@dcl/schemas'
 import { ethers } from 'ethers'
 import { getGenderFilterQuery } from '../utils'
 import { QueryVariables } from './types'
@@ -86,13 +81,11 @@ export function getFetchQuery(
   }
 
   if (filters.maxPrice) {
-    const maxPrice = ethers.utils.parseEther(filters.maxPrice).toString()
-    where.push(`searchOrderPrice_lte: "${maxPrice}"`)
+    where.push(`searchOrderPrice_lte: "${filters.maxPrice}"`)
   }
 
   if (filters.minPrice) {
-    const minPrice = ethers.utils.parseEther(filters.minPrice).toString()
-    where.push(`searchOrderPrice_gte: "${minPrice}"`)
+    where.push(`searchOrderPrice_gte: "${filters.minPrice}"`)
   }
 
   if (filters.contractAddresses && filters.contractAddresses.length > 0) {
@@ -125,7 +118,7 @@ export function getFetchQuery(
     }
 
     if (filters.wearableGenders && filters.wearableGenders.length > 0) {
-      const genderQuery = getGenderFilterQuery(filters.wearableGenders, false);
+      const genderQuery = getGenderFilterQuery(filters.wearableGenders, false)
       where.push(genderQuery)
     }
 
@@ -144,7 +137,7 @@ export function getFetchQuery(
     }
 
     if (filters.emoteGenders && filters.emoteGenders.length > 0) {
-      const genderQuery = getGenderFilterQuery(filters.emoteGenders, true);
+      const genderQuery = getGenderFilterQuery(filters.emoteGenders, true)
       if (genderQuery) {
         where.push(genderQuery)
       }
@@ -179,7 +172,7 @@ export function getFetchQuery(
       ? filters.skip + filters.first
       : filters.first
     : max
-  
+
   const query = `query NFTs(
     ${NFTS_FILTERS}
     ${getExtraVariables ? getExtraVariables(filters).join('\n') : ''}

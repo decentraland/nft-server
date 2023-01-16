@@ -197,13 +197,11 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
   }
 
   if (maxPrice) {
-    const maxPriceWei = ethers.utils.parseEther(maxPrice).toString()
-    where.push(`price_lte: "${maxPriceWei}"`)
+    where.push(`price_lte: "${maxPrice}"`)
   }
 
   if (minPrice) {
-    const minPriceWei = ethers.utils.parseEther(minPrice).toString()
-    where.push(`price_gte: "${minPriceWei}"`)
+    where.push(`price_gte: "${minPrice}"`)
   }
 
   if (contractAddresses && contractAddresses.length > 0) {
@@ -327,6 +325,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       orderDirection = 'desc'
   }
 
+  console.log('where: ', where)
   const query = `query Items {
     items(
       first: ${total},
