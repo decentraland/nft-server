@@ -119,7 +119,7 @@ export function getRentalsAnalyticsDayDataQuery(
 export function getRentalsAnalyticsTotalDataQuery() {
   return `
     query AnalyticsTotalData {
-      analytics: globals {
+      analytics: analyticsTotalDatas {
         id
         rentals
         volume
@@ -132,7 +132,7 @@ export function getRentalsAnalyticsTotalDataQuery() {
 
 export function mapRentalsAnalyticsFragment(fragment: any): AnalyticsDayData {
   return {
-    id: fragment.id === 'global' ? 'all' : fragment.id,
+    id: fragment.id === 'analytics-total-data' ? 'all' : fragment.id,
     date: fragment.date,
     sales: 0,
     volume: fragment.volume,
