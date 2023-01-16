@@ -1,3 +1,4 @@
+import { ethers } from 'ethers'
 import {
   EmoteCategory,
   EmotePlayMode,
@@ -80,8 +81,12 @@ export function createItemsHandler(
         itemId,
         isWearableSmart,
         network,
-        minPrice,
-        maxPrice,
+        maxPrice: maxPrice
+          ? ethers.utils.parseEther(maxPrice).toString()
+          : undefined,
+        minPrice: minPrice
+          ? ethers.utils.parseEther(minPrice).toString()
+          : undefined,
       })
     )
   }

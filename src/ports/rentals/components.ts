@@ -52,6 +52,8 @@ export function createRentalsComponent(
         : undefined
     parameters.lessor = filters.owner
     parameters.tenant = filters.tenant
+    parameters.minPricePerDay = filters.minPrice
+    parameters.maxPricePerDay = filters.maxPrice
 
     // OPEN rentals will be queried by default.
     parameters.status = [RentalStatus.OPEN]

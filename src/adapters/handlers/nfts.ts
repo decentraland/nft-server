@@ -1,3 +1,4 @@
+import { ethers } from 'ethers'
 import {
   EmoteCategory,
   EmotePlayMode,
@@ -100,8 +101,12 @@ export function createNFTsHandler(
         itemId,
         network,
         rentalStatus,
-        maxPrice,
-        minPrice,
+        maxPrice: maxPrice
+          ? ethers.utils.parseEther(maxPrice).toString()
+          : undefined,
+        minPrice: minPrice
+          ? ethers.utils.parseEther(minPrice).toString()
+          : undefined,
       })
     })
   }
