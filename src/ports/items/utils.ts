@@ -325,7 +325,6 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
       orderDirection = 'desc'
   }
 
-  console.log('where: ', where)
   const query = `query Items {
     items(
       first: ${total},
