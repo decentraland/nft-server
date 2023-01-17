@@ -53,6 +53,8 @@ export function getAnalyticsTotalDataQuery() {
 }
 
 export function mapAnalyticsFragment(fragment: any): AnalyticsDayData {
+  // The data returned from the collections/marketplace subgraphs is identical to the one that will be returned by the nft-server.
+  // This means that there is no need to map it, just return the same values.
   return {
     id: fragment.id,
     date: fragment.date,
@@ -132,8 +134,11 @@ export function getRentalsAnalyticsTotalDataQuery() {
 
 export function mapRentalsAnalyticsFragment(fragment: any): AnalyticsDayData {
   return {
+    // Non rentals subgraphs bring this data from an entity with id 'all'
+    // In order to merge the data correctly, we need to set the id to 'all' for the rentals subgraph data as well.
     id: fragment.id === 'analytics-total-data' ? 'all' : fragment.id,
     date: fragment.date,
+    // Rentals provide rentals numbers, not sales, so we just return 0 for sales.
     sales: 0,
     volume: fragment.volume,
     creatorsEarnings: fragment.lessorEarnings,
