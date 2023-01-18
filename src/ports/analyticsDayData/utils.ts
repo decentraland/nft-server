@@ -61,14 +61,7 @@ export function mapAnalyticsFragment(
 ): AnalyticsDayData {
   // The data returned from the collections/marketplace subgraphs is identical to the one that will be returned by the nft-server.
   // This means that there is no need to map it, just return the same values.
-  return {
-    id: fragment.id,
-    date: fragment.date,
-    sales: fragment.sales,
-    volume: fragment.volume,
-    creatorsEarnings: fragment.creatorsEarnings,
-    daoEarnings: fragment.daoEarnings,
-  }
+  return fragment
 }
 
 export function getDateXDaysAgo(numOfDays: number, date = new Date()) {
