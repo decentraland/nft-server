@@ -1,7 +1,10 @@
 import { AnalyticsDayDataFilters, Network } from '@dcl/schemas'
 import { test } from '../../../src/tests/components'
 import { createAnalyticsDayDataComponent } from '../../ports/analyticsDayData/component'
-import { IAnalyticsDayDataComponent } from '../../ports/analyticsDayData/types'
+import {
+  AnalyticsDayDataFragment,
+  IAnalyticsDayDataComponent,
+} from '../../ports/analyticsDayData/types'
 import {
   getAnalyticsDayDataQuery,
   getAnalyticsTotalDataQuery,
@@ -25,7 +28,7 @@ test('analyticsDayData component', function ({ components }) {
   describe('when fetching', () => {
     describe('and the "from" filter is 0', () => {
       let filters: AnalyticsDayDataFilters
-      let graphResponse: any[]
+      let graphResponse: AnalyticsDayDataFragment[]
 
       beforeEach(() => {
         const { collectionsSubgraph } = components
@@ -59,7 +62,7 @@ test('analyticsDayData component', function ({ components }) {
 
     describe('and the "from" filter is not 0', () => {
       let filters: AnalyticsDayDataFilters
-      let graphResponse: any[]
+      let graphResponse: AnalyticsDayDataFragment[]
 
       beforeEach(() => {
         const { collectionsSubgraph } = components
