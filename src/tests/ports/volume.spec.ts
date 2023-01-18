@@ -1,10 +1,10 @@
+import { AnalyticsDayData } from '@dcl/schemas'
 import { test } from '../components'
 import { getAccumulatedAnalyticsData } from '../../logic/volume'
 import { AnalyticsTimeframe } from '../../ports/analyticsDayData/types'
 import { getTimestampFromTimeframe } from '../../ports/analyticsDayData/utils'
 import { IVolumeComponent } from '../../ports/volume/types'
 import { createVolumeComponent } from '../../ports/volume/component'
-import { AnalyticsDayData } from '@dcl/schemas'
 
 test('volume component', function ({ components }) {
   let volumeComponent: IVolumeComponent
