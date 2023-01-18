@@ -1,5 +1,9 @@
 import { AnalyticsDayData, AnalyticsDayDataFilters } from '@dcl/schemas'
-import { AnalyticsTimeframe } from './types'
+import {
+  AnalyticsDayDataFragment,
+  AnalyticsTimeframe,
+  RentalsAnalyticsDayDataFragment,
+} from './types'
 
 export const getAnalyticsDayDataFragment = () => `
   fragment analyticsDayDataFragment on AnalyticsDayData {
@@ -52,7 +56,9 @@ export function getAnalyticsTotalDataQuery() {
   `
 }
 
-export function mapAnalyticsFragment(fragment: any): AnalyticsDayData {
+export function mapAnalyticsFragment(
+  fragment: AnalyticsDayDataFragment
+): AnalyticsDayData {
   // The data returned from the collections/marketplace subgraphs is identical to the one that will be returned by the nft-server.
   // This means that there is no need to map it, just return the same values.
   return {
@@ -109,7 +115,6 @@ export function getRentalsAnalyticsDayDataQuery(
       analytics: analyticsDayDatas(where: { ${where.join('\n')} }) {
         id
         date
-        rentals
         volume
         lessorEarnings
         feeCollectorEarnings
@@ -123,7 +128,6 @@ export function getRentalsAnalyticsTotalDataQuery() {
     query AnalyticsTotalData {
       analytics: analyticsTotalDatas {
         id
-        rentals
         volume
         lessorEarnings
         feeCollectorEarnings
@@ -132,7 +136,9 @@ export function getRentalsAnalyticsTotalDataQuery() {
   `
 }
 
-export function mapRentalsAnalyticsFragment(fragment: any): AnalyticsDayData {
+export function mapRentalsAnalyticsFragment(
+  fragment: RentalsAnalyticsDayDataFragment
+): AnalyticsDayData {
   return {
     // Non rentals subgraphs bring this data from an entity with id 'all'
     // In order to merge the data correctly, we need to set the id to 'all' for the rentals subgraph data as well.

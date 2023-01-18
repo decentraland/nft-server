@@ -6,12 +6,12 @@ import {
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { IAnalyticsDayDataComponent } from './types'
 
-export function createAnalyticsDayDataComponent(options: {
+export function createAnalyticsDayDataComponent<T>(options: {
   subgraph: ISubgraphComponent
   network: Network
   getAnalyticsDayDataQuery: (filters: AnalyticsDayDataFilters) => string
   getAnalyticsTotalDataQuery: () => string
-  mapAnalyticsFragment: (fragment: any) => AnalyticsDayData
+  mapAnalyticsFragment: (fragment: T) => AnalyticsDayData
 }): IAnalyticsDayDataComponent {
   const {
     subgraph,
@@ -39,7 +39,7 @@ export function createAnalyticsDayDataComponent(options: {
         : getAnalyticsDayDataQuery(filters)
 
     const { analytics: fragments } = await subgraph.query<{
-      analytics: any[]
+      analytics: T[]
     }>(query)
 
     return fragments.map(mapAnalyticsFragment)
@@ -55,7 +55,7 @@ export function createAnalyticsDayDataComponent(options: {
         ? getAnalyticsTotalDataQuery()
         : getAnalyticsDayDataQuery(filters)
     const { analytics: fragments } = await subgraph.query<{
-      analytics: any[]
+      analytics: T[]
     }>(query)
 
     return fragments.length

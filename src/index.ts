@@ -121,6 +121,10 @@ import {
   mapAnalyticsFragment,
   mapRentalsAnalyticsFragment,
 } from './ports/analyticsDayData/utils'
+import {
+  AnalyticsDayDataFragment,
+  RentalsAnalyticsDayDataFragment,
+} from './ports/analyticsDayData/types'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -419,32 +423,34 @@ async function initComponents(): Promise<AppComponents> {
   const trendings = createTrendingsComponent(collectionsSubgraph, items)
 
   // analytics day data for the marketplace subgraph
-  const marketplaceAnalyticsDayData = createAnalyticsDayDataComponent({
-    subgraph: marketplaceSubgraph,
-    // TODO: Isn't this supposed to be ETHEREUM? marketplace subgraph is not on Polygon
-    network: Network.MATIC,
-    getAnalyticsDayDataQuery,
-    getAnalyticsTotalDataQuery,
-    mapAnalyticsFragment,
-  })
+  const marketplaceAnalyticsDayData =
+    createAnalyticsDayDataComponent<AnalyticsDayDataFragment>({
+      subgraph: marketplaceSubgraph,
+      network: Network.ETHEREUM,
+      getAnalyticsDayDataQuery,
+      getAnalyticsTotalDataQuery,
+      mapAnalyticsFragment,
+    })
 
   // analytics day data for the collections subgraph
-  const collectionsAnalyticsDayData = createAnalyticsDayDataComponent({
-    subgraph: collectionsSubgraph,
-    network: Network.MATIC,
-    getAnalyticsDayDataQuery,
-    getAnalyticsTotalDataQuery,
-    mapAnalyticsFragment,
-  })
+  const collectionsAnalyticsDayData =
+    createAnalyticsDayDataComponent<AnalyticsDayDataFragment>({
+      subgraph: collectionsSubgraph,
+      network: Network.MATIC,
+      getAnalyticsDayDataQuery,
+      getAnalyticsTotalDataQuery,
+      mapAnalyticsFragment,
+    })
 
   // analytics day data for the rentals subgraph
-  const rentalsAnalyticsDayData = createAnalyticsDayDataComponent({
-    subgraph: rentalsSubgraph,
-    network: Network.ETHEREUM,
-    getAnalyticsDayDataQuery: getRentalsAnalyticsDayDataQuery,
-    getAnalyticsTotalDataQuery: getRentalsAnalyticsTotalDataQuery,
-    mapAnalyticsFragment: mapRentalsAnalyticsFragment,
-  })
+  const rentalsAnalyticsDayData =
+    createAnalyticsDayDataComponent<RentalsAnalyticsDayDataFragment>({
+      subgraph: rentalsSubgraph,
+      network: Network.ETHEREUM,
+      getAnalyticsDayDataQuery: getRentalsAnalyticsDayDataQuery,
+      getAnalyticsTotalDataQuery: getRentalsAnalyticsTotalDataQuery,
+      mapAnalyticsFragment: mapRentalsAnalyticsFragment,
+    })
 
   const analyticsData = createMergerComponent<
     AnalyticsDayData,
