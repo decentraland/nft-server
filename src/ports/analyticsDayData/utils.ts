@@ -99,7 +99,7 @@ export function getRentalsAnalyticsDayDataQuery({
     query AnalyticsDayData {
       analytics: analyticsDayDatas${
         from ? `(where:{date_gt: ${Math.round(from / 1000)}})` : ''
-      }
+      } {
         id
         date
         volume
