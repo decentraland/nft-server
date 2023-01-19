@@ -92,20 +92,14 @@ export function getTimestampFromTimeframe(timeframe: AnalyticsTimeframe) {
 
 // Rentals
 
-export function getRentalsAnalyticsDayDataQuery(
-  filters: AnalyticsDayDataFilters
-) {
-  const { from } = filters
-
-  const where: string[] = []
-
-  if (from) {
-    where.push(`date_gt: ${Math.round(from / 1000)}`)
-  }
-
+export function getRentalsAnalyticsDayDataQuery({
+  from,
+}: AnalyticsDayDataFilters) {
   return `
     query AnalyticsDayData {
-      analytics: analyticsDayDatas(where: { ${where.join('\n')} }) {
+      analytics: analyticsDayDatas${
+        from ? `(where:{date_gt: ${Math.round(from / 1000)}})` : ''
+      }
         id
         date
         volume
