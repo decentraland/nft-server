@@ -1,11 +1,11 @@
+import { AnalyticsDayData } from '@dcl/schemas'
 import BN from 'bn.js'
 import { getAccumulatedAnalyticsData } from '../../logic/volume'
-import { AnalyticsDataFragment } from '../../ports/analyticsDayData/types'
 
 describe('getAccumulatedAnalyticsData', () => {
-  let fragments: AnalyticsDataFragment[]
+  let days: AnalyticsDayData[]
   beforeEach(() => {
-    fragments = [
+    days = [
       {
         id: '123',
         date: 123,
@@ -26,16 +26,14 @@ describe('getAccumulatedAnalyticsData', () => {
   })
   describe('when providing fragments with volume data', () => {
     it('should return the accumulated data by adding them', () => {
-      expect(getAccumulatedAnalyticsData(fragments)).toStrictEqual({
-        sales: fragments[0].sales + fragments[1].sales,
-        volume: new BN(fragments[0].volume)
-          .add(new BN(fragments[1].volume))
+      expect(getAccumulatedAnalyticsData(days)).toStrictEqual({
+        sales: days[0].sales + days[1].sales,
+        volume: new BN(days[0].volume).add(new BN(days[1].volume)).toString(),
+        creatorsEarnings: new BN(days[0].creatorsEarnings)
+          .add(new BN(days[1].creatorsEarnings))
           .toString(),
-        creatorsEarnings: new BN(fragments[0].creatorsEarnings)
-          .add(new BN(fragments[1].creatorsEarnings))
-          .toString(),
-        daoEarnings: new BN(fragments[0].daoEarnings)
-          .add(new BN(fragments[1].daoEarnings))
+        daoEarnings: new BN(days[0].daoEarnings)
+          .add(new BN(days[1].daoEarnings))
           .toString(),
       })
     })

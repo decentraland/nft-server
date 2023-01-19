@@ -1,13 +1,25 @@
-import { Network, AnalyticsDayDataFilters } from '@dcl/schemas'
+import {
+  Network,
+  AnalyticsDayDataFilters,
+  AnalyticsDayData,
+} from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
-import { AnalyticsDataFragment, IAnalyticsDayDataComponent } from './types'
-import { getAnalyticsDayDataQuery, getAnalyticsTotalDataQuery } from './utils'
+import { IAnalyticsDayDataComponent } from './types'
 
-export function createAnalyticsDayDataComponent(options: {
+export function createAnalyticsDayDataComponent<T>(options: {
   subgraph: ISubgraphComponent
   network: Network
+  getAnalyticsDayDataQuery: (filters: AnalyticsDayDataFilters) => string
+  getAnalyticsTotalDataQuery: () => string
+  mapAnalyticsFragment: (fragment: T) => AnalyticsDayData
 }): IAnalyticsDayDataComponent {
-  const { subgraph, network } = options
+  const {
+    subgraph,
+    network,
+    getAnalyticsDayDataQuery,
+    getAnalyticsTotalDataQuery,
+    mapAnalyticsFragment,
+  } = options
 
   function isValid(network: Network, filters: AnalyticsDayDataFilters) {
     return (
@@ -27,10 +39,10 @@ export function createAnalyticsDayDataComponent(options: {
         : getAnalyticsDayDataQuery(filters)
 
     const { analytics: fragments } = await subgraph.query<{
-      analytics: AnalyticsDataFragment[]
+      analytics: T[]
     }>(query)
 
-    return fragments
+    return fragments.map(mapAnalyticsFragment)
   }
 
   async function count(filters: AnalyticsDayDataFilters) {
@@ -43,7 +55,7 @@ export function createAnalyticsDayDataComponent(options: {
         ? getAnalyticsTotalDataQuery()
         : getAnalyticsDayDataQuery(filters)
     const { analytics: fragments } = await subgraph.query<{
-      analytics: AnalyticsDataFragment[]
+      analytics: T[]
     }>(query)
 
     return fragments.length

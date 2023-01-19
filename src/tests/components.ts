@@ -52,6 +52,11 @@ import {
 
 import { createAnalyticsDayDataSource } from '../adapters/sources/analyticsDayData'
 import { createAnalyticsDayDataComponent } from '../ports/analyticsDayData/component'
+import {
+  getAnalyticsDayDataQuery,
+  getAnalyticsTotalDataQuery,
+  mapAnalyticsFragment,
+} from '../ports/analyticsDayData/utils'
 import { createMergerComponent } from '../ports/merger/component'
 import { SortDirection } from '../ports/merger/types'
 import { createRequestSessionComponent } from '../ports/requestSession/component'
@@ -382,12 +387,18 @@ export async function initComponents(): Promise<AppComponents> {
   const marketplaceAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: marketplaceSubgraph,
     network: Network.MATIC,
+    getAnalyticsDayDataQuery,
+    getAnalyticsTotalDataQuery,
+    mapAnalyticsFragment,
   })
 
   // analytics day data for the collections subgraph
   const collectionsAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
+    getAnalyticsDayDataQuery,
+    getAnalyticsTotalDataQuery,
+    mapAnalyticsFragment,
   })
 
   const analyticsData = createMergerComponent<
