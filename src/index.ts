@@ -73,6 +73,14 @@ import {
   getCollectionsFragment,
   getCollectionsOrderBy,
 } from './logic/nfts/collections'
+import {
+  getMarketplacePricesQuery,
+  marketplaceShouldFetch as marketplaceShouldFetchPrices,
+} from './logic/prices/marketplace'
+import {
+  collectionsShouldFetch as collectionsShouldFetchPrices,
+  getCollectionPricesQuery,
+} from './logic/prices/collections'
 import { NFTResult } from './ports/nfts/types'
 import { NFT_DEFAULT_SORT_BY } from './ports/nfts/utils'
 import { createNFTsSource } from './adapters/sources/nfts'
@@ -108,6 +116,12 @@ import { createTrendingsComponent } from './ports/trendings/component'
 import { createRentalsComponent } from './ports/rentals/components'
 import { createRentalsNFTSource } from './adapters/sources/rentals'
 import { createRentalsNFTComponent } from './ports/rentalNFTs/component'
+import {
+  createPricesComponent,
+  createProcessedPricesComponent,
+} from './ports/prices/component'
+import { PriceFilters, PriceFragment, PriceSortBy } from './ports/prices/types'
+import { createPricesSource } from './adapters/sources/prices'
 import {
   getLandAndEstateContractAddresses,
   rentalNFTComponentShouldFetch,
@@ -496,6 +510,34 @@ async function initComponents(): Promise<AppComponents> {
     network: Network.MATIC,
   })
 
+  // prices
+  const marketplacePrices = createPricesComponent({
+    subgraph: marketplaceSubgraph,
+    queryGetter: getMarketplacePricesQuery,
+  })
+
+  const collectionsPrices = createPricesComponent({
+    subgraph: collectionsSubgraph,
+    queryGetter: getCollectionPricesQuery,
+  })
+
+  const prices = createProcessedPricesComponent(
+    createMergerComponent<PriceFragment, PriceFilters, PriceSortBy>({
+      sources: [
+        createPricesSource(marketplacePrices, {
+          shouldFetch: marketplaceShouldFetchPrices,
+        }),
+        createPricesSource(collectionsPrices, {
+          shouldFetch: collectionsShouldFetchPrices,
+        }),
+      ],
+      directions: {
+        [PriceSortBy.PRICE]: SortDirection.ASC,
+      },
+      defaultSortBy: PriceSortBy.PRICE,
+    })
+  )
+
   // accounts
   const marketplaceAccounts = createAccountsComponent({
     subgraph: marketplaceSubgraph,
@@ -570,6 +612,7 @@ async function initComponents(): Promise<AppComponents> {
     collections,
     accounts,
     rankings,
+    prices,
     volumes,
     analyticsData,
     collectionsSubgraph,

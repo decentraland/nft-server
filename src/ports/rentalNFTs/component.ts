@@ -23,11 +23,8 @@ export function createRentalsNFTComponent(options: {
   marketplaceNFTsComponent: INFTsComponent
   contractAddresses: ReturnType<typeof getLandAndEstateContractAddresses>
 }): INFTsComponent {
-  const {
-    rentalsComponent,
-    marketplaceNFTsComponent,
-    contractAddresses,
-  } = options
+  const { rentalsComponent, marketplaceNFTsComponent, contractAddresses } =
+    options
 
   /**
    * Query the rentals subgraph to obtain a list of assets where the provided filters.owner is the lessor.
