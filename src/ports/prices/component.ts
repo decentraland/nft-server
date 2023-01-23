@@ -5,7 +5,6 @@ import {
   AssetType,
   IPricesComponent,
   IProcessedPricesComponent,
-  PriceFilterCategory,
   PriceFilterExtraOption,
   PriceFilters,
   PriceFragment,
@@ -33,8 +32,6 @@ export function createPricesComponent(options: {
   }
 
   async function fetch(filters: PriceFilters) {
-    const { category } = filters
-
     if (!isValid(filters)) {
       return []
     }
