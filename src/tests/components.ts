@@ -112,6 +112,20 @@ import { createVolumeComponent } from '../ports/volume/component'
 import { createTrendingsComponent } from '../ports/trendings/component'
 import { createRankingsComponent } from '../ports/rankings/component'
 import { createRentalsComponent } from '../ports/rentals/components'
+import { createPricesSource } from '../adapters/sources/prices'
+import {
+  getCollectionPricesQuery,
+  collectionsShouldFetch as collectionsShouldFetchPrices,
+} from '../logic/prices/collections'
+import {
+  getMarketplacePricesQuery,
+  marketplaceShouldFetch as marketplaceShouldFetchPrices,
+} from '../logic/prices/marketplace'
+import {
+  createPricesComponent,
+  createProcessedPricesComponent,
+} from '../ports/prices/component'
+import { PriceFragment, PriceFilters, PriceSortBy } from '../ports/prices/types'
 
 // start TCP port for listeners
 let lastUsedPort = 19000 + parseInt(process.env.JEST_WORKER_ID || '1') * 1000
@@ -499,6 +513,34 @@ export async function initComponents(): Promise<AppComponents> {
     },
   })
 
+  // prices
+  const marketplacePrices = createPricesComponent({
+    subgraph: marketplaceSubgraph,
+    queryGetter: getMarketplacePricesQuery,
+  })
+
+  const collectionsPrices = createPricesComponent({
+    subgraph: collectionsSubgraph,
+    queryGetter: getCollectionPricesQuery,
+  })
+
+  const prices = createProcessedPricesComponent(
+    createMergerComponent<PriceFragment, PriceFilters, PriceSortBy>({
+      sources: [
+        createPricesSource(marketplacePrices, {
+          shouldFetch: marketplaceShouldFetchPrices,
+        }),
+        createPricesSource(collectionsPrices, {
+          shouldFetch: collectionsShouldFetchPrices,
+        }),
+      ],
+      directions: {
+        [PriceSortBy.PRICE]: SortDirection.ASC,
+      },
+      defaultSortBy: PriceSortBy.PRICE,
+    })
+  )
+
   const statusChecks = await createStatusCheckComponent({ config, server })
   const globalLogger = logs.getLogger('nft-server')
   const requestSession = createRequestSessionComponent()
@@ -526,5 +568,6 @@ export async function initComponents(): Promise<AppComponents> {
     collectionsSubgraph,
     volumes,
     rankings,
+    prices,
   }
 }

@@ -14,6 +14,7 @@ import { createAnalyticsDataHandler } from './handlers/analyticsData'
 import { createRankingsHandler } from './handlers/rankings'
 import { createTrendingHandler } from './handlers/trending'
 import { createVolumeHandler } from './handlers/volume'
+import { createPricesHandler } from './handlers/prices'
 
 export async function setupRoutes(globalContext: GlobalContext) {
   const { components } = globalContext
@@ -41,6 +42,7 @@ export async function setupRoutes(globalContext: GlobalContext) {
   router.get('/volume/:timeframe', createVolumeHandler(components))
   router.get('/rankings/:entity/:timeframe', createRankingsHandler(components))
   router.get('/trendings', createTrendingHandler(components))
+  router.get('/prices', createPricesHandler(components))
   router.get(
     '/contracts/:contractAddress/tokens/:tokenId',
     createNFTHandler(components)
