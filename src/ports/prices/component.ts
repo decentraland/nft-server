@@ -46,7 +46,7 @@ export function createPricesComponent(options: {
       }>(query, { lastId, expiresAt: Date.now().toString() })
 
       priceFragments = [...priceFragments, ...fragments]
-      lastId = priceFragments[priceFragments.length - 1].id
+      lastId = priceFragments[priceFragments.length - 1]?.id
       if (fragments.length < MAX_RESULTS) {
         break
       }
