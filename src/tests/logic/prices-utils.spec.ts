@@ -1,6 +1,5 @@
 import {
   PriceFilterExtraOption,
-  PriceFilters,
   PriceFragment,
   PriceSortBy,
 } from '../../ports/prices/types'

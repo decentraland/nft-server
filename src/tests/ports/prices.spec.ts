@@ -2,7 +2,6 @@ import { NFTCategory } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { createPricesComponent } from '../../ports/prices/component'
 import { getCollectionPricesQuery } from '../../logic/prices/collections'
-import { getMarketplacePricesQuery } from '../../logic/prices/marketplace'
 import {
   IPricesComponent,
   PriceFilters,
@@ -14,8 +13,6 @@ const error = 'An error occurred'
 
 let collectionsPriceComponent: IPricesComponent
 let collectionsSubgraph: ISubgraphComponent
-let marketplaceSubgraph: ISubgraphComponent
-let marketplaceSubgraphQueryMock: jest.Mock
 let collectionsSubgraphQueryMock: jest.Mock
 let filters: PriceFilters
 
@@ -24,11 +21,7 @@ describe('when getting prices', () => {
     filters = {
       category: NFTCategory.WEARABLE,
     }
-    marketplaceSubgraphQueryMock = jest.fn()
     collectionsSubgraphQueryMock = jest.fn()
-    marketplaceSubgraph = {
-      query: marketplaceSubgraphQueryMock,
-    }
     collectionsSubgraph = {
       query: collectionsSubgraphQueryMock,
     }

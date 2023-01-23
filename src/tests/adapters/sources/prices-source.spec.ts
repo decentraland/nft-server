@@ -1,7 +1,6 @@
 import { NFTCategory } from '@dcl/schemas'
 import { IMergerComponent } from '../../../ports/merger/types'
 import { createPricesSource } from '../../../adapters/sources/prices'
-import { INFTsComponent } from '../../../ports/nfts/types'
 import {
   IPricesComponent,
   PriceFilters,
@@ -16,10 +15,7 @@ let pricesSource: IMergerComponent.Source<
   PriceSortBy
 >
 let pricesComponentMock: IPricesComponent
-let nftsComponentsMock: INFTsComponent
 let fetchMock: jest.Mock
-let fetchOneMock: jest.Mock
-let fetchByTokenIdsMock: jest.Mock
 let countMock: jest.Mock
 let shouldFetch: jest.Mock
 let filters: PriceFilters
@@ -34,12 +30,6 @@ beforeEach(() => {
   }
   pricesComponentMock = {
     fetch: fetchMock,
-    count: countMock,
-  }
-  nftsComponentsMock = {
-    fetch: fetchMock,
-    fetchOne: fetchOneMock,
-    fetchByTokenIds: fetchByTokenIdsMock,
     count: countMock,
   }
   pricesSource = createPricesSource(pricesComponentMock, { shouldFetch })
