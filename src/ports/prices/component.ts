@@ -2,6 +2,7 @@ import { NFTCategory } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { IMergerComponent } from '../merger/types'
 import {
+  AssetType,
   IPricesComponent,
   IProcessedPricesComponent,
   PriceFilterCategory,
@@ -21,17 +22,20 @@ export function createPricesComponent(options: {
 }): IPricesComponent {
   const { subgraph, queryGetter } = options
 
-  function isValid(category: PriceFilterCategory) {
+  function isValid(filters: PriceFilters) {
+    const { category, assetType } = filters
     return (
-      category === PriceFilterExtraOption.LAND ||
-      !!NFTCategory.validate(category)
+      ((assetType && [AssetType.ITEM, AssetType.NFT].includes(assetType)) ||
+        !assetType) &&
+      (category === PriceFilterExtraOption.LAND ||
+        !!NFTCategory.validate(category))
     )
   }
 
   async function fetch(filters: PriceFilters) {
-    const { category, assetType } = filters
+    const { category } = filters
 
-    if (!isValid(category)) {
+    if (!isValid(filters)) {
       return []
     }
 
