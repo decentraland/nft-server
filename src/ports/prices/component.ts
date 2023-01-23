@@ -23,12 +23,13 @@ export function createPricesComponent(options: {
 
   function isValid(filters: PriceFilters) {
     const { category, assetType } = filters
-    return (
-      ((assetType && [AssetType.ITEM, AssetType.NFT].includes(assetType)) ||
-        !assetType) &&
-      (category === PriceFilterExtraOption.LAND ||
-        !!NFTCategory.validate(category))
-    )
+    const isValidAssetType =
+      !assetType || [AssetType.ITEM, AssetType.NFT].includes(assetType)
+
+    const isValidCategory =
+      category === PriceFilterExtraOption.LAND || NFTCategory.validate(category)
+
+    return isValidAssetType && isValidCategory
   }
 
   async function fetch(filters: PriceFilters) {
