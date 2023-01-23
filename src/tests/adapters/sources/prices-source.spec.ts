@@ -61,7 +61,7 @@ describe('when fetching nft prices', () => {
       ]
       fetchMock.mockResolvedValueOnce(pricesResponse)
     })
-    it('should return an empty array', () => {
+    it('should return the price response as a sortable result', () => {
       return expect(pricesSource.fetch(filters)).resolves.toEqual(
         pricesResponse.map(convertPriceFragmentToSortableResult)
       )
