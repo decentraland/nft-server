@@ -1,4 +1,5 @@
-import { NFTCategory } from '@dcl/schemas'
+import { Network, NFTCategory, NFTFilters } from '@dcl/schemas'
+import { addWearableCategoryAndRaritiesFilters } from '../../ports/nfts/utils'
 import {
   PriceFilterCategory,
   PriceFilterExtraOption,
@@ -8,20 +9,24 @@ import {
 const MAX_RESULTS = 1000
 
 export function marketplaceShouldFetch(filters: PriceFilters) {
-  return [
-    PriceFilterExtraOption.LAND,
-    NFTCategory.PARCEL,
-    NFTCategory.ESTATE,
-    NFTCategory.WEARABLE,
-    NFTCategory.ENS,
-  ].includes(filters.category)
+  const isCorrectNetworkFilter =
+    !filters.network ||
+    !!(filters.network && filters.network === Network.ETHEREUM)
+  return (
+    [
+      PriceFilterExtraOption.LAND,
+      NFTCategory.PARCEL,
+      NFTCategory.ESTATE,
+      NFTCategory.WEARABLE,
+      NFTCategory.ENS,
+    ].includes(filters.category) && isCorrectNetworkFilter
+  )
 }
 
 export const getPriceFragment = () => `
   fragment priceFragment on NFT {
     price: searchOrderPrice
     id: tokenId
-    name
   }
 `
 
@@ -40,10 +45,35 @@ export function getMarketplacePricesQuery(id: string) {
   return id ? marketplacePricesQueryById : marketplacePricesQuery
 }
 
+function getExtraWheres(filters: NFTFilters) {
+  const where: string[] = []
+  if (filters.contractAddresses && filters.contractAddresses.length > 0) {
+    where.push(
+      `contractAddress_in: [${filters.contractAddresses
+        .map((contract) => `"${contract}"`)
+        .join(', ')}]`
+    )
+  }
+  if (filters.isWearableSmart) {
+    where.push('itemType: smart_wearable_v1')
+  }
+
+  addWearableCategoryAndRaritiesFilters(filters, where)
+  return where
+}
+
 export function marketplacePricesQuery(filters: PriceFilters) {
-  const { category } = filters
-  const categories = getNFTCategoryFromPriceCategory(category)
-  return `query NFTPrices($expiresAt: String) {
+  const additionalWheres: string[] = getExtraWheres({
+    ...filters,
+    category: filters.category as NFTCategory,
+  })
+  const categories = getNFTCategoryFromPriceCategory(filters.category)
+  return `query NFTPrices(
+      $expiresAt: String
+      $wearableCategory: String
+      $isWearableHead: Boolean
+      $isWearableAccessory: Boolean
+      ) {
       prices: nfts(
         first: ${MAX_RESULTS},
         orderBy: tokenId,
@@ -53,7 +83,8 @@ export function marketplacePricesQuery(filters: PriceFilters) {
           searchOrderStatus: open,
           searchOrderExpiresAt_gt: $expiresAt,
           category_in: [${categories}],
-          searchEstateSize_gt: 0
+          searchEstateSize_gt: 0,
+          ${additionalWheres.join('\n')}
         }) {
         ...priceFragment
       }
@@ -62,9 +93,16 @@ export function marketplacePricesQuery(filters: PriceFilters) {
 }
 
 export function marketplacePricesQueryById(filters: PriceFilters) {
-  const { category } = filters
+  const { category, ...rest } = filters
+  const additionalWheres: string[] = getExtraWheres(rest)
   const categories = getNFTCategoryFromPriceCategory(category)
-  return `query NFTPrices($lastId: ID, $expiresAt: String) {
+  return `query NFTPrices(
+      $lastId: ID,
+      $expiresAt: String
+      $wearableCategory: String
+      $isWearableHead: Boolean
+      $isWearableAccessory: Boolean
+     ) {
       prices: nfts(
         orderBy: tokenId,
         orderDirection: asc, 
@@ -75,7 +113,8 @@ export function marketplacePricesQueryById(filters: PriceFilters) {
           searchOrderExpiresAt_gt: $expiresAt,
           category_in: [${categories}],
           tokenId_gt: $lastId,
-          searchEstateSize_gt:0
+          searchEstateSize_gt:0,
+          ${additionalWheres.join('\n')}
         }) {
         ...priceFragment
       }

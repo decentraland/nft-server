@@ -1,3 +1,11 @@
+import {
+  WearableCategory,
+  GenderFilterOption,
+  EmoteCategory,
+  EmotePlayMode,
+  Rarity,
+  Network,
+} from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { Params } from '../../logic/http/params'
 import { asJSON } from '../../logic/http/response'
@@ -18,10 +26,50 @@ export function createPricesHandler(
     }
     const category = params.getString('category') as PriceFilterCategory
     const assetType = params.getString('assetType') as AssetType
+    const isWearableHead = params.getBoolean('isWearableHead')
+    const isWearableAccessory = params.getBoolean('isWearableAccessory')
+    const isWearableSmart = params.getBoolean('isWearableSmart')
+    const wearableCategory = params.getValue<WearableCategory>(
+      'wearableCategory',
+      WearableCategory
+    )
+    const wearableGenders = params.getList<GenderFilterOption>(
+      'wearableGender',
+      GenderFilterOption
+    )
+    const emoteCategory = params.getValue<EmoteCategory>(
+      'emoteCategory',
+      EmoteCategory
+    )
+    const emoteGenders = params.getList<GenderFilterOption>(
+      'emoteGender',
+      GenderFilterOption
+    )
+    const emotePlayMode = params.getList<EmotePlayMode>(
+      'emotePlayMode',
+      EmotePlayMode
+    )
+    const contractAddresses = params.getAddressList('contractAddress')
+    const itemRarities = params.getList<Rarity>('itemRarity', Rarity)
+    const network = params.getValue<Network>('network', Network)
 
     return asJSON(
       async () => ({
-        data: await prices.fetch({ category, assetType }),
+        data: await prices.fetch({
+          category,
+          assetType,
+          isWearableHead,
+          isWearableAccessory,
+          isWearableSmart,
+          wearableCategory,
+          wearableGenders,
+          emoteCategory,
+          emoteGenders,
+          emotePlayMode,
+          contractAddresses,
+          itemRarities,
+          network,
+        }),
       }),
       responseHeaders
     )

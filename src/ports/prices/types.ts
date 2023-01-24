@@ -1,4 +1,4 @@
-import { NFTCategory } from '@dcl/schemas'
+import { NFTCategory, NFTFilters } from '@dcl/schemas'
 
 export enum AssetType {
   NFT = 'nft',
@@ -14,7 +14,20 @@ export type PriceFilterCategory = NFTCategory | PriceFilterExtraOption
 export type PriceFilters = {
   category: PriceFilterCategory
   assetType?: AssetType
-}
+} & Pick<
+  NFTFilters,
+  | 'isWearableHead'
+  | 'isWearableAccessory'
+  | 'isWearableSmart'
+  | 'wearableCategory'
+  | 'wearableGenders'
+  | 'emoteCategory'
+  | 'emoteGenders'
+  | 'emotePlayMode'
+  | 'contractAddresses'
+  | 'itemRarities'
+  | 'network'
+>
 
 export type PriceFragment = {
   price: string
