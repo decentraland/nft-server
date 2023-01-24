@@ -78,6 +78,7 @@ export function createRentalsNFTSource(
         count: 0,
       }
     }
+
     const results = await rentals.getRentalsListings(filters)
     return {
       data: await enhanceRentalListing(results.data.results),
