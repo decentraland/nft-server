@@ -54,9 +54,10 @@ export function shouldFetch(filters: NFTFilters): boolean {
  * From a list of contracts return the addresses of the land and estate contracts.
  * Will throw an error if the addresses are not found.
  */
-export function getLandAndEstateContractAddresses(
-  contracts: Contract[]
-): { land: string; estate: string } {
+export function getLandAndEstateContractAddresses(contracts: Contract[]): {
+  land: string
+  estate: string
+} {
   let land: string | undefined
   let estate: string | undefined
 

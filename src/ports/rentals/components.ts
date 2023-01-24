@@ -48,7 +48,7 @@ export function createRentalsComponent(
     parameters.category =
       filters.category === NFTCategory.PARCEL ||
       filters.category === NFTCategory.ESTATE
-        ? ((filters.category as unknown) as RentalsListingsFilterByCategory)
+        ? (filters.category as unknown as RentalsListingsFilterByCategory)
         : undefined
     parameters.lessor = filters.owner
     parameters.tenant = filters.tenant
@@ -165,30 +165,29 @@ export function createRentalsComponent(
       urls.push(url)
     }
 
-    const results: SignaturesServerPaginatedResponse<
-      RentalListing[]
-    >[] = await Promise.all(
-      urls.map((url) =>
-        limit(async () => {
-          try {
-            const response = await fetchComponent.fetch(url)
-            if (!response.ok) {
-              await processGetRentalsError(response)
-            }
+    const results: SignaturesServerPaginatedResponse<RentalListing[]>[] =
+      await Promise.all(
+        urls.map((url) =>
+          limit(async () => {
+            try {
+              const response = await fetchComponent.fetch(url)
+              if (!response.ok) {
+                await processGetRentalsError(response)
+              }
 
-            const parsedResult = await response.json()
-            if (!parsedResult.ok) {
-              throw new Error(parsedResult.message)
-            }
+              const parsedResult = await response.json()
+              if (!parsedResult.ok) {
+                throw new Error(parsedResult.message)
+              }
 
-            return parsedResult
-          } catch (error) {
-            limit.clearQueue()
-            throw error
-          }
-        })
+              return parsedResult
+            } catch (error) {
+              limit.clearQueue()
+              throw error
+            }
+          })
+        )
       )
-    )
 
     return results.flatMap((result) => result.data.results)
   }
@@ -197,6 +196,7 @@ export function createRentalsComponent(
     filters: NFTFilters
   ): Promise<SignaturesServerPaginatedResponse<RentalListing[]>> {
     const parameters = buildGetRentalsParameters(filters)
+    console.log('Getting rental listings', parameters)
 
     const response = await fetchComponent.fetch(
       `${rentalsUrl}/v1/rentals-listings${parameters}`
@@ -206,15 +206,15 @@ export function createRentalsComponent(
       await processGetRentalsError(response)
     }
 
-    const parsedResult: SignaturesServerPaginatedResponse<
-      RentalListing[]
-    > = await response.json()
+    const parsedResult: SignaturesServerPaginatedResponse<RentalListing[]> =
+      await response.json()
 
     if (!parsedResult.ok) {
       throw new Error(
         (parsedResult as SignaturesServerErrorResponse<any>).message
       )
     }
+    console.log('Got rental listings', parsedResult)
 
     return parsedResult
   }
