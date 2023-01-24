@@ -42,7 +42,6 @@ export function getCollectionPricesQuery(id: string, filters: PriceFilters) {
 }
 
 function getExtraWheres(filters: NFTFilters) {
-  console.log('filters: ', filters)
   const where: string[] = []
   if (filters.contractAddresses && filters.contractAddresses.length > 0) {
     where.push(
