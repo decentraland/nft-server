@@ -13,7 +13,7 @@ import { asJSON } from '../../logic/http/response'
 import { AssetType, PriceFilterCategory } from '../../ports/prices/types'
 import { AppComponents, Context } from '../../types'
 
-const MAX_AGE = 60000 * 60 * 24 // 1 DAY
+const MAX_AGE = 86400 // 1 DAY
 
 export function createPricesHandler(
   components: Pick<AppComponents, 'prices'>
@@ -71,13 +71,13 @@ export function createPricesHandler(
       }),
       {
         'Cache-Control': `public,max-age=${MAX_AGE},s-maxage=${MAX_AGE}`,
+        'Content-Type': 'application/json',
+        'Last-Modified': new Date().toUTCString(),
       },
       (data: any) => {
         const dataString = JSON.stringify(data)
         return {
           ETag: etag(dataString),
-          'Last-Modified': new Date().toUTCString(),
-          'Content-Type': 'application/json',
           'content-length': dataString.length.toString(),
         }
       }
