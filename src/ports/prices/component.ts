@@ -41,9 +41,14 @@ export function createPricesComponent(options: {
     let priceFragments: PriceFragment[] = []
     while (true) {
       const query = getPricesQuery(queryGetter, filters, lastId)
+      const queryVariables = {
+        ...filters,
+        lastId,
+        expiresAt: Date.now().toString(),
+      }
       const { prices: fragments } = await subgraph.query<{
         prices: PriceFragment[]
-      }>(query, { lastId, expiresAt: Date.now().toString() })
+      }>(query, queryVariables)
 
       priceFragments = [...priceFragments, ...fragments]
       lastId = priceFragments[priceFragments.length - 1]?.id

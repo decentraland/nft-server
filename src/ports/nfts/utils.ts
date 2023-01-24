@@ -52,6 +52,90 @@ export function getQueryVariables<T>(
   }
 }
 
+export function addWearableCategoryAndRaritiesFilters(
+  filters: Pick<
+    NFTFilters,
+    | 'wearableCategory'
+    | 'category'
+    | 'isWearableHead'
+    | 'isWearableAccessory'
+    | 'wearableGenders'
+    | 'itemRarities'
+  >,
+  where: string[]
+) {
+  if (!filters.category || filters.category === NFTCategory.WEARABLE) {
+    if (filters.wearableCategory) {
+      where.push('searchWearableCategory: $wearableCategory')
+    }
+
+    if (filters.isWearableHead) {
+      where.push('searchIsWearableHead: $isWearableHead')
+    }
+
+    if (filters.isWearableAccessory) {
+      where.push('searchIsWearableAccessory: $isWearableAccessory')
+    }
+
+    if (filters.wearableGenders && filters.wearableGenders.length > 0) {
+      const genderQuery = getGenderFilterQuery(filters.wearableGenders, false)
+      where.push(genderQuery)
+    }
+
+    if (filters.itemRarities && filters.itemRarities.length > 0) {
+      where.push(
+        `searchWearableRarity_in: [${filters.itemRarities
+          .map((rarity) => `"${rarity}"`)
+          .join(',')}]`
+      )
+    }
+  }
+}
+
+export function addEmoteCategoryAndRaritiesFilters(
+  filters: Pick<
+    NFTFilters,
+    | 'category'
+    | 'emoteCategory'
+    | 'emoteGenders'
+    | 'emotePlayMode'
+    | 'itemRarities'
+  >,
+  where: string[]
+) {
+  if (!filters.category || filters.category === NFTCategory.EMOTE) {
+    if (filters.emoteCategory) {
+      where.push('searchEmoteCategory: $emoteCategory')
+    }
+
+    if (filters.emoteGenders && filters.emoteGenders.length > 0) {
+      const genderQuery = getGenderFilterQuery(filters.emoteGenders, true)
+      if (genderQuery) {
+        where.push(genderQuery)
+      }
+    }
+
+    /**
+     * If emotePlayMode length is more than 1 we are ignoring the filter. This is done like this because
+     * we are now saving the playMode as a boolean in the graph (loop), so 2 properties means we want all items
+     * This should change when we add more play mode types.
+     */
+    if (filters.emotePlayMode && filters.emotePlayMode.length === 1) {
+      where.push(
+        `searchEmoteLoop: ${filters.emotePlayMode[0] === EmotePlayMode.LOOP}`
+      )
+    }
+
+    if (filters.itemRarities && filters.itemRarities.length > 0) {
+      where.push(
+        `searchEmoteRarity_in: [${filters.itemRarities
+          .map((rarity) => `"${rarity}"`)
+          .join(',')}]`
+      )
+    }
+  }
+}
+
 export function getFetchQuery(
   filters: NFTFilters,
   fragmentName: string,
@@ -103,64 +187,9 @@ export function getFetchQuery(
     where.push(`soldAt_not: null`)
   }
 
-  if (!filters.category || filters.category === NFTCategory.WEARABLE) {
-    if (filters.wearableCategory) {
-      where.push('searchWearableCategory: $wearableCategory')
-    }
+  addWearableCategoryAndRaritiesFilters(filters, where)
 
-    if (filters.isWearableHead) {
-      where.push('searchIsWearableHead: $isWearableHead')
-    }
-
-    if (filters.isWearableAccessory) {
-      where.push('searchIsWearableAccessory: $isWearableAccessory')
-    }
-
-    if (filters.wearableGenders && filters.wearableGenders.length > 0) {
-      const genderQuery = getGenderFilterQuery(filters.wearableGenders, false)
-      where.push(genderQuery)
-    }
-
-    if (filters.itemRarities && filters.itemRarities.length > 0) {
-      where.push(
-        `searchWearableRarity_in: [${filters.itemRarities
-          .map((rarity) => `"${rarity}"`)
-          .join(',')}]`
-      )
-    }
-  }
-
-  if (!filters.category || filters.category === NFTCategory.EMOTE) {
-    if (filters.emoteCategory) {
-      where.push('searchEmoteCategory: $emoteCategory')
-    }
-
-    if (filters.emoteGenders && filters.emoteGenders.length > 0) {
-      const genderQuery = getGenderFilterQuery(filters.emoteGenders, true)
-      if (genderQuery) {
-        where.push(genderQuery)
-      }
-    }
-
-    /**
-     * If emotePlayMode length is more than 1 we are ignoring the filter. This is done like this because
-     * we are now saving the playMode as a boolean in the graph (loop), so 2 properties means we want all items
-     * This should change when we add more play mode types.
-     */
-    if (filters.emotePlayMode && filters.emotePlayMode.length === 1) {
-      where.push(
-        `searchEmoteLoop: ${filters.emotePlayMode[0] === EmotePlayMode.LOOP}`
-      )
-    }
-
-    if (filters.itemRarities && filters.itemRarities.length > 0) {
-      where.push(
-        `searchEmoteRarity_in: [${filters.itemRarities
-          .map((rarity) => `"${rarity}"`)
-          .join(',')}]`
-      )
-    }
-  }
+  addEmoteCategoryAndRaritiesFilters(filters, where)
 
   // Compute total nfts to query. If there's a "skip" we add it to the total, since we need all the prior results to later merge them in a single page. If nothing is provided we default to the max. When counting we also use the max.
   const max = 1000
