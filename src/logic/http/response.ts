@@ -12,14 +12,18 @@ export class HttpError extends Error {
 
 export async function asJSON(
   handle: () => Promise<any>,
-  headers?: HeadersInit
+  headers?: HeadersInit,
+  extraHeaders?: (data: any) => HeadersInit
 ): Promise<IHttpServerComponent.IResponse> {
   try {
     const result = await handle()
     return {
       status: 200,
       body: result,
-      headers,
+      headers: {
+        ...headers,
+        ...(extraHeaders ? extraHeaders(result) : {}),
+      },
     }
   } catch (error: any) {
     if (error instanceof HttpError) {

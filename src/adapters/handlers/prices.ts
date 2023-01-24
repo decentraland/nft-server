@@ -1,3 +1,4 @@
+import etag from 'etag'
 import {
   WearableCategory,
   GenderFilterOption,
@@ -21,9 +22,6 @@ export function createPricesHandler(
 
   return async (context) => {
     const params = new Params(context.url.searchParams)
-    const responseHeaders = {
-      'Cache-Control': `public,max-age=${MAX_AGE},s-maxage=${MAX_AGE}`,
-    }
     const category = params.getString('category') as PriceFilterCategory
     const assetType = params.getString('assetType') as AssetType
     const isWearableHead = params.getBoolean('isWearableHead')
@@ -71,7 +69,18 @@ export function createPricesHandler(
           network,
         }),
       }),
-      responseHeaders
+      {
+        'Cache-Control': `public,max-age=${MAX_AGE},s-maxage=${MAX_AGE}`,
+      },
+      (data: any) => {
+        const dataString = JSON.stringify(data)
+        return {
+          ETag: etag(dataString),
+          'Last-Modified': new Date().toUTCString(),
+          'Content-Type': 'application/json',
+          'content-length': dataString.length.toString(),
+        }
+      }
     )
   }
 }
