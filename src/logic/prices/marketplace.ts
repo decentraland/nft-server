@@ -12,6 +12,7 @@ export function marketplaceShouldFetch(filters: PriceFilters) {
   const isCorrectNetworkFilter =
     !filters.network ||
     !!(filters.network && filters.network === Network.ETHEREUM)
+  const isWearableSmartFilter = filters.isWearableSmart
   return (
     [
       PriceFilterExtraOption.LAND,
@@ -19,7 +20,9 @@ export function marketplaceShouldFetch(filters: PriceFilters) {
       NFTCategory.ESTATE,
       NFTCategory.WEARABLE,
       NFTCategory.ENS,
-    ].includes(filters.category) && isCorrectNetworkFilter
+    ].includes(filters.category) &&
+    isCorrectNetworkFilter &&
+    !isWearableSmartFilter
   )
 }
 

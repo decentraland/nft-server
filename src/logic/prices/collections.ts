@@ -41,13 +41,16 @@ export function getCollectionPricesQuery(id: string, filters: PriceFilters) {
     : collectionsNFTsPricesQuery
 }
 
-function getExtraWheres(filters: NFTFilters) {
+function getExtraWheres(filters: NFTFilters, assetType: AssetType) {
   const where: string[] = []
   if (filters.contractAddresses && filters.contractAddresses.length > 0) {
+    const fieldKey =
+      assetType === AssetType.ITEM ? 'collection' : 'collectionAddress'
+
     where.push(
-      `contractAddress_in: [${filters.contractAddresses
+      `${fieldKey}_in: [${filters.contractAddresses
         .map((contract) => `"${contract}"`)
-        .join(', ')}]`
+        .join(',')}]`
     )
   }
   if (filters.isWearableSmart) {
@@ -62,10 +65,13 @@ function getExtraWheres(filters: NFTFilters) {
 }
 
 export function collectionsNFTsPricesQuery(filters: PriceFilters) {
-  const additionalWheres: string[] = getExtraWheres({
-    ...filters,
-    category: filters.category as NFTCategory,
-  })
+  const additionalWheres: string[] = getExtraWheres(
+    {
+      ...filters,
+      category: filters.category as NFTCategory,
+    },
+    AssetType.NFT
+  )
   return `query NFTPrices(
     $expiresAt: String, 
     $wearableCategory: String
@@ -89,10 +95,13 @@ export function collectionsNFTsPricesQuery(filters: PriceFilters) {
 }
 
 export function collectionsNFTsPricesQueryById(filters: PriceFilters) {
-  const additionalWheres: string[] = getExtraWheres({
-    ...filters,
-    category: filters.category as NFTCategory,
-  })
+  const additionalWheres: string[] = getExtraWheres(
+    {
+      ...filters,
+      category: filters.category as NFTCategory,
+    },
+    AssetType.NFT
+  )
   return `query NFTPrices(
       $lastId: ID, 
       $expiresAt: String
@@ -120,10 +129,13 @@ export function collectionsNFTsPricesQueryById(filters: PriceFilters) {
 
 export function collectionsItemsPricesQuery(filters: PriceFilters) {
   const { category } = filters
-  const additionalWheres: string[] = getExtraWheres({
-    ...filters,
-    category: filters.category as NFTCategory,
-  })
+  const additionalWheres: string[] = getExtraWheres(
+    {
+      ...filters,
+      category: filters.category as NFTCategory,
+    },
+    AssetType.ITEM
+  )
   const itemType =
     category === NFTCategory.WEARABLE
       ? '[wearable_v1, wearable_v2, smart_wearable_v1]'
@@ -154,10 +166,13 @@ export function collectionsItemsPricesQuery(filters: PriceFilters) {
 
 export function collectionsItemsPricesQueryById(filters: PriceFilters) {
   const { category } = filters
-  const additionalWheres: string[] = getExtraWheres({
-    ...filters,
-    category: filters.category as NFTCategory,
-  })
+  const additionalWheres: string[] = getExtraWheres(
+    {
+      ...filters,
+      category: filters.category as NFTCategory,
+    },
+    AssetType.ITEM
+  )
   const itemType =
     category === NFTCategory.WEARABLE
       ? '[wearable_v1, wearable_v2, smart_wearable_v1]'
