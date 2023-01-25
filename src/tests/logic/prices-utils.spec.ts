@@ -55,5 +55,13 @@ describe('shouldFetch logic ', () => {
     ])('Fetching %s should be %s', (category, expected) => {
       expect(marketplaceShouldFetch({ category })).toEqual(expected)
     })
+    it('should not fetch if the filter isWearableSmart is on', () => {
+      expect(
+        marketplaceShouldFetch({
+          isWearableSmart: true,
+          category: NFTCategory.WEARABLE,
+        })
+      ).toEqual(false)
+    })
   })
 })
