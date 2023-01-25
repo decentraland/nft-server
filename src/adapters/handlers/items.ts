@@ -27,7 +27,7 @@ export function createItemsHandler(
     const category = params.getValue<NFTCategory>('category', NFTCategory)
     const creator = params.getAddress('creator')
     const isSoldOut = params.getBoolean('isSoldOut')
-    const isOnSale = params.getBoolean('isOnSale')
+    const isOnSale = params.getString('isOnSale') === 'true'
     const search = params.getString('search')
     const isWearableHead = params.getBoolean('isWearableHead')
     const isWearableAccessory = params.getBoolean('isWearableAccessory')

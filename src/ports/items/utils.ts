@@ -217,6 +217,8 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
 
   if (isOnSale) {
     where.push(`searchIsStoreMinter: true`)
+  } else if (isOnSale === false) {
+    where.push(`searchIsStoreMinter: false`)
   }
 
   if (sortBy === ItemSortBy.RECENTLY_SOLD) {
