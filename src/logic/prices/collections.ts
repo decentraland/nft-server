@@ -45,7 +45,7 @@ function getExtraWheres(filters: NFTFilters, assetType: AssetType) {
   const where: string[] = []
   if (filters.contractAddresses && filters.contractAddresses.length > 0) {
     const fieldKey =
-      assetType === AssetType.ITEM ? 'collection' : 'collectionAddress'
+      assetType === AssetType.ITEM ? 'collection' : 'contractAddress'
 
     where.push(
       `${fieldKey}_in: [${filters.contractAddresses
