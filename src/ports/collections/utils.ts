@@ -26,6 +26,9 @@ export function fromCollectionFragment(
     size: fragment.itemsCount,
     network,
     chainId,
+    firstListedAt: fragment.firstListedAt
+      ? +fragment.firstListedAt * 1000
+      : null,
   }
 
   return collection
@@ -42,6 +45,7 @@ export const getCollectionFragment = () => `
     createdAt
     updatedAt
     reviewedAt
+    firstListedAt
   }
 `
 
@@ -87,6 +91,12 @@ export function getCollectionsQuery(
     where.push(`searchText_contains: "${search.trim().toLowerCase()}"`)
   }
 
+  // Sorting by a nullable field will return null values first.
+  // We do not want them so we filter them out.
+  if (sortBy === CollectionSortBy.RECENTLY_LISTED) {
+    where.push('firstListedAt_not: null')
+  }
+
   const max = 1000
   const total = isCount
     ? max
@@ -113,6 +123,9 @@ export function getCollectionsQuery(
       break
     case CollectionSortBy.SIZE:
       orderBy = 'itemsCount'
+      orderDirection = 'desc'
+    case CollectionSortBy.RECENTLY_LISTED:
+      orderBy = 'firstListedAt'
       orderDirection = 'desc'
     default:
       orderBy = 'name'

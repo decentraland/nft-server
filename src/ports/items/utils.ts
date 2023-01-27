@@ -86,6 +86,9 @@ export function fromItemFragment(
     updatedAt: +fragment.updatedAt * 1000,
     reviewedAt: +fragment.reviewedAt * 1000,
     soldAt: +fragment.soldAt * 1000,
+    firstListedAt: fragment.firstListedAt
+      ? +fragment.firstListedAt * 1000
+      : null,
   }
 
   return item
@@ -125,6 +128,7 @@ export const getItemFragment = () => `
     updatedAt
     reviewedAt
     soldAt
+    firstListedAt
   }
 `
 
@@ -286,6 +290,12 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     }
   }
 
+  // Sorting by a nullable field will return null values first.
+  // We do not want them so we filter them out.
+  if (sortBy === ItemSortBy.RECENTLY_LISTED) {
+    where.push('firstListedAt_not: null')
+  }
+
   // Compute total nfts to query. If there's a "skip" we add it to the total, since we need all the prior results to later merge them in a single page. If nothing is provided we default to the max. When counting we also use the max.
   const max = 1000
   const total = isCount
@@ -318,6 +328,10 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     case ItemSortBy.CHEAPEST:
       orderBy = 'price'
       orderDirection = 'asc'
+      break
+    case ItemSortBy.RECENTLY_LISTED:
+      orderBy = 'firstListedAt'
+      orderDirection = 'desc'
       break
     default:
       orderBy = 'createdAt'
