@@ -126,6 +126,7 @@ type Item = {
 - `minPrice`: Return only sales with a price higher than this. Type `number`.
 - `maxPrice`: Return only sales with a price lower than this. Type `number`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
+- `urn`: Filter results by URN. It supports multiple values by adding the query param multiple times. Type: `string`.
 
 ## Orders
 

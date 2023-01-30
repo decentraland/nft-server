@@ -75,4 +75,21 @@ describe("#getItemsQuery", () => {
       expect(getItemsQuery({ wearableGenders: [GenderFilterOption.UNISEX] })).toEqual(expect.stringContaining('searchWearableBodyShapes_contains: [BaseMale, BaseFemale]'))
     })
   })
+
+  describe('when urns is defined', () => {
+    it('should check urns in the list of urns received by params', () => {
+      expect(
+        getItemsQuery({
+          urns: [
+            'urn:decentraland:mumbai:collections-v2:0x1c8592d12157f1a63c8b207588488bfd7c3eac33:0',
+            'urn:decentraland:mumbai:collections-v2:0x1c8592d12157f1a63c8b207588488bfd7c3eac37:7',
+          ],
+        })
+      ).toEqual(
+        expect.stringContaining(
+          'urn_in: ["urn:decentraland:mumbai:collections-v2:0x1c8592d12157f1a63c8b207588488bfd7c3eac33:0","urn:decentraland:mumbai:collections-v2:0x1c8592d12157f1a63c8b207588488bfd7c3eac37:7"]'
+        )
+      )
+    })
+  })
 });
