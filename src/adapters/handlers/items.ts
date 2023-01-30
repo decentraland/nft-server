@@ -58,6 +58,7 @@ export function createItemsHandler(
     const network = params.getValue<Network>('network', Network)
     const maxPrice = params.getString('maxPrice')
     const minPrice = params.getString('minPrice')
+    const urns = params.getList('urn')
 
     return asJSON(() =>
       items.fetchAndCount({
@@ -87,6 +88,7 @@ export function createItemsHandler(
         minPrice: minPrice
           ? ethers.utils.parseEther(minPrice).toString()
           : undefined,
+        urns,
       })
     )
   }
