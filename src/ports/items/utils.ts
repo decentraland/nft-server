@@ -155,6 +155,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     minPrice,
     maxPrice,
     emotePlayMode,
+    urns,
   } = filters
 
   const where: string[] = [`searchIsCollectionApproved: true`]
@@ -217,6 +218,14 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
 
   if (itemId) {
     where.push(`blockchainId: "${itemId}"`)
+  }
+
+  if (urns && urns.length > 0) {
+    where.push(
+      `urn_in: [${urns
+        .map((urn) => `"${urn}"`)
+        .join(',')}]`
+    )
   }
 
   if (isOnSale) {
