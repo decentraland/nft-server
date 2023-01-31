@@ -127,6 +127,7 @@ export function getCollectionsQuery(
     case CollectionSortBy.RECENTLY_LISTED:
       orderBy = 'firstListedAt'
       orderDirection = 'desc'
+      break
     default:
       orderBy = 'name'
       orderDirection = 'asc'
