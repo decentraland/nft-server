@@ -1,4 +1,4 @@
-import { EmotePlayMode, GenderFilterOption } from '@dcl/schemas';
+import { EmotePlayMode, GenderFilterOption, ItemSortBy } from '@dcl/schemas';
 import { getItemsQuery } from './utils';
 
 describe("#getItemsQuery", () => {
@@ -92,4 +92,26 @@ describe("#getItemsQuery", () => {
       )
     })
   })
-});
+
+  describe('when sortBy is ItemSortBy.RECENTLY_LISTED', () => {
+    let query: string
+
+    beforeEach(() => {
+      query = getItemsQuery({
+        sortBy: ItemSortBy.RECENTLY_LISTED,
+      })
+    })
+
+    it('should add firstListedAt_not: null where filter', () => {
+      expect(query.includes('firstListedAt_not: null')).toBeTruthy()
+    })
+
+    it('should add firstListedAt as orderBy', () => {
+      expect(query.includes('orderBy: firstListedAt')).toBeTruthy()
+    })
+
+    it('should add desc as orderDirection', () => {
+      expect(query.includes('orderDirection: desc')).toBeTruthy()
+    })
+  })
+})
