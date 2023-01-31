@@ -5,6 +5,7 @@ import {
   CollectionSortBy,
   Network,
 } from '@dcl/schemas'
+import { SortDirection } from '../merger/types'
 import { CollectionFragment } from './types'
 
 export const COLLECTION_DEFAULT_SORT_BY = CollectionSortBy.NAME
@@ -111,26 +112,27 @@ export function getCollectionsQuery(
   switch (sortBy) {
     case CollectionSortBy.NEWEST:
       orderBy = 'createdAt'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
       break
     case CollectionSortBy.RECENTLY_REVIEWED:
       orderBy = 'reviewedAt'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
       break
     case CollectionSortBy.NAME:
       orderBy = 'name'
-      orderDirection = 'asc'
+      orderDirection = SortDirection.ASC
       break
     case CollectionSortBy.SIZE:
       orderBy = 'itemsCount'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
+      break
     case CollectionSortBy.RECENTLY_LISTED:
       orderBy = 'firstListedAt'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
       break
     default:
       orderBy = 'name'
-      orderDirection = 'asc'
+      orderDirection = SortDirection.ASC
   }
 
   return `

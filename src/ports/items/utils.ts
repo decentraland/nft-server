@@ -11,6 +11,7 @@ import {
 import { ItemFragment, FragmentItemType } from './types'
 import { isAddressZero } from '../../logic/address'
 import { getGenderFilterQuery } from '../utils'
+import { SortDirection } from '../merger/types'
 
 export const ITEM_DEFAULT_SORT_BY = ItemSortBy.NEWEST
 
@@ -221,11 +222,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
   }
 
   if (urns && urns.length > 0) {
-    where.push(
-      `urn_in: [${urns
-        .map((urn) => `"${urn}"`)
-        .join(',')}]`
-    )
+    where.push(`urn_in: [${urns.map((urn) => `"${urn}"`).join(',')}]`)
   }
 
   if (isOnSale) {
@@ -320,31 +317,31 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
   switch (sortBy || ITEM_DEFAULT_SORT_BY) {
     case ItemSortBy.NEWEST:
       orderBy = 'createdAt'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
       break
     case ItemSortBy.RECENTLY_REVIEWED:
       orderBy = 'reviewedAt'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
       break
     case ItemSortBy.RECENTLY_SOLD:
       orderBy = 'soldAt'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
       break
     case ItemSortBy.NAME:
       orderBy = 'searchText'
-      orderDirection = 'asc'
+      orderDirection = SortDirection.ASC
       break
     case ItemSortBy.CHEAPEST:
       orderBy = 'price'
-      orderDirection = 'asc'
+      orderDirection = SortDirection.ASC
       break
     case ItemSortBy.RECENTLY_LISTED:
       orderBy = 'firstListedAt'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
       break
     default:
       orderBy = 'createdAt'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
   }
 
   const query = `query Items {
