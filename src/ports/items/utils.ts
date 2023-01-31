@@ -11,6 +11,7 @@ import {
 import { ItemFragment, FragmentItemType } from './types'
 import { isAddressZero } from '../../logic/address'
 import { getGenderFilterQuery } from '../utils'
+import { SortDirection } from '../merger/types'
 
 export const ITEM_DEFAULT_SORT_BY = ItemSortBy.NEWEST
 
@@ -86,6 +87,9 @@ export function fromItemFragment(
     updatedAt: +fragment.updatedAt * 1000,
     reviewedAt: +fragment.reviewedAt * 1000,
     soldAt: +fragment.soldAt * 1000,
+    firstListedAt: fragment.firstListedAt
+      ? +fragment.firstListedAt * 1000
+      : null,
   }
 
   return item
@@ -125,6 +129,7 @@ export const getItemFragment = () => `
     updatedAt
     reviewedAt
     soldAt
+    firstListedAt
   }
 `
 
@@ -217,11 +222,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
   }
 
   if (urns && urns.length > 0) {
-    where.push(
-      `urn_in: [${urns
-        .map((urn) => `"${urn}"`)
-        .join(',')}]`
-    )
+    where.push(`urn_in: [${urns.map((urn) => `"${urn}"`).join(',')}]`)
   }
 
   if (isOnSale) {
@@ -295,6 +296,12 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     }
   }
 
+  // Sorting by a nullable field will return null values first.
+  // We do not want them so we filter them out.
+  if (sortBy === ItemSortBy.RECENTLY_LISTED) {
+    where.push('firstListedAt_not: null')
+  }
+
   // Compute total nfts to query. If there's a "skip" we add it to the total, since we need all the prior results to later merge them in a single page. If nothing is provided we default to the max. When counting we also use the max.
   const max = 1000
   const total = isCount
@@ -310,27 +317,31 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
   switch (sortBy || ITEM_DEFAULT_SORT_BY) {
     case ItemSortBy.NEWEST:
       orderBy = 'createdAt'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
       break
     case ItemSortBy.RECENTLY_REVIEWED:
       orderBy = 'reviewedAt'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
       break
     case ItemSortBy.RECENTLY_SOLD:
       orderBy = 'soldAt'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
       break
     case ItemSortBy.NAME:
       orderBy = 'searchText'
-      orderDirection = 'asc'
+      orderDirection = SortDirection.ASC
       break
     case ItemSortBy.CHEAPEST:
       orderBy = 'price'
-      orderDirection = 'asc'
+      orderDirection = SortDirection.ASC
+      break
+    case ItemSortBy.RECENTLY_LISTED:
+      orderBy = 'firstListedAt'
+      orderDirection = SortDirection.DESC
       break
     default:
       orderBy = 'createdAt'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
   }
 
   const query = `query Items {

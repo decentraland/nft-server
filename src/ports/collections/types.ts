@@ -15,4 +15,5 @@ export type CollectionFragment = {
   createdAt: string
   updatedAt: string
   reviewedAt: string
+  firstListedAt: string | null
 }

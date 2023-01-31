@@ -47,6 +47,7 @@ export type ItemFragment = {
   reviewedAt: string
   soldAt: string
   beneficiary: string
+  firstListedAt: string | null
 }
 
 export interface IItemsComponent {

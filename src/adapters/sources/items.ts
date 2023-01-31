@@ -16,6 +16,7 @@ export function createItemsSource(
         [ItemSortBy.RECENTLY_SOLD]: result.soldAt,
         [ItemSortBy.NAME]: result.name,
         [ItemSortBy.CHEAPEST]: result.available > 0 ? +result.price : null,
+        [ItemSortBy.RECENTLY_LISTED]: result.firstListedAt,
       },
     }))
   }

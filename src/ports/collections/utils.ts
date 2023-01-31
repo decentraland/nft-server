@@ -5,6 +5,7 @@ import {
   CollectionSortBy,
   Network,
 } from '@dcl/schemas'
+import { SortDirection } from '../merger/types'
 import { CollectionFragment } from './types'
 
 export const COLLECTION_DEFAULT_SORT_BY = CollectionSortBy.NAME
@@ -26,6 +27,9 @@ export function fromCollectionFragment(
     size: fragment.itemsCount,
     network,
     chainId,
+    firstListedAt: fragment.firstListedAt
+      ? +fragment.firstListedAt * 1000
+      : null,
   }
 
   return collection
@@ -42,6 +46,7 @@ export const getCollectionFragment = () => `
     createdAt
     updatedAt
     reviewedAt
+    firstListedAt
   }
 `
 
@@ -87,6 +92,12 @@ export function getCollectionsQuery(
     where.push(`searchText_contains: "${search.trim().toLowerCase()}"`)
   }
 
+  // Sorting by a nullable field will return null values first.
+  // We do not want them so we filter them out.
+  if (sortBy === CollectionSortBy.RECENTLY_LISTED) {
+    where.push('firstListedAt_not: null')
+  }
+
   const max = 1000
   const total = isCount
     ? max
@@ -101,22 +112,27 @@ export function getCollectionsQuery(
   switch (sortBy) {
     case CollectionSortBy.NEWEST:
       orderBy = 'createdAt'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
       break
     case CollectionSortBy.RECENTLY_REVIEWED:
       orderBy = 'reviewedAt'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
       break
     case CollectionSortBy.NAME:
       orderBy = 'name'
-      orderDirection = 'asc'
+      orderDirection = SortDirection.ASC
       break
     case CollectionSortBy.SIZE:
       orderBy = 'itemsCount'
-      orderDirection = 'desc'
+      orderDirection = SortDirection.DESC
+      break
+    case CollectionSortBy.RECENTLY_LISTED:
+      orderBy = 'firstListedAt'
+      orderDirection = SortDirection.DESC
+      break
     default:
       orderBy = 'name'
-      orderDirection = 'asc'
+      orderDirection = SortDirection.ASC
   }
 
   return `

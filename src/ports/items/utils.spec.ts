@@ -1,5 +1,14 @@
-import { EmotePlayMode, GenderFilterOption } from '@dcl/schemas';
-import { getItemsQuery } from './utils';
+import {
+  ChainId,
+  EmoteCategory,
+  EmotePlayMode,
+  GenderFilterOption,
+  ItemSortBy,
+  Network,
+  Rarity,
+} from '@dcl/schemas'
+import { ItemFragment, FragmentItemType } from './types'
+import { fromItemFragment, getItemsQuery } from './utils'
 
 describe("#getItemsQuery", () => {
   describe("when minPrice is defined", () => {
@@ -92,4 +101,96 @@ describe("#getItemsQuery", () => {
       )
     })
   })
-});
+
+  describe('when sortBy is ItemSortBy.RECENTLY_LISTED', () => {
+    let query: string
+
+    beforeEach(() => {
+      query = getItemsQuery({
+        sortBy: ItemSortBy.RECENTLY_LISTED,
+      })
+    })
+
+    it('should add firstListedAt_not: null where filter', () => {
+      expect(query.includes('firstListedAt_not: null')).toBeTruthy()
+    })
+
+    it('should add firstListedAt as orderBy', () => {
+      expect(query.includes('orderBy: firstListedAt')).toBeTruthy()
+    })
+
+    it('should add desc as orderDirection', () => {
+      expect(query.includes('orderDirection: desc')).toBeTruthy()
+    })
+  })
+})
+
+describe('#fromItemFragment', () => {
+  let itemFragment: ItemFragment
+
+  beforeEach(() => {
+    itemFragment = {
+      id: 'id',
+      price: 'price',
+      blockchainId: 'blockchainId',
+      image: 'image',
+      rarity: Rarity.COMMON,
+      available: 'available',
+      itemType: FragmentItemType.EMOTE_V1,
+      collection: {
+        id: 'collection',
+        creator: 'creator',
+      },
+      metadata: {
+        wearable: null,
+        emote: {
+          category: EmoteCategory.DANCE,
+          description: 'description',
+          loop: false,
+          name: 'name',
+        },
+      },
+      searchWearableBodyShapes: null,
+      searchEmoteBodyShapes: null,
+      searchIsStoreMinter: false,
+      createdAt: '100',
+      updatedAt: '100',
+      reviewedAt: '100',
+      soldAt: '100',
+      beneficiary: 'beneficiary',
+      firstListedAt: null,
+    }
+  })
+
+  describe('when fragment firstListedAt is null', () => {
+    beforeEach(() => {
+      itemFragment.firstListedAt = null
+    })
+
+    it('should return an Item with firstListedAt as null', () => {
+      const collection = fromItemFragment(
+        itemFragment,
+        Network.MATIC,
+        ChainId.MATIC_MUMBAI
+      )
+
+      expect(collection.firstListedAt).toBeNull()
+    })
+  })
+
+  describe('when fragment firstListedAt is "100"', () => {
+    beforeEach(() => {
+      itemFragment.firstListedAt = '100'
+    })
+
+    it('should return a Collection with firstListedAt as 100000', () => {
+      const collection = fromItemFragment(
+        itemFragment,
+        Network.MATIC,
+        ChainId.MATIC_MUMBAI
+      )
+
+      expect(collection.firstListedAt).toBe(100000)
+    })
+  })
+})

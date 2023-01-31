@@ -347,6 +347,7 @@ export async function initComponents(): Promise<AppComponents> {
       [ItemSortBy.RECENTLY_SOLD]: SortDirection.DESC,
       [ItemSortBy.NAME]: SortDirection.ASC,
       [ItemSortBy.CHEAPEST]: SortDirection.ASC,
+      [ItemSortBy.RECENTLY_LISTED]: SortDirection.DESC,
     },
     maxCount: 1000,
   })
@@ -477,6 +478,7 @@ export async function initComponents(): Promise<AppComponents> {
       [CollectionSortBy.NEWEST]: SortDirection.DESC,
       [CollectionSortBy.RECENTLY_REVIEWED]: SortDirection.DESC,
       [CollectionSortBy.SIZE]: SortDirection.DESC,
+      [CollectionSortBy.RECENTLY_LISTED]: SortDirection.DESC,
     },
     maxCount: 1000,
   })
