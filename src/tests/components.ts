@@ -126,6 +126,7 @@ import {
   createProcessedPricesComponent,
 } from '../ports/prices/component'
 import { PriceFragment, PriceFilters, PriceSortBy } from '../ports/prices/types'
+import { createStatsComponent } from '../ports/stats/component'
 
 // start TCP port for listeners
 let lastUsedPort = 19000 + parseInt(process.env.JEST_WORKER_ID || '1') * 1000
@@ -543,6 +544,10 @@ export async function initComponents(): Promise<AppComponents> {
     })
   )
 
+  const stats = createStatsComponent({
+    subgraph: marketplaceSubgraph,
+  })
+
   const statusChecks = await createStatusCheckComponent({ config, server })
   const globalLogger = logs.getLogger('nft-server')
   const requestSession = createRequestSessionComponent()
@@ -571,5 +576,6 @@ export async function initComponents(): Promise<AppComponents> {
     volumes,
     rankings,
     prices,
+    stats,
   }
 }

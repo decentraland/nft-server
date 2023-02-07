@@ -45,6 +45,7 @@ import { NFTResult } from './ports/nfts/types'
 import { IRequestSessionComponent } from './ports/requestSession/types'
 import { ITrendingsComponent } from './ports/trendings/types'
 import { IProcessedPricesComponent } from './ports/prices/types'
+import { IStatsComponent } from './ports/stats/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -78,6 +79,7 @@ export type AppComponents = {
   accounts: IMergerComponent<Account, AccountFilters, AccountSortBy>
   rankings: IItemsDayDataComponent
   prices: IProcessedPricesComponent
+  stats: IStatsComponent
   volumes: IVolumeComponent
   analyticsData: IMergerComponent<
     AnalyticsDayData,
