@@ -4,7 +4,7 @@ import {
   EstateStat,
   FetchEstateSizesQueryFragment,
   IStatsComponent,
-  StatsResource,
+  StatsCategory,
   StatsResourceParams,
 } from '../../ports/stats/types'
 import { consolidateSizes } from '../../ports/stats/utils'
@@ -19,7 +19,7 @@ let params: StatsResourceParams
 describe('when getting stats', () => {
   beforeEach(() => {
     params = {
-      resource: StatsResource.ESTATE,
+      category: StatsCategory.ESTATE,
       stat: EstateStat.SIZE,
     }
     marketplaceSubgraphQueryMock = jest.fn()
@@ -50,7 +50,7 @@ describe('when getting stats', () => {
       return expect(
         statsComponent.fetch({
           ...params,
-          resource: 'anInvalidResource' as StatsResource,
+          category: 'anInvalidResource' as StatsCategory,
         })
       ).resolves.toEqual([])
     })
