@@ -50,6 +50,7 @@ const getItem = (contractAddress: string, itemId: string) => ({
   updatedAt: 1653899245000,
   reviewedAt: 1631882258000,
   soldAt: 1653899245000,
+  firstListedAt: null
 })
 
 const RESULTS_PAGE_SIZE = 10

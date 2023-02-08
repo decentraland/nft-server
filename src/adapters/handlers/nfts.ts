@@ -1,3 +1,4 @@
+import { ethers } from 'ethers'
 import {
   EmoteCategory,
   EmotePlayMode,
@@ -26,6 +27,7 @@ export function createNFTsHandler(
     const sortBy = params.getValue<NFTSortBy>('sortBy', NFTSortBy)
     const category = params.getValue<NFTCategory>('category', NFTCategory)
     const owner = params.getAddress('owner')
+    const tenant = params.getAddress('tenant')?.toLowerCase()
     const isOnSale = params.getBoolean('isOnSale')
     const search = params.getString('search')
     const isLand = params.getBoolean('isLand')
@@ -66,8 +68,14 @@ export function createNFTsHandler(
     const adjacentToRoad = params.getBoolean('adjacentToRoad')
     const minDistanceToPlaza = params.getNumber('minDistanceToPlaza')
     const maxDistanceToPlaza = params.getNumber('maxDistanceToPlaza')
+    const maxEstateSize = params.getNumber('maxEstateSize')
+    const minEstateSize = params.getNumber('minEstateSize')
 
     return asJSON(() => {
+      if (owner && tenant) {
+        throw new HttpError('Owner or tenant can be set, but not both.', 400)
+      }
+
       if (tokenId && !tokenId.match(`^[0-9]+$`)) {
         throw new HttpError('Invalid token id, token ids must be numbers', 400)
       }
@@ -103,11 +111,18 @@ export function createNFTsHandler(
         itemId,
         network,
         rentalStatus,
-        maxPrice,
-        minPrice,
         adjacentToRoad,
         minDistanceToPlaza,
-        maxDistanceToPlaza
+        maxDistanceToPlaza,
+        tenant,
+        maxPrice: maxPrice
+          ? ethers.utils.parseEther(maxPrice).toString()
+          : undefined,
+        minPrice: minPrice
+          ? ethers.utils.parseEther(minPrice).toString()
+          : undefined,
+        minEstateSize,
+        maxEstateSize,
       })
     })
   }

@@ -52,6 +52,11 @@ import {
 
 import { createAnalyticsDayDataSource } from '../adapters/sources/analyticsDayData'
 import { createAnalyticsDayDataComponent } from '../ports/analyticsDayData/component'
+import {
+  getAnalyticsDayDataQuery,
+  getAnalyticsTotalDataQuery,
+  mapAnalyticsFragment,
+} from '../ports/analyticsDayData/utils'
 import { createMergerComponent } from '../ports/merger/component'
 import { SortDirection } from '../ports/merger/types'
 import { createRequestSessionComponent } from '../ports/requestSession/component'
@@ -107,6 +112,21 @@ import { createVolumeComponent } from '../ports/volume/component'
 import { createTrendingsComponent } from '../ports/trendings/component'
 import { createRankingsComponent } from '../ports/rankings/component'
 import { createRentalsComponent } from '../ports/rentals/components'
+import { createPricesSource } from '../adapters/sources/prices'
+import {
+  getCollectionPricesQuery,
+  collectionsShouldFetch as collectionsShouldFetchPrices,
+} from '../logic/prices/collections'
+import {
+  getMarketplacePricesQuery,
+  marketplaceShouldFetch as marketplaceShouldFetchPrices,
+} from '../logic/prices/marketplace'
+import {
+  createPricesComponent,
+  createProcessedPricesComponent,
+} from '../ports/prices/component'
+import { PriceFragment, PriceFilters, PriceSortBy } from '../ports/prices/types'
+import { createStatsComponent } from '../ports/stats/component'
 
 // start TCP port for listeners
 let lastUsedPort = 19000 + parseInt(process.env.JEST_WORKER_ID || '1') * 1000
@@ -328,6 +348,7 @@ export async function initComponents(): Promise<AppComponents> {
       [ItemSortBy.RECENTLY_SOLD]: SortDirection.DESC,
       [ItemSortBy.NAME]: SortDirection.ASC,
       [ItemSortBy.CHEAPEST]: SortDirection.ASC,
+      [ItemSortBy.RECENTLY_LISTED]: SortDirection.DESC,
     },
     maxCount: 1000,
   })
@@ -382,12 +403,18 @@ export async function initComponents(): Promise<AppComponents> {
   const marketplaceAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: marketplaceSubgraph,
     network: Network.MATIC,
+    getAnalyticsDayDataQuery,
+    getAnalyticsTotalDataQuery,
+    mapAnalyticsFragment,
   })
 
   // analytics day data for the collections subgraph
   const collectionsAnalyticsDayData = createAnalyticsDayDataComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
+    getAnalyticsDayDataQuery,
+    getAnalyticsTotalDataQuery,
+    mapAnalyticsFragment,
   })
 
   const analyticsData = createMergerComponent<
@@ -452,6 +479,7 @@ export async function initComponents(): Promise<AppComponents> {
       [CollectionSortBy.NEWEST]: SortDirection.DESC,
       [CollectionSortBy.RECENTLY_REVIEWED]: SortDirection.DESC,
       [CollectionSortBy.SIZE]: SortDirection.DESC,
+      [CollectionSortBy.RECENTLY_LISTED]: SortDirection.DESC,
     },
     maxCount: 1000,
   })
@@ -488,6 +516,38 @@ export async function initComponents(): Promise<AppComponents> {
     },
   })
 
+  // prices
+  const marketplacePrices = createPricesComponent({
+    subgraph: marketplaceSubgraph,
+    queryGetter: getMarketplacePricesQuery,
+  })
+
+  const collectionsPrices = createPricesComponent({
+    subgraph: collectionsSubgraph,
+    queryGetter: getCollectionPricesQuery,
+  })
+
+  const prices = createProcessedPricesComponent(
+    createMergerComponent<PriceFragment, PriceFilters, PriceSortBy>({
+      sources: [
+        createPricesSource(marketplacePrices, {
+          shouldFetch: marketplaceShouldFetchPrices,
+        }),
+        createPricesSource(collectionsPrices, {
+          shouldFetch: collectionsShouldFetchPrices,
+        }),
+      ],
+      directions: {
+        [PriceSortBy.PRICE]: SortDirection.ASC,
+      },
+      defaultSortBy: PriceSortBy.PRICE,
+    })
+  )
+
+  const stats = createStatsComponent({
+    subgraph: marketplaceSubgraph,
+  })
+
   const statusChecks = await createStatusCheckComponent({ config, server })
   const globalLogger = logs.getLogger('nft-server')
   const requestSession = createRequestSessionComponent()
@@ -515,5 +575,7 @@ export async function initComponents(): Promise<AppComponents> {
     collectionsSubgraph,
     volumes,
     rankings,
+    prices,
+    stats,
   }
 }

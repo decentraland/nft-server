@@ -263,10 +263,11 @@ export function fromMarketplaceOrderFragment(fragment: OrderFragment) {
 export function marketplaceShouldFetch(filters: NFTFilters) {
   const hasAProhibitedSortBySet =
     filters.sortBy &&
-    PROHIBITED_SORT_BYS.includes((filters.sortBy as unknown) as NFTSortBy)
+    PROHIBITED_SORT_BYS.includes(filters.sortBy as unknown as NFTSortBy)
   if (
     (filters.network && filters.network !== Network.ETHEREUM) ||
     filters.category === NFTCategory.EMOTE ||
+    filters.tenant ||
     filters.itemId ||
     filters.isWearableSmart ||
     filters.isOnRent ||

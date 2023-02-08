@@ -1,3 +1,4 @@
+import { ethers } from 'ethers'
 import {
   EmoteCategory,
   EmotePlayMode,
@@ -57,6 +58,7 @@ export function createItemsHandler(
     const network = params.getValue<Network>('network', Network)
     const maxPrice = params.getString('maxPrice')
     const minPrice = params.getString('minPrice')
+    const urns = params.getList('urn')
 
     return asJSON(() =>
       items.fetchAndCount({
@@ -80,8 +82,13 @@ export function createItemsHandler(
         itemId,
         isWearableSmart,
         network,
-        minPrice,
-        maxPrice,
+        maxPrice: maxPrice
+          ? ethers.utils.parseEther(maxPrice).toString()
+          : undefined,
+        minPrice: minPrice
+          ? ethers.utils.parseEther(minPrice).toString()
+          : undefined,
+        urns,
       })
     )
   }

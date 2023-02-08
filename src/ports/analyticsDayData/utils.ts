@@ -1,5 +1,9 @@
-import { AnalyticsDayDataFilters } from '@dcl/schemas'
-import { AnalyticsTimeframe } from './types'
+import { AnalyticsDayData, AnalyticsDayDataFilters } from '@dcl/schemas'
+import {
+  AnalyticsDayDataFragment,
+  AnalyticsTimeframe,
+  RentalsAnalyticsDayDataFragment,
+} from './types'
 
 export const getAnalyticsDayDataFragment = () => `
   fragment analyticsDayDataFragment on AnalyticsDayData {
@@ -52,6 +56,14 @@ export function getAnalyticsTotalDataQuery() {
   `
 }
 
+export function mapAnalyticsFragment(
+  fragment: AnalyticsDayDataFragment
+): AnalyticsDayData {
+  // The data returned from the collections/marketplace subgraphs is identical to the one that will be returned by the nft-server.
+  // This means that there is no need to map it, just return the same values.
+  return fragment
+}
+
 export function getDateXDaysAgo(numOfDays: number, date = new Date()) {
   const daysAgo = new Date(date.getTime())
 
@@ -75,5 +87,54 @@ export function getTimestampFromTimeframe(timeframe: AnalyticsTimeframe) {
       return 0
     default:
       return 0
+  }
+}
+
+// Rentals
+
+export function getRentalsAnalyticsDayDataQuery({
+  from,
+}: AnalyticsDayDataFilters) {
+  return `
+    query AnalyticsDayData {
+      analytics: analyticsDayDatas${
+        from ? `(where:{date_gt: ${Math.round(from / 1000)}})` : ''
+      } {
+        id
+        date
+        volume
+        lessorEarnings
+        feeCollectorEarnings
+      }
+    }
+  `
+}
+
+export function getRentalsAnalyticsTotalDataQuery() {
+  return `
+    query AnalyticsTotalData {
+      analytics: analyticsTotalDatas {
+        id
+        volume
+        lessorEarnings
+        feeCollectorEarnings
+      }
+    }
+  `
+}
+
+export function mapRentalsAnalyticsFragment(
+  fragment: RentalsAnalyticsDayDataFragment
+): AnalyticsDayData {
+  return {
+    // Non rentals subgraphs bring this data from an entity with id 'all'
+    // In order to merge the data correctly, we need to set the id to 'all' for the rentals subgraph data as well.
+    id: fragment.id === 'analytics-total-data' ? 'all' : fragment.id,
+    date: fragment.date,
+    // Rentals provide rentals numbers, not sales, so we just return 0 for sales.
+    sales: 0,
+    volume: fragment.volume,
+    creatorsEarnings: fragment.lessorEarnings,
+    daoEarnings: fragment.feeCollectorEarnings,
   }
 }

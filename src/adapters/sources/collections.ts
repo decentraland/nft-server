@@ -16,6 +16,7 @@ export function createCollectionsSource(
         [CollectionSortBy.RECENTLY_REVIEWED]: result.reviewedAt,
         [CollectionSortBy.NAME]: result.name,
         [CollectionSortBy.SIZE]: result.size,
+        [CollectionSortBy.RECENTLY_LISTED]: result.firstListedAt,
       },
     }))
   }

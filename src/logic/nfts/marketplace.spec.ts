@@ -151,4 +151,16 @@ describe('when deciding if the marketplace should fetch', () => {
       expect(marketplaceShouldFetch({ rentalStatus })).toBe(true)
     })
   })
+
+  describe('and the tenant filter is set', () => {
+    it('should return false', () => {
+      expect(marketplaceShouldFetch({ tenant: 'aTenant' })).toBe(false)
+    })
+  })
+
+  describe('and the tenant filter is not set', () => {
+    it('should return true', () => {
+      expect(marketplaceShouldFetch({})).toBe(true)
+    })
+  })
 })

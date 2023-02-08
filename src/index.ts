@@ -73,6 +73,14 @@ import {
   getCollectionsFragment,
   getCollectionsOrderBy,
 } from './logic/nfts/collections'
+import {
+  getMarketplacePricesQuery,
+  marketplaceShouldFetch as marketplaceShouldFetchPrices,
+} from './logic/prices/marketplace'
+import {
+  collectionsShouldFetch as collectionsShouldFetchPrices,
+  getCollectionPricesQuery,
+} from './logic/prices/collections'
 import { NFTResult } from './ports/nfts/types'
 import { NFT_DEFAULT_SORT_BY } from './ports/nfts/utils'
 import { createNFTsSource } from './adapters/sources/nfts'
@@ -109,10 +117,29 @@ import { createRentalsComponent } from './ports/rentals/components'
 import { createRentalsNFTSource } from './adapters/sources/rentals'
 import { createRentalsNFTComponent } from './ports/rentalNFTs/component'
 import {
+  createPricesComponent,
+  createProcessedPricesComponent,
+} from './ports/prices/component'
+import { PriceFilters, PriceFragment, PriceSortBy } from './ports/prices/types'
+import { createPricesSource } from './adapters/sources/prices'
+import {
   getLandAndEstateContractAddresses,
   rentalNFTComponentShouldFetch,
   shouldFetch as shouldFetchRentalsFromSignatureServer,
 } from './logic/nfts/rentals'
+import {
+  getAnalyticsDayDataQuery,
+  getAnalyticsTotalDataQuery,
+  getRentalsAnalyticsDayDataQuery,
+  getRentalsAnalyticsTotalDataQuery,
+  mapAnalyticsFragment,
+  mapRentalsAnalyticsFragment,
+} from './ports/analyticsDayData/utils'
+import {
+  AnalyticsDayDataFragment,
+  RentalsAnalyticsDayDataFragment,
+} from './ports/analyticsDayData/types'
+import { createStatsComponent } from './ports/stats/component'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -360,6 +387,7 @@ async function initComponents(): Promise<AppComponents> {
       [ItemSortBy.RECENTLY_SOLD]: SortDirection.DESC,
       [ItemSortBy.NAME]: SortDirection.ASC,
       [ItemSortBy.CHEAPEST]: SortDirection.ASC,
+      [ItemSortBy.RECENTLY_LISTED]: SortDirection.DESC,
     },
     maxCount: 1000,
   })
@@ -411,16 +439,34 @@ async function initComponents(): Promise<AppComponents> {
   const trendings = createTrendingsComponent(collectionsSubgraph, items)
 
   // analytics day data for the marketplace subgraph
-  const marketplaceAnalyticsDayData = createAnalyticsDayDataComponent({
-    subgraph: marketplaceSubgraph,
-    network: Network.MATIC,
-  })
+  const marketplaceAnalyticsDayData =
+    createAnalyticsDayDataComponent<AnalyticsDayDataFragment>({
+      subgraph: marketplaceSubgraph,
+      network: Network.ETHEREUM,
+      getAnalyticsDayDataQuery,
+      getAnalyticsTotalDataQuery,
+      mapAnalyticsFragment,
+    })
 
   // analytics day data for the collections subgraph
-  const collectionsAnalyticsDayData = createAnalyticsDayDataComponent({
-    subgraph: collectionsSubgraph,
-    network: Network.MATIC,
-  })
+  const collectionsAnalyticsDayData =
+    createAnalyticsDayDataComponent<AnalyticsDayDataFragment>({
+      subgraph: collectionsSubgraph,
+      network: Network.MATIC,
+      getAnalyticsDayDataQuery,
+      getAnalyticsTotalDataQuery,
+      mapAnalyticsFragment,
+    })
+
+  // analytics day data for the rentals subgraph
+  const rentalsAnalyticsDayData =
+    createAnalyticsDayDataComponent<RentalsAnalyticsDayDataFragment>({
+      subgraph: rentalsSubgraph,
+      network: Network.ETHEREUM,
+      getAnalyticsDayDataQuery: getRentalsAnalyticsDayDataQuery,
+      getAnalyticsTotalDataQuery: getRentalsAnalyticsTotalDataQuery,
+      mapAnalyticsFragment: mapRentalsAnalyticsFragment,
+    })
 
   const analyticsData = createMergerComponent<
     AnalyticsDayData,
@@ -430,6 +476,7 @@ async function initComponents(): Promise<AppComponents> {
     sources: [
       createAnalyticsDayDataSource(marketplaceAnalyticsDayData),
       createAnalyticsDayDataSource(collectionsAnalyticsDayData),
+      createAnalyticsDayDataSource(rentalsAnalyticsDayData),
     ],
     defaultSortBy: AnalyticsDayDataSortBy.DATE,
     directions: {
@@ -463,6 +510,38 @@ async function initComponents(): Promise<AppComponents> {
   const rankings = createRankingsComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
+  })
+
+  // prices
+  const marketplacePrices = createPricesComponent({
+    subgraph: marketplaceSubgraph,
+    queryGetter: getMarketplacePricesQuery,
+  })
+
+  const collectionsPrices = createPricesComponent({
+    subgraph: collectionsSubgraph,
+    queryGetter: getCollectionPricesQuery,
+  })
+
+  const prices = createProcessedPricesComponent(
+    createMergerComponent<PriceFragment, PriceFilters, PriceSortBy>({
+      sources: [
+        createPricesSource(marketplacePrices, {
+          shouldFetch: marketplaceShouldFetchPrices,
+        }),
+        createPricesSource(collectionsPrices, {
+          shouldFetch: collectionsShouldFetchPrices,
+        }),
+      ],
+      directions: {
+        [PriceSortBy.PRICE]: SortDirection.ASC,
+      },
+      defaultSortBy: PriceSortBy.PRICE,
+    })
+  )
+
+  const stats = createStatsComponent({
+    subgraph: marketplaceSubgraph,
   })
 
   // accounts
@@ -516,6 +595,7 @@ async function initComponents(): Promise<AppComponents> {
       [CollectionSortBy.NEWEST]: SortDirection.DESC,
       [CollectionSortBy.RECENTLY_REVIEWED]: SortDirection.DESC,
       [CollectionSortBy.SIZE]: SortDirection.DESC,
+      [CollectionSortBy.RECENTLY_LISTED]: SortDirection.DESC,
     },
     maxCount: 1000,
   })
@@ -539,10 +619,12 @@ async function initComponents(): Promise<AppComponents> {
     collections,
     accounts,
     rankings,
+    prices,
     volumes,
     analyticsData,
     collectionsSubgraph,
     marketplaceSubgraph,
+    stats,
   }
 }
 
