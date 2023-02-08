@@ -63,4 +63,24 @@ describe("#getFetchQuery", () => {
       expect(getFetchQuery({ wearableGenders: [GenderFilterOption.UNISEX] }, '', () => '')).toEqual(expect.stringContaining('searchWearableBodyShapes_contains: [BaseMale, BaseFemale]'))
     })
   })
+
+  describe("when adjacentToRoad is defined", () => {
+    it("should search for lands that are adjacent to a road", () => {
+      expect(getFetchQuery({ adjacentToRoad: true }, '', () => '')).toEqual(expect.stringContaining('searchAdjacentToRoad: true'))
+    })
+  })
+
+  describe("when minDistanceToPlaza is defined", () => {
+    it("should search for lands that have a distance greater than the one defined", () => {
+      expect(getFetchQuery({ minDistanceToPlaza: 2, isLand: true }, '', () => '')).toEqual(expect.stringContaining('searchDistanceToPlaza_gte: 2'))
+    })
+  })
+
+  describe("when maxDistanceToPlaza is defined", () => {
+    it("should search for lands that have a distance smaller than the one defined and at least distance 0", () => {
+      const fetchQuery = getFetchQuery({ maxDistanceToPlaza: 2, isLand: true }, '', () => '');
+      expect(fetchQuery).toEqual(expect.stringContaining('searchDistanceToPlaza_gte: 0'))
+      expect(fetchQuery).toEqual(expect.stringContaining('searchDistanceToPlaza_lte: 2'))
+    })
+  })
 });
