@@ -255,6 +255,8 @@ export function collectionsShouldFetch(filters: NFTFilters) {
       (filters.rentalStatus as RentalStatus[]).length > 0) ||
     (!Array.isArray(filters.rentalStatus) && filters.rentalStatus) ||
     filters.isLand ||
+    filters.maxEstateSize ||
+    filters.minEstateSize ||
     (filters.network && filters.network !== Network.MATIC) ||
     (filters.category &&
       filters.category !== NFTCategory.WEARABLE &&

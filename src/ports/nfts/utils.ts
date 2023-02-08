@@ -171,6 +171,14 @@ export function getFetchQuery(
     where.push(`searchOrderPrice_gte: "${filters.minPrice}"`)
   }
 
+  if (filters.maxEstateSize) {
+    where.push(`searchEstateSize_lte: ${filters.maxEstateSize}`)
+  }
+
+  if (filters.minEstateSize) {
+    where.push(`searchEstateSize_gte: ${filters.minEstateSize}`)
+  }
+
   if (filters.contractAddresses && filters.contractAddresses.length > 0) {
     where.push(
       `contractAddress_in: [${filters.contractAddresses

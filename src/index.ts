@@ -139,6 +139,7 @@ import {
   AnalyticsDayDataFragment,
   RentalsAnalyticsDayDataFragment,
 } from './ports/analyticsDayData/types'
+import { createStatsComponent } from './ports/stats/component'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -539,6 +540,10 @@ async function initComponents(): Promise<AppComponents> {
     })
   )
 
+  const stats = createStatsComponent({
+    subgraph: marketplaceSubgraph,
+  })
+
   // accounts
   const marketplaceAccounts = createAccountsComponent({
     subgraph: marketplaceSubgraph,
@@ -619,6 +624,7 @@ async function initComponents(): Promise<AppComponents> {
     analyticsData,
     collectionsSubgraph,
     marketplaceSubgraph,
+    stats,
   }
 }
 

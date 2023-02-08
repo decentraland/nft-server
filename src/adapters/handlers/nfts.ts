@@ -65,6 +65,8 @@ export function createNFTsHandler(
       .concat(params.getList<RentalStatus>('rentalStatus[]', RentalStatus)) // concats to support both ways of sending the array
     const maxPrice = params.getString('maxPrice')
     const minPrice = params.getString('minPrice')
+    const maxEstateSize = params.getNumber('maxEstateSize')
+    const minEstateSize = params.getNumber('minEstateSize')
 
     return asJSON(() => {
       if (owner && tenant) {
@@ -113,6 +115,8 @@ export function createNFTsHandler(
         minPrice: minPrice
           ? ethers.utils.parseEther(minPrice).toString()
           : undefined,
+        minEstateSize,
+        maxEstateSize,
       })
     })
   }
