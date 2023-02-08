@@ -72,6 +72,9 @@ type NFT = {
 - `rentalStatus`: Filter results by `Rental status`. Can be used only when querying NFTs that are on rent using the `isOnRent` flag. Possible values: `open`, `executed`, `claimed`, `cancelled`.
 - `minPrice`: Filter results by minimun price. Type: `number`
 - `maxPrice`: Filter results by max price. Type: `number`
+- `adjacentToRoad`: Filter land that is next to a road. Type: `boolean`
+- `distanceToPlazaMin`: Filter land that has a distance to a plaza of minimun this value. Type: `number`
+- `distanceToPlazaMax`: Filter land that has a distance to a plaza of maximun this value. Type `number`
 
 ## Items
 

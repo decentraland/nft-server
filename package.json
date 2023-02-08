@@ -26,7 +26,7 @@
     "printWidth": 80
   },
   "dependencies": {
-    "@dcl/schemas": "^6.4.2",
+    "@dcl/schemas": "/Users/melisaanabellarossi/development/common-schemas/dcl-schemas-0.0.3.tgz",
     "@types/sqlite3": "^3.1.7",
     "@well-known-components/env-config-provider": "^1.1.1",
     "@well-known-components/http-server": "^1.1.6",
