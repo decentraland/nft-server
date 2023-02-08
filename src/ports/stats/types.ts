@@ -4,13 +4,13 @@ export enum EstateStat {
 
 export type ResourceStats = EstateStat
 
-export enum StatsResource {
+export enum StatsCategory {
   ESTATE = 'estate',
 }
 
 export type StatsResourceParams = {
   stat: ResourceStats
-  resource: StatsResource
+  category: StatsCategory
   isOnSale?: boolean
 }
 

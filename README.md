@@ -63,6 +63,9 @@ type NFT = {
 - `isWearableSmart`: Only return smart wearables. Type `boolean`.
 - `wearableCategory`: Filter results by `WearableCategory`. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`, `skin`.
 - `wearableGender`: Filter results by `GenderFilterOption`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`, `unisex`.
+- `emoteCategory`: Filter results by `EmoteCategory`. Possible values: `dance`, `stunt`, `greetings`, `fun`, `poses`, `reactions`, `horror`, `miscellaneous`.
+- `emoteGender`: Filter results by `GenderFilterOption`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`, `unisex`.
+- `emotePlayMode`: Filter results by `EmotePlayMode`. It supports multiple values by adding the query param multiple times. Possible values: `simple`, `loop`
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
 - `tokenId`: Filter results by `tokenId`. Type: `string`.
 - `itemRarity`: Filter results by `Rarity`. It supports multiple values by adding the query param multiple times. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
@@ -72,8 +75,8 @@ type NFT = {
 - `rentalStatus`: Filter results by `Rental status`. Can be used only when querying NFTs that are on rent using the `isOnRent` flag. Possible values: `open`, `executed`, `claimed`, `cancelled`.
 - `minPrice`: Filter results by minimun price. Type: `number`
 - `maxPrice`: Filter results by max price. Type: `number`
-- `minEstateSize`: Filter results by minium `searchEstateSize`. Type: `number`
-- `maxEstateSize`: Filter results by max `searchEstateSize`. Type: `number`
+- `minEstateSize`: Filter results by minimum amount of parcels in the Estate. Type: `number`
+- `maxEstateSize`: Filter results by maximum amount of parcels in the Estate. Type: `number`
 
 ## Items
 
@@ -500,7 +503,7 @@ Record<string, number>
 
 ## Stats
 
-**Endpoint**: `/v1/stats/:resource/:stat`
+**Endpoint**: `/v1/stats/:category/:stat`
 
 **Type**:
 
@@ -510,8 +513,8 @@ Record<string, number>
 
 **URL Params**:
 
-- `resource`: The resource asking stats about. Possible values: `estate`.
-- `stat`: The resource stat asked. 
+- `category`: The category asking stats about. Possible values: `estate`.
+- `stat`: The resource stat asked.
   - Possible values:
     - For resource `estate`: `size`
 

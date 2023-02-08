@@ -44,7 +44,7 @@ export async function setupRoutes(globalContext: GlobalContext) {
   router.get('/rankings/:entity/:timeframe', createRankingsHandler(components))
   router.get('/trendings', createTrendingHandler(components))
   router.get('/prices', createPricesHandler(components))
-  router.get('/stats/:resource/:stat', createStatsHandler(components))
+  router.get('/stats/:category/:stat', createStatsHandler(components))
   router.get(
     '/contracts/:contractAddress/tokens/:tokenId',
     createNFTHandler(components)

@@ -2,7 +2,7 @@ import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import {
   FetchEstateSizesQueryFragment,
   IStatsComponent,
-  StatsResource,
+  StatsCategory,
   StatsResourceParams,
   EstateStat,
 } from './types'
@@ -14,8 +14,8 @@ export function createStatsComponent(options: {
   const { subgraph } = options
 
   function isValid(filters: StatsResourceParams) {
-    const { resource } = filters
-    return Object.values(StatsResource).includes(resource)
+    const { category } = filters
+    return Object.values(StatsCategory).includes(category)
   }
 
   async function fetchEstateSizes(isOnSale?: boolean) {
@@ -44,9 +44,9 @@ export function createStatsComponent(options: {
     if (!isValid(params)) {
       return []
     }
-    const { resource, stat, isOnSale } = params
-    switch (resource) {
-      case StatsResource.ESTATE:
+    const { category, stat, isOnSale } = params
+    switch (category) {
+      case StatsCategory.ESTATE:
         if (stat === EstateStat.SIZE) {
           return fetchEstateSizes(isOnSale)
         }
