@@ -199,7 +199,7 @@ export function getFetchQuery(
 
   addEmoteCategoryAndRaritiesFilters(filters, where)
 
-  if (filters.adjacentToRoad) {
+  if (filters.isLand && filters.adjacentToRoad) {
     where.push('searchAdjacentToRoad: true')
   }
 

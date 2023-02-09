@@ -66,7 +66,7 @@ describe("#getFetchQuery", () => {
 
   describe("when adjacentToRoad is defined", () => {
     it("should search for lands that are adjacent to a road", () => {
-      expect(getFetchQuery({ adjacentToRoad: true }, '', () => '')).toEqual(expect.stringContaining('searchAdjacentToRoad: true'))
+      expect(getFetchQuery({ adjacentToRoad: true, isLand: true }, '', () => '')).toEqual(expect.stringContaining('searchAdjacentToRoad: true'))
     })
   })
 
