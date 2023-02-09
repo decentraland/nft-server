@@ -65,6 +65,9 @@ export function createNFTsHandler(
       .concat(params.getList<RentalStatus>('rentalStatus[]', RentalStatus)) // concats to support both ways of sending the array
     const maxPrice = params.getString('maxPrice')
     const minPrice = params.getString('minPrice')
+    const adjacentToRoad = params.getBoolean('adjacentToRoad')
+    const minDistanceToPlaza = params.getNumber('minDistanceToPlaza')
+    const maxDistanceToPlaza = params.getNumber('maxDistanceToPlaza')
     const maxEstateSize = params.getNumber('maxEstateSize')
     const minEstateSize = params.getNumber('minEstateSize')
 
@@ -108,6 +111,9 @@ export function createNFTsHandler(
         itemId,
         network,
         rentalStatus,
+        adjacentToRoad,
+        minDistanceToPlaza,
+        maxDistanceToPlaza,
         tenant,
         maxPrice: maxPrice
           ? ethers.utils.parseEther(maxPrice).toString()

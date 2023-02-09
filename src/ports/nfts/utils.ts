@@ -199,6 +199,19 @@ export function getFetchQuery(
 
   addEmoteCategoryAndRaritiesFilters(filters, where)
 
+  if (filters.isLand && filters.adjacentToRoad) {
+    where.push('searchAdjacentToRoad: true')
+  }
+
+  if (filters.isLand && (filters.minDistanceToPlaza !== undefined || filters.maxDistanceToPlaza !== undefined)) {
+    const minDistanceToPlaza = filters.minDistanceToPlaza || 0;
+    where.push(`searchDistanceToPlaza_gte: ${minDistanceToPlaza}`)
+
+    if (filters.maxDistanceToPlaza) {
+      where.push(`searchDistanceToPlaza_lte: ${filters.maxDistanceToPlaza}`)
+    }
+  }
+
   // Compute total nfts to query. If there's a "skip" we add it to the total, since we need all the prior results to later merge them in a single page. If nothing is provided we default to the max. When counting we also use the max.
   const max = 1000
   const total = isCount
