@@ -207,7 +207,7 @@ export function getFetchQuery(
     const minDistanceToPlaza = filters.minDistanceToPlaza || 0;
     where.push(`searchDistanceToPlaza_gte: ${minDistanceToPlaza}`)
 
-    if (filters.maxDistanceToPlaza) {
+    if (filters.maxDistanceToPlaza !== undefined) {
       where.push(`searchDistanceToPlaza_lte: ${filters.maxDistanceToPlaza}`)
     }
   }
