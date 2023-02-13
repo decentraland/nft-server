@@ -174,7 +174,12 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
   }
 
   if (creator) {
-    where.push(`creator: "${creator}"`)
+    const creators = Array.isArray(creator) ? creator : [creator]
+    if (creators.length > 0) {
+      where.push(
+        `creator_in: [${creators.map((address) => `"${address}"`).join(',')}]`
+      )
+    }
   }
 
   const minSaleValue = getMinSaleValueInWei()

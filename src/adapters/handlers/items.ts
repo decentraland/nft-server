@@ -25,7 +25,9 @@ export function createItemsHandler(
     const skip = params.getNumber('skip')
     const sortBy = params.getValue<ItemSortBy>('sortBy', ItemSortBy)
     const category = params.getValue<NFTCategory>('category', NFTCategory)
-    const creator = params.getAddress('creator')
+    const creator = params
+      .getList('creator')
+      .concat(params.getList('creator[]')) // concats to support both ways of sending the array
     const isSoldOut = params.getBoolean('isSoldOut')
     const isOnSale = params.getBoolean('isOnSale')
     const search = params.getString('search')

@@ -67,6 +67,7 @@ type NFT = {
 - `emoteGender`: Filter results by `GenderFilterOption`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`, `unisex`.
 - `emotePlayMode`: Filter results by `EmotePlayMode`. It supports multiple values by adding the query param multiple times. Possible values: `simple`, `loop`
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
+- `creator`: Filter results by the creator address. It supports multiple values by adding the query param multiple times. Type: `string`.
 - `tokenId`: Filter results by `tokenId`. Type: `string`.
 - `itemRarity`: Filter results by `Rarity`. It supports multiple values by adding the query param multiple times. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
 - `itemId`: Filter results by `itemId`. Type `string`.
@@ -116,7 +117,7 @@ type Item = {
 - `first`: Limit the number of results. Type: `number`.
 - `skip`: Skip results. Type: `number`.
 - `sortBy`: Sort results. Possible values: `newest`, `recently_reviewed`, `recently_sold`, `name`, `cheapest`.
-- `creator`: Filter by creator. Type: `address`.
+- `creator`: Filter by creator. It supports multiple values by adding the query param multiple times. Type: `string`.
 - `rarity`: Filter results by `Rarity`. It supports multiple values by adding the query param multiple times. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
 - `isSoldOut`: Only return results that are sold out (all NFTs have been minted). Type: `boolean`.
 - `isOnSale`: Only return results that can be bought (`CollectionStore` has been added as minter, and there's still available supply to mint). Type: `boolean`.
@@ -317,7 +318,7 @@ export type Account = {
 - `skip`: Skip results. Type: `number`.
 - `sortBy`: Sort results. Possible values: `most_sales`, `most_purchases`, `most_spent`, `most_earned`, `most_royalties`.
 - `id`: Filter by user address. Type: `string`.
-- `address`: Currently the same as id, Filter by user address. Type: 'string'.
+- `address`: Currently the same as id, Filter by user address. It supports multiple values by adding the query param multiple times. Type: `string`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 
 ## Collections

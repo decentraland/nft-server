@@ -15,6 +15,7 @@ export function createAccountsSource(
         [AccountSortBy.MOST_PURCHASES]: result.purchases,
         [AccountSortBy.MOST_ROYALTIES]: +result.royalties,
         [AccountSortBy.MOST_SALES]: result.sales,
+        [AccountSortBy.MOST_COLLECTIONS]: result.collections,
       },
     }))
   }

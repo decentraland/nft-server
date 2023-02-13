@@ -63,6 +63,9 @@ export function createNFTsHandler(
     const rentalStatus = params
       .getList<RentalStatus>('rentalStatus', RentalStatus)
       .concat(params.getList<RentalStatus>('rentalStatus[]', RentalStatus)) // concats to support both ways of sending the array
+    const creator = params
+      .getList('creator')
+      .concat(params.getList('creator[]')) // concats to support both ways of sending the array
     const maxPrice = params.getString('maxPrice')
     const minPrice = params.getString('minPrice')
     const adjacentToRoad = params.getBoolean('adjacentToRoad')
@@ -106,6 +109,7 @@ export function createNFTsHandler(
         emoteGenders,
         emotePlayMode,
         contractAddresses,
+        creator,
         tokenId,
         itemRarities,
         itemId,

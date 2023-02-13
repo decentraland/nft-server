@@ -127,6 +127,14 @@ import {
 } from '../ports/prices/component'
 import { PriceFragment, PriceFilters, PriceSortBy } from '../ports/prices/types'
 import { createStatsComponent } from '../ports/stats/component'
+import {
+  getMarketplaceAccountFragment,
+  getMarketplaceAccountOrderBy,
+} from '../logic/accounts/marketplace'
+import {
+  getCollectionsAccountFragment,
+  getCollectionsAccountOrderBy,
+} from '../logic/accounts/collections'
 
 // start TCP port for listeners
 let lastUsedPort = 19000 + parseInt(process.env.JEST_WORKER_ID || '1') * 1000
@@ -489,12 +497,16 @@ export async function initComponents(): Promise<AppComponents> {
     subgraph: marketplaceSubgraph,
     network: Network.ETHEREUM,
     chainId: marketplaceChainId,
+    getFragment: getMarketplaceAccountFragment,
+    getSortByProp: getMarketplaceAccountOrderBy,
   })
 
   const collectionsAccounts = createAccountsComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
     chainId: collectionsChainId,
+    getFragment: getCollectionsAccountFragment,
+    getSortByProp: getCollectionsAccountOrderBy,
   })
 
   const accounts = createMergerComponent<
@@ -513,6 +525,7 @@ export async function initComponents(): Promise<AppComponents> {
       [AccountSortBy.MOST_ROYALTIES]: SortDirection.DESC,
       [AccountSortBy.MOST_SALES]: SortDirection.DESC,
       [AccountSortBy.MOST_SPENT]: SortDirection.DESC,
+      [AccountSortBy.MOST_COLLECTIONS]: SortDirection.DESC,
     },
   })
 

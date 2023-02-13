@@ -235,6 +235,18 @@ export function getCollectionsExtraWhere(options: NFTFilters) {
   if (options.itemId) {
     extraWhere.push('itemBlockchainId: $itemId')
   }
+  if (options.creator) {
+    const creators = Array.isArray(options.creator)
+      ? options.creator
+      : [options.creator]
+    if (creators.length > 0) {
+      extraWhere.push(
+        `item_: { 
+          creator_in: [${creators.map((address) => `"${address}"`).join(',')}] 
+        }`
+      )
+    }
+  }
   if (options.isWearableSmart) {
     extraWhere.push('itemType: smart_wearable_v1')
   } else if (options.category) {

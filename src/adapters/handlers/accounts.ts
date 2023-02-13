@@ -16,7 +16,9 @@ export function createAccountsHandler(
     const skip = params.getNumber('skip')
     const sortBy = params.getValue<AccountSortBy>('sortBy', AccountSortBy)
     const id = params.getString('id')
-    const address = params.getString('address')
+    const address = params
+      .getList('address')
+      .concat(params.getList('address[]')) // concats to support both ways of sending the array
     const network = params.getValue<Network>('network', Network)
 
     return asJSON(() =>
