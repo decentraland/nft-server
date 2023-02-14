@@ -66,13 +66,13 @@ describe("#getFetchQuery", () => {
 
   describe("when adjacentToRoad is defined", () => {
     it("should search for lands that are adjacent to a road", () => {
-      expect(getFetchQuery({ adjacentToRoad: true, isLand: true }, '', () => '')).toEqual(expect.stringContaining('searchAdjacentToRoad: true'))
+      expect(getFetchQuery({ adjacentToRoad: true }, '', () => '')).toEqual(expect.stringContaining('searchAdjacentToRoad: true'))
     })
   })
 
   describe("when minDistanceToPlaza is defined", () => {
     it("should search for lands that have a distance greater than the one defined", () => {
-      expect(getFetchQuery({ minDistanceToPlaza: 2, isLand: true }, '', () => '')).toEqual(expect.stringContaining('searchDistanceToPlaza_gte: 2'))
+      expect(getFetchQuery({ minDistanceToPlaza: 2 }, '', () => '')).toEqual(expect.stringContaining('searchDistanceToPlaza_gte: 2'))
     })
   })
 

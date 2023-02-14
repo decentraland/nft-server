@@ -199,11 +199,11 @@ export function getFetchQuery(
 
   addEmoteCategoryAndRaritiesFilters(filters, where)
 
-  if (filters.isLand && filters.adjacentToRoad) {
+  if (filters.adjacentToRoad) {
     where.push('searchAdjacentToRoad: true')
   }
 
-  if (filters.isLand && (filters.minDistanceToPlaza !== undefined || filters.maxDistanceToPlaza !== undefined)) {
+  if (filters.minDistanceToPlaza !== undefined || filters.maxDistanceToPlaza !== undefined) {
     const minDistanceToPlaza = filters.minDistanceToPlaza || 0;
     where.push(`searchDistanceToPlaza_gte: ${minDistanceToPlaza}`)
 
