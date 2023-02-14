@@ -199,16 +199,18 @@ export function getFetchQuery(
 
   addEmoteCategoryAndRaritiesFilters(filters, where)
 
-  if (filters.adjacentToRoad) {
-    where.push('searchAdjacentToRoad: true')
-  }
-
-  if (filters.minDistanceToPlaza !== undefined || filters.maxDistanceToPlaza !== undefined) {
-    const minDistanceToPlaza = filters.minDistanceToPlaza || 0;
-    where.push(`searchDistanceToPlaza_gte: ${minDistanceToPlaza}`)
-
-    if (filters.maxDistanceToPlaza !== undefined) {
-      where.push(`searchDistanceToPlaza_lte: ${filters.maxDistanceToPlaza}`)
+  if (filters.isLand || (filters.category && [NFTCategory.PARCEL, NFTCategory.ESTATE].includes(filters.category))) {
+    if (filters.adjacentToRoad) {
+      where.push('searchAdjacentToRoad: true')
+    }
+  
+    if (filters.minDistanceToPlaza !== undefined || filters.maxDistanceToPlaza !== undefined) {
+      const minDistanceToPlaza = filters.minDistanceToPlaza || 0;
+      where.push(`searchDistanceToPlaza_gte: ${minDistanceToPlaza}`)
+  
+      if (filters.maxDistanceToPlaza !== undefined) {
+        where.push(`searchDistanceToPlaza_lte: ${filters.maxDistanceToPlaza}`)
+      }
     }
   }
 
