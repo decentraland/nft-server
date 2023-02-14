@@ -13,10 +13,12 @@ export class Params {
 
   getList<T extends string = string>(key: string, values: Values = {}) {
     const list = this.params.getAll(key) as T[]
+    const extraList = this.params.getAll(`${key}[]`) as T[] // adds support for arrays sent as &key[]=...
+    const fullList = list.concat(extraList)
     const validValues = this.getValidValues(values)
     return validValues.length > 0
-      ? list.filter((value) => validValues.includes(value))
-      : list
+      ? fullList.filter((value) => validValues.includes(value))
+      : fullList
   }
 
   getNumber(key: string, defaultValue?: number) {
