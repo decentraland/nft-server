@@ -140,6 +140,14 @@ import {
   RentalsAnalyticsDayDataFragment,
 } from './ports/analyticsDayData/types'
 import { createStatsComponent } from './ports/stats/component'
+import {
+  getMarketplaceAccountFragment,
+  getMarketplaceAccountOrderBy,
+} from './logic/accounts/marketplace'
+import {
+  getCollectionsAccountFragment,
+  getCollectionsAccountOrderBy,
+} from './logic/accounts/collections'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -549,12 +557,16 @@ async function initComponents(): Promise<AppComponents> {
     subgraph: marketplaceSubgraph,
     network: Network.ETHEREUM,
     chainId: marketplaceChainId,
+    getFragment: getMarketplaceAccountFragment,
+    getSortByProp: getMarketplaceAccountOrderBy,
   })
 
   const collectionsAccounts = createAccountsComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
     chainId: collectionsChainId,
+    getFragment: getCollectionsAccountFragment,
+    getSortByProp: getCollectionsAccountOrderBy,
   })
 
   const accounts = createMergerComponent<
@@ -573,6 +585,7 @@ async function initComponents(): Promise<AppComponents> {
       [AccountSortBy.MOST_ROYALTIES]: SortDirection.DESC,
       [AccountSortBy.MOST_SALES]: SortDirection.DESC,
       [AccountSortBy.MOST_SPENT]: SortDirection.DESC,
+      [AccountSortBy.MOST_COLLECTIONS]: SortDirection.DESC,
     },
   })
 

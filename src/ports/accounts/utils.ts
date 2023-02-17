@@ -12,31 +12,25 @@ export function fromAccountFragment(fragment: AccountFragment): Account {
     spent: fragment.spent,
     earned: fragment.earned,
     royalties: fragment.royalties || '0',
+    collections: fragment.collections || 0,
   }
 
   return account
 }
 
-export const getAccountFragment = (withRoyalties?: boolean) => `
-  fragment accountFragment on Account {
-    id
-    address
-    sales
-    purchases
-    spent
-    earned
-    ${withRoyalties ? 'royalties' : ''}
-  }
-`
-
 export function getAccountsQuery(
   filters: AccountFilters,
+  fragmentGetter: (withRoyalties?: boolean) => string,
+  orderByGetter: (sortBy?: AccountSortBy) => {
+    orderBy: string
+    orderDirection: string
+  },
   options?: {
     isCount?: boolean
     withRoyalties?: boolean
   }
 ) {
-  const { first, skip, sortBy, id, address } = filters
+  const { first, skip, id, sortBy, address } = filters
 
   const where: string[] = []
 
@@ -44,8 +38,10 @@ export function getAccountsQuery(
     where.push(`id: "${id}"`)
   }
 
-  if (address) {
-    where.push(`address: "${address}"`)
+  if (address && address.length > 0) {
+    where.push(
+      `address_in: [${address.map((address) => `"${address}"`).join(',')}]`
+    )
   }
 
   const max = 1000
@@ -57,29 +53,7 @@ export function getAccountsQuery(
       : first
     : max
 
-  let orderBy: string
-  let orderDirection: string
-  switch (sortBy) {
-    case AccountSortBy.MOST_PURCHASES:
-      orderBy = 'purchases'
-      orderDirection = 'desc'
-      break
-    case AccountSortBy.MOST_ROYALTIES:
-      orderBy = 'royalties'
-      orderDirection = 'desc'
-      break
-    case AccountSortBy.MOST_SALES:
-      orderBy = 'sales'
-      orderDirection = 'desc'
-      break
-    case AccountSortBy.MOST_SPENT:
-      orderBy = 'spent'
-      orderDirection = 'desc'
-      break
-    default:
-      orderBy = 'earned'
-      orderDirection = 'desc'
-  }
+  const { orderBy, orderDirection } = orderByGetter(sortBy)
 
   return `
     query Accounts {
@@ -92,6 +66,6 @@ export function getAccountsQuery(
         }) 
         { ${options?.isCount ? 'id' : `...accountFragment`} }
     }
-    ${options?.isCount ? '' : getAccountFragment(options?.withRoyalties)}
+    ${options?.isCount ? '' : fragmentGetter(options?.withRoyalties)}
   `
 }

@@ -7,8 +7,13 @@ export function createAccountsComponent(options: {
   subgraph: ISubgraphComponent
   network: Network
   chainId: ChainId
+  getFragment: (withRoyalties?: boolean) => string
+  getSortByProp: (sortBy?: AccountSortBy) => {
+    orderBy: string
+    orderDirection: string
+  }
 }): IAccountsComponent {
-  const { subgraph, network } = options
+  const { subgraph, network, getFragment, getSortByProp } = options
 
   function isValid(filters: AccountFilters) {
     return (
@@ -25,7 +30,7 @@ export function createAccountsComponent(options: {
       return []
     }
 
-    const query = getAccountsQuery(filters, {
+    const query = getAccountsQuery(filters, getFragment, getSortByProp, {
       withRoyalties: network === Network.MATIC,
     })
 
@@ -43,7 +48,9 @@ export function createAccountsComponent(options: {
       return 0
     }
 
-    const query = getAccountsQuery(filters, { isCount: true })
+    const query = getAccountsQuery(filters, getFragment, getSortByProp, {
+      isCount: true,
+    })
     const { accounts: fragments } = await subgraph.query<{
       accounts: AccountFragment[]
     }>(query)
