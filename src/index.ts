@@ -44,6 +44,7 @@ import {
   createStatusCheckComponent,
   IFetchComponent,
 } from '@well-known-components/http-server'
+import { createHttpTracerComponent } from '@well-known-components/http-tracer-component'
 import { Lifecycle } from '@well-known-components/interfaces'
 import { createMetricsComponent } from '@well-known-components/metrics'
 import { createTracerComponent } from '@well-known-components/tracer-component'
@@ -200,6 +201,8 @@ async function initComponents(): Promise<AppComponents> {
     server,
     config,
   })
+
+  createHttpTracerComponent({ server, tracer })
 
   createHttRequestsLogger(
     { server, logger: logs },
