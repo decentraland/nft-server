@@ -16,10 +16,15 @@ export function createHttRequestsLogger(
   const inLogger = logger.getLogger('http-in')
   const outLogger = logger.getLogger('http-out')
   server.use((ctx: IHttpServerComponent.DefaultContext<object>, next) => {
-    inLogger[verbosity](`[${ctx.request.method}: ${ctx.request.url}]`)
+    const inLog = config?.inputLog
+      ? config.inputLog(ctx.request)
+      : `[${ctx.request.method}: ${ctx.request.url}]`
+    inLogger[verbosity](inLog)
     return next().then((response) => {
       outLogger[verbosity](
-        `[${ctx.request.method}: ${ctx.request.url}][${response.status}]`
+        config?.outputLog
+          ? config.outputLog(ctx.request, response)
+          : `[${ctx.request.method}: ${ctx.request.url}][${response.status}]`
       )
       return response
     })
