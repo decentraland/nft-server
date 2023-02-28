@@ -5,7 +5,7 @@ import { asJSON } from '../../logic/http/response'
 import { AppComponents, Context } from '../../types'
 
 export function createMintsHandler(
-  components: Pick<AppComponents, 'logs' | 'mints'>
+  components: Pick<AppComponents, 'mints'>
 ): IHttpServerComponent.IRequestHandler<Context<'/mints'>> {
   const { mints } = components
 

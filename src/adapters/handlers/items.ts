@@ -15,7 +15,7 @@ import { Params } from '../../logic/http/params'
 import { asJSON } from '../../logic/http/response'
 
 export function createItemsHandler(
-  components: Pick<AppComponents, 'logs' | 'items'>
+  components: Pick<AppComponents, 'items'>
 ): IHttpServerComponent.IRequestHandler<Context<'/items'>> {
   const { items } = components
   return async (context) => {
