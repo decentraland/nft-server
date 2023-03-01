@@ -50,7 +50,7 @@
   "devDependencies": {
     "@types/bn.js": "^5.1.1",
     "@types/compression": "^1.7.0",
-    "@types/cors": "^2.8.10",
+    "@types/cors": "^2.8.13",
     "@types/etag": "^1.8.1",
     "@types/jest": "^26.0.23",
     "@types/node": "^14.14.28",
