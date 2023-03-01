@@ -5,7 +5,7 @@ import { Params } from '../../logic/http/params'
 import { asJSON } from '../../logic/http/response'
 
 export function createOrdersHandler(
-  components: Pick<AppComponents, 'logs' | 'orders'>
+  components: Pick<AppComponents, 'orders'>
 ): IHttpServerComponent.IRequestHandler<Context<'/orders'>> {
   const { orders } = components
   return async (context) => {

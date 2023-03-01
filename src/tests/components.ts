@@ -11,6 +11,7 @@ import {
 } from '@well-known-components/thegraph-component'
 import { createMetricsComponent } from '@well-known-components/metrics'
 import { createLogComponent } from '@well-known-components/logger'
+import { createTracerComponent } from '@well-known-components/tracer-component'
 import {
   createLocalFetchCompoment,
   createRunner,
@@ -59,7 +60,6 @@ import {
 } from '../ports/analyticsDayData/utils'
 import { createMergerComponent } from '../ports/merger/component'
 import { SortDirection } from '../ports/merger/types'
-import { createRequestSessionComponent } from '../ports/requestSession/component'
 import { createBidsSource } from '../adapters/sources/bids'
 import { createContractsSource } from '../adapters/sources/contracts'
 import { createItemsSource } from '../adapters/sources/items'
@@ -174,7 +174,8 @@ export async function initComponents(): Promise<AppComponents> {
     method: await config.getString('CORS_METHOD'),
   }
 
-  const logs = createLogComponent()
+  const tracer = createTracerComponent()
+  const logs = await createLogComponent({ tracer })
   const server = await createServerComponent<GlobalContext>(
     { config, logs },
     { cors, compression: {} }
@@ -562,14 +563,11 @@ export async function initComponents(): Promise<AppComponents> {
   })
 
   const statusChecks = await createStatusCheckComponent({ config, server })
-  const globalLogger = logs.getLogger('nft-server')
-  const requestSession = createRequestSessionComponent()
 
   return {
     config,
     logs,
-    globalLogger,
-    requestSession,
+    tracer,
     server,
     statusChecks,
     metrics,

@@ -5,7 +5,7 @@ import { asJSON } from '../../logic/http/response'
 import { AppComponents, Context } from '../../types'
 
 export function createBidsHandler(
-  components: Pick<AppComponents, 'logs' | 'bids'>
+  components: Pick<AppComponents, 'bids'>
 ): IHttpServerComponent.IRequestHandler<Context<'/bids'>> {
   const { bids } = components
 

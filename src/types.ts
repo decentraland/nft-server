@@ -36,13 +36,13 @@ import type {
   IHttpServerComponent,
   IMetricsComponent,
   IBaseComponent,
+  ITracerComponent,
 } from '@well-known-components/interfaces'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { IVolumeComponent } from './ports/volume/types'
 import { IItemsDayDataComponent } from './ports/rankings/types'
 import { IMergerComponent } from './ports/merger/types'
 import { NFTResult } from './ports/nfts/types'
-import { IRequestSessionComponent } from './ports/requestSession/types'
 import { ITrendingsComponent } from './ports/trendings/types'
 import { IProcessedPricesComponent } from './ports/prices/types'
 import { IStatsComponent } from './ports/stats/types'
@@ -60,11 +60,10 @@ export type GlobalContext = {
 export type AppComponents = {
   config: IConfigComponent
   logs: ILoggerComponent
-  globalLogger: ILoggerComponent.ILogger
-  requestSession: IRequestSessionComponent
   server: IHttpServerComponent<GlobalContext>
   statusChecks: IBaseComponent
   metrics: IMetricsComponent<any>
+  tracer: ITracerComponent
   orders: IMergerComponent<Order, OrderFilters, OrderSortBy>
   bids: IMergerComponent<Bid, BidFilters, BidSortBy>
   contracts: IMergerComponent<Contract, ContractFilters, ContractSortBy>

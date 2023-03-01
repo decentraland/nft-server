@@ -16,7 +16,7 @@ import { Params } from '../../logic/http/params'
 import { HttpError, asJSON } from '../../logic/http/response'
 
 export function createNFTsHandler(
-  components: Pick<AppComponents, 'logs' | 'nfts'>
+  components: Pick<AppComponents, 'nfts'>
 ): IHttpServerComponent.IRequestHandler<Context<'/nfts'>> {
   const { nfts } = components
   return async (context) => {
@@ -132,7 +132,7 @@ export function createNFTsHandler(
 }
 
 export function createNFTHandler(
-  components: Pick<AppComponents, 'logs' | 'nfts'>
+  components: Pick<AppComponents, 'nfts'>
 ): IHttpServerComponent.IRequestHandler<
   Context<'/contracts/:contractAddress/tokens/:tokenId'>
 > {

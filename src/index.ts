@@ -1,5 +1,5 @@
 import BN from 'bn.js'
-import nodeFetch from 'node-fetch'
+import * as nodeFetch from 'node-fetch'
 import { config as configDotEnvFile } from 'dotenv'
 configDotEnvFile() // load env file before other imports because some of them use env variables
 import {
@@ -44,8 +44,11 @@ import {
   createStatusCheckComponent,
   IFetchComponent,
 } from '@well-known-components/http-server'
+import { createHttpTracerComponent } from '@well-known-components/http-tracer-component'
 import { Lifecycle } from '@well-known-components/interfaces'
 import { createMetricsComponent } from '@well-known-components/metrics'
+import { createTracerComponent } from '@well-known-components/tracer-component'
+import { createLogComponent } from '@well-known-components/logger'
 import { AppComponents, AppConfig, GlobalContext } from './types'
 import { createBidsComponent } from './ports/bids/component'
 import { createOrdersComponent } from './ports/orders/component'
@@ -102,11 +105,9 @@ import { createSalesComponent } from './ports/sales/component'
 import { createCollectionsComponent } from './ports/collections/component'
 import { createCollectionsSource } from './adapters/sources/collections'
 import { COLLECTION_DEFAULT_SORT_BY } from './ports/collections/utils'
-import { createRequestSessionComponent } from './ports/requestSession/component'
 import { createAccountsComponent } from './ports/accounts/component'
 import { createAccountsSource } from './adapters/sources/accounts'
 import { ACCOUNT_DEFAULT_SORT_BY } from './ports/accounts/utils'
-import { createLogComponent } from './ports/logger/component'
 import { createAnalyticsDayDataComponent } from './ports/analyticsDayData/component'
 import { createAnalyticsDayDataSource } from './adapters/sources/analyticsDayData'
 import { main } from './service'
@@ -136,6 +137,10 @@ import {
   mapRentalsAnalyticsFragment,
 } from './ports/analyticsDayData/utils'
 import {
+  createHttRequestsLogger,
+  Verbosity,
+} from './ports/http-requests-logger'
+import {
   AnalyticsDayDataFragment,
   RentalsAnalyticsDayDataFragment,
 } from './ports/analyticsDayData/types'
@@ -158,6 +163,24 @@ async function initComponents(): Promise<AppComponents> {
   }
 
   const config = createConfigComponent(process.env, defaultValues)
+  const tracer = createTracerComponent()
+
+  const fetch: IFetchComponent = {
+    fetch: (url: nodeFetch.RequestInfo, init?: nodeFetch.RequestInit) => {
+      const headers: nodeFetch.HeadersInit = { ...init?.headers }
+      const traceParent = tracer.isInsideOfTraceSpan()
+        ? tracer.getTraceChildString()
+        : null
+      if (traceParent) {
+        ;(headers as { [key: string]: string }).traceparent = traceParent
+        const traceState = tracer.getTraceStateString()
+        if (traceState) {
+          ;(headers as { [key: string]: string }).tracestate = traceState
+        }
+      }
+      return nodeFetch.default(url, { ...init, headers })
+    },
+  }
 
   const cors = {
     origin: await config.getString('CORS_ORIGIN'),
@@ -167,30 +190,30 @@ async function initComponents(): Promise<AppComponents> {
   // FF_RENTALS
   const isRentalsEnabled = (await config.getNumber('FF_RENTALS')) === 1
 
-  const requestSession = createRequestSessionComponent()
-  const logs = createLogComponent({ requestSession })
-
-  const globalLogger = logs.getLogger('nft-server')
+  const logs = await createLogComponent({ tracer })
 
   const server = await createServerComponent<GlobalContext>(
     { config, logs },
     { cors, compression: {} }
   )
 
-  const statusChecks = await createStatusCheckComponent({ config, server })
-
   const metrics = await createMetricsComponent(metricDeclarations, {
     server,
     config,
   })
 
+  createHttpTracerComponent({ server, tracer })
+
+  createHttRequestsLogger(
+    { server, logger: logs },
+    { verbosity: Verbosity.INFO }
+  )
+
+  const statusChecks = await createStatusCheckComponent({ config, server })
+
   // chain ids
   const marketplaceChainId = getMarketplaceChainId()
   const collectionsChainId = getCollectionsChainId()
-
-  const fetch: IFetchComponent = {
-    fetch: nodeFetch,
-  }
 
   // subgraphs
   const marketplaceSubgraph = await createSubgraphComponent(
@@ -616,8 +639,6 @@ async function initComponents(): Promise<AppComponents> {
   return {
     config,
     logs,
-    globalLogger,
-    requestSession,
     server,
     statusChecks,
     metrics,
@@ -633,6 +654,7 @@ async function initComponents(): Promise<AppComponents> {
     accounts,
     rankings,
     prices,
+    tracer,
     volumes,
     analyticsData,
     collectionsSubgraph,
