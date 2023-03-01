@@ -1,23 +1,20 @@
 import { addLandFilters } from '../nfts/utils'
-import { FetchEstateSizesQueryFragment, StatsResourceFilters } from './types'
+import { FetchEstateSizesQueryFragment, StatsEstateFilters } from './types'
 
 export const MAX_RESULTS = 1000
 
-export function getEstatesSizesQuery(
-  filters: Pick<
-    StatsResourceFilters,
-    | 'adjacentToRoad'
-    | 'maxDistanceToPlaza'
-    | 'maxEstateSize'
-    | 'minDistanceToPlaza'
-    | 'minEstateSize'
-    | 'isOnSale'
-  >
-) {
+export function getEstatesSizesQuery(filters: StatsEstateFilters) {
   const extraWhere = []
   if (filters.isOnSale) {
     extraWhere.push('searchOrderStatus: open')
     extraWhere.push('searchOrderExpiresAt_gt: $expiresAt')
+  }
+  if (filters.maxPrice) {
+    extraWhere.push(`searchOrderPrice_lte: "${filters.maxPrice}"`)
+  }
+
+  if (filters.minPrice) {
+    extraWhere.push(`searchOrderPrice_gte: "${filters.minPrice}"`)
   }
   addLandFilters(filters, extraWhere)
   return `

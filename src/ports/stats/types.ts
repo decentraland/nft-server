@@ -15,7 +15,7 @@ export type StatsResourceParams = {
   category: StatsCategory
 }
 
-export type StatsResourceFilters = Pick<
+export type StatsEstateFilters = Pick<
   NFTFilters,
   | 'isOnSale'
   | 'adjacentToRoad'
@@ -23,7 +23,11 @@ export type StatsResourceFilters = Pick<
   | 'maxDistanceToPlaza'
   | 'minEstateSize'
   | 'maxEstateSize'
+  | 'minPrice'
+  | 'maxPrice'
 >
+
+export type StatsResourceFilters = StatsEstateFilters
 
 export type Stats = Record<number, number>
 

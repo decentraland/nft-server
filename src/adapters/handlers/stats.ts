@@ -1,4 +1,5 @@
 import etag from 'etag'
+import { ethers } from 'ethers'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { asJSON } from '../../logic/http/response'
 import { AppComponents, Context } from '../../types'
@@ -22,6 +23,8 @@ export function createStatsHandler(
     const maxDistanceToPlaza = params.getNumber('maxDistanceToPlaza')
     const maxEstateSize = params.getNumber('maxEstateSize')
     const minEstateSize = params.getNumber('minEstateSize')
+    const minPrice = params.getString('minPrice')
+    const maxPrice = params.getString('maxPrice')
 
     return asJSON(
       async () => ({
@@ -37,6 +40,12 @@ export function createStatsHandler(
             maxDistanceToPlaza,
             maxEstateSize,
             minEstateSize,
+            maxPrice: maxPrice
+              ? ethers.utils.parseEther(maxPrice).toString()
+              : undefined,
+            minPrice: minPrice
+              ? ethers.utils.parseEther(minPrice).toString()
+              : undefined,
           }
         ),
       }),

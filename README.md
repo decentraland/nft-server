@@ -535,3 +535,5 @@ Record<string, number>
 - `maxDistanceToPlaza`: Filter land that has a distance to a plaza of maximun this value. Type `number`
 - `minEstateSize`: Filter results by minimum amount of parcels in the Estate. Type: `number`
 - `maxEstateSize`: Filter results by maximum amount of parcels in the Estate. Type: `number`
+- `minPrice`: Filter results by minimun price. Type: `number`
+- `maxPrice`: Filter results by max price. Type: `number`
