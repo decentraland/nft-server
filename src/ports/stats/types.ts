@@ -1,3 +1,5 @@
+import { NFTFilters } from '@dcl/schemas'
+
 export enum EstateStat {
   SIZE = 'size',
 }
@@ -11,13 +13,25 @@ export enum StatsCategory {
 export type StatsResourceParams = {
   stat: ResourceStats
   category: StatsCategory
-  isOnSale?: boolean
 }
+
+export type StatsResourceFilters = Pick<
+  NFTFilters,
+  | 'isOnSale'
+  | 'adjacentToRoad'
+  | 'minDistanceToPlaza'
+  | 'maxDistanceToPlaza'
+  | 'minEstateSize'
+  | 'maxEstateSize'
+>
 
 export type Stats = Record<number, number>
 
 export interface IStatsComponent {
-  fetch(params: StatsResourceParams): Promise<Stats>
+  fetch(
+    params: StatsResourceParams,
+    filters: StatsResourceFilters
+  ): Promise<Stats>
 }
 
 export type FetchEstateSizeOpts = {

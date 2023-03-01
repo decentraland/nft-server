@@ -1,5 +1,8 @@
 import { Network, NFTCategory, NFTFilters } from '@dcl/schemas'
-import { addWearableCategoryAndRaritiesFilters } from '../../ports/nfts/utils'
+import {
+  addLandFilters,
+  addWearableCategoryAndRaritiesFilters,
+} from '../../ports/nfts/utils'
 import {
   PriceFilterCategory,
   PriceFilterExtraOption,
@@ -61,6 +64,7 @@ function getExtraWheres(filters: NFTFilters) {
     where.push('itemType: smart_wearable_v1')
   }
 
+  addLandFilters(filters, where)
   addWearableCategoryAndRaritiesFilters(filters, where)
   return where
 }

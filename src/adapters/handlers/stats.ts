@@ -17,13 +17,28 @@ export function createStatsHandler(
     const { category, stat } = context.params
     const isOnSale = params.getBoolean('isOnSale')
 
+    const adjacentToRoad = params.getBoolean('adjacentToRoad')
+    const minDistanceToPlaza = params.getNumber('minDistanceToPlaza')
+    const maxDistanceToPlaza = params.getNumber('maxDistanceToPlaza')
+    const maxEstateSize = params.getNumber('maxEstateSize')
+    const minEstateSize = params.getNumber('minEstateSize')
+
     return asJSON(
       async () => ({
-        data: await stats.fetch({
-          category: category as StatsCategory,
-          stat: stat as unknown as ResourceStats,
-          isOnSale,
-        }),
+        data: await stats.fetch(
+          {
+            category: category as StatsCategory,
+            stat: stat as unknown as ResourceStats,
+          },
+          {
+            isOnSale,
+            adjacentToRoad,
+            minDistanceToPlaza,
+            maxDistanceToPlaza,
+            maxEstateSize,
+            minEstateSize,
+          }
+        ),
       }),
       {
         'Cache-Control': `public,max-age=${MAX_AGE},s-maxage=${MAX_AGE}`,
