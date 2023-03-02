@@ -20,6 +20,7 @@ export function createVolumeComponent(
     return getAccumulatedAnalyticsData(
       await analyticsDataComponent.fetch({
         from: getTimestampFromTimeframe(timeframe as AnalyticsTimeframe),
+        first: 0,
       })
     )
   }
