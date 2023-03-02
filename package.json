@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@dcl/schemas": "^6.11.1",
-    "@types/sqlite3": "^3.1.7",
+    "@types/sqlite3": "^3.1.8",
     "@well-known-components/env-config-provider": "^1.2.0",
     "@well-known-components/http-server": "^1.1.6",
     "@well-known-components/http-tracer-component": "^1.1.0",
