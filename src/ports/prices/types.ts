@@ -27,6 +27,11 @@ export type PriceFilters = {
   | 'contractAddresses'
   | 'itemRarities'
   | 'network'
+  | 'adjacentToRoad'
+  | 'minDistanceToPlaza'
+  | 'maxDistanceToPlaza'
+  | 'minEstateSize'
+  | 'maxEstateSize'
 >
 
 export type PriceFragment = {

@@ -77,8 +77,8 @@ type NFT = {
 - `minPrice`: Filter results by minimun price. Type: `number`
 - `maxPrice`: Filter results by max price. Type: `number`
 - `adjacentToRoad`: Filter land that is next to a road. Type: `boolean`
-- `distanceToPlazaMin`: Filter land that has a distance to a plaza of minimun this value. Type: `number`
-- `distanceToPlazaMax`: Filter land that has a distance to a plaza of maximun this value. Type `number`
+- `minDistanceToPlaza`: Filter land that has a distance to a plaza of minimun this value. Type: `number`
+- `maxDistanceToPlaza`: Filter land that has a distance to a plaza of maximun this value. Type `number`
 - `minEstateSize`: Filter results by minimum amount of parcels in the Estate. Type: `number`
 - `maxEstateSize`: Filter results by maximum amount of parcels in the Estate. Type: `number`
 
@@ -504,6 +504,11 @@ Record<string, number>
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
 - `itemRarity`: Filter results by `Rarity`. It supports multiple values by adding the query param multiple times. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
+- `adjacentToRoad`: Filter land that is next to a road. Type: `boolean`
+- `minDistanceToPlaza`: Filter land that has a distance to a plaza of minimun this value. Type: `number`
+- `maxDistanceToPlaza`: Filter land that has a distance to a plaza of maximun this value. Type `number`
+- `minEstateSize`: Filter results by minimum amount of parcels in the Estate. Type: `number`
+- `maxEstateSize`: Filter results by maximum amount of parcels in the Estate. Type: `number`
 
 ## Stats
 
@@ -525,3 +530,10 @@ Record<string, number>
 **Query Params**:
 
 - `isOnSale`: Only return results that have an open, non-expired listing. Type: `boolean`.
+- `adjacentToRoad`: Filter land that is next to a road. Type: `boolean`
+- `minDistanceToPlaza`: Filter land that has a distance to a plaza of minimun this value. Type: `number`
+- `maxDistanceToPlaza`: Filter land that has a distance to a plaza of maximun this value. Type `number`
+- `minEstateSize`: Filter results by minimum amount of parcels in the Estate. Type: `number`
+- `maxEstateSize`: Filter results by maximum amount of parcels in the Estate. Type: `number`
+- `minPrice`: Filter results by minimun price. Type: `number`
+- `maxPrice`: Filter results by max price. Type: `number`

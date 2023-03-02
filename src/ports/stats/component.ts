@@ -5,6 +5,7 @@ import {
   StatsCategory,
   StatsResourceParams,
   EstateStat,
+  StatsResourceFilters,
 } from './types'
 import { MAX_RESULTS, consolidateSizes, getEstatesSizesQuery } from './utils'
 
@@ -18,11 +19,11 @@ export function createStatsComponent(options: {
     return Object.values(StatsCategory).includes(category)
   }
 
-  async function fetchEstateSizes(isOnSale?: boolean) {
+  async function fetchEstateSizes(filters: StatsResourceFilters) {
     let lastId = ''
     let sizes: FetchEstateSizesQueryFragment[] = []
     while (true) {
-      const query = getEstatesSizesQuery(isOnSale)
+      const query = getEstatesSizesQuery(filters)
       const queryVariables = {
         lastId,
         expiresAt: Date.now().toString(),
@@ -40,15 +41,18 @@ export function createStatsComponent(options: {
     return consolidateSizes(sizes)
   }
 
-  async function fetch(params: StatsResourceParams) {
+  async function fetch(
+    params: StatsResourceParams,
+    filters: StatsResourceFilters
+  ) {
     if (!isValid(params)) {
       return []
     }
-    const { category, stat, isOnSale } = params
+    const { category, stat } = params
     switch (category) {
       case StatsCategory.ESTATE:
         if (stat === EstateStat.SIZE) {
-          return fetchEstateSizes(isOnSale)
+          return fetchEstateSizes(filters)
         }
       default:
         break

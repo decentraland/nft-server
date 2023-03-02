@@ -1,13 +1,22 @@
-import { FetchEstateSizesQueryFragment } from './types'
+import { addLandFilters } from '../nfts/utils'
+import { FetchEstateSizesQueryFragment, StatsEstateFilters } from './types'
 
 export const MAX_RESULTS = 1000
 
-export function getEstatesSizesQuery(isOnSale?: boolean) {
+export function getEstatesSizesQuery(filters: StatsEstateFilters) {
   const extraWhere = []
-  if (isOnSale) {
+  if (filters.isOnSale) {
     extraWhere.push('searchOrderStatus: open')
     extraWhere.push('searchOrderExpiresAt_gt: $expiresAt')
   }
+  if (filters.maxPrice) {
+    extraWhere.push(`searchOrderPrice_lte: "${filters.maxPrice}"`)
+  }
+
+  if (filters.minPrice) {
+    extraWhere.push(`searchOrderPrice_gte: "${filters.minPrice}"`)
+  }
+  addLandFilters(filters, extraWhere)
   return `
     query EstateSizesQuery($lastId: ID, $expiresAt: String ) {
       nfts (

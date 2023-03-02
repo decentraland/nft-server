@@ -5,6 +5,7 @@ import {
   FetchEstateSizesQueryFragment,
   IStatsComponent,
   StatsCategory,
+  StatsResourceFilters,
   StatsResourceParams,
 } from '../../ports/stats/types'
 import { consolidateSizes } from '../../ports/stats/utils'
@@ -15,12 +16,16 @@ let statsComponent: IStatsComponent
 let marketplaceSubgraph: ISubgraphComponent
 let marketplaceSubgraphQueryMock: jest.Mock
 let params: StatsResourceParams
+let filters: StatsResourceFilters
 
 describe('when getting stats', () => {
   beforeEach(() => {
     params = {
       category: StatsCategory.ESTATE,
       stat: EstateStat.SIZE,
+    }
+    filters = {
+      isOnSale: true,
     }
     marketplaceSubgraphQueryMock = jest.fn()
     marketplaceSubgraph = {
@@ -41,17 +46,22 @@ describe('when getting stats', () => {
     })
 
     it('should propagate the error', () => {
-      return expect(statsComponent.fetch(params)).rejects.toThrowError(error)
+      return expect(statsComponent.fetch(params, filters)).rejects.toThrowError(
+        error
+      )
     })
   })
 
   describe('and the params are not valid', () => {
     it('should propagate the error', () => {
       return expect(
-        statsComponent.fetch({
-          ...params,
-          category: 'anInvalidResource' as StatsCategory,
-        })
+        statsComponent.fetch(
+          {
+            ...params,
+            category: 'anInvalidResource' as StatsCategory,
+          },
+          filters
+        )
       ).resolves.toEqual([])
     })
   })
@@ -71,7 +81,7 @@ describe('when getting stats', () => {
     })
 
     it('should return the fragments processed', () => {
-      return expect(statsComponent.fetch(params)).resolves.toEqual(
+      return expect(statsComponent.fetch(params, filters)).resolves.toEqual(
         consolidateSizes(fragments)
       )
     })
@@ -85,7 +95,9 @@ describe('when getting stats', () => {
     })
 
     it('should throw an error with the message returned in the JSON message', () => {
-      return expect(statsComponent.fetch(params)).rejects.toThrowError(error)
+      return expect(statsComponent.fetch(params, filters)).rejects.toThrowError(
+        error
+      )
     })
   })
 })

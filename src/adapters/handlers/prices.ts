@@ -51,6 +51,12 @@ export function createPricesHandler(
     const itemRarities = params.getList<Rarity>('itemRarity', Rarity)
     const network = params.getValue<Network>('network', Network)
 
+    const adjacentToRoad = params.getBoolean('adjacentToRoad')
+    const minDistanceToPlaza = params.getNumber('minDistanceToPlaza')
+    const maxDistanceToPlaza = params.getNumber('maxDistanceToPlaza')
+    const maxEstateSize = params.getNumber('maxEstateSize')
+    const minEstateSize = params.getNumber('minEstateSize')
+
     return asJSON(
       async () => ({
         data: await prices.fetch({
@@ -67,6 +73,11 @@ export function createPricesHandler(
           contractAddresses,
           itemRarities,
           network,
+          adjacentToRoad,
+          minDistanceToPlaza,
+          maxDistanceToPlaza,
+          maxEstateSize,
+          minEstateSize,
         }),
       }),
       {
