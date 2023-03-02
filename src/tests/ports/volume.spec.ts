@@ -62,6 +62,7 @@ test('volume component', function ({ components }) {
         )
         expect(analyticsData.fetch).toHaveBeenCalledWith({
           from: getTimestampFromTimeframe(timeframe),
+          first: 0,
         })
       })
     })
