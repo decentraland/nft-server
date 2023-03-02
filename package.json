@@ -54,7 +54,7 @@
     "@types/etag": "^1.8.1",
     "@types/jest": "^26.0.23",
     "@types/node": "^14.14.28",
-    "@types/seedrandom": "^3.0.2",
+    "@types/seedrandom": "^3.0.5",
     "@well-known-components/test-helpers": "^1.4.0",
     "dcl-tslint-config-standard": "^2.0.0",
     "jest": "^27.0.6",
