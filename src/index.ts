@@ -148,6 +148,7 @@ import {
   getCollectionsAccountFragment,
   getCollectionsAccountOrderBy,
 } from './logic/accounts/collections'
+import { createOwnersComponent } from './ports/owner/component'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -338,12 +339,15 @@ async function initComponents(): Promise<AppComponents> {
     NFTFilters,
     NFTSortBy
   >[] = [
+    //va los agarra y los busca
     createNFTsSource(marketplaceNFTs, {
+      //este esta en ethereum
       shouldFetch: marketplaceShouldFetch,
       isRentalsEnabled,
       rentals: rentalsComponent,
     }),
     createNFTsSource(collectionsNFTs, {
+      //este esta en matic
       shouldFetch: collectionsShouldFetch,
     }),
   ]
@@ -398,6 +402,12 @@ async function initComponents(): Promise<AppComponents> {
       [ItemSortBy.RECENTLY_LISTED]: SortDirection.DESC,
     },
     maxCount: 1000,
+  })
+
+  // owners
+  const owners = createOwnersComponent({
+    subgraph: collectionsSubgraph,
+    network: Network.MATIC,
   })
 
   // mints
@@ -638,6 +648,7 @@ async function initComponents(): Promise<AppComponents> {
     collectionsSubgraph,
     marketplaceSubgraph,
     stats,
+    owners,
   }
 }
 

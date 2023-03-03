@@ -16,6 +16,7 @@ import { createTrendingHandler } from './handlers/trending'
 import { createVolumeHandler } from './handlers/volume'
 import { createPricesHandler } from './handlers/prices'
 import { createStatsHandler } from './handlers/stats'
+import { createOwnersHandler } from './handlers/owners'
 
 export async function setupRoutes(globalContext: GlobalContext) {
   const { components } = globalContext
@@ -49,6 +50,8 @@ export async function setupRoutes(globalContext: GlobalContext) {
     '/contracts/:contractAddress/tokens/:tokenId',
     createNFTHandler(components)
   )
+  router.get('/owners', createOwnersHandler(components))
+
 
   server.use(router.middleware())
 }

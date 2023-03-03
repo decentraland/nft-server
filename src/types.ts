@@ -46,6 +46,7 @@ import { IRequestSessionComponent } from './ports/requestSession/types'
 import { ITrendingsComponent } from './ports/trendings/types'
 import { IProcessedPricesComponent } from './ports/prices/types'
 import { IStatsComponent } from './ports/stats/types'
+import { IOwnerDataComponent } from './ports/owner/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -86,6 +87,7 @@ export type AppComponents = {
     AnalyticsDayDataFilters,
     AnalyticsDayDataSortBy
   >
+  owners: IOwnerDataComponent
 }
 
 export type Context<Path extends string = any> = RoutedContext<
