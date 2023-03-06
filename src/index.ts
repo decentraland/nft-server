@@ -407,7 +407,6 @@ async function initComponents(): Promise<AppComponents> {
   // owners
   const owners = createOwnersComponent({
     subgraph: collectionsSubgraph,
-    network: Network.MATIC,
   })
 
   // mints
