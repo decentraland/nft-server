@@ -59,6 +59,7 @@ export function createRentalsComponent(
     parameters.maxDistanceToPlaza = filters.maxDistanceToPlaza
     parameters.minEstateSize = filters.minEstateSize
     parameters.maxEstateSize = filters.maxEstateSize
+    parameters.rentalDays = filters.rentalDays
 
     // OPEN rentals will be queried by default.
     parameters.status = [RentalStatus.OPEN]
