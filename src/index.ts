@@ -139,7 +139,7 @@ import {
 import {
   createHttRequestsLogger,
   Verbosity,
-} from './ports/http-requests-logger'
+} from '@well-known-components/http-requests-logger-component'
 import {
   AnalyticsDayDataFragment,
   RentalsAnalyticsDayDataFragment,

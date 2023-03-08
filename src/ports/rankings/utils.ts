@@ -71,7 +71,7 @@ function getQueryParams(entity: RankingEntity, filters: RankingsFilters) {
     }
   }
   if (from) {
-    where.push(`date_gt: ${Math.round(from / 1000)}`)
+    where.push(`date_gte: ${Math.round(from / 1000)}`)
   }
   let orderBy = 'volume'
   let orderDirection = 'desc'
