@@ -1,0 +1,63 @@
+fragment ItemFields on Item {
+  id
+  price
+  blockchainId
+  image
+  rarity
+  available
+  itemType
+  collection {
+    id
+    creator
+  }
+  metadata {
+    wearable {
+      bodyShapes
+      name
+      description
+      category
+      rarity
+    }
+    emote {
+      bodyShapes
+      name
+      description
+      category
+      loop
+      rarity
+    }
+  }
+  nfts(where: { orders_: { price_gt: 0, status: open } }) {
+    orders(orderBy: price, where: { status: open }) {
+      price
+    }
+  }
+  searchWearableBodyShapes
+  searchEmoteBodyShapes
+  searchIsStoreMinter
+  createdAt
+  updatedAt
+  firstListedAt
+}
+
+# fragment LegacyNFTFragment on NFT {
+#   id
+#   searchOrderPrice # instead of `price`
+#   tokenId # instead of `blockchainId`
+#   image
+#   searchWearableRarity # instead of `rarity`
+#   name
+#   category
+#   searchWearableBodyShapes
+#   createdAt
+#   updatedAt
+# }
+
+query GetCatalog($first: Int, $orderBy: Item_orderBy) {
+  items(first: $first, where: {}, orderBy: $orderBy) {
+    ...ItemFields
+  }
+  # legacyNFTs(first: $first) {
+  #   ...LegacyNFTFragment
+  # }
+}

@@ -41,6 +41,9 @@ export function createAnalyticsDayDataComponent<T>(options: {
     const { analytics: fragments } = await subgraph.query<{
       analytics: T[]
     }>(query)
+    console.log('query: ', query)
+    console.log('fragments.length: ', fragments.length)
+    // console.log('fragments: ', fragments);
 
     return fragments.map(mapAnalyticsFragment)
   }

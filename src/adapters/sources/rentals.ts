@@ -54,6 +54,7 @@ export function createRentalsNFTSource(
       return []
     }
 
+    console.log('filters1: ', filters);
     const paginatedRentalListings = await rentals.getRentalsListings(filters)
     return enhanceRentalListing(paginatedRentalListings.data.results)
   }
@@ -78,7 +79,7 @@ export function createRentalsNFTSource(
         count: 0,
       }
     }
-
+    console.log('filters1: ', filters);
     const results = await rentals.getRentalsListings(filters)
     return {
       data: await enhanceRentalListing(results.data.results),

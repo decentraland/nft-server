@@ -153,6 +153,7 @@ import {
   getCollectionsAccountFragment,
   getCollectionsAccountOrderBy,
 } from './logic/accounts/collections'
+import { createCatalogComponent } from './ports/catalog/component'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -571,6 +572,8 @@ async function initComponents(): Promise<AppComponents> {
     })
   )
 
+  const catalog = createCatalogComponent()
+
   const stats = createStatsComponent({
     subgraph: marketplaceSubgraph,
   })
@@ -647,6 +650,7 @@ async function initComponents(): Promise<AppComponents> {
     contracts,
     nfts,
     items,
+    catalog,
     mints,
     sales,
     trendings,

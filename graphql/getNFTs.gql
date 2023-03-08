@@ -1,0 +1,31 @@
+fragment LegacyNFTFields2 on NFT {
+  tokenId
+  owner {
+    id
+  }
+}
+
+query GetNFTs($first: Int, $owner: String) {
+  # collections
+  nfts(first: $first, where: { owner: $owner }) {
+    id
+    tokenId
+    owner {
+      id
+    }
+    # item {
+    #   metadata {
+    #     wearable {
+    #       name
+    #     }
+    #   }
+    # }
+    # owner {
+    #   id
+    # }
+  }
+  # marketplace
+  nfts(first: $first, where: { owner: $owner }) {
+    ...LegacyNFTFields2
+  }
+}

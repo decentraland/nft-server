@@ -12,6 +12,7 @@ export function getAccumulatedAnalyticsData(days: AnalyticsDayData[]) {
     daoEarnings: '0',
   }
 
+  console.log('days: ', days.length);
   return days.reduce(
     (acc, day) => ({
       sales: acc.sales + day.sales,

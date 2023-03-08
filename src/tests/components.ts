@@ -135,6 +135,7 @@ import {
   getCollectionsAccountFragment,
   getCollectionsAccountOrderBy,
 } from '../logic/accounts/collections'
+import { createCatalogComponent } from '../ports/catalog/component'
 
 // start TCP port for listeners
 let lastUsedPort = 19000 + parseInt(process.env.JEST_WORKER_ID || '1') * 1000
@@ -563,6 +564,7 @@ export async function initComponents(): Promise<AppComponents> {
   })
 
   const statusChecks = await createStatusCheckComponent({ config, server })
+  const catalog = createCatalogComponent()
 
   return {
     config,
@@ -588,5 +590,6 @@ export async function initComponents(): Promise<AppComponents> {
     rankings,
     prices,
     stats,
+    catalog,
   }
 }

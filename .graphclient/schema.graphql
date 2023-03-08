@@ -1,0 +1,6037 @@
+schema {
+  query: Query
+  subscription: Subscription
+}
+
+"Marks the GraphQL type as indexable entity.  Each type that should be an entity is required to be annotated with this directive."
+directive @entity on OBJECT
+
+"Defined a Subgraph ID for an object type"
+directive @subgraphId(id: String!) on OBJECT
+
+"creates a virtual field on the entity that may be queried but cannot be set manually through the mappings API."
+directive @derivedFrom(field: String!) on FIELD_DEFINITION
+
+type Query {
+  count(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Count
+  counts(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Count_orderBy
+    orderDirection: OrderDirection
+    where: Count_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Count!]!
+  order(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Order
+  orders(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Order_orderBy
+    orderDirection: OrderDirection
+    where: Order_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Order!]!
+  bid(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Bid
+  bids(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Bid_orderBy
+    orderDirection: OrderDirection
+    where: Bid_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Bid!]!
+  parcel(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Parcel
+  parcels(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Parcel_orderBy
+    orderDirection: OrderDirection
+    where: Parcel_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Parcel!]!
+  estate(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Estate
+  estates(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Estate_orderBy
+    orderDirection: OrderDirection
+    where: Estate_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Estate!]!
+  data(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Data
+  datas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Data_orderBy
+    orderDirection: OrderDirection
+    where: Data_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Data!]!
+  wearable(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Wearable
+  wearables(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Wearable_orderBy
+    orderDirection: OrderDirection
+    where: Wearable_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Wearable!]!
+  ens(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ENS
+  enss(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ENS_orderBy
+    orderDirection: OrderDirection
+    where: ENS_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ENS!]!
+  nft(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): NFT
+  legacyNFTs(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: NFT_orderBy
+    orderDirection: OrderDirection
+    where: NFT_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [NFT!]!
+  account(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Account
+  accounts(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Account_orderBy
+    orderDirection: OrderDirection
+    where: Account_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Account!]!
+  sale(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Sale
+  sales(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Sale_orderBy
+    orderDirection: OrderDirection
+    where: Sale_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Sale!]!
+  analyticsDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AnalyticsDayData
+  analyticsDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AnalyticsDayData_orderBy
+    orderDirection: OrderDirection
+    where: AnalyticsDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AnalyticsDayData!]!
+  """Access to subgraph metadata"""
+  _meta(block: Block_height): _Meta_
+  collection(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Collection
+  collections(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Collection_orderBy
+    orderDirection: OrderDirection
+    where: Collection_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Collection!]!
+  item(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Item
+  items(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Item_orderBy
+    orderDirection: OrderDirection
+    where: Item_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Item!]!
+  nfts(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: NFT_orderBy
+    orderDirection: OrderDirection
+    where: NFT_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [NFT!]!
+  metadata(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Metadata_orderBy
+    orderDirection: OrderDirection
+    where: Metadata_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Metadata!]!
+  emote(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Emote
+  emotes(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Emote_orderBy
+    orderDirection: OrderDirection
+    where: Emote_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Emote!]!
+  rarity(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Rarity
+  rarities(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Rarity_orderBy
+    orderDirection: OrderDirection
+    where: Rarity_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Rarity!]!
+  mint(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Mint
+  mints(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Mint_orderBy
+    orderDirection: OrderDirection
+    where: Mint_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Mint!]!
+  curation(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Curation
+  curations(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Curation_orderBy
+    orderDirection: OrderDirection
+    where: Curation_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Curation!]!
+  itemsDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ItemsDayData
+  itemsDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ItemsDayData_orderBy
+    orderDirection: OrderDirection
+    where: ItemsDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ItemsDayData!]!
+  accountsDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AccountsDayData
+  accountsDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AccountsDayData_orderBy
+    orderDirection: OrderDirection
+    where: AccountsDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AccountsDayData!]!
+}
+
+type Subscription {
+  count(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Count
+  counts(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Count_orderBy
+    orderDirection: OrderDirection
+    where: Count_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Count!]!
+  order(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Order
+  orders(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Order_orderBy
+    orderDirection: OrderDirection
+    where: Order_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Order!]!
+  bid(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Bid
+  bids(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Bid_orderBy
+    orderDirection: OrderDirection
+    where: Bid_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Bid!]!
+  parcel(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Parcel
+  parcels(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Parcel_orderBy
+    orderDirection: OrderDirection
+    where: Parcel_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Parcel!]!
+  estate(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Estate
+  estates(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Estate_orderBy
+    orderDirection: OrderDirection
+    where: Estate_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Estate!]!
+  data(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Data
+  datas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Data_orderBy
+    orderDirection: OrderDirection
+    where: Data_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Data!]!
+  wearable(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Wearable
+  wearables(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Wearable_orderBy
+    orderDirection: OrderDirection
+    where: Wearable_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Wearable!]!
+  ens(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ENS
+  enss(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ENS_orderBy
+    orderDirection: OrderDirection
+    where: ENS_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ENS!]!
+  nft(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): NFT
+  nfts(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: NFT_orderBy
+    orderDirection: OrderDirection
+    where: NFT_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [NFT!]!
+  account(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Account
+  accounts(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Account_orderBy
+    orderDirection: OrderDirection
+    where: Account_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Account!]!
+  sale(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Sale
+  sales(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Sale_orderBy
+    orderDirection: OrderDirection
+    where: Sale_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Sale!]!
+  analyticsDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AnalyticsDayData
+  analyticsDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AnalyticsDayData_orderBy
+    orderDirection: OrderDirection
+    where: AnalyticsDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AnalyticsDayData!]!
+  """Access to subgraph metadata"""
+  _meta(block: Block_height): _Meta_
+  collection(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Collection
+  collections(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Collection_orderBy
+    orderDirection: OrderDirection
+    where: Collection_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Collection!]!
+  item(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Item
+  items(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Item_orderBy
+    orderDirection: OrderDirection
+    where: Item_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Item!]!
+  metadata(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Metadata_orderBy
+    orderDirection: OrderDirection
+    where: Metadata_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Metadata!]!
+  emote(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Emote
+  emotes(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Emote_orderBy
+    orderDirection: OrderDirection
+    where: Emote_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Emote!]!
+  rarity(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Rarity
+  rarities(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Rarity_orderBy
+    orderDirection: OrderDirection
+    where: Rarity_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Rarity!]!
+  mint(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Mint
+  mints(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Mint_orderBy
+    orderDirection: OrderDirection
+    where: Mint_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Mint!]!
+  curation(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): Curation
+  curations(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: Curation_orderBy
+    orderDirection: OrderDirection
+    where: Curation_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [Curation!]!
+  itemsDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): ItemsDayData
+  itemsDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: ItemsDayData_orderBy
+    orderDirection: OrderDirection
+    where: ItemsDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [ItemsDayData!]!
+  accountsDayData(
+    id: ID!
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): AccountsDayData
+  accountsDayDatas(
+    skip: Int = 0
+    first: Int = 100
+    orderBy: AccountsDayData_orderBy
+    orderDirection: OrderDirection
+    where: AccountsDayData_filter
+    """
+    The block at which the query should be executed. Can either be a `{ hash: Bytes }` value containing a block hash, a `{ number: Int }` containing the block number, or a `{ number_gte: Int }` containing the minimum block number. In the case of `number_gte`, the query will be executed on the latest block only if the subgraph has progressed to or past the minimum block number. Defaults to the latest block when omitted.
+    """
+    block: Block_height
+    """
+    Set to `allow` to receive data even if the subgraph has skipped over errors while syncing.
+    """
+    subgraphError: _SubgraphErrorPolicy_! = deny
+  ): [AccountsDayData!]!
+}
+
+type Account {
+  id: ID!
+  address: Bytes!
+  nfts(skip: Int = 0, first: Int = 100, orderBy: NFT_orderBy, orderDirection: OrderDirection, where: NFT_filter): [NFT!]
+  sales: Int!
+  purchases: Int!
+  spent: BigInt!
+  earned: BigInt!
+  isCommitteeMember: Boolean
+  totalCurations: Int
+  primarySales: Int!
+  primarySalesEarned: BigInt!
+  royalties: BigInt!
+  uniqueAndMythicItems: [ID!]!
+  uniqueAndMythicItemsTotal: Int!
+  collections: Int!
+  creatorsSupported: [String!]!
+  creatorsSupportedTotal: Int!
+  uniqueCollectors: [String!]!
+  uniqueCollectorsTotal: Int!
+}
+
+input Account_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  address: Bytes
+  address_not: Bytes
+  address_gt: Bytes
+  address_lt: Bytes
+  address_gte: Bytes
+  address_lte: Bytes
+  address_in: [Bytes!]
+  address_not_in: [Bytes!]
+  address_contains: Bytes
+  address_not_contains: Bytes
+  nfts_: NFT_filter
+  sales: Int
+  sales_not: Int
+  sales_gt: Int
+  sales_lt: Int
+  sales_gte: Int
+  sales_lte: Int
+  sales_in: [Int!]
+  sales_not_in: [Int!]
+  purchases: Int
+  purchases_not: Int
+  purchases_gt: Int
+  purchases_lt: Int
+  purchases_gte: Int
+  purchases_lte: Int
+  purchases_in: [Int!]
+  purchases_not_in: [Int!]
+  spent: BigInt
+  spent_not: BigInt
+  spent_gt: BigInt
+  spent_lt: BigInt
+  spent_gte: BigInt
+  spent_lte: BigInt
+  spent_in: [BigInt!]
+  spent_not_in: [BigInt!]
+  earned: BigInt
+  earned_not: BigInt
+  earned_gt: BigInt
+  earned_lt: BigInt
+  earned_gte: BigInt
+  earned_lte: BigInt
+  earned_in: [BigInt!]
+  earned_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Account_filter]
+  or: [Account_filter]
+  isCommitteeMember: Boolean
+  isCommitteeMember_not: Boolean
+  isCommitteeMember_in: [Boolean!]
+  isCommitteeMember_not_in: [Boolean!]
+  totalCurations: Int
+  totalCurations_not: Int
+  totalCurations_gt: Int
+  totalCurations_lt: Int
+  totalCurations_gte: Int
+  totalCurations_lte: Int
+  totalCurations_in: [Int!]
+  totalCurations_not_in: [Int!]
+  primarySales: Int
+  primarySales_not: Int
+  primarySales_gt: Int
+  primarySales_lt: Int
+  primarySales_gte: Int
+  primarySales_lte: Int
+  primarySales_in: [Int!]
+  primarySales_not_in: [Int!]
+  primarySalesEarned: BigInt
+  primarySalesEarned_not: BigInt
+  primarySalesEarned_gt: BigInt
+  primarySalesEarned_lt: BigInt
+  primarySalesEarned_gte: BigInt
+  primarySalesEarned_lte: BigInt
+  primarySalesEarned_in: [BigInt!]
+  primarySalesEarned_not_in: [BigInt!]
+  royalties: BigInt
+  royalties_not: BigInt
+  royalties_gt: BigInt
+  royalties_lt: BigInt
+  royalties_gte: BigInt
+  royalties_lte: BigInt
+  royalties_in: [BigInt!]
+  royalties_not_in: [BigInt!]
+  uniqueAndMythicItems: [ID!]
+  uniqueAndMythicItems_not: [ID!]
+  uniqueAndMythicItems_contains: [ID!]
+  uniqueAndMythicItems_contains_nocase: [ID!]
+  uniqueAndMythicItems_not_contains: [ID!]
+  uniqueAndMythicItems_not_contains_nocase: [ID!]
+  uniqueAndMythicItemsTotal: Int
+  uniqueAndMythicItemsTotal_not: Int
+  uniqueAndMythicItemsTotal_gt: Int
+  uniqueAndMythicItemsTotal_lt: Int
+  uniqueAndMythicItemsTotal_gte: Int
+  uniqueAndMythicItemsTotal_lte: Int
+  uniqueAndMythicItemsTotal_in: [Int!]
+  uniqueAndMythicItemsTotal_not_in: [Int!]
+  collections: Int
+  collections_not: Int
+  collections_gt: Int
+  collections_lt: Int
+  collections_gte: Int
+  collections_lte: Int
+  collections_in: [Int!]
+  collections_not_in: [Int!]
+  creatorsSupported: [String!]
+  creatorsSupported_not: [String!]
+  creatorsSupported_contains: [String!]
+  creatorsSupported_contains_nocase: [String!]
+  creatorsSupported_not_contains: [String!]
+  creatorsSupported_not_contains_nocase: [String!]
+  creatorsSupportedTotal: Int
+  creatorsSupportedTotal_not: Int
+  creatorsSupportedTotal_gt: Int
+  creatorsSupportedTotal_lt: Int
+  creatorsSupportedTotal_gte: Int
+  creatorsSupportedTotal_lte: Int
+  creatorsSupportedTotal_in: [Int!]
+  creatorsSupportedTotal_not_in: [Int!]
+  uniqueCollectors: [String!]
+  uniqueCollectors_not: [String!]
+  uniqueCollectors_contains: [String!]
+  uniqueCollectors_contains_nocase: [String!]
+  uniqueCollectors_not_contains: [String!]
+  uniqueCollectors_not_contains_nocase: [String!]
+  uniqueCollectorsTotal: Int
+  uniqueCollectorsTotal_not: Int
+  uniqueCollectorsTotal_gt: Int
+  uniqueCollectorsTotal_lt: Int
+  uniqueCollectorsTotal_gte: Int
+  uniqueCollectorsTotal_lte: Int
+  uniqueCollectorsTotal_in: [Int!]
+  uniqueCollectorsTotal_not_in: [Int!]
+}
+
+enum Account_orderBy {
+  id
+  address
+  nfts
+  sales
+  purchases
+  spent
+  earned
+  isCommitteeMember
+  totalCurations
+  primarySales
+  primarySalesEarned
+  royalties
+  uniqueAndMythicItems
+  uniqueAndMythicItemsTotal
+  collections
+  creatorsSupported
+  creatorsSupportedTotal
+  uniqueCollectors
+  uniqueCollectorsTotal
+}
+
+type AnalyticsDayData {
+  id: ID!
+  date: Int!
+  sales: Int!
+  volume: BigInt!
+  creatorsEarnings: BigInt!
+  daoEarnings: BigInt!
+}
+
+input AnalyticsDayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  sales: Int
+  sales_not: Int
+  sales_gt: Int
+  sales_lt: Int
+  sales_gte: Int
+  sales_lte: Int
+  sales_in: [Int!]
+  sales_not_in: [Int!]
+  volume: BigInt
+  volume_not: BigInt
+  volume_gt: BigInt
+  volume_lt: BigInt
+  volume_gte: BigInt
+  volume_lte: BigInt
+  volume_in: [BigInt!]
+  volume_not_in: [BigInt!]
+  creatorsEarnings: BigInt
+  creatorsEarnings_not: BigInt
+  creatorsEarnings_gt: BigInt
+  creatorsEarnings_lt: BigInt
+  creatorsEarnings_gte: BigInt
+  creatorsEarnings_lte: BigInt
+  creatorsEarnings_in: [BigInt!]
+  creatorsEarnings_not_in: [BigInt!]
+  daoEarnings: BigInt
+  daoEarnings_not: BigInt
+  daoEarnings_gt: BigInt
+  daoEarnings_lt: BigInt
+  daoEarnings_gte: BigInt
+  daoEarnings_lte: BigInt
+  daoEarnings_in: [BigInt!]
+  daoEarnings_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [AnalyticsDayData_filter]
+  or: [AnalyticsDayData_filter]
+}
+
+enum AnalyticsDayData_orderBy {
+  id
+  date
+  sales
+  volume
+  creatorsEarnings
+  daoEarnings
+}
+
+type Bid {
+  id: ID!
+  bidAddress: Bytes!
+  category: Category!
+  nft: NFT
+  nftAddress: Bytes!
+  tokenId: BigInt!
+  bidder: Bytes
+  seller: Bytes
+  price: BigInt!
+  fingerprint: Bytes
+  status: OrderStatus!
+  blockchainId: String!
+  blockNumber: BigInt!
+  expiresAt: BigInt!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+}
+
+input Bid_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  bidAddress: Bytes
+  bidAddress_not: Bytes
+  bidAddress_gt: Bytes
+  bidAddress_lt: Bytes
+  bidAddress_gte: Bytes
+  bidAddress_lte: Bytes
+  bidAddress_in: [Bytes!]
+  bidAddress_not_in: [Bytes!]
+  bidAddress_contains: Bytes
+  bidAddress_not_contains: Bytes
+  category: Category
+  category_not: Category
+  category_in: [Category!]
+  category_not_in: [Category!]
+  nft: String
+  nft_not: String
+  nft_gt: String
+  nft_lt: String
+  nft_gte: String
+  nft_lte: String
+  nft_in: [String!]
+  nft_not_in: [String!]
+  nft_contains: String
+  nft_contains_nocase: String
+  nft_not_contains: String
+  nft_not_contains_nocase: String
+  nft_starts_with: String
+  nft_starts_with_nocase: String
+  nft_not_starts_with: String
+  nft_not_starts_with_nocase: String
+  nft_ends_with: String
+  nft_ends_with_nocase: String
+  nft_not_ends_with: String
+  nft_not_ends_with_nocase: String
+  nft_: NFT_filter
+  nftAddress: Bytes
+  nftAddress_not: Bytes
+  nftAddress_gt: Bytes
+  nftAddress_lt: Bytes
+  nftAddress_gte: Bytes
+  nftAddress_lte: Bytes
+  nftAddress_in: [Bytes!]
+  nftAddress_not_in: [Bytes!]
+  nftAddress_contains: Bytes
+  nftAddress_not_contains: Bytes
+  tokenId: BigInt
+  tokenId_not: BigInt
+  tokenId_gt: BigInt
+  tokenId_lt: BigInt
+  tokenId_gte: BigInt
+  tokenId_lte: BigInt
+  tokenId_in: [BigInt!]
+  tokenId_not_in: [BigInt!]
+  bidder: Bytes
+  bidder_not: Bytes
+  bidder_gt: Bytes
+  bidder_lt: Bytes
+  bidder_gte: Bytes
+  bidder_lte: Bytes
+  bidder_in: [Bytes!]
+  bidder_not_in: [Bytes!]
+  bidder_contains: Bytes
+  bidder_not_contains: Bytes
+  seller: Bytes
+  seller_not: Bytes
+  seller_gt: Bytes
+  seller_lt: Bytes
+  seller_gte: Bytes
+  seller_lte: Bytes
+  seller_in: [Bytes!]
+  seller_not_in: [Bytes!]
+  seller_contains: Bytes
+  seller_not_contains: Bytes
+  price: BigInt
+  price_not: BigInt
+  price_gt: BigInt
+  price_lt: BigInt
+  price_gte: BigInt
+  price_lte: BigInt
+  price_in: [BigInt!]
+  price_not_in: [BigInt!]
+  fingerprint: Bytes
+  fingerprint_not: Bytes
+  fingerprint_gt: Bytes
+  fingerprint_lt: Bytes
+  fingerprint_gte: Bytes
+  fingerprint_lte: Bytes
+  fingerprint_in: [Bytes!]
+  fingerprint_not_in: [Bytes!]
+  fingerprint_contains: Bytes
+  fingerprint_not_contains: Bytes
+  status: OrderStatus
+  status_not: OrderStatus
+  status_in: [OrderStatus!]
+  status_not_in: [OrderStatus!]
+  blockchainId: String
+  blockchainId_not: String
+  blockchainId_gt: String
+  blockchainId_lt: String
+  blockchainId_gte: String
+  blockchainId_lte: String
+  blockchainId_in: [String!]
+  blockchainId_not_in: [String!]
+  blockchainId_contains: String
+  blockchainId_contains_nocase: String
+  blockchainId_not_contains: String
+  blockchainId_not_contains_nocase: String
+  blockchainId_starts_with: String
+  blockchainId_starts_with_nocase: String
+  blockchainId_not_starts_with: String
+  blockchainId_not_starts_with_nocase: String
+  blockchainId_ends_with: String
+  blockchainId_ends_with_nocase: String
+  blockchainId_not_ends_with: String
+  blockchainId_not_ends_with_nocase: String
+  blockNumber: BigInt
+  blockNumber_not: BigInt
+  blockNumber_gt: BigInt
+  blockNumber_lt: BigInt
+  blockNumber_gte: BigInt
+  blockNumber_lte: BigInt
+  blockNumber_in: [BigInt!]
+  blockNumber_not_in: [BigInt!]
+  expiresAt: BigInt
+  expiresAt_not: BigInt
+  expiresAt_gt: BigInt
+  expiresAt_lt: BigInt
+  expiresAt_gte: BigInt
+  expiresAt_lte: BigInt
+  expiresAt_in: [BigInt!]
+  expiresAt_not_in: [BigInt!]
+  createdAt: BigInt
+  createdAt_not: BigInt
+  createdAt_gt: BigInt
+  createdAt_lt: BigInt
+  createdAt_gte: BigInt
+  createdAt_lte: BigInt
+  createdAt_in: [BigInt!]
+  createdAt_not_in: [BigInt!]
+  updatedAt: BigInt
+  updatedAt_not: BigInt
+  updatedAt_gt: BigInt
+  updatedAt_lt: BigInt
+  updatedAt_gte: BigInt
+  updatedAt_lte: BigInt
+  updatedAt_in: [BigInt!]
+  updatedAt_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Bid_filter]
+  or: [Bid_filter]
+}
+
+enum Bid_orderBy {
+  id
+  bidAddress
+  category
+  nft
+  nft__id
+  nft__tokenId
+  nft__contractAddress
+  nft__category
+  nft__tokenURI
+  nft__name
+  nft__image
+  nft__createdAt
+  nft__updatedAt
+  nft__soldAt
+  nft__transferredAt
+  nft__sales
+  nft__volume
+  nft__searchOrderStatus
+  nft__searchOrderPrice
+  nft__searchOrderExpiresAt
+  nft__searchOrderCreatedAt
+  nft__searchIsLand
+  nft__searchText
+  nft__searchParcelIsInBounds
+  nft__searchParcelX
+  nft__searchParcelY
+  nft__searchParcelEstateId
+  nft__searchDistanceToPlaza
+  nft__searchAdjacentToRoad
+  nft__searchEstateSize
+  nft__searchIsWearableHead
+  nft__searchIsWearableAccessory
+  nft__searchWearableRarity
+  nft__searchWearableCategory
+  nftAddress
+  tokenId
+  bidder
+  seller
+  price
+  fingerprint
+  status
+  blockchainId
+  blockNumber
+  expiresAt
+  createdAt
+  updatedAt
+  nft__itemBlockchainId
+  nft__issuedId
+  nft__itemType
+  nft__urn
+  nft__searchItemType
+  nft__searchEmoteCategory
+  nft__searchEmoteLoop
+  nft__searchEmoteRarity
+}
+
+scalar BigDecimal
+
+scalar BigInt
+
+input BlockChangedFilter {
+  number_gte: Int!
+}
+
+input Block_height {
+  hash: Bytes
+  number: Int
+  number_gte: Int
+}
+
+scalar Bytes
+
+enum Category {
+  parcel
+  estate
+  wearable
+  ens
+}
+
+type Count {
+  id: ID!
+  orderTotal: Int!
+  orderParcel: Int!
+  orderEstate: Int!
+  orderWearable: Int!
+  orderENS: Int!
+  parcelTotal: Int!
+  estateTotal: Int!
+  wearableTotal: Int!
+  ensTotal: Int!
+  started: Int!
+  salesTotal: Int!
+  salesManaTotal: BigInt!
+  creatorEarningsManaTotal: BigInt!
+  daoEarningsManaTotal: BigInt!
+  bidTotal: Int!
+  collectionTotal: Int!
+  itemTotal: Int!
+  nftTotal: Int!
+  primarySalesTotal: Int!
+  primarySalesManaTotal: BigInt!
+  secondarySalesTotal: Int!
+  secondarySalesManaTotal: BigInt!
+  royaltiesManaTotal: BigInt!
+}
+
+input Count_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  orderTotal: Int
+  orderTotal_not: Int
+  orderTotal_gt: Int
+  orderTotal_lt: Int
+  orderTotal_gte: Int
+  orderTotal_lte: Int
+  orderTotal_in: [Int!]
+  orderTotal_not_in: [Int!]
+  orderParcel: Int
+  orderParcel_not: Int
+  orderParcel_gt: Int
+  orderParcel_lt: Int
+  orderParcel_gte: Int
+  orderParcel_lte: Int
+  orderParcel_in: [Int!]
+  orderParcel_not_in: [Int!]
+  orderEstate: Int
+  orderEstate_not: Int
+  orderEstate_gt: Int
+  orderEstate_lt: Int
+  orderEstate_gte: Int
+  orderEstate_lte: Int
+  orderEstate_in: [Int!]
+  orderEstate_not_in: [Int!]
+  orderWearable: Int
+  orderWearable_not: Int
+  orderWearable_gt: Int
+  orderWearable_lt: Int
+  orderWearable_gte: Int
+  orderWearable_lte: Int
+  orderWearable_in: [Int!]
+  orderWearable_not_in: [Int!]
+  orderENS: Int
+  orderENS_not: Int
+  orderENS_gt: Int
+  orderENS_lt: Int
+  orderENS_gte: Int
+  orderENS_lte: Int
+  orderENS_in: [Int!]
+  orderENS_not_in: [Int!]
+  parcelTotal: Int
+  parcelTotal_not: Int
+  parcelTotal_gt: Int
+  parcelTotal_lt: Int
+  parcelTotal_gte: Int
+  parcelTotal_lte: Int
+  parcelTotal_in: [Int!]
+  parcelTotal_not_in: [Int!]
+  estateTotal: Int
+  estateTotal_not: Int
+  estateTotal_gt: Int
+  estateTotal_lt: Int
+  estateTotal_gte: Int
+  estateTotal_lte: Int
+  estateTotal_in: [Int!]
+  estateTotal_not_in: [Int!]
+  wearableTotal: Int
+  wearableTotal_not: Int
+  wearableTotal_gt: Int
+  wearableTotal_lt: Int
+  wearableTotal_gte: Int
+  wearableTotal_lte: Int
+  wearableTotal_in: [Int!]
+  wearableTotal_not_in: [Int!]
+  ensTotal: Int
+  ensTotal_not: Int
+  ensTotal_gt: Int
+  ensTotal_lt: Int
+  ensTotal_gte: Int
+  ensTotal_lte: Int
+  ensTotal_in: [Int!]
+  ensTotal_not_in: [Int!]
+  started: Int
+  started_not: Int
+  started_gt: Int
+  started_lt: Int
+  started_gte: Int
+  started_lte: Int
+  started_in: [Int!]
+  started_not_in: [Int!]
+  salesTotal: Int
+  salesTotal_not: Int
+  salesTotal_gt: Int
+  salesTotal_lt: Int
+  salesTotal_gte: Int
+  salesTotal_lte: Int
+  salesTotal_in: [Int!]
+  salesTotal_not_in: [Int!]
+  salesManaTotal: BigInt
+  salesManaTotal_not: BigInt
+  salesManaTotal_gt: BigInt
+  salesManaTotal_lt: BigInt
+  salesManaTotal_gte: BigInt
+  salesManaTotal_lte: BigInt
+  salesManaTotal_in: [BigInt!]
+  salesManaTotal_not_in: [BigInt!]
+  creatorEarningsManaTotal: BigInt
+  creatorEarningsManaTotal_not: BigInt
+  creatorEarningsManaTotal_gt: BigInt
+  creatorEarningsManaTotal_lt: BigInt
+  creatorEarningsManaTotal_gte: BigInt
+  creatorEarningsManaTotal_lte: BigInt
+  creatorEarningsManaTotal_in: [BigInt!]
+  creatorEarningsManaTotal_not_in: [BigInt!]
+  daoEarningsManaTotal: BigInt
+  daoEarningsManaTotal_not: BigInt
+  daoEarningsManaTotal_gt: BigInt
+  daoEarningsManaTotal_lt: BigInt
+  daoEarningsManaTotal_gte: BigInt
+  daoEarningsManaTotal_lte: BigInt
+  daoEarningsManaTotal_in: [BigInt!]
+  daoEarningsManaTotal_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Count_filter]
+  or: [Count_filter]
+  bidTotal: Int
+  bidTotal_not: Int
+  bidTotal_gt: Int
+  bidTotal_lt: Int
+  bidTotal_gte: Int
+  bidTotal_lte: Int
+  bidTotal_in: [Int!]
+  bidTotal_not_in: [Int!]
+  collectionTotal: Int
+  collectionTotal_not: Int
+  collectionTotal_gt: Int
+  collectionTotal_lt: Int
+  collectionTotal_gte: Int
+  collectionTotal_lte: Int
+  collectionTotal_in: [Int!]
+  collectionTotal_not_in: [Int!]
+  itemTotal: Int
+  itemTotal_not: Int
+  itemTotal_gt: Int
+  itemTotal_lt: Int
+  itemTotal_gte: Int
+  itemTotal_lte: Int
+  itemTotal_in: [Int!]
+  itemTotal_not_in: [Int!]
+  nftTotal: Int
+  nftTotal_not: Int
+  nftTotal_gt: Int
+  nftTotal_lt: Int
+  nftTotal_gte: Int
+  nftTotal_lte: Int
+  nftTotal_in: [Int!]
+  nftTotal_not_in: [Int!]
+  primarySalesTotal: Int
+  primarySalesTotal_not: Int
+  primarySalesTotal_gt: Int
+  primarySalesTotal_lt: Int
+  primarySalesTotal_gte: Int
+  primarySalesTotal_lte: Int
+  primarySalesTotal_in: [Int!]
+  primarySalesTotal_not_in: [Int!]
+  primarySalesManaTotal: BigInt
+  primarySalesManaTotal_not: BigInt
+  primarySalesManaTotal_gt: BigInt
+  primarySalesManaTotal_lt: BigInt
+  primarySalesManaTotal_gte: BigInt
+  primarySalesManaTotal_lte: BigInt
+  primarySalesManaTotal_in: [BigInt!]
+  primarySalesManaTotal_not_in: [BigInt!]
+  secondarySalesTotal: Int
+  secondarySalesTotal_not: Int
+  secondarySalesTotal_gt: Int
+  secondarySalesTotal_lt: Int
+  secondarySalesTotal_gte: Int
+  secondarySalesTotal_lte: Int
+  secondarySalesTotal_in: [Int!]
+  secondarySalesTotal_not_in: [Int!]
+  secondarySalesManaTotal: BigInt
+  secondarySalesManaTotal_not: BigInt
+  secondarySalesManaTotal_gt: BigInt
+  secondarySalesManaTotal_lt: BigInt
+  secondarySalesManaTotal_gte: BigInt
+  secondarySalesManaTotal_lte: BigInt
+  secondarySalesManaTotal_in: [BigInt!]
+  secondarySalesManaTotal_not_in: [BigInt!]
+  royaltiesManaTotal: BigInt
+  royaltiesManaTotal_not: BigInt
+  royaltiesManaTotal_gt: BigInt
+  royaltiesManaTotal_lt: BigInt
+  royaltiesManaTotal_gte: BigInt
+  royaltiesManaTotal_lte: BigInt
+  royaltiesManaTotal_in: [BigInt!]
+  royaltiesManaTotal_not_in: [BigInt!]
+}
+
+enum Count_orderBy {
+  id
+  orderTotal
+  orderParcel
+  orderEstate
+  orderWearable
+  orderENS
+  parcelTotal
+  estateTotal
+  wearableTotal
+  ensTotal
+  started
+  salesTotal
+  salesManaTotal
+  creatorEarningsManaTotal
+  daoEarningsManaTotal
+  bidTotal
+  collectionTotal
+  itemTotal
+  nftTotal
+  primarySalesTotal
+  primarySalesManaTotal
+  secondarySalesTotal
+  secondarySalesManaTotal
+  royaltiesManaTotal
+}
+
+type Data {
+  id: ID!
+  parcel: Parcel
+  estate: Estate
+  version: String!
+  name: String
+  description: String
+  ipns: String
+}
+
+input Data_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  parcel: String
+  parcel_not: String
+  parcel_gt: String
+  parcel_lt: String
+  parcel_gte: String
+  parcel_lte: String
+  parcel_in: [String!]
+  parcel_not_in: [String!]
+  parcel_contains: String
+  parcel_contains_nocase: String
+  parcel_not_contains: String
+  parcel_not_contains_nocase: String
+  parcel_starts_with: String
+  parcel_starts_with_nocase: String
+  parcel_not_starts_with: String
+  parcel_not_starts_with_nocase: String
+  parcel_ends_with: String
+  parcel_ends_with_nocase: String
+  parcel_not_ends_with: String
+  parcel_not_ends_with_nocase: String
+  parcel_: Parcel_filter
+  estate: String
+  estate_not: String
+  estate_gt: String
+  estate_lt: String
+  estate_gte: String
+  estate_lte: String
+  estate_in: [String!]
+  estate_not_in: [String!]
+  estate_contains: String
+  estate_contains_nocase: String
+  estate_not_contains: String
+  estate_not_contains_nocase: String
+  estate_starts_with: String
+  estate_starts_with_nocase: String
+  estate_not_starts_with: String
+  estate_not_starts_with_nocase: String
+  estate_ends_with: String
+  estate_ends_with_nocase: String
+  estate_not_ends_with: String
+  estate_not_ends_with_nocase: String
+  estate_: Estate_filter
+  version: String
+  version_not: String
+  version_gt: String
+  version_lt: String
+  version_gte: String
+  version_lte: String
+  version_in: [String!]
+  version_not_in: [String!]
+  version_contains: String
+  version_contains_nocase: String
+  version_not_contains: String
+  version_not_contains_nocase: String
+  version_starts_with: String
+  version_starts_with_nocase: String
+  version_not_starts_with: String
+  version_not_starts_with_nocase: String
+  version_ends_with: String
+  version_ends_with_nocase: String
+  version_not_ends_with: String
+  version_not_ends_with_nocase: String
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_contains_nocase: String
+  name_not_contains: String
+  name_not_contains_nocase: String
+  name_starts_with: String
+  name_starts_with_nocase: String
+  name_not_starts_with: String
+  name_not_starts_with_nocase: String
+  name_ends_with: String
+  name_ends_with_nocase: String
+  name_not_ends_with: String
+  name_not_ends_with_nocase: String
+  description: String
+  description_not: String
+  description_gt: String
+  description_lt: String
+  description_gte: String
+  description_lte: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_contains: String
+  description_contains_nocase: String
+  description_not_contains: String
+  description_not_contains_nocase: String
+  description_starts_with: String
+  description_starts_with_nocase: String
+  description_not_starts_with: String
+  description_not_starts_with_nocase: String
+  description_ends_with: String
+  description_ends_with_nocase: String
+  description_not_ends_with: String
+  description_not_ends_with_nocase: String
+  ipns: String
+  ipns_not: String
+  ipns_gt: String
+  ipns_lt: String
+  ipns_gte: String
+  ipns_lte: String
+  ipns_in: [String!]
+  ipns_not_in: [String!]
+  ipns_contains: String
+  ipns_contains_nocase: String
+  ipns_not_contains: String
+  ipns_not_contains_nocase: String
+  ipns_starts_with: String
+  ipns_starts_with_nocase: String
+  ipns_not_starts_with: String
+  ipns_not_starts_with_nocase: String
+  ipns_ends_with: String
+  ipns_ends_with_nocase: String
+  ipns_not_ends_with: String
+  ipns_not_ends_with_nocase: String
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Data_filter]
+  or: [Data_filter]
+}
+
+enum Data_orderBy {
+  id
+  parcel
+  parcel__id
+  parcel__tokenId
+  parcel__x
+  parcel__y
+  parcel__rawData
+  estate
+  estate__id
+  estate__tokenId
+  estate__adjacentToRoadCount
+  estate__size
+  estate__rawData
+  version
+  name
+  description
+  ipns
+}
+
+type ENS {
+  id: ID!
+  tokenId: BigInt!
+  owner: Account!
+  caller: Bytes
+  beneficiary: Bytes
+  labelHash: Bytes
+  subdomain: String
+  createdAt: BigInt
+  nft: NFT
+}
+
+input ENS_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  tokenId: BigInt
+  tokenId_not: BigInt
+  tokenId_gt: BigInt
+  tokenId_lt: BigInt
+  tokenId_gte: BigInt
+  tokenId_lte: BigInt
+  tokenId_in: [BigInt!]
+  tokenId_not_in: [BigInt!]
+  owner: String
+  owner_not: String
+  owner_gt: String
+  owner_lt: String
+  owner_gte: String
+  owner_lte: String
+  owner_in: [String!]
+  owner_not_in: [String!]
+  owner_contains: String
+  owner_contains_nocase: String
+  owner_not_contains: String
+  owner_not_contains_nocase: String
+  owner_starts_with: String
+  owner_starts_with_nocase: String
+  owner_not_starts_with: String
+  owner_not_starts_with_nocase: String
+  owner_ends_with: String
+  owner_ends_with_nocase: String
+  owner_not_ends_with: String
+  owner_not_ends_with_nocase: String
+  owner_: Account_filter
+  caller: Bytes
+  caller_not: Bytes
+  caller_gt: Bytes
+  caller_lt: Bytes
+  caller_gte: Bytes
+  caller_lte: Bytes
+  caller_in: [Bytes!]
+  caller_not_in: [Bytes!]
+  caller_contains: Bytes
+  caller_not_contains: Bytes
+  beneficiary: Bytes
+  beneficiary_not: Bytes
+  beneficiary_gt: Bytes
+  beneficiary_lt: Bytes
+  beneficiary_gte: Bytes
+  beneficiary_lte: Bytes
+  beneficiary_in: [Bytes!]
+  beneficiary_not_in: [Bytes!]
+  beneficiary_contains: Bytes
+  beneficiary_not_contains: Bytes
+  labelHash: Bytes
+  labelHash_not: Bytes
+  labelHash_gt: Bytes
+  labelHash_lt: Bytes
+  labelHash_gte: Bytes
+  labelHash_lte: Bytes
+  labelHash_in: [Bytes!]
+  labelHash_not_in: [Bytes!]
+  labelHash_contains: Bytes
+  labelHash_not_contains: Bytes
+  subdomain: String
+  subdomain_not: String
+  subdomain_gt: String
+  subdomain_lt: String
+  subdomain_gte: String
+  subdomain_lte: String
+  subdomain_in: [String!]
+  subdomain_not_in: [String!]
+  subdomain_contains: String
+  subdomain_contains_nocase: String
+  subdomain_not_contains: String
+  subdomain_not_contains_nocase: String
+  subdomain_starts_with: String
+  subdomain_starts_with_nocase: String
+  subdomain_not_starts_with: String
+  subdomain_not_starts_with_nocase: String
+  subdomain_ends_with: String
+  subdomain_ends_with_nocase: String
+  subdomain_not_ends_with: String
+  subdomain_not_ends_with_nocase: String
+  createdAt: BigInt
+  createdAt_not: BigInt
+  createdAt_gt: BigInt
+  createdAt_lt: BigInt
+  createdAt_gte: BigInt
+  createdAt_lte: BigInt
+  createdAt_in: [BigInt!]
+  createdAt_not_in: [BigInt!]
+  nft_: NFT_filter
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [ENS_filter]
+  or: [ENS_filter]
+}
+
+enum ENS_orderBy {
+  id
+  tokenId
+  owner
+  owner__id
+  owner__address
+  owner__sales
+  owner__purchases
+  owner__spent
+  owner__earned
+  caller
+  beneficiary
+  labelHash
+  subdomain
+  createdAt
+  nft
+  nft__id
+  nft__tokenId
+  nft__contractAddress
+  nft__category
+  nft__tokenURI
+  nft__name
+  nft__image
+  nft__createdAt
+  nft__updatedAt
+  nft__soldAt
+  nft__transferredAt
+  nft__sales
+  nft__volume
+  nft__searchOrderStatus
+  nft__searchOrderPrice
+  nft__searchOrderExpiresAt
+  nft__searchOrderCreatedAt
+  nft__searchIsLand
+  nft__searchText
+  nft__searchParcelIsInBounds
+  nft__searchParcelX
+  nft__searchParcelY
+  nft__searchParcelEstateId
+  nft__searchDistanceToPlaza
+  nft__searchAdjacentToRoad
+  nft__searchEstateSize
+  nft__searchIsWearableHead
+  nft__searchIsWearableAccessory
+  nft__searchWearableRarity
+  nft__searchWearableCategory
+}
+
+type Estate {
+  id: ID!
+  tokenId: BigInt!
+  owner: Account!
+  parcels(skip: Int = 0, first: Int = 100, orderBy: Parcel_orderBy, orderDirection: OrderDirection, where: Parcel_filter): [Parcel!]!
+  parcelDistances: [Int!]
+  adjacentToRoadCount: Int
+  size: Int
+  data: Data
+  rawData: String
+  nft: NFT
+}
+
+input Estate_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  tokenId: BigInt
+  tokenId_not: BigInt
+  tokenId_gt: BigInt
+  tokenId_lt: BigInt
+  tokenId_gte: BigInt
+  tokenId_lte: BigInt
+  tokenId_in: [BigInt!]
+  tokenId_not_in: [BigInt!]
+  owner: String
+  owner_not: String
+  owner_gt: String
+  owner_lt: String
+  owner_gte: String
+  owner_lte: String
+  owner_in: [String!]
+  owner_not_in: [String!]
+  owner_contains: String
+  owner_contains_nocase: String
+  owner_not_contains: String
+  owner_not_contains_nocase: String
+  owner_starts_with: String
+  owner_starts_with_nocase: String
+  owner_not_starts_with: String
+  owner_not_starts_with_nocase: String
+  owner_ends_with: String
+  owner_ends_with_nocase: String
+  owner_not_ends_with: String
+  owner_not_ends_with_nocase: String
+  owner_: Account_filter
+  parcels_: Parcel_filter
+  parcelDistances: [Int!]
+  parcelDistances_not: [Int!]
+  parcelDistances_contains: [Int!]
+  parcelDistances_contains_nocase: [Int!]
+  parcelDistances_not_contains: [Int!]
+  parcelDistances_not_contains_nocase: [Int!]
+  adjacentToRoadCount: Int
+  adjacentToRoadCount_not: Int
+  adjacentToRoadCount_gt: Int
+  adjacentToRoadCount_lt: Int
+  adjacentToRoadCount_gte: Int
+  adjacentToRoadCount_lte: Int
+  adjacentToRoadCount_in: [Int!]
+  adjacentToRoadCount_not_in: [Int!]
+  size: Int
+  size_not: Int
+  size_gt: Int
+  size_lt: Int
+  size_gte: Int
+  size_lte: Int
+  size_in: [Int!]
+  size_not_in: [Int!]
+  data: String
+  data_not: String
+  data_gt: String
+  data_lt: String
+  data_gte: String
+  data_lte: String
+  data_in: [String!]
+  data_not_in: [String!]
+  data_contains: String
+  data_contains_nocase: String
+  data_not_contains: String
+  data_not_contains_nocase: String
+  data_starts_with: String
+  data_starts_with_nocase: String
+  data_not_starts_with: String
+  data_not_starts_with_nocase: String
+  data_ends_with: String
+  data_ends_with_nocase: String
+  data_not_ends_with: String
+  data_not_ends_with_nocase: String
+  data_: Data_filter
+  rawData: String
+  rawData_not: String
+  rawData_gt: String
+  rawData_lt: String
+  rawData_gte: String
+  rawData_lte: String
+  rawData_in: [String!]
+  rawData_not_in: [String!]
+  rawData_contains: String
+  rawData_contains_nocase: String
+  rawData_not_contains: String
+  rawData_not_contains_nocase: String
+  rawData_starts_with: String
+  rawData_starts_with_nocase: String
+  rawData_not_starts_with: String
+  rawData_not_starts_with_nocase: String
+  rawData_ends_with: String
+  rawData_ends_with_nocase: String
+  rawData_not_ends_with: String
+  rawData_not_ends_with_nocase: String
+  nft_: NFT_filter
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Estate_filter]
+  or: [Estate_filter]
+}
+
+enum Estate_orderBy {
+  id
+  tokenId
+  owner
+  owner__id
+  owner__address
+  owner__sales
+  owner__purchases
+  owner__spent
+  owner__earned
+  parcels
+  parcelDistances
+  adjacentToRoadCount
+  size
+  data
+  data__id
+  data__version
+  data__name
+  data__description
+  data__ipns
+  rawData
+  nft
+  nft__id
+  nft__tokenId
+  nft__contractAddress
+  nft__category
+  nft__tokenURI
+  nft__name
+  nft__image
+  nft__createdAt
+  nft__updatedAt
+  nft__soldAt
+  nft__transferredAt
+  nft__sales
+  nft__volume
+  nft__searchOrderStatus
+  nft__searchOrderPrice
+  nft__searchOrderExpiresAt
+  nft__searchOrderCreatedAt
+  nft__searchIsLand
+  nft__searchText
+  nft__searchParcelIsInBounds
+  nft__searchParcelX
+  nft__searchParcelY
+  nft__searchParcelEstateId
+  nft__searchDistanceToPlaza
+  nft__searchAdjacentToRoad
+  nft__searchEstateSize
+  nft__searchIsWearableHead
+  nft__searchIsWearableAccessory
+  nft__searchWearableRarity
+  nft__searchWearableCategory
+}
+
+type NFT {
+  id: ID!
+  tokenId: BigInt!
+  contractAddress: String!
+  category: String!
+  owner: Account!
+  tokenURI: String
+  orders(skip: Int = 0, first: Int = 100, orderBy: Order_orderBy, orderDirection: OrderDirection, where: Order_filter): [Order!]
+  bids(skip: Int = 0, first: Int = 100, orderBy: Bid_orderBy, orderDirection: OrderDirection, where: Bid_filter): [Bid!]
+  activeOrder: Order
+  name: String
+  image: String
+  parcel: Parcel
+  estate: Estate
+  wearable: Wearable
+  ens: ENS
+  createdAt: BigInt!
+  updatedAt: BigInt!
+  soldAt: BigInt
+  transferredAt: BigInt!
+  sales: Int!
+  volume: BigInt!
+  searchOrderStatus: OrderStatus
+  searchOrderPrice: BigInt
+  searchOrderExpiresAt: BigInt
+  searchOrderCreatedAt: BigInt
+  searchIsLand: Boolean
+  searchText: String
+  searchParcelIsInBounds: Boolean
+  searchParcelX: BigInt
+  searchParcelY: BigInt
+  searchParcelEstateId: String
+  searchDistanceToPlaza: Int
+  searchAdjacentToRoad: Boolean
+  searchEstateSize: Int
+  searchIsWearableHead: Boolean
+  searchIsWearableAccessory: Boolean
+  searchWearableRarity: String
+  searchWearableCategory: WearableCategory
+  searchWearableBodyShapes: [WearableBodyShape!]
+  itemBlockchainId: BigInt
+  issuedId: BigInt
+  itemType: ItemType!
+  urn: String!
+  collection: Collection!
+  item: Item
+  metadata: Metadata
+  searchItemType: String
+  searchEmoteCategory: EmoteCategory
+  searchEmoteLoop: Boolean
+  searchEmoteRarity: String
+  searchEmoteBodyShapes: [WearableBodyShape!]
+}
+
+input NFT_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  tokenId: BigInt
+  tokenId_not: BigInt
+  tokenId_gt: BigInt
+  tokenId_lt: BigInt
+  tokenId_gte: BigInt
+  tokenId_lte: BigInt
+  tokenId_in: [BigInt!]
+  tokenId_not_in: [BigInt!]
+  contractAddress: String
+  contractAddress_not: String
+  contractAddress_gt: String
+  contractAddress_lt: String
+  contractAddress_gte: String
+  contractAddress_lte: String
+  contractAddress_in: [String!]
+  contractAddress_not_in: [String!]
+  contractAddress_contains: String
+  contractAddress_not_contains: String
+  category: String
+  category_not: String
+  category_in: [String!]
+  category_not_in: [String!]
+  owner: String
+  owner_not: String
+  owner_gt: String
+  owner_lt: String
+  owner_gte: String
+  owner_lte: String
+  owner_in: [String!]
+  owner_not_in: [String!]
+  owner_contains: String
+  owner_contains_nocase: String
+  owner_not_contains: String
+  owner_not_contains_nocase: String
+  owner_starts_with: String
+  owner_starts_with_nocase: String
+  owner_not_starts_with: String
+  owner_not_starts_with_nocase: String
+  owner_ends_with: String
+  owner_ends_with_nocase: String
+  owner_not_ends_with: String
+  owner_not_ends_with_nocase: String
+  owner_: Account_filter
+  tokenURI: String
+  tokenURI_not: String
+  tokenURI_gt: String
+  tokenURI_lt: String
+  tokenURI_gte: String
+  tokenURI_lte: String
+  tokenURI_in: [String!]
+  tokenURI_not_in: [String!]
+  tokenURI_contains: String
+  tokenURI_contains_nocase: String
+  tokenURI_not_contains: String
+  tokenURI_not_contains_nocase: String
+  tokenURI_starts_with: String
+  tokenURI_starts_with_nocase: String
+  tokenURI_not_starts_with: String
+  tokenURI_not_starts_with_nocase: String
+  tokenURI_ends_with: String
+  tokenURI_ends_with_nocase: String
+  tokenURI_not_ends_with: String
+  tokenURI_not_ends_with_nocase: String
+  orders_: Order_filter
+  bids_: Bid_filter
+  activeOrder: String
+  activeOrder_not: String
+  activeOrder_gt: String
+  activeOrder_lt: String
+  activeOrder_gte: String
+  activeOrder_lte: String
+  activeOrder_in: [String!]
+  activeOrder_not_in: [String!]
+  activeOrder_contains: String
+  activeOrder_contains_nocase: String
+  activeOrder_not_contains: String
+  activeOrder_not_contains_nocase: String
+  activeOrder_starts_with: String
+  activeOrder_starts_with_nocase: String
+  activeOrder_not_starts_with: String
+  activeOrder_not_starts_with_nocase: String
+  activeOrder_ends_with: String
+  activeOrder_ends_with_nocase: String
+  activeOrder_not_ends_with: String
+  activeOrder_not_ends_with_nocase: String
+  activeOrder_: Order_filter
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_contains_nocase: String
+  name_not_contains: String
+  name_not_contains_nocase: String
+  name_starts_with: String
+  name_starts_with_nocase: String
+  name_not_starts_with: String
+  name_not_starts_with_nocase: String
+  name_ends_with: String
+  name_ends_with_nocase: String
+  name_not_ends_with: String
+  name_not_ends_with_nocase: String
+  image: String
+  image_not: String
+  image_gt: String
+  image_lt: String
+  image_gte: String
+  image_lte: String
+  image_in: [String!]
+  image_not_in: [String!]
+  image_contains: String
+  image_contains_nocase: String
+  image_not_contains: String
+  image_not_contains_nocase: String
+  image_starts_with: String
+  image_starts_with_nocase: String
+  image_not_starts_with: String
+  image_not_starts_with_nocase: String
+  image_ends_with: String
+  image_ends_with_nocase: String
+  image_not_ends_with: String
+  image_not_ends_with_nocase: String
+  parcel: String
+  parcel_not: String
+  parcel_gt: String
+  parcel_lt: String
+  parcel_gte: String
+  parcel_lte: String
+  parcel_in: [String!]
+  parcel_not_in: [String!]
+  parcel_contains: String
+  parcel_contains_nocase: String
+  parcel_not_contains: String
+  parcel_not_contains_nocase: String
+  parcel_starts_with: String
+  parcel_starts_with_nocase: String
+  parcel_not_starts_with: String
+  parcel_not_starts_with_nocase: String
+  parcel_ends_with: String
+  parcel_ends_with_nocase: String
+  parcel_not_ends_with: String
+  parcel_not_ends_with_nocase: String
+  parcel_: Parcel_filter
+  estate: String
+  estate_not: String
+  estate_gt: String
+  estate_lt: String
+  estate_gte: String
+  estate_lte: String
+  estate_in: [String!]
+  estate_not_in: [String!]
+  estate_contains: String
+  estate_contains_nocase: String
+  estate_not_contains: String
+  estate_not_contains_nocase: String
+  estate_starts_with: String
+  estate_starts_with_nocase: String
+  estate_not_starts_with: String
+  estate_not_starts_with_nocase: String
+  estate_ends_with: String
+  estate_ends_with_nocase: String
+  estate_not_ends_with: String
+  estate_not_ends_with_nocase: String
+  estate_: Estate_filter
+  wearable: String
+  wearable_not: String
+  wearable_gt: String
+  wearable_lt: String
+  wearable_gte: String
+  wearable_lte: String
+  wearable_in: [String!]
+  wearable_not_in: [String!]
+  wearable_contains: String
+  wearable_contains_nocase: String
+  wearable_not_contains: String
+  wearable_not_contains_nocase: String
+  wearable_starts_with: String
+  wearable_starts_with_nocase: String
+  wearable_not_starts_with: String
+  wearable_not_starts_with_nocase: String
+  wearable_ends_with: String
+  wearable_ends_with_nocase: String
+  wearable_not_ends_with: String
+  wearable_not_ends_with_nocase: String
+  wearable_: Wearable_filter
+  ens: String
+  ens_not: String
+  ens_gt: String
+  ens_lt: String
+  ens_gte: String
+  ens_lte: String
+  ens_in: [String!]
+  ens_not_in: [String!]
+  ens_contains: String
+  ens_contains_nocase: String
+  ens_not_contains: String
+  ens_not_contains_nocase: String
+  ens_starts_with: String
+  ens_starts_with_nocase: String
+  ens_not_starts_with: String
+  ens_not_starts_with_nocase: String
+  ens_ends_with: String
+  ens_ends_with_nocase: String
+  ens_not_ends_with: String
+  ens_not_ends_with_nocase: String
+  ens_: ENS_filter
+  createdAt: BigInt
+  createdAt_not: BigInt
+  createdAt_gt: BigInt
+  createdAt_lt: BigInt
+  createdAt_gte: BigInt
+  createdAt_lte: BigInt
+  createdAt_in: [BigInt!]
+  createdAt_not_in: [BigInt!]
+  updatedAt: BigInt
+  updatedAt_not: BigInt
+  updatedAt_gt: BigInt
+  updatedAt_lt: BigInt
+  updatedAt_gte: BigInt
+  updatedAt_lte: BigInt
+  updatedAt_in: [BigInt!]
+  updatedAt_not_in: [BigInt!]
+  soldAt: BigInt
+  soldAt_not: BigInt
+  soldAt_gt: BigInt
+  soldAt_lt: BigInt
+  soldAt_gte: BigInt
+  soldAt_lte: BigInt
+  soldAt_in: [BigInt!]
+  soldAt_not_in: [BigInt!]
+  transferredAt: BigInt
+  transferredAt_not: BigInt
+  transferredAt_gt: BigInt
+  transferredAt_lt: BigInt
+  transferredAt_gte: BigInt
+  transferredAt_lte: BigInt
+  transferredAt_in: [BigInt!]
+  transferredAt_not_in: [BigInt!]
+  sales: Int
+  sales_not: Int
+  sales_gt: Int
+  sales_lt: Int
+  sales_gte: Int
+  sales_lte: Int
+  sales_in: [Int!]
+  sales_not_in: [Int!]
+  volume: BigInt
+  volume_not: BigInt
+  volume_gt: BigInt
+  volume_lt: BigInt
+  volume_gte: BigInt
+  volume_lte: BigInt
+  volume_in: [BigInt!]
+  volume_not_in: [BigInt!]
+  searchOrderStatus: OrderStatus
+  searchOrderStatus_not: OrderStatus
+  searchOrderStatus_in: [OrderStatus!]
+  searchOrderStatus_not_in: [OrderStatus!]
+  searchOrderPrice: BigInt
+  searchOrderPrice_not: BigInt
+  searchOrderPrice_gt: BigInt
+  searchOrderPrice_lt: BigInt
+  searchOrderPrice_gte: BigInt
+  searchOrderPrice_lte: BigInt
+  searchOrderPrice_in: [BigInt!]
+  searchOrderPrice_not_in: [BigInt!]
+  searchOrderExpiresAt: BigInt
+  searchOrderExpiresAt_not: BigInt
+  searchOrderExpiresAt_gt: BigInt
+  searchOrderExpiresAt_lt: BigInt
+  searchOrderExpiresAt_gte: BigInt
+  searchOrderExpiresAt_lte: BigInt
+  searchOrderExpiresAt_in: [BigInt!]
+  searchOrderExpiresAt_not_in: [BigInt!]
+  searchOrderCreatedAt: BigInt
+  searchOrderCreatedAt_not: BigInt
+  searchOrderCreatedAt_gt: BigInt
+  searchOrderCreatedAt_lt: BigInt
+  searchOrderCreatedAt_gte: BigInt
+  searchOrderCreatedAt_lte: BigInt
+  searchOrderCreatedAt_in: [BigInt!]
+  searchOrderCreatedAt_not_in: [BigInt!]
+  searchIsLand: Boolean
+  searchIsLand_not: Boolean
+  searchIsLand_in: [Boolean!]
+  searchIsLand_not_in: [Boolean!]
+  searchText: String
+  searchText_not: String
+  searchText_gt: String
+  searchText_lt: String
+  searchText_gte: String
+  searchText_lte: String
+  searchText_in: [String!]
+  searchText_not_in: [String!]
+  searchText_contains: String
+  searchText_contains_nocase: String
+  searchText_not_contains: String
+  searchText_not_contains_nocase: String
+  searchText_starts_with: String
+  searchText_starts_with_nocase: String
+  searchText_not_starts_with: String
+  searchText_not_starts_with_nocase: String
+  searchText_ends_with: String
+  searchText_ends_with_nocase: String
+  searchText_not_ends_with: String
+  searchText_not_ends_with_nocase: String
+  searchParcelIsInBounds: Boolean
+  searchParcelIsInBounds_not: Boolean
+  searchParcelIsInBounds_in: [Boolean!]
+  searchParcelIsInBounds_not_in: [Boolean!]
+  searchParcelX: BigInt
+  searchParcelX_not: BigInt
+  searchParcelX_gt: BigInt
+  searchParcelX_lt: BigInt
+  searchParcelX_gte: BigInt
+  searchParcelX_lte: BigInt
+  searchParcelX_in: [BigInt!]
+  searchParcelX_not_in: [BigInt!]
+  searchParcelY: BigInt
+  searchParcelY_not: BigInt
+  searchParcelY_gt: BigInt
+  searchParcelY_lt: BigInt
+  searchParcelY_gte: BigInt
+  searchParcelY_lte: BigInt
+  searchParcelY_in: [BigInt!]
+  searchParcelY_not_in: [BigInt!]
+  searchParcelEstateId: String
+  searchParcelEstateId_not: String
+  searchParcelEstateId_gt: String
+  searchParcelEstateId_lt: String
+  searchParcelEstateId_gte: String
+  searchParcelEstateId_lte: String
+  searchParcelEstateId_in: [String!]
+  searchParcelEstateId_not_in: [String!]
+  searchParcelEstateId_contains: String
+  searchParcelEstateId_contains_nocase: String
+  searchParcelEstateId_not_contains: String
+  searchParcelEstateId_not_contains_nocase: String
+  searchParcelEstateId_starts_with: String
+  searchParcelEstateId_starts_with_nocase: String
+  searchParcelEstateId_not_starts_with: String
+  searchParcelEstateId_not_starts_with_nocase: String
+  searchParcelEstateId_ends_with: String
+  searchParcelEstateId_ends_with_nocase: String
+  searchParcelEstateId_not_ends_with: String
+  searchParcelEstateId_not_ends_with_nocase: String
+  searchDistanceToPlaza: Int
+  searchDistanceToPlaza_not: Int
+  searchDistanceToPlaza_gt: Int
+  searchDistanceToPlaza_lt: Int
+  searchDistanceToPlaza_gte: Int
+  searchDistanceToPlaza_lte: Int
+  searchDistanceToPlaza_in: [Int!]
+  searchDistanceToPlaza_not_in: [Int!]
+  searchAdjacentToRoad: Boolean
+  searchAdjacentToRoad_not: Boolean
+  searchAdjacentToRoad_in: [Boolean!]
+  searchAdjacentToRoad_not_in: [Boolean!]
+  searchEstateSize: Int
+  searchEstateSize_not: Int
+  searchEstateSize_gt: Int
+  searchEstateSize_lt: Int
+  searchEstateSize_gte: Int
+  searchEstateSize_lte: Int
+  searchEstateSize_in: [Int!]
+  searchEstateSize_not_in: [Int!]
+  searchIsWearableHead: Boolean
+  searchIsWearableHead_not: Boolean
+  searchIsWearableHead_in: [Boolean!]
+  searchIsWearableHead_not_in: [Boolean!]
+  searchIsWearableAccessory: Boolean
+  searchIsWearableAccessory_not: Boolean
+  searchIsWearableAccessory_in: [Boolean!]
+  searchIsWearableAccessory_not_in: [Boolean!]
+  searchWearableRarity: String
+  searchWearableRarity_not: String
+  searchWearableRarity_gt: String
+  searchWearableRarity_lt: String
+  searchWearableRarity_gte: String
+  searchWearableRarity_lte: String
+  searchWearableRarity_in: [String!]
+  searchWearableRarity_not_in: [String!]
+  searchWearableRarity_contains: String
+  searchWearableRarity_contains_nocase: String
+  searchWearableRarity_not_contains: String
+  searchWearableRarity_not_contains_nocase: String
+  searchWearableRarity_starts_with: String
+  searchWearableRarity_starts_with_nocase: String
+  searchWearableRarity_not_starts_with: String
+  searchWearableRarity_not_starts_with_nocase: String
+  searchWearableRarity_ends_with: String
+  searchWearableRarity_ends_with_nocase: String
+  searchWearableRarity_not_ends_with: String
+  searchWearableRarity_not_ends_with_nocase: String
+  searchWearableCategory: WearableCategory
+  searchWearableCategory_not: WearableCategory
+  searchWearableCategory_in: [WearableCategory!]
+  searchWearableCategory_not_in: [WearableCategory!]
+  searchWearableBodyShapes: [WearableBodyShape!]
+  searchWearableBodyShapes_not: [WearableBodyShape!]
+  searchWearableBodyShapes_contains: [WearableBodyShape!]
+  searchWearableBodyShapes_contains_nocase: [WearableBodyShape!]
+  searchWearableBodyShapes_not_contains: [WearableBodyShape!]
+  searchWearableBodyShapes_not_contains_nocase: [WearableBodyShape!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [NFT_filter]
+  or: [NFT_filter]
+  category_gt: String
+  category_lt: String
+  category_gte: String
+  category_lte: String
+  category_contains: String
+  category_contains_nocase: String
+  category_not_contains: String
+  category_not_contains_nocase: String
+  category_starts_with: String
+  category_starts_with_nocase: String
+  category_not_starts_with: String
+  category_not_starts_with_nocase: String
+  category_ends_with: String
+  category_ends_with_nocase: String
+  category_not_ends_with: String
+  category_not_ends_with_nocase: String
+  contractAddress_contains_nocase: String
+  contractAddress_not_contains_nocase: String
+  contractAddress_starts_with: String
+  contractAddress_starts_with_nocase: String
+  contractAddress_not_starts_with: String
+  contractAddress_not_starts_with_nocase: String
+  contractAddress_ends_with: String
+  contractAddress_ends_with_nocase: String
+  contractAddress_not_ends_with: String
+  contractAddress_not_ends_with_nocase: String
+  itemBlockchainId: BigInt
+  itemBlockchainId_not: BigInt
+  itemBlockchainId_gt: BigInt
+  itemBlockchainId_lt: BigInt
+  itemBlockchainId_gte: BigInt
+  itemBlockchainId_lte: BigInt
+  itemBlockchainId_in: [BigInt!]
+  itemBlockchainId_not_in: [BigInt!]
+  issuedId: BigInt
+  issuedId_not: BigInt
+  issuedId_gt: BigInt
+  issuedId_lt: BigInt
+  issuedId_gte: BigInt
+  issuedId_lte: BigInt
+  issuedId_in: [BigInt!]
+  issuedId_not_in: [BigInt!]
+  itemType: ItemType
+  itemType_not: ItemType
+  itemType_in: [ItemType!]
+  itemType_not_in: [ItemType!]
+  urn: String
+  urn_not: String
+  urn_gt: String
+  urn_lt: String
+  urn_gte: String
+  urn_lte: String
+  urn_in: [String!]
+  urn_not_in: [String!]
+  urn_contains: String
+  urn_contains_nocase: String
+  urn_not_contains: String
+  urn_not_contains_nocase: String
+  urn_starts_with: String
+  urn_starts_with_nocase: String
+  urn_not_starts_with: String
+  urn_not_starts_with_nocase: String
+  urn_ends_with: String
+  urn_ends_with_nocase: String
+  urn_not_ends_with: String
+  urn_not_ends_with_nocase: String
+  collection: String
+  collection_not: String
+  collection_gt: String
+  collection_lt: String
+  collection_gte: String
+  collection_lte: String
+  collection_in: [String!]
+  collection_not_in: [String!]
+  collection_contains: String
+  collection_contains_nocase: String
+  collection_not_contains: String
+  collection_not_contains_nocase: String
+  collection_starts_with: String
+  collection_starts_with_nocase: String
+  collection_not_starts_with: String
+  collection_not_starts_with_nocase: String
+  collection_ends_with: String
+  collection_ends_with_nocase: String
+  collection_not_ends_with: String
+  collection_not_ends_with_nocase: String
+  collection_: Collection_filter
+  item: String
+  item_not: String
+  item_gt: String
+  item_lt: String
+  item_gte: String
+  item_lte: String
+  item_in: [String!]
+  item_not_in: [String!]
+  item_contains: String
+  item_contains_nocase: String
+  item_not_contains: String
+  item_not_contains_nocase: String
+  item_starts_with: String
+  item_starts_with_nocase: String
+  item_not_starts_with: String
+  item_not_starts_with_nocase: String
+  item_ends_with: String
+  item_ends_with_nocase: String
+  item_not_ends_with: String
+  item_not_ends_with_nocase: String
+  item_: Item_filter
+  metadata: String
+  metadata_not: String
+  metadata_gt: String
+  metadata_lt: String
+  metadata_gte: String
+  metadata_lte: String
+  metadata_in: [String!]
+  metadata_not_in: [String!]
+  metadata_contains: String
+  metadata_contains_nocase: String
+  metadata_not_contains: String
+  metadata_not_contains_nocase: String
+  metadata_starts_with: String
+  metadata_starts_with_nocase: String
+  metadata_not_starts_with: String
+  metadata_not_starts_with_nocase: String
+  metadata_ends_with: String
+  metadata_ends_with_nocase: String
+  metadata_not_ends_with: String
+  metadata_not_ends_with_nocase: String
+  metadata_: Metadata_filter
+  searchItemType: String
+  searchItemType_not: String
+  searchItemType_gt: String
+  searchItemType_lt: String
+  searchItemType_gte: String
+  searchItemType_lte: String
+  searchItemType_in: [String!]
+  searchItemType_not_in: [String!]
+  searchItemType_contains: String
+  searchItemType_contains_nocase: String
+  searchItemType_not_contains: String
+  searchItemType_not_contains_nocase: String
+  searchItemType_starts_with: String
+  searchItemType_starts_with_nocase: String
+  searchItemType_not_starts_with: String
+  searchItemType_not_starts_with_nocase: String
+  searchItemType_ends_with: String
+  searchItemType_ends_with_nocase: String
+  searchItemType_not_ends_with: String
+  searchItemType_not_ends_with_nocase: String
+  searchEmoteCategory: EmoteCategory
+  searchEmoteCategory_not: EmoteCategory
+  searchEmoteCategory_in: [EmoteCategory!]
+  searchEmoteCategory_not_in: [EmoteCategory!]
+  searchEmoteLoop: Boolean
+  searchEmoteLoop_not: Boolean
+  searchEmoteLoop_in: [Boolean!]
+  searchEmoteLoop_not_in: [Boolean!]
+  searchEmoteRarity: String
+  searchEmoteRarity_not: String
+  searchEmoteRarity_gt: String
+  searchEmoteRarity_lt: String
+  searchEmoteRarity_gte: String
+  searchEmoteRarity_lte: String
+  searchEmoteRarity_in: [String!]
+  searchEmoteRarity_not_in: [String!]
+  searchEmoteRarity_contains: String
+  searchEmoteRarity_contains_nocase: String
+  searchEmoteRarity_not_contains: String
+  searchEmoteRarity_not_contains_nocase: String
+  searchEmoteRarity_starts_with: String
+  searchEmoteRarity_starts_with_nocase: String
+  searchEmoteRarity_not_starts_with: String
+  searchEmoteRarity_not_starts_with_nocase: String
+  searchEmoteRarity_ends_with: String
+  searchEmoteRarity_ends_with_nocase: String
+  searchEmoteRarity_not_ends_with: String
+  searchEmoteRarity_not_ends_with_nocase: String
+  searchEmoteBodyShapes: [WearableBodyShape!]
+  searchEmoteBodyShapes_not: [WearableBodyShape!]
+  searchEmoteBodyShapes_contains: [WearableBodyShape!]
+  searchEmoteBodyShapes_contains_nocase: [WearableBodyShape!]
+  searchEmoteBodyShapes_not_contains: [WearableBodyShape!]
+  searchEmoteBodyShapes_not_contains_nocase: [WearableBodyShape!]
+}
+
+enum NFT_orderBy {
+  id
+  tokenId
+  contractAddress
+  category
+  owner
+  owner__id
+  owner__address
+  owner__sales
+  owner__purchases
+  owner__spent
+  owner__earned
+  tokenURI
+  orders
+  bids
+  activeOrder
+  activeOrder__id
+  activeOrder__marketplaceAddress
+  activeOrder__category
+  activeOrder__nftAddress
+  activeOrder__tokenId
+  activeOrder__txHash
+  activeOrder__owner
+  activeOrder__buyer
+  activeOrder__price
+  activeOrder__status
+  activeOrder__blockNumber
+  activeOrder__expiresAt
+  activeOrder__createdAt
+  activeOrder__updatedAt
+  name
+  image
+  parcel
+  parcel__id
+  parcel__tokenId
+  parcel__x
+  parcel__y
+  parcel__rawData
+  estate
+  estate__id
+  estate__tokenId
+  estate__adjacentToRoadCount
+  estate__size
+  estate__rawData
+  wearable
+  wearable__id
+  wearable__representationId
+  wearable__collection
+  wearable__name
+  wearable__description
+  wearable__category
+  wearable__rarity
+  ens
+  ens__id
+  ens__tokenId
+  ens__caller
+  ens__beneficiary
+  ens__labelHash
+  ens__subdomain
+  ens__createdAt
+  createdAt
+  updatedAt
+  soldAt
+  transferredAt
+  sales
+  volume
+  searchOrderStatus
+  searchOrderPrice
+  searchOrderExpiresAt
+  searchOrderCreatedAt
+  searchIsLand
+  searchText
+  searchParcelIsInBounds
+  searchParcelX
+  searchParcelY
+  searchParcelEstateId
+  searchDistanceToPlaza
+  searchAdjacentToRoad
+  searchEstateSize
+  searchIsWearableHead
+  searchIsWearableAccessory
+  searchWearableRarity
+  searchWearableCategory
+  searchWearableBodyShapes
+  itemBlockchainId
+  issuedId
+  itemType
+  owner__isCommitteeMember
+  owner__totalCurations
+  owner__primarySales
+  owner__primarySalesEarned
+  owner__royalties
+  owner__uniqueAndMythicItemsTotal
+  owner__collections
+  owner__creatorsSupportedTotal
+  owner__uniqueCollectorsTotal
+  urn
+  collection
+  collection__id
+  collection__owner
+  collection__creator
+  collection__name
+  collection__symbol
+  collection__isCompleted
+  collection__isApproved
+  collection__isEditable
+  collection__urn
+  collection__itemsCount
+  collection__createdAt
+  collection__updatedAt
+  collection__reviewedAt
+  collection__firstListedAt
+  collection__searchIsStoreMinter
+  collection__searchText
+  item
+  item__id
+  item__blockchainId
+  item__creator
+  item__itemType
+  item__totalSupply
+  item__maxSupply
+  item__rarity
+  item__creationFee
+  item__available
+  item__price
+  item__beneficiary
+  item__contentHash
+  item__URI
+  item__image
+  item__rawMetadata
+  item__urn
+  item__createdAt
+  item__updatedAt
+  item__reviewedAt
+  item__soldAt
+  item__firstListedAt
+  item__sales
+  item__volume
+  item__searchText
+  item__searchItemType
+  item__searchIsCollectionApproved
+  item__searchIsStoreMinter
+  item__searchIsWearableHead
+  item__searchIsWearableAccessory
+  item__searchWearableCategory
+  item__searchWearableRarity
+  item__searchEmoteCategory
+  item__searchEmoteLoop
+  item__searchEmoteRarity
+  item__uniqueCollectorsTotal
+  metadata
+  metadata__id
+  metadata__itemType
+  searchItemType
+  searchEmoteCategory
+  searchEmoteLoop
+  searchEmoteRarity
+  searchEmoteBodyShapes
+}
+
+type Order {
+  id: ID!
+  marketplaceAddress: Bytes!
+  category: Category!
+  nft: NFT
+  nftAddress: Bytes!
+  tokenId: BigInt!
+  txHash: Bytes!
+  owner: Bytes!
+  buyer: Bytes
+  price: BigInt!
+  status: OrderStatus!
+  blockNumber: BigInt!
+  expiresAt: BigInt!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+}
+
+"""Defines the order direction, either ascending or descending"""
+enum OrderDirection {
+  asc
+  desc
+}
+
+enum OrderStatus {
+  open
+  sold
+  cancelled
+}
+
+input Order_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  marketplaceAddress: Bytes
+  marketplaceAddress_not: Bytes
+  marketplaceAddress_gt: Bytes
+  marketplaceAddress_lt: Bytes
+  marketplaceAddress_gte: Bytes
+  marketplaceAddress_lte: Bytes
+  marketplaceAddress_in: [Bytes!]
+  marketplaceAddress_not_in: [Bytes!]
+  marketplaceAddress_contains: Bytes
+  marketplaceAddress_not_contains: Bytes
+  category: Category
+  category_not: Category
+  category_in: [Category!]
+  category_not_in: [Category!]
+  nft: String
+  nft_not: String
+  nft_gt: String
+  nft_lt: String
+  nft_gte: String
+  nft_lte: String
+  nft_in: [String!]
+  nft_not_in: [String!]
+  nft_contains: String
+  nft_contains_nocase: String
+  nft_not_contains: String
+  nft_not_contains_nocase: String
+  nft_starts_with: String
+  nft_starts_with_nocase: String
+  nft_not_starts_with: String
+  nft_not_starts_with_nocase: String
+  nft_ends_with: String
+  nft_ends_with_nocase: String
+  nft_not_ends_with: String
+  nft_not_ends_with_nocase: String
+  nft_: NFT_filter
+  nftAddress: Bytes
+  nftAddress_not: Bytes
+  nftAddress_gt: Bytes
+  nftAddress_lt: Bytes
+  nftAddress_gte: Bytes
+  nftAddress_lte: Bytes
+  nftAddress_in: [Bytes!]
+  nftAddress_not_in: [Bytes!]
+  nftAddress_contains: Bytes
+  nftAddress_not_contains: Bytes
+  tokenId: BigInt
+  tokenId_not: BigInt
+  tokenId_gt: BigInt
+  tokenId_lt: BigInt
+  tokenId_gte: BigInt
+  tokenId_lte: BigInt
+  tokenId_in: [BigInt!]
+  tokenId_not_in: [BigInt!]
+  txHash: Bytes
+  txHash_not: Bytes
+  txHash_gt: Bytes
+  txHash_lt: Bytes
+  txHash_gte: Bytes
+  txHash_lte: Bytes
+  txHash_in: [Bytes!]
+  txHash_not_in: [Bytes!]
+  txHash_contains: Bytes
+  txHash_not_contains: Bytes
+  owner: Bytes
+  owner_not: Bytes
+  owner_gt: Bytes
+  owner_lt: Bytes
+  owner_gte: Bytes
+  owner_lte: Bytes
+  owner_in: [Bytes!]
+  owner_not_in: [Bytes!]
+  owner_contains: Bytes
+  owner_not_contains: Bytes
+  buyer: Bytes
+  buyer_not: Bytes
+  buyer_gt: Bytes
+  buyer_lt: Bytes
+  buyer_gte: Bytes
+  buyer_lte: Bytes
+  buyer_in: [Bytes!]
+  buyer_not_in: [Bytes!]
+  buyer_contains: Bytes
+  buyer_not_contains: Bytes
+  price: BigInt
+  price_not: BigInt
+  price_gt: BigInt
+  price_lt: BigInt
+  price_gte: BigInt
+  price_lte: BigInt
+  price_in: [BigInt!]
+  price_not_in: [BigInt!]
+  status: OrderStatus
+  status_not: OrderStatus
+  status_in: [OrderStatus!]
+  status_not_in: [OrderStatus!]
+  blockNumber: BigInt
+  blockNumber_not: BigInt
+  blockNumber_gt: BigInt
+  blockNumber_lt: BigInt
+  blockNumber_gte: BigInt
+  blockNumber_lte: BigInt
+  blockNumber_in: [BigInt!]
+  blockNumber_not_in: [BigInt!]
+  expiresAt: BigInt
+  expiresAt_not: BigInt
+  expiresAt_gt: BigInt
+  expiresAt_lt: BigInt
+  expiresAt_gte: BigInt
+  expiresAt_lte: BigInt
+  expiresAt_in: [BigInt!]
+  expiresAt_not_in: [BigInt!]
+  createdAt: BigInt
+  createdAt_not: BigInt
+  createdAt_gt: BigInt
+  createdAt_lt: BigInt
+  createdAt_gte: BigInt
+  createdAt_lte: BigInt
+  createdAt_in: [BigInt!]
+  createdAt_not_in: [BigInt!]
+  updatedAt: BigInt
+  updatedAt_not: BigInt
+  updatedAt_gt: BigInt
+  updatedAt_lt: BigInt
+  updatedAt_gte: BigInt
+  updatedAt_lte: BigInt
+  updatedAt_in: [BigInt!]
+  updatedAt_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Order_filter]
+  or: [Order_filter]
+}
+
+enum Order_orderBy {
+  id
+  marketplaceAddress
+  category
+  nft
+  nft__id
+  nft__tokenId
+  nft__contractAddress
+  nft__category
+  nft__tokenURI
+  nft__name
+  nft__image
+  nft__createdAt
+  nft__updatedAt
+  nft__soldAt
+  nft__transferredAt
+  nft__sales
+  nft__volume
+  nft__searchOrderStatus
+  nft__searchOrderPrice
+  nft__searchOrderExpiresAt
+  nft__searchOrderCreatedAt
+  nft__searchIsLand
+  nft__searchText
+  nft__searchParcelIsInBounds
+  nft__searchParcelX
+  nft__searchParcelY
+  nft__searchParcelEstateId
+  nft__searchDistanceToPlaza
+  nft__searchAdjacentToRoad
+  nft__searchEstateSize
+  nft__searchIsWearableHead
+  nft__searchIsWearableAccessory
+  nft__searchWearableRarity
+  nft__searchWearableCategory
+  nftAddress
+  tokenId
+  txHash
+  owner
+  buyer
+  price
+  status
+  blockNumber
+  expiresAt
+  createdAt
+  updatedAt
+  nft__itemBlockchainId
+  nft__issuedId
+  nft__itemType
+  nft__urn
+  nft__searchItemType
+  nft__searchEmoteCategory
+  nft__searchEmoteLoop
+  nft__searchEmoteRarity
+}
+
+type Parcel {
+  id: ID!
+  tokenId: BigInt!
+  owner: Account!
+  x: BigInt!
+  y: BigInt!
+  estate: Estate
+  data: Data
+  rawData: String
+  nft: NFT
+}
+
+input Parcel_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  tokenId: BigInt
+  tokenId_not: BigInt
+  tokenId_gt: BigInt
+  tokenId_lt: BigInt
+  tokenId_gte: BigInt
+  tokenId_lte: BigInt
+  tokenId_in: [BigInt!]
+  tokenId_not_in: [BigInt!]
+  owner: String
+  owner_not: String
+  owner_gt: String
+  owner_lt: String
+  owner_gte: String
+  owner_lte: String
+  owner_in: [String!]
+  owner_not_in: [String!]
+  owner_contains: String
+  owner_contains_nocase: String
+  owner_not_contains: String
+  owner_not_contains_nocase: String
+  owner_starts_with: String
+  owner_starts_with_nocase: String
+  owner_not_starts_with: String
+  owner_not_starts_with_nocase: String
+  owner_ends_with: String
+  owner_ends_with_nocase: String
+  owner_not_ends_with: String
+  owner_not_ends_with_nocase: String
+  owner_: Account_filter
+  x: BigInt
+  x_not: BigInt
+  x_gt: BigInt
+  x_lt: BigInt
+  x_gte: BigInt
+  x_lte: BigInt
+  x_in: [BigInt!]
+  x_not_in: [BigInt!]
+  y: BigInt
+  y_not: BigInt
+  y_gt: BigInt
+  y_lt: BigInt
+  y_gte: BigInt
+  y_lte: BigInt
+  y_in: [BigInt!]
+  y_not_in: [BigInt!]
+  estate: String
+  estate_not: String
+  estate_gt: String
+  estate_lt: String
+  estate_gte: String
+  estate_lte: String
+  estate_in: [String!]
+  estate_not_in: [String!]
+  estate_contains: String
+  estate_contains_nocase: String
+  estate_not_contains: String
+  estate_not_contains_nocase: String
+  estate_starts_with: String
+  estate_starts_with_nocase: String
+  estate_not_starts_with: String
+  estate_not_starts_with_nocase: String
+  estate_ends_with: String
+  estate_ends_with_nocase: String
+  estate_not_ends_with: String
+  estate_not_ends_with_nocase: String
+  estate_: Estate_filter
+  data: String
+  data_not: String
+  data_gt: String
+  data_lt: String
+  data_gte: String
+  data_lte: String
+  data_in: [String!]
+  data_not_in: [String!]
+  data_contains: String
+  data_contains_nocase: String
+  data_not_contains: String
+  data_not_contains_nocase: String
+  data_starts_with: String
+  data_starts_with_nocase: String
+  data_not_starts_with: String
+  data_not_starts_with_nocase: String
+  data_ends_with: String
+  data_ends_with_nocase: String
+  data_not_ends_with: String
+  data_not_ends_with_nocase: String
+  data_: Data_filter
+  rawData: String
+  rawData_not: String
+  rawData_gt: String
+  rawData_lt: String
+  rawData_gte: String
+  rawData_lte: String
+  rawData_in: [String!]
+  rawData_not_in: [String!]
+  rawData_contains: String
+  rawData_contains_nocase: String
+  rawData_not_contains: String
+  rawData_not_contains_nocase: String
+  rawData_starts_with: String
+  rawData_starts_with_nocase: String
+  rawData_not_starts_with: String
+  rawData_not_starts_with_nocase: String
+  rawData_ends_with: String
+  rawData_ends_with_nocase: String
+  rawData_not_ends_with: String
+  rawData_not_ends_with_nocase: String
+  nft_: NFT_filter
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Parcel_filter]
+  or: [Parcel_filter]
+}
+
+enum Parcel_orderBy {
+  id
+  tokenId
+  owner
+  owner__id
+  owner__address
+  owner__sales
+  owner__purchases
+  owner__spent
+  owner__earned
+  x
+  y
+  estate
+  estate__id
+  estate__tokenId
+  estate__adjacentToRoadCount
+  estate__size
+  estate__rawData
+  data
+  data__id
+  data__version
+  data__name
+  data__description
+  data__ipns
+  rawData
+  nft
+  nft__id
+  nft__tokenId
+  nft__contractAddress
+  nft__category
+  nft__tokenURI
+  nft__name
+  nft__image
+  nft__createdAt
+  nft__updatedAt
+  nft__soldAt
+  nft__transferredAt
+  nft__sales
+  nft__volume
+  nft__searchOrderStatus
+  nft__searchOrderPrice
+  nft__searchOrderExpiresAt
+  nft__searchOrderCreatedAt
+  nft__searchIsLand
+  nft__searchText
+  nft__searchParcelIsInBounds
+  nft__searchParcelX
+  nft__searchParcelY
+  nft__searchParcelEstateId
+  nft__searchDistanceToPlaza
+  nft__searchAdjacentToRoad
+  nft__searchEstateSize
+  nft__searchIsWearableHead
+  nft__searchIsWearableAccessory
+  nft__searchWearableRarity
+  nft__searchWearableCategory
+}
+
+type Sale {
+  id: ID!
+  type: SaleType!
+  buyer: Bytes!
+  seller: Bytes!
+  price: BigInt!
+  nft: NFT!
+  timestamp: BigInt!
+  txHash: Bytes!
+  searchTokenId: BigInt!
+  searchContractAddress: String!
+  searchCategory: String!
+  beneficiary: Bytes!
+  feesCollectorCut: BigInt!
+  feesCollector: Bytes!
+  royaltiesCut: BigInt!
+  royaltiesCollector: Bytes!
+  item: Item!
+  searchItemId: BigInt!
+}
+
+enum SaleType {
+  bid
+  order
+  mint
+}
+
+input Sale_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  type: SaleType
+  type_not: SaleType
+  type_in: [SaleType!]
+  type_not_in: [SaleType!]
+  buyer: Bytes
+  buyer_not: Bytes
+  buyer_gt: Bytes
+  buyer_lt: Bytes
+  buyer_gte: Bytes
+  buyer_lte: Bytes
+  buyer_in: [Bytes!]
+  buyer_not_in: [Bytes!]
+  buyer_contains: Bytes
+  buyer_not_contains: Bytes
+  seller: Bytes
+  seller_not: Bytes
+  seller_gt: Bytes
+  seller_lt: Bytes
+  seller_gte: Bytes
+  seller_lte: Bytes
+  seller_in: [Bytes!]
+  seller_not_in: [Bytes!]
+  seller_contains: Bytes
+  seller_not_contains: Bytes
+  price: BigInt
+  price_not: BigInt
+  price_gt: BigInt
+  price_lt: BigInt
+  price_gte: BigInt
+  price_lte: BigInt
+  price_in: [BigInt!]
+  price_not_in: [BigInt!]
+  nft: String
+  nft_not: String
+  nft_gt: String
+  nft_lt: String
+  nft_gte: String
+  nft_lte: String
+  nft_in: [String!]
+  nft_not_in: [String!]
+  nft_contains: String
+  nft_contains_nocase: String
+  nft_not_contains: String
+  nft_not_contains_nocase: String
+  nft_starts_with: String
+  nft_starts_with_nocase: String
+  nft_not_starts_with: String
+  nft_not_starts_with_nocase: String
+  nft_ends_with: String
+  nft_ends_with_nocase: String
+  nft_not_ends_with: String
+  nft_not_ends_with_nocase: String
+  nft_: NFT_filter
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  txHash: Bytes
+  txHash_not: Bytes
+  txHash_gt: Bytes
+  txHash_lt: Bytes
+  txHash_gte: Bytes
+  txHash_lte: Bytes
+  txHash_in: [Bytes!]
+  txHash_not_in: [Bytes!]
+  txHash_contains: Bytes
+  txHash_not_contains: Bytes
+  searchTokenId: BigInt
+  searchTokenId_not: BigInt
+  searchTokenId_gt: BigInt
+  searchTokenId_lt: BigInt
+  searchTokenId_gte: BigInt
+  searchTokenId_lte: BigInt
+  searchTokenId_in: [BigInt!]
+  searchTokenId_not_in: [BigInt!]
+  searchContractAddress: String
+  searchContractAddress_not: String
+  searchContractAddress_gt: String
+  searchContractAddress_lt: String
+  searchContractAddress_gte: String
+  searchContractAddress_lte: String
+  searchContractAddress_in: [String!]
+  searchContractAddress_not_in: [String!]
+  searchContractAddress_contains: String
+  searchContractAddress_not_contains: String
+  searchCategory: String
+  searchCategory_not: String
+  searchCategory_gt: String
+  searchCategory_lt: String
+  searchCategory_gte: String
+  searchCategory_lte: String
+  searchCategory_in: [String!]
+  searchCategory_not_in: [String!]
+  searchCategory_contains: String
+  searchCategory_contains_nocase: String
+  searchCategory_not_contains: String
+  searchCategory_not_contains_nocase: String
+  searchCategory_starts_with: String
+  searchCategory_starts_with_nocase: String
+  searchCategory_not_starts_with: String
+  searchCategory_not_starts_with_nocase: String
+  searchCategory_ends_with: String
+  searchCategory_ends_with_nocase: String
+  searchCategory_not_ends_with: String
+  searchCategory_not_ends_with_nocase: String
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Sale_filter]
+  or: [Sale_filter]
+  beneficiary: Bytes
+  beneficiary_not: Bytes
+  beneficiary_gt: Bytes
+  beneficiary_lt: Bytes
+  beneficiary_gte: Bytes
+  beneficiary_lte: Bytes
+  beneficiary_in: [Bytes!]
+  beneficiary_not_in: [Bytes!]
+  beneficiary_contains: Bytes
+  beneficiary_not_contains: Bytes
+  feesCollectorCut: BigInt
+  feesCollectorCut_not: BigInt
+  feesCollectorCut_gt: BigInt
+  feesCollectorCut_lt: BigInt
+  feesCollectorCut_gte: BigInt
+  feesCollectorCut_lte: BigInt
+  feesCollectorCut_in: [BigInt!]
+  feesCollectorCut_not_in: [BigInt!]
+  feesCollector: Bytes
+  feesCollector_not: Bytes
+  feesCollector_gt: Bytes
+  feesCollector_lt: Bytes
+  feesCollector_gte: Bytes
+  feesCollector_lte: Bytes
+  feesCollector_in: [Bytes!]
+  feesCollector_not_in: [Bytes!]
+  feesCollector_contains: Bytes
+  feesCollector_not_contains: Bytes
+  royaltiesCut: BigInt
+  royaltiesCut_not: BigInt
+  royaltiesCut_gt: BigInt
+  royaltiesCut_lt: BigInt
+  royaltiesCut_gte: BigInt
+  royaltiesCut_lte: BigInt
+  royaltiesCut_in: [BigInt!]
+  royaltiesCut_not_in: [BigInt!]
+  royaltiesCollector: Bytes
+  royaltiesCollector_not: Bytes
+  royaltiesCollector_gt: Bytes
+  royaltiesCollector_lt: Bytes
+  royaltiesCollector_gte: Bytes
+  royaltiesCollector_lte: Bytes
+  royaltiesCollector_in: [Bytes!]
+  royaltiesCollector_not_in: [Bytes!]
+  royaltiesCollector_contains: Bytes
+  royaltiesCollector_not_contains: Bytes
+  item: String
+  item_not: String
+  item_gt: String
+  item_lt: String
+  item_gte: String
+  item_lte: String
+  item_in: [String!]
+  item_not_in: [String!]
+  item_contains: String
+  item_contains_nocase: String
+  item_not_contains: String
+  item_not_contains_nocase: String
+  item_starts_with: String
+  item_starts_with_nocase: String
+  item_not_starts_with: String
+  item_not_starts_with_nocase: String
+  item_ends_with: String
+  item_ends_with_nocase: String
+  item_not_ends_with: String
+  item_not_ends_with_nocase: String
+  item_: Item_filter
+  searchItemId: BigInt
+  searchItemId_not: BigInt
+  searchItemId_gt: BigInt
+  searchItemId_lt: BigInt
+  searchItemId_gte: BigInt
+  searchItemId_lte: BigInt
+  searchItemId_in: [BigInt!]
+  searchItemId_not_in: [BigInt!]
+  searchContractAddress_contains_nocase: String
+  searchContractAddress_not_contains_nocase: String
+  searchContractAddress_starts_with: String
+  searchContractAddress_starts_with_nocase: String
+  searchContractAddress_not_starts_with: String
+  searchContractAddress_not_starts_with_nocase: String
+  searchContractAddress_ends_with: String
+  searchContractAddress_ends_with_nocase: String
+  searchContractAddress_not_ends_with: String
+  searchContractAddress_not_ends_with_nocase: String
+}
+
+enum Sale_orderBy {
+  id
+  type
+  buyer
+  seller
+  price
+  nft
+  nft__id
+  nft__tokenId
+  nft__contractAddress
+  nft__category
+  nft__tokenURI
+  nft__name
+  nft__image
+  nft__createdAt
+  nft__updatedAt
+  nft__soldAt
+  nft__transferredAt
+  nft__sales
+  nft__volume
+  nft__searchOrderStatus
+  nft__searchOrderPrice
+  nft__searchOrderExpiresAt
+  nft__searchOrderCreatedAt
+  nft__searchIsLand
+  nft__searchText
+  nft__searchParcelIsInBounds
+  nft__searchParcelX
+  nft__searchParcelY
+  nft__searchParcelEstateId
+  nft__searchDistanceToPlaza
+  nft__searchAdjacentToRoad
+  nft__searchEstateSize
+  nft__searchIsWearableHead
+  nft__searchIsWearableAccessory
+  nft__searchWearableRarity
+  nft__searchWearableCategory
+  timestamp
+  txHash
+  searchTokenId
+  searchContractAddress
+  searchCategory
+  beneficiary
+  feesCollectorCut
+  feesCollector
+  royaltiesCut
+  royaltiesCollector
+  item
+  item__id
+  item__blockchainId
+  item__creator
+  item__itemType
+  item__totalSupply
+  item__maxSupply
+  item__rarity
+  item__creationFee
+  item__available
+  item__price
+  item__beneficiary
+  item__contentHash
+  item__URI
+  item__image
+  item__rawMetadata
+  item__urn
+  item__createdAt
+  item__updatedAt
+  item__reviewedAt
+  item__soldAt
+  item__firstListedAt
+  item__sales
+  item__volume
+  item__searchText
+  item__searchItemType
+  item__searchIsCollectionApproved
+  item__searchIsStoreMinter
+  item__searchIsWearableHead
+  item__searchIsWearableAccessory
+  item__searchWearableCategory
+  item__searchWearableRarity
+  item__searchEmoteCategory
+  item__searchEmoteLoop
+  item__searchEmoteRarity
+  item__uniqueCollectorsTotal
+  nft__itemBlockchainId
+  nft__issuedId
+  nft__itemType
+  nft__urn
+  nft__searchItemType
+  nft__searchEmoteCategory
+  nft__searchEmoteLoop
+  nft__searchEmoteRarity
+  searchItemId
+}
+
+type Wearable {
+  id: ID!
+  owner: Account!
+  representationId: String!
+  collection: String!
+  name: String!
+  description: String!
+  category: WearableCategory!
+  rarity: WearableRarity!
+  bodyShapes: [WearableBodyShape!]
+  nft: NFT
+}
+
+enum WearableBodyShape {
+  BaseFemale
+  BaseMale
+}
+
+enum WearableCategory {
+  eyebrows
+  eyes
+  facial_hair
+  hair
+  mouth
+  upper_body
+  lower_body
+  feet
+  earring
+  eyewear
+  hat
+  helmet
+  mask
+  tiara
+  top_head
+  skin
+}
+
+enum WearableRarity {
+  common
+  uncommon
+  rare
+  epic
+  legendary
+  mythic
+  unique
+}
+
+input Wearable_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  owner: String
+  owner_not: String
+  owner_gt: String
+  owner_lt: String
+  owner_gte: String
+  owner_lte: String
+  owner_in: [String!]
+  owner_not_in: [String!]
+  owner_contains: String
+  owner_contains_nocase: String
+  owner_not_contains: String
+  owner_not_contains_nocase: String
+  owner_starts_with: String
+  owner_starts_with_nocase: String
+  owner_not_starts_with: String
+  owner_not_starts_with_nocase: String
+  owner_ends_with: String
+  owner_ends_with_nocase: String
+  owner_not_ends_with: String
+  owner_not_ends_with_nocase: String
+  owner_: Account_filter
+  representationId: String
+  representationId_not: String
+  representationId_gt: String
+  representationId_lt: String
+  representationId_gte: String
+  representationId_lte: String
+  representationId_in: [String!]
+  representationId_not_in: [String!]
+  representationId_contains: String
+  representationId_contains_nocase: String
+  representationId_not_contains: String
+  representationId_not_contains_nocase: String
+  representationId_starts_with: String
+  representationId_starts_with_nocase: String
+  representationId_not_starts_with: String
+  representationId_not_starts_with_nocase: String
+  representationId_ends_with: String
+  representationId_ends_with_nocase: String
+  representationId_not_ends_with: String
+  representationId_not_ends_with_nocase: String
+  collection: String
+  collection_not: String
+  collection_gt: String
+  collection_lt: String
+  collection_gte: String
+  collection_lte: String
+  collection_in: [String!]
+  collection_not_in: [String!]
+  collection_contains: String
+  collection_contains_nocase: String
+  collection_not_contains: String
+  collection_not_contains_nocase: String
+  collection_starts_with: String
+  collection_starts_with_nocase: String
+  collection_not_starts_with: String
+  collection_not_starts_with_nocase: String
+  collection_ends_with: String
+  collection_ends_with_nocase: String
+  collection_not_ends_with: String
+  collection_not_ends_with_nocase: String
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_contains_nocase: String
+  name_not_contains: String
+  name_not_contains_nocase: String
+  name_starts_with: String
+  name_starts_with_nocase: String
+  name_not_starts_with: String
+  name_not_starts_with_nocase: String
+  name_ends_with: String
+  name_ends_with_nocase: String
+  name_not_ends_with: String
+  name_not_ends_with_nocase: String
+  description: String
+  description_not: String
+  description_gt: String
+  description_lt: String
+  description_gte: String
+  description_lte: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_contains: String
+  description_contains_nocase: String
+  description_not_contains: String
+  description_not_contains_nocase: String
+  description_starts_with: String
+  description_starts_with_nocase: String
+  description_not_starts_with: String
+  description_not_starts_with_nocase: String
+  description_ends_with: String
+  description_ends_with_nocase: String
+  description_not_ends_with: String
+  description_not_ends_with_nocase: String
+  category: WearableCategory
+  category_not: WearableCategory
+  category_in: [WearableCategory!]
+  category_not_in: [WearableCategory!]
+  rarity: WearableRarity
+  rarity_not: WearableRarity
+  rarity_in: [WearableRarity!]
+  rarity_not_in: [WearableRarity!]
+  bodyShapes: [WearableBodyShape!]
+  bodyShapes_not: [WearableBodyShape!]
+  bodyShapes_contains: [WearableBodyShape!]
+  bodyShapes_contains_nocase: [WearableBodyShape!]
+  bodyShapes_not_contains: [WearableBodyShape!]
+  bodyShapes_not_contains_nocase: [WearableBodyShape!]
+  nft_: NFT_filter
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Wearable_filter]
+  or: [Wearable_filter]
+}
+
+enum Wearable_orderBy {
+  id
+  owner
+  owner__id
+  owner__address
+  owner__sales
+  owner__purchases
+  owner__spent
+  owner__earned
+  representationId
+  collection
+  name
+  description
+  category
+  rarity
+  bodyShapes
+  nft
+  nft__id
+  nft__tokenId
+  nft__contractAddress
+  nft__category
+  nft__tokenURI
+  nft__name
+  nft__image
+  nft__createdAt
+  nft__updatedAt
+  nft__soldAt
+  nft__transferredAt
+  nft__sales
+  nft__volume
+  nft__searchOrderStatus
+  nft__searchOrderPrice
+  nft__searchOrderExpiresAt
+  nft__searchOrderCreatedAt
+  nft__searchIsLand
+  nft__searchText
+  nft__searchParcelIsInBounds
+  nft__searchParcelX
+  nft__searchParcelY
+  nft__searchParcelEstateId
+  nft__searchDistanceToPlaza
+  nft__searchAdjacentToRoad
+  nft__searchEstateSize
+  nft__searchIsWearableHead
+  nft__searchIsWearableAccessory
+  nft__searchWearableRarity
+  nft__searchWearableCategory
+}
+
+type _Block_ {
+  """The hash of the block"""
+  hash: Bytes
+  """The block number"""
+  number: Int!
+  """Integer representation of the timestamp stored in blocks for the chain"""
+  timestamp: Int
+}
+
+"""The type for the top-level _meta field"""
+type _Meta_ {
+  """
+  Information about a specific subgraph block. The hash of the block
+  will be null if the _meta field has a block constraint that asks for
+  a block number. It will be filled if the _meta field has no block constraint
+  and therefore asks for the latest  block
+  
+  """
+  block: _Block_!
+  """The deployment ID"""
+  deployment: String!
+  """If `true`, the subgraph encountered indexing errors at some past block"""
+  hasIndexingErrors: Boolean!
+}
+
+enum _SubgraphErrorPolicy_ {
+  """Data will be returned even if the subgraph has indexing errors"""
+  allow
+  """
+  If the subgraph has indexing errors, data will be omitted. The default.
+  """
+  deny
+}
+
+type AccountsDayData {
+  id: ID!
+  date: Int!
+  sales: Int!
+  purchases: Int!
+  earned: BigInt!
+  spent: BigInt!
+  uniqueCollectionsSales: [String!]!
+  uniqueCollectors: [String!]!
+  uniqueCollectorsTotal: Int!
+  uniqueAndMythicItems: [ID!]!
+  uniqueAndMythicItemsTotal: Int!
+  creatorsSupported: [String!]!
+  creatorsSupportedTotal: Int!
+}
+
+input AccountsDayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  sales: Int
+  sales_not: Int
+  sales_gt: Int
+  sales_lt: Int
+  sales_gte: Int
+  sales_lte: Int
+  sales_in: [Int!]
+  sales_not_in: [Int!]
+  purchases: Int
+  purchases_not: Int
+  purchases_gt: Int
+  purchases_lt: Int
+  purchases_gte: Int
+  purchases_lte: Int
+  purchases_in: [Int!]
+  purchases_not_in: [Int!]
+  earned: BigInt
+  earned_not: BigInt
+  earned_gt: BigInt
+  earned_lt: BigInt
+  earned_gte: BigInt
+  earned_lte: BigInt
+  earned_in: [BigInt!]
+  earned_not_in: [BigInt!]
+  spent: BigInt
+  spent_not: BigInt
+  spent_gt: BigInt
+  spent_lt: BigInt
+  spent_gte: BigInt
+  spent_lte: BigInt
+  spent_in: [BigInt!]
+  spent_not_in: [BigInt!]
+  uniqueCollectionsSales: [String!]
+  uniqueCollectionsSales_not: [String!]
+  uniqueCollectionsSales_contains: [String!]
+  uniqueCollectionsSales_contains_nocase: [String!]
+  uniqueCollectionsSales_not_contains: [String!]
+  uniqueCollectionsSales_not_contains_nocase: [String!]
+  uniqueCollectors: [String!]
+  uniqueCollectors_not: [String!]
+  uniqueCollectors_contains: [String!]
+  uniqueCollectors_contains_nocase: [String!]
+  uniqueCollectors_not_contains: [String!]
+  uniqueCollectors_not_contains_nocase: [String!]
+  uniqueCollectorsTotal: Int
+  uniqueCollectorsTotal_not: Int
+  uniqueCollectorsTotal_gt: Int
+  uniqueCollectorsTotal_lt: Int
+  uniqueCollectorsTotal_gte: Int
+  uniqueCollectorsTotal_lte: Int
+  uniqueCollectorsTotal_in: [Int!]
+  uniqueCollectorsTotal_not_in: [Int!]
+  uniqueAndMythicItems: [ID!]
+  uniqueAndMythicItems_not: [ID!]
+  uniqueAndMythicItems_contains: [ID!]
+  uniqueAndMythicItems_contains_nocase: [ID!]
+  uniqueAndMythicItems_not_contains: [ID!]
+  uniqueAndMythicItems_not_contains_nocase: [ID!]
+  uniqueAndMythicItemsTotal: Int
+  uniqueAndMythicItemsTotal_not: Int
+  uniqueAndMythicItemsTotal_gt: Int
+  uniqueAndMythicItemsTotal_lt: Int
+  uniqueAndMythicItemsTotal_gte: Int
+  uniqueAndMythicItemsTotal_lte: Int
+  uniqueAndMythicItemsTotal_in: [Int!]
+  uniqueAndMythicItemsTotal_not_in: [Int!]
+  creatorsSupported: [String!]
+  creatorsSupported_not: [String!]
+  creatorsSupported_contains: [String!]
+  creatorsSupported_contains_nocase: [String!]
+  creatorsSupported_not_contains: [String!]
+  creatorsSupported_not_contains_nocase: [String!]
+  creatorsSupportedTotal: Int
+  creatorsSupportedTotal_not: Int
+  creatorsSupportedTotal_gt: Int
+  creatorsSupportedTotal_lt: Int
+  creatorsSupportedTotal_gte: Int
+  creatorsSupportedTotal_lte: Int
+  creatorsSupportedTotal_in: [Int!]
+  creatorsSupportedTotal_not_in: [Int!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [AccountsDayData_filter]
+  or: [AccountsDayData_filter]
+}
+
+enum AccountsDayData_orderBy {
+  id
+  date
+  sales
+  purchases
+  earned
+  spent
+  uniqueCollectionsSales
+  uniqueCollectors
+  uniqueCollectorsTotal
+  uniqueAndMythicItems
+  uniqueAndMythicItemsTotal
+  creatorsSupported
+  creatorsSupportedTotal
+}
+
+type Collection {
+  id: ID!
+  items(skip: Int = 0, first: Int = 100, orderBy: Item_orderBy, orderDirection: OrderDirection, where: Item_filter): [Item!]
+  owner: String!
+  creator: String!
+  name: String!
+  symbol: String!
+  isCompleted: Boolean
+  isApproved: Boolean
+  isEditable: Boolean
+  minters: [String!]!
+  managers: [String!]!
+  urn: String!
+  itemsCount: Int!
+  createdAt: BigInt!
+  updatedAt: BigInt!
+  reviewedAt: BigInt!
+  firstListedAt: BigInt
+  searchIsStoreMinter: Boolean!
+  searchText: String!
+}
+
+input Collection_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  items_: Item_filter
+  owner: String
+  owner_not: String
+  owner_gt: String
+  owner_lt: String
+  owner_gte: String
+  owner_lte: String
+  owner_in: [String!]
+  owner_not_in: [String!]
+  owner_contains: String
+  owner_contains_nocase: String
+  owner_not_contains: String
+  owner_not_contains_nocase: String
+  owner_starts_with: String
+  owner_starts_with_nocase: String
+  owner_not_starts_with: String
+  owner_not_starts_with_nocase: String
+  owner_ends_with: String
+  owner_ends_with_nocase: String
+  owner_not_ends_with: String
+  owner_not_ends_with_nocase: String
+  creator: String
+  creator_not: String
+  creator_gt: String
+  creator_lt: String
+  creator_gte: String
+  creator_lte: String
+  creator_in: [String!]
+  creator_not_in: [String!]
+  creator_contains: String
+  creator_contains_nocase: String
+  creator_not_contains: String
+  creator_not_contains_nocase: String
+  creator_starts_with: String
+  creator_starts_with_nocase: String
+  creator_not_starts_with: String
+  creator_not_starts_with_nocase: String
+  creator_ends_with: String
+  creator_ends_with_nocase: String
+  creator_not_ends_with: String
+  creator_not_ends_with_nocase: String
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_contains_nocase: String
+  name_not_contains: String
+  name_not_contains_nocase: String
+  name_starts_with: String
+  name_starts_with_nocase: String
+  name_not_starts_with: String
+  name_not_starts_with_nocase: String
+  name_ends_with: String
+  name_ends_with_nocase: String
+  name_not_ends_with: String
+  name_not_ends_with_nocase: String
+  symbol: String
+  symbol_not: String
+  symbol_gt: String
+  symbol_lt: String
+  symbol_gte: String
+  symbol_lte: String
+  symbol_in: [String!]
+  symbol_not_in: [String!]
+  symbol_contains: String
+  symbol_contains_nocase: String
+  symbol_not_contains: String
+  symbol_not_contains_nocase: String
+  symbol_starts_with: String
+  symbol_starts_with_nocase: String
+  symbol_not_starts_with: String
+  symbol_not_starts_with_nocase: String
+  symbol_ends_with: String
+  symbol_ends_with_nocase: String
+  symbol_not_ends_with: String
+  symbol_not_ends_with_nocase: String
+  isCompleted: Boolean
+  isCompleted_not: Boolean
+  isCompleted_in: [Boolean!]
+  isCompleted_not_in: [Boolean!]
+  isApproved: Boolean
+  isApproved_not: Boolean
+  isApproved_in: [Boolean!]
+  isApproved_not_in: [Boolean!]
+  isEditable: Boolean
+  isEditable_not: Boolean
+  isEditable_in: [Boolean!]
+  isEditable_not_in: [Boolean!]
+  minters: [String!]
+  minters_not: [String!]
+  minters_contains: [String!]
+  minters_contains_nocase: [String!]
+  minters_not_contains: [String!]
+  minters_not_contains_nocase: [String!]
+  managers: [String!]
+  managers_not: [String!]
+  managers_contains: [String!]
+  managers_contains_nocase: [String!]
+  managers_not_contains: [String!]
+  managers_not_contains_nocase: [String!]
+  urn: String
+  urn_not: String
+  urn_gt: String
+  urn_lt: String
+  urn_gte: String
+  urn_lte: String
+  urn_in: [String!]
+  urn_not_in: [String!]
+  urn_contains: String
+  urn_contains_nocase: String
+  urn_not_contains: String
+  urn_not_contains_nocase: String
+  urn_starts_with: String
+  urn_starts_with_nocase: String
+  urn_not_starts_with: String
+  urn_not_starts_with_nocase: String
+  urn_ends_with: String
+  urn_ends_with_nocase: String
+  urn_not_ends_with: String
+  urn_not_ends_with_nocase: String
+  itemsCount: Int
+  itemsCount_not: Int
+  itemsCount_gt: Int
+  itemsCount_lt: Int
+  itemsCount_gte: Int
+  itemsCount_lte: Int
+  itemsCount_in: [Int!]
+  itemsCount_not_in: [Int!]
+  createdAt: BigInt
+  createdAt_not: BigInt
+  createdAt_gt: BigInt
+  createdAt_lt: BigInt
+  createdAt_gte: BigInt
+  createdAt_lte: BigInt
+  createdAt_in: [BigInt!]
+  createdAt_not_in: [BigInt!]
+  updatedAt: BigInt
+  updatedAt_not: BigInt
+  updatedAt_gt: BigInt
+  updatedAt_lt: BigInt
+  updatedAt_gte: BigInt
+  updatedAt_lte: BigInt
+  updatedAt_in: [BigInt!]
+  updatedAt_not_in: [BigInt!]
+  reviewedAt: BigInt
+  reviewedAt_not: BigInt
+  reviewedAt_gt: BigInt
+  reviewedAt_lt: BigInt
+  reviewedAt_gte: BigInt
+  reviewedAt_lte: BigInt
+  reviewedAt_in: [BigInt!]
+  reviewedAt_not_in: [BigInt!]
+  firstListedAt: BigInt
+  firstListedAt_not: BigInt
+  firstListedAt_gt: BigInt
+  firstListedAt_lt: BigInt
+  firstListedAt_gte: BigInt
+  firstListedAt_lte: BigInt
+  firstListedAt_in: [BigInt!]
+  firstListedAt_not_in: [BigInt!]
+  searchIsStoreMinter: Boolean
+  searchIsStoreMinter_not: Boolean
+  searchIsStoreMinter_in: [Boolean!]
+  searchIsStoreMinter_not_in: [Boolean!]
+  searchText: String
+  searchText_not: String
+  searchText_gt: String
+  searchText_lt: String
+  searchText_gte: String
+  searchText_lte: String
+  searchText_in: [String!]
+  searchText_not_in: [String!]
+  searchText_contains: String
+  searchText_contains_nocase: String
+  searchText_not_contains: String
+  searchText_not_contains_nocase: String
+  searchText_starts_with: String
+  searchText_starts_with_nocase: String
+  searchText_not_starts_with: String
+  searchText_not_starts_with_nocase: String
+  searchText_ends_with: String
+  searchText_ends_with_nocase: String
+  searchText_not_ends_with: String
+  searchText_not_ends_with_nocase: String
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Collection_filter]
+  or: [Collection_filter]
+}
+
+enum Collection_orderBy {
+  id
+  items
+  owner
+  creator
+  name
+  symbol
+  isCompleted
+  isApproved
+  isEditable
+  minters
+  managers
+  urn
+  itemsCount
+  createdAt
+  updatedAt
+  reviewedAt
+  firstListedAt
+  searchIsStoreMinter
+  searchText
+}
+
+type Curation {
+  id: ID!
+  txHash: Bytes!
+  curator: Account!
+  collection: Collection!
+  item: Item
+  isApproved: Boolean!
+  timestamp: BigInt!
+}
+
+input Curation_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  txHash: Bytes
+  txHash_not: Bytes
+  txHash_gt: Bytes
+  txHash_lt: Bytes
+  txHash_gte: Bytes
+  txHash_lte: Bytes
+  txHash_in: [Bytes!]
+  txHash_not_in: [Bytes!]
+  txHash_contains: Bytes
+  txHash_not_contains: Bytes
+  curator: String
+  curator_not: String
+  curator_gt: String
+  curator_lt: String
+  curator_gte: String
+  curator_lte: String
+  curator_in: [String!]
+  curator_not_in: [String!]
+  curator_contains: String
+  curator_contains_nocase: String
+  curator_not_contains: String
+  curator_not_contains_nocase: String
+  curator_starts_with: String
+  curator_starts_with_nocase: String
+  curator_not_starts_with: String
+  curator_not_starts_with_nocase: String
+  curator_ends_with: String
+  curator_ends_with_nocase: String
+  curator_not_ends_with: String
+  curator_not_ends_with_nocase: String
+  curator_: Account_filter
+  collection: String
+  collection_not: String
+  collection_gt: String
+  collection_lt: String
+  collection_gte: String
+  collection_lte: String
+  collection_in: [String!]
+  collection_not_in: [String!]
+  collection_contains: String
+  collection_contains_nocase: String
+  collection_not_contains: String
+  collection_not_contains_nocase: String
+  collection_starts_with: String
+  collection_starts_with_nocase: String
+  collection_not_starts_with: String
+  collection_not_starts_with_nocase: String
+  collection_ends_with: String
+  collection_ends_with_nocase: String
+  collection_not_ends_with: String
+  collection_not_ends_with_nocase: String
+  collection_: Collection_filter
+  item: String
+  item_not: String
+  item_gt: String
+  item_lt: String
+  item_gte: String
+  item_lte: String
+  item_in: [String!]
+  item_not_in: [String!]
+  item_contains: String
+  item_contains_nocase: String
+  item_not_contains: String
+  item_not_contains_nocase: String
+  item_starts_with: String
+  item_starts_with_nocase: String
+  item_not_starts_with: String
+  item_not_starts_with_nocase: String
+  item_ends_with: String
+  item_ends_with_nocase: String
+  item_not_ends_with: String
+  item_not_ends_with_nocase: String
+  item_: Item_filter
+  isApproved: Boolean
+  isApproved_not: Boolean
+  isApproved_in: [Boolean!]
+  isApproved_not_in: [Boolean!]
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Curation_filter]
+  or: [Curation_filter]
+}
+
+enum Curation_orderBy {
+  id
+  txHash
+  curator
+  curator__id
+  curator__address
+  curator__isCommitteeMember
+  curator__totalCurations
+  curator__sales
+  curator__primarySales
+  curator__purchases
+  curator__spent
+  curator__earned
+  curator__primarySalesEarned
+  curator__royalties
+  curator__uniqueAndMythicItemsTotal
+  curator__collections
+  curator__creatorsSupportedTotal
+  curator__uniqueCollectorsTotal
+  collection
+  collection__id
+  collection__owner
+  collection__creator
+  collection__name
+  collection__symbol
+  collection__isCompleted
+  collection__isApproved
+  collection__isEditable
+  collection__urn
+  collection__itemsCount
+  collection__createdAt
+  collection__updatedAt
+  collection__reviewedAt
+  collection__firstListedAt
+  collection__searchIsStoreMinter
+  collection__searchText
+  item
+  item__id
+  item__blockchainId
+  item__creator
+  item__itemType
+  item__totalSupply
+  item__maxSupply
+  item__rarity
+  item__creationFee
+  item__available
+  item__price
+  item__beneficiary
+  item__contentHash
+  item__URI
+  item__image
+  item__rawMetadata
+  item__urn
+  item__createdAt
+  item__updatedAt
+  item__reviewedAt
+  item__soldAt
+  item__firstListedAt
+  item__sales
+  item__volume
+  item__searchText
+  item__searchItemType
+  item__searchIsCollectionApproved
+  item__searchIsStoreMinter
+  item__searchIsWearableHead
+  item__searchIsWearableAccessory
+  item__searchWearableCategory
+  item__searchWearableRarity
+  item__searchEmoteCategory
+  item__searchEmoteLoop
+  item__searchEmoteRarity
+  item__uniqueCollectorsTotal
+  isApproved
+  timestamp
+}
+
+enum Currency {
+  MANA
+  USD
+}
+
+type Emote {
+  id: ID!
+  name: String!
+  description: String!
+  collection: String!
+  category: EmoteCategory!
+  loop: Boolean!
+  rarity: WearableRarity!
+  bodyShapes: [WearableBodyShape!]
+}
+
+enum EmoteCategory {
+  dance
+  stunt
+  greetings
+  fun
+  poses
+  reactions
+  horror
+  miscellaneous
+}
+
+input Emote_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_contains_nocase: String
+  name_not_contains: String
+  name_not_contains_nocase: String
+  name_starts_with: String
+  name_starts_with_nocase: String
+  name_not_starts_with: String
+  name_not_starts_with_nocase: String
+  name_ends_with: String
+  name_ends_with_nocase: String
+  name_not_ends_with: String
+  name_not_ends_with_nocase: String
+  description: String
+  description_not: String
+  description_gt: String
+  description_lt: String
+  description_gte: String
+  description_lte: String
+  description_in: [String!]
+  description_not_in: [String!]
+  description_contains: String
+  description_contains_nocase: String
+  description_not_contains: String
+  description_not_contains_nocase: String
+  description_starts_with: String
+  description_starts_with_nocase: String
+  description_not_starts_with: String
+  description_not_starts_with_nocase: String
+  description_ends_with: String
+  description_ends_with_nocase: String
+  description_not_ends_with: String
+  description_not_ends_with_nocase: String
+  collection: String
+  collection_not: String
+  collection_gt: String
+  collection_lt: String
+  collection_gte: String
+  collection_lte: String
+  collection_in: [String!]
+  collection_not_in: [String!]
+  collection_contains: String
+  collection_contains_nocase: String
+  collection_not_contains: String
+  collection_not_contains_nocase: String
+  collection_starts_with: String
+  collection_starts_with_nocase: String
+  collection_not_starts_with: String
+  collection_not_starts_with_nocase: String
+  collection_ends_with: String
+  collection_ends_with_nocase: String
+  collection_not_ends_with: String
+  collection_not_ends_with_nocase: String
+  category: EmoteCategory
+  category_not: EmoteCategory
+  category_in: [EmoteCategory!]
+  category_not_in: [EmoteCategory!]
+  loop: Boolean
+  loop_not: Boolean
+  loop_in: [Boolean!]
+  loop_not_in: [Boolean!]
+  rarity: WearableRarity
+  rarity_not: WearableRarity
+  rarity_in: [WearableRarity!]
+  rarity_not_in: [WearableRarity!]
+  bodyShapes: [WearableBodyShape!]
+  bodyShapes_not: [WearableBodyShape!]
+  bodyShapes_contains: [WearableBodyShape!]
+  bodyShapes_contains_nocase: [WearableBodyShape!]
+  bodyShapes_not_contains: [WearableBodyShape!]
+  bodyShapes_not_contains_nocase: [WearableBodyShape!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Emote_filter]
+  or: [Emote_filter]
+}
+
+enum Emote_orderBy {
+  id
+  name
+  description
+  collection
+  category
+  loop
+  rarity
+  bodyShapes
+}
+
+type Item {
+  id: ID!
+  collection: Collection!
+  blockchainId: BigInt!
+  creator: String!
+  itemType: ItemType!
+  totalSupply: BigInt!
+  maxSupply: BigInt!
+  rarity: String!
+  creationFee: BigInt!
+  available: BigInt!
+  price: BigInt!
+  beneficiary: String!
+  contentHash: String
+  URI: String!
+  image: String
+  minters: [String!]!
+  managers: [String!]!
+  metadata: Metadata
+  rawMetadata: String!
+  urn: String!
+  nfts(skip: Int = 0, first: Int = 100, orderBy: NFT_orderBy, orderDirection: OrderDirection, where: NFT_filter): [NFT!]
+  createdAt: BigInt!
+  updatedAt: BigInt!
+  """Last time the item was reviewed"""
+  reviewedAt: BigInt!
+  """Last time the Item was sold"""
+  soldAt: BigInt
+  """First time the Item was listed"""
+  firstListedAt: BigInt
+  sales: Int!
+  volume: BigInt!
+  searchText: String
+  searchItemType: String
+  searchIsCollectionApproved: Boolean
+  searchIsStoreMinter: Boolean!
+  searchIsWearableHead: Boolean
+  searchIsWearableAccessory: Boolean
+  searchWearableCategory: WearableCategory
+  searchWearableRarity: String
+  searchWearableBodyShapes: [WearableBodyShape!]
+  searchEmoteCategory: EmoteCategory
+  searchEmoteLoop: Boolean
+  searchEmoteRarity: String
+  searchEmoteBodyShapes: [WearableBodyShape!]
+  uniqueCollectors: [String!]!
+  uniqueCollectorsTotal: Int!
+}
+
+enum ItemType {
+  undefined
+  wearable_v1
+  wearable_v2
+  smart_wearable_v1
+  emote_v1
+}
+
+input Item_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  collection: String
+  collection_not: String
+  collection_gt: String
+  collection_lt: String
+  collection_gte: String
+  collection_lte: String
+  collection_in: [String!]
+  collection_not_in: [String!]
+  collection_contains: String
+  collection_contains_nocase: String
+  collection_not_contains: String
+  collection_not_contains_nocase: String
+  collection_starts_with: String
+  collection_starts_with_nocase: String
+  collection_not_starts_with: String
+  collection_not_starts_with_nocase: String
+  collection_ends_with: String
+  collection_ends_with_nocase: String
+  collection_not_ends_with: String
+  collection_not_ends_with_nocase: String
+  collection_: Collection_filter
+  blockchainId: BigInt
+  blockchainId_not: BigInt
+  blockchainId_gt: BigInt
+  blockchainId_lt: BigInt
+  blockchainId_gte: BigInt
+  blockchainId_lte: BigInt
+  blockchainId_in: [BigInt!]
+  blockchainId_not_in: [BigInt!]
+  creator: String
+  creator_not: String
+  creator_gt: String
+  creator_lt: String
+  creator_gte: String
+  creator_lte: String
+  creator_in: [String!]
+  creator_not_in: [String!]
+  creator_contains: String
+  creator_contains_nocase: String
+  creator_not_contains: String
+  creator_not_contains_nocase: String
+  creator_starts_with: String
+  creator_starts_with_nocase: String
+  creator_not_starts_with: String
+  creator_not_starts_with_nocase: String
+  creator_ends_with: String
+  creator_ends_with_nocase: String
+  creator_not_ends_with: String
+  creator_not_ends_with_nocase: String
+  itemType: ItemType
+  itemType_not: ItemType
+  itemType_in: [ItemType!]
+  itemType_not_in: [ItemType!]
+  totalSupply: BigInt
+  totalSupply_not: BigInt
+  totalSupply_gt: BigInt
+  totalSupply_lt: BigInt
+  totalSupply_gte: BigInt
+  totalSupply_lte: BigInt
+  totalSupply_in: [BigInt!]
+  totalSupply_not_in: [BigInt!]
+  maxSupply: BigInt
+  maxSupply_not: BigInt
+  maxSupply_gt: BigInt
+  maxSupply_lt: BigInt
+  maxSupply_gte: BigInt
+  maxSupply_lte: BigInt
+  maxSupply_in: [BigInt!]
+  maxSupply_not_in: [BigInt!]
+  rarity: String
+  rarity_not: String
+  rarity_gt: String
+  rarity_lt: String
+  rarity_gte: String
+  rarity_lte: String
+  rarity_in: [String!]
+  rarity_not_in: [String!]
+  rarity_contains: String
+  rarity_contains_nocase: String
+  rarity_not_contains: String
+  rarity_not_contains_nocase: String
+  rarity_starts_with: String
+  rarity_starts_with_nocase: String
+  rarity_not_starts_with: String
+  rarity_not_starts_with_nocase: String
+  rarity_ends_with: String
+  rarity_ends_with_nocase: String
+  rarity_not_ends_with: String
+  rarity_not_ends_with_nocase: String
+  creationFee: BigInt
+  creationFee_not: BigInt
+  creationFee_gt: BigInt
+  creationFee_lt: BigInt
+  creationFee_gte: BigInt
+  creationFee_lte: BigInt
+  creationFee_in: [BigInt!]
+  creationFee_not_in: [BigInt!]
+  available: BigInt
+  available_not: BigInt
+  available_gt: BigInt
+  available_lt: BigInt
+  available_gte: BigInt
+  available_lte: BigInt
+  available_in: [BigInt!]
+  available_not_in: [BigInt!]
+  price: BigInt
+  price_not: BigInt
+  price_gt: BigInt
+  price_lt: BigInt
+  price_gte: BigInt
+  price_lte: BigInt
+  price_in: [BigInt!]
+  price_not_in: [BigInt!]
+  beneficiary: String
+  beneficiary_not: String
+  beneficiary_gt: String
+  beneficiary_lt: String
+  beneficiary_gte: String
+  beneficiary_lte: String
+  beneficiary_in: [String!]
+  beneficiary_not_in: [String!]
+  beneficiary_contains: String
+  beneficiary_contains_nocase: String
+  beneficiary_not_contains: String
+  beneficiary_not_contains_nocase: String
+  beneficiary_starts_with: String
+  beneficiary_starts_with_nocase: String
+  beneficiary_not_starts_with: String
+  beneficiary_not_starts_with_nocase: String
+  beneficiary_ends_with: String
+  beneficiary_ends_with_nocase: String
+  beneficiary_not_ends_with: String
+  beneficiary_not_ends_with_nocase: String
+  contentHash: String
+  contentHash_not: String
+  contentHash_gt: String
+  contentHash_lt: String
+  contentHash_gte: String
+  contentHash_lte: String
+  contentHash_in: [String!]
+  contentHash_not_in: [String!]
+  contentHash_contains: String
+  contentHash_contains_nocase: String
+  contentHash_not_contains: String
+  contentHash_not_contains_nocase: String
+  contentHash_starts_with: String
+  contentHash_starts_with_nocase: String
+  contentHash_not_starts_with: String
+  contentHash_not_starts_with_nocase: String
+  contentHash_ends_with: String
+  contentHash_ends_with_nocase: String
+  contentHash_not_ends_with: String
+  contentHash_not_ends_with_nocase: String
+  URI: String
+  URI_not: String
+  URI_gt: String
+  URI_lt: String
+  URI_gte: String
+  URI_lte: String
+  URI_in: [String!]
+  URI_not_in: [String!]
+  URI_contains: String
+  URI_contains_nocase: String
+  URI_not_contains: String
+  URI_not_contains_nocase: String
+  URI_starts_with: String
+  URI_starts_with_nocase: String
+  URI_not_starts_with: String
+  URI_not_starts_with_nocase: String
+  URI_ends_with: String
+  URI_ends_with_nocase: String
+  URI_not_ends_with: String
+  URI_not_ends_with_nocase: String
+  image: String
+  image_not: String
+  image_gt: String
+  image_lt: String
+  image_gte: String
+  image_lte: String
+  image_in: [String!]
+  image_not_in: [String!]
+  image_contains: String
+  image_contains_nocase: String
+  image_not_contains: String
+  image_not_contains_nocase: String
+  image_starts_with: String
+  image_starts_with_nocase: String
+  image_not_starts_with: String
+  image_not_starts_with_nocase: String
+  image_ends_with: String
+  image_ends_with_nocase: String
+  image_not_ends_with: String
+  image_not_ends_with_nocase: String
+  minters: [String!]
+  minters_not: [String!]
+  minters_contains: [String!]
+  minters_contains_nocase: [String!]
+  minters_not_contains: [String!]
+  minters_not_contains_nocase: [String!]
+  managers: [String!]
+  managers_not: [String!]
+  managers_contains: [String!]
+  managers_contains_nocase: [String!]
+  managers_not_contains: [String!]
+  managers_not_contains_nocase: [String!]
+  metadata: String
+  metadata_not: String
+  metadata_gt: String
+  metadata_lt: String
+  metadata_gte: String
+  metadata_lte: String
+  metadata_in: [String!]
+  metadata_not_in: [String!]
+  metadata_contains: String
+  metadata_contains_nocase: String
+  metadata_not_contains: String
+  metadata_not_contains_nocase: String
+  metadata_starts_with: String
+  metadata_starts_with_nocase: String
+  metadata_not_starts_with: String
+  metadata_not_starts_with_nocase: String
+  metadata_ends_with: String
+  metadata_ends_with_nocase: String
+  metadata_not_ends_with: String
+  metadata_not_ends_with_nocase: String
+  metadata_: Metadata_filter
+  rawMetadata: String
+  rawMetadata_not: String
+  rawMetadata_gt: String
+  rawMetadata_lt: String
+  rawMetadata_gte: String
+  rawMetadata_lte: String
+  rawMetadata_in: [String!]
+  rawMetadata_not_in: [String!]
+  rawMetadata_contains: String
+  rawMetadata_contains_nocase: String
+  rawMetadata_not_contains: String
+  rawMetadata_not_contains_nocase: String
+  rawMetadata_starts_with: String
+  rawMetadata_starts_with_nocase: String
+  rawMetadata_not_starts_with: String
+  rawMetadata_not_starts_with_nocase: String
+  rawMetadata_ends_with: String
+  rawMetadata_ends_with_nocase: String
+  rawMetadata_not_ends_with: String
+  rawMetadata_not_ends_with_nocase: String
+  urn: String
+  urn_not: String
+  urn_gt: String
+  urn_lt: String
+  urn_gte: String
+  urn_lte: String
+  urn_in: [String!]
+  urn_not_in: [String!]
+  urn_contains: String
+  urn_contains_nocase: String
+  urn_not_contains: String
+  urn_not_contains_nocase: String
+  urn_starts_with: String
+  urn_starts_with_nocase: String
+  urn_not_starts_with: String
+  urn_not_starts_with_nocase: String
+  urn_ends_with: String
+  urn_ends_with_nocase: String
+  urn_not_ends_with: String
+  urn_not_ends_with_nocase: String
+  nfts_: NFT_filter
+  createdAt: BigInt
+  createdAt_not: BigInt
+  createdAt_gt: BigInt
+  createdAt_lt: BigInt
+  createdAt_gte: BigInt
+  createdAt_lte: BigInt
+  createdAt_in: [BigInt!]
+  createdAt_not_in: [BigInt!]
+  updatedAt: BigInt
+  updatedAt_not: BigInt
+  updatedAt_gt: BigInt
+  updatedAt_lt: BigInt
+  updatedAt_gte: BigInt
+  updatedAt_lte: BigInt
+  updatedAt_in: [BigInt!]
+  updatedAt_not_in: [BigInt!]
+  reviewedAt: BigInt
+  reviewedAt_not: BigInt
+  reviewedAt_gt: BigInt
+  reviewedAt_lt: BigInt
+  reviewedAt_gte: BigInt
+  reviewedAt_lte: BigInt
+  reviewedAt_in: [BigInt!]
+  reviewedAt_not_in: [BigInt!]
+  soldAt: BigInt
+  soldAt_not: BigInt
+  soldAt_gt: BigInt
+  soldAt_lt: BigInt
+  soldAt_gte: BigInt
+  soldAt_lte: BigInt
+  soldAt_in: [BigInt!]
+  soldAt_not_in: [BigInt!]
+  firstListedAt: BigInt
+  firstListedAt_not: BigInt
+  firstListedAt_gt: BigInt
+  firstListedAt_lt: BigInt
+  firstListedAt_gte: BigInt
+  firstListedAt_lte: BigInt
+  firstListedAt_in: [BigInt!]
+  firstListedAt_not_in: [BigInt!]
+  sales: Int
+  sales_not: Int
+  sales_gt: Int
+  sales_lt: Int
+  sales_gte: Int
+  sales_lte: Int
+  sales_in: [Int!]
+  sales_not_in: [Int!]
+  volume: BigInt
+  volume_not: BigInt
+  volume_gt: BigInt
+  volume_lt: BigInt
+  volume_gte: BigInt
+  volume_lte: BigInt
+  volume_in: [BigInt!]
+  volume_not_in: [BigInt!]
+  searchText: String
+  searchText_not: String
+  searchText_gt: String
+  searchText_lt: String
+  searchText_gte: String
+  searchText_lte: String
+  searchText_in: [String!]
+  searchText_not_in: [String!]
+  searchText_contains: String
+  searchText_contains_nocase: String
+  searchText_not_contains: String
+  searchText_not_contains_nocase: String
+  searchText_starts_with: String
+  searchText_starts_with_nocase: String
+  searchText_not_starts_with: String
+  searchText_not_starts_with_nocase: String
+  searchText_ends_with: String
+  searchText_ends_with_nocase: String
+  searchText_not_ends_with: String
+  searchText_not_ends_with_nocase: String
+  searchItemType: String
+  searchItemType_not: String
+  searchItemType_gt: String
+  searchItemType_lt: String
+  searchItemType_gte: String
+  searchItemType_lte: String
+  searchItemType_in: [String!]
+  searchItemType_not_in: [String!]
+  searchItemType_contains: String
+  searchItemType_contains_nocase: String
+  searchItemType_not_contains: String
+  searchItemType_not_contains_nocase: String
+  searchItemType_starts_with: String
+  searchItemType_starts_with_nocase: String
+  searchItemType_not_starts_with: String
+  searchItemType_not_starts_with_nocase: String
+  searchItemType_ends_with: String
+  searchItemType_ends_with_nocase: String
+  searchItemType_not_ends_with: String
+  searchItemType_not_ends_with_nocase: String
+  searchIsCollectionApproved: Boolean
+  searchIsCollectionApproved_not: Boolean
+  searchIsCollectionApproved_in: [Boolean!]
+  searchIsCollectionApproved_not_in: [Boolean!]
+  searchIsStoreMinter: Boolean
+  searchIsStoreMinter_not: Boolean
+  searchIsStoreMinter_in: [Boolean!]
+  searchIsStoreMinter_not_in: [Boolean!]
+  searchIsWearableHead: Boolean
+  searchIsWearableHead_not: Boolean
+  searchIsWearableHead_in: [Boolean!]
+  searchIsWearableHead_not_in: [Boolean!]
+  searchIsWearableAccessory: Boolean
+  searchIsWearableAccessory_not: Boolean
+  searchIsWearableAccessory_in: [Boolean!]
+  searchIsWearableAccessory_not_in: [Boolean!]
+  searchWearableCategory: WearableCategory
+  searchWearableCategory_not: WearableCategory
+  searchWearableCategory_in: [WearableCategory!]
+  searchWearableCategory_not_in: [WearableCategory!]
+  searchWearableRarity: String
+  searchWearableRarity_not: String
+  searchWearableRarity_gt: String
+  searchWearableRarity_lt: String
+  searchWearableRarity_gte: String
+  searchWearableRarity_lte: String
+  searchWearableRarity_in: [String!]
+  searchWearableRarity_not_in: [String!]
+  searchWearableRarity_contains: String
+  searchWearableRarity_contains_nocase: String
+  searchWearableRarity_not_contains: String
+  searchWearableRarity_not_contains_nocase: String
+  searchWearableRarity_starts_with: String
+  searchWearableRarity_starts_with_nocase: String
+  searchWearableRarity_not_starts_with: String
+  searchWearableRarity_not_starts_with_nocase: String
+  searchWearableRarity_ends_with: String
+  searchWearableRarity_ends_with_nocase: String
+  searchWearableRarity_not_ends_with: String
+  searchWearableRarity_not_ends_with_nocase: String
+  searchWearableBodyShapes: [WearableBodyShape!]
+  searchWearableBodyShapes_not: [WearableBodyShape!]
+  searchWearableBodyShapes_contains: [WearableBodyShape!]
+  searchWearableBodyShapes_contains_nocase: [WearableBodyShape!]
+  searchWearableBodyShapes_not_contains: [WearableBodyShape!]
+  searchWearableBodyShapes_not_contains_nocase: [WearableBodyShape!]
+  searchEmoteCategory: EmoteCategory
+  searchEmoteCategory_not: EmoteCategory
+  searchEmoteCategory_in: [EmoteCategory!]
+  searchEmoteCategory_not_in: [EmoteCategory!]
+  searchEmoteLoop: Boolean
+  searchEmoteLoop_not: Boolean
+  searchEmoteLoop_in: [Boolean!]
+  searchEmoteLoop_not_in: [Boolean!]
+  searchEmoteRarity: String
+  searchEmoteRarity_not: String
+  searchEmoteRarity_gt: String
+  searchEmoteRarity_lt: String
+  searchEmoteRarity_gte: String
+  searchEmoteRarity_lte: String
+  searchEmoteRarity_in: [String!]
+  searchEmoteRarity_not_in: [String!]
+  searchEmoteRarity_contains: String
+  searchEmoteRarity_contains_nocase: String
+  searchEmoteRarity_not_contains: String
+  searchEmoteRarity_not_contains_nocase: String
+  searchEmoteRarity_starts_with: String
+  searchEmoteRarity_starts_with_nocase: String
+  searchEmoteRarity_not_starts_with: String
+  searchEmoteRarity_not_starts_with_nocase: String
+  searchEmoteRarity_ends_with: String
+  searchEmoteRarity_ends_with_nocase: String
+  searchEmoteRarity_not_ends_with: String
+  searchEmoteRarity_not_ends_with_nocase: String
+  searchEmoteBodyShapes: [WearableBodyShape!]
+  searchEmoteBodyShapes_not: [WearableBodyShape!]
+  searchEmoteBodyShapes_contains: [WearableBodyShape!]
+  searchEmoteBodyShapes_contains_nocase: [WearableBodyShape!]
+  searchEmoteBodyShapes_not_contains: [WearableBodyShape!]
+  searchEmoteBodyShapes_not_contains_nocase: [WearableBodyShape!]
+  uniqueCollectors: [String!]
+  uniqueCollectors_not: [String!]
+  uniqueCollectors_contains: [String!]
+  uniqueCollectors_contains_nocase: [String!]
+  uniqueCollectors_not_contains: [String!]
+  uniqueCollectors_not_contains_nocase: [String!]
+  uniqueCollectorsTotal: Int
+  uniqueCollectorsTotal_not: Int
+  uniqueCollectorsTotal_gt: Int
+  uniqueCollectorsTotal_lt: Int
+  uniqueCollectorsTotal_gte: Int
+  uniqueCollectorsTotal_lte: Int
+  uniqueCollectorsTotal_in: [Int!]
+  uniqueCollectorsTotal_not_in: [Int!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Item_filter]
+  or: [Item_filter]
+}
+
+enum Item_orderBy {
+  id
+  collection
+  collection__id
+  collection__owner
+  collection__creator
+  collection__name
+  collection__symbol
+  collection__isCompleted
+  collection__isApproved
+  collection__isEditable
+  collection__urn
+  collection__itemsCount
+  collection__createdAt
+  collection__updatedAt
+  collection__reviewedAt
+  collection__firstListedAt
+  collection__searchIsStoreMinter
+  collection__searchText
+  blockchainId
+  creator
+  itemType
+  totalSupply
+  maxSupply
+  rarity
+  creationFee
+  available
+  price
+  beneficiary
+  contentHash
+  URI
+  image
+  minters
+  managers
+  metadata
+  metadata__id
+  metadata__itemType
+  rawMetadata
+  urn
+  nfts
+  createdAt
+  updatedAt
+  reviewedAt
+  soldAt
+  firstListedAt
+  sales
+  volume
+  searchText
+  searchItemType
+  searchIsCollectionApproved
+  searchIsStoreMinter
+  searchIsWearableHead
+  searchIsWearableAccessory
+  searchWearableCategory
+  searchWearableRarity
+  searchWearableBodyShapes
+  searchEmoteCategory
+  searchEmoteLoop
+  searchEmoteRarity
+  searchEmoteBodyShapes
+  uniqueCollectors
+  uniqueCollectorsTotal
+}
+
+type ItemsDayData {
+  id: ID!
+  date: Int!
+  sales: Int!
+  volume: BigInt!
+  searchEmoteCategory: EmoteCategory
+  searchWearableCategory: WearableCategory
+  searchRarity: String
+}
+
+input ItemsDayData_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  date: Int
+  date_not: Int
+  date_gt: Int
+  date_lt: Int
+  date_gte: Int
+  date_lte: Int
+  date_in: [Int!]
+  date_not_in: [Int!]
+  sales: Int
+  sales_not: Int
+  sales_gt: Int
+  sales_lt: Int
+  sales_gte: Int
+  sales_lte: Int
+  sales_in: [Int!]
+  sales_not_in: [Int!]
+  volume: BigInt
+  volume_not: BigInt
+  volume_gt: BigInt
+  volume_lt: BigInt
+  volume_gte: BigInt
+  volume_lte: BigInt
+  volume_in: [BigInt!]
+  volume_not_in: [BigInt!]
+  searchEmoteCategory: EmoteCategory
+  searchEmoteCategory_not: EmoteCategory
+  searchEmoteCategory_in: [EmoteCategory!]
+  searchEmoteCategory_not_in: [EmoteCategory!]
+  searchWearableCategory: WearableCategory
+  searchWearableCategory_not: WearableCategory
+  searchWearableCategory_in: [WearableCategory!]
+  searchWearableCategory_not_in: [WearableCategory!]
+  searchRarity: String
+  searchRarity_not: String
+  searchRarity_gt: String
+  searchRarity_lt: String
+  searchRarity_gte: String
+  searchRarity_lte: String
+  searchRarity_in: [String!]
+  searchRarity_not_in: [String!]
+  searchRarity_contains: String
+  searchRarity_contains_nocase: String
+  searchRarity_not_contains: String
+  searchRarity_not_contains_nocase: String
+  searchRarity_starts_with: String
+  searchRarity_starts_with_nocase: String
+  searchRarity_not_starts_with: String
+  searchRarity_not_starts_with_nocase: String
+  searchRarity_ends_with: String
+  searchRarity_ends_with_nocase: String
+  searchRarity_not_ends_with: String
+  searchRarity_not_ends_with_nocase: String
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [ItemsDayData_filter]
+  or: [ItemsDayData_filter]
+}
+
+enum ItemsDayData_orderBy {
+  id
+  date
+  sales
+  volume
+  searchEmoteCategory
+  searchWearableCategory
+  searchRarity
+}
+
+type Metadata {
+  id: ID!
+  itemType: ItemType!
+  wearable: Wearable
+  emote: Emote
+}
+
+input Metadata_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  itemType: ItemType
+  itemType_not: ItemType
+  itemType_in: [ItemType!]
+  itemType_not_in: [ItemType!]
+  wearable: String
+  wearable_not: String
+  wearable_gt: String
+  wearable_lt: String
+  wearable_gte: String
+  wearable_lte: String
+  wearable_in: [String!]
+  wearable_not_in: [String!]
+  wearable_contains: String
+  wearable_contains_nocase: String
+  wearable_not_contains: String
+  wearable_not_contains_nocase: String
+  wearable_starts_with: String
+  wearable_starts_with_nocase: String
+  wearable_not_starts_with: String
+  wearable_not_starts_with_nocase: String
+  wearable_ends_with: String
+  wearable_ends_with_nocase: String
+  wearable_not_ends_with: String
+  wearable_not_ends_with_nocase: String
+  wearable_: Wearable_filter
+  emote: String
+  emote_not: String
+  emote_gt: String
+  emote_lt: String
+  emote_gte: String
+  emote_lte: String
+  emote_in: [String!]
+  emote_not_in: [String!]
+  emote_contains: String
+  emote_contains_nocase: String
+  emote_not_contains: String
+  emote_not_contains_nocase: String
+  emote_starts_with: String
+  emote_starts_with_nocase: String
+  emote_not_starts_with: String
+  emote_not_starts_with_nocase: String
+  emote_ends_with: String
+  emote_ends_with_nocase: String
+  emote_not_ends_with: String
+  emote_not_ends_with_nocase: String
+  emote_: Emote_filter
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Metadata_filter]
+  or: [Metadata_filter]
+}
+
+enum Metadata_orderBy {
+  id
+  itemType
+  wearable
+  wearable__id
+  wearable__name
+  wearable__description
+  wearable__collection
+  wearable__category
+  wearable__rarity
+  emote
+  emote__id
+  emote__name
+  emote__description
+  emote__collection
+  emote__category
+  emote__loop
+  emote__rarity
+}
+
+type Mint {
+  id: ID!
+  item: Item!
+  nft: NFT!
+  creator: String!
+  beneficiary: String!
+  minter: String!
+  timestamp: BigInt!
+  searchPrimarySalePrice: BigInt
+  searchContractAddress: String!
+  searchItemId: BigInt!
+  searchTokenId: BigInt!
+  searchIssuedId: BigInt
+  searchIsStoreMinter: Boolean!
+}
+
+input Mint_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  item: String
+  item_not: String
+  item_gt: String
+  item_lt: String
+  item_gte: String
+  item_lte: String
+  item_in: [String!]
+  item_not_in: [String!]
+  item_contains: String
+  item_contains_nocase: String
+  item_not_contains: String
+  item_not_contains_nocase: String
+  item_starts_with: String
+  item_starts_with_nocase: String
+  item_not_starts_with: String
+  item_not_starts_with_nocase: String
+  item_ends_with: String
+  item_ends_with_nocase: String
+  item_not_ends_with: String
+  item_not_ends_with_nocase: String
+  item_: Item_filter
+  nft: String
+  nft_not: String
+  nft_gt: String
+  nft_lt: String
+  nft_gte: String
+  nft_lte: String
+  nft_in: [String!]
+  nft_not_in: [String!]
+  nft_contains: String
+  nft_contains_nocase: String
+  nft_not_contains: String
+  nft_not_contains_nocase: String
+  nft_starts_with: String
+  nft_starts_with_nocase: String
+  nft_not_starts_with: String
+  nft_not_starts_with_nocase: String
+  nft_ends_with: String
+  nft_ends_with_nocase: String
+  nft_not_ends_with: String
+  nft_not_ends_with_nocase: String
+  nft_: NFT_filter
+  creator: String
+  creator_not: String
+  creator_gt: String
+  creator_lt: String
+  creator_gte: String
+  creator_lte: String
+  creator_in: [String!]
+  creator_not_in: [String!]
+  creator_contains: String
+  creator_contains_nocase: String
+  creator_not_contains: String
+  creator_not_contains_nocase: String
+  creator_starts_with: String
+  creator_starts_with_nocase: String
+  creator_not_starts_with: String
+  creator_not_starts_with_nocase: String
+  creator_ends_with: String
+  creator_ends_with_nocase: String
+  creator_not_ends_with: String
+  creator_not_ends_with_nocase: String
+  beneficiary: String
+  beneficiary_not: String
+  beneficiary_gt: String
+  beneficiary_lt: String
+  beneficiary_gte: String
+  beneficiary_lte: String
+  beneficiary_in: [String!]
+  beneficiary_not_in: [String!]
+  beneficiary_contains: String
+  beneficiary_contains_nocase: String
+  beneficiary_not_contains: String
+  beneficiary_not_contains_nocase: String
+  beneficiary_starts_with: String
+  beneficiary_starts_with_nocase: String
+  beneficiary_not_starts_with: String
+  beneficiary_not_starts_with_nocase: String
+  beneficiary_ends_with: String
+  beneficiary_ends_with_nocase: String
+  beneficiary_not_ends_with: String
+  beneficiary_not_ends_with_nocase: String
+  minter: String
+  minter_not: String
+  minter_gt: String
+  minter_lt: String
+  minter_gte: String
+  minter_lte: String
+  minter_in: [String!]
+  minter_not_in: [String!]
+  minter_contains: String
+  minter_contains_nocase: String
+  minter_not_contains: String
+  minter_not_contains_nocase: String
+  minter_starts_with: String
+  minter_starts_with_nocase: String
+  minter_not_starts_with: String
+  minter_not_starts_with_nocase: String
+  minter_ends_with: String
+  minter_ends_with_nocase: String
+  minter_not_ends_with: String
+  minter_not_ends_with_nocase: String
+  timestamp: BigInt
+  timestamp_not: BigInt
+  timestamp_gt: BigInt
+  timestamp_lt: BigInt
+  timestamp_gte: BigInt
+  timestamp_lte: BigInt
+  timestamp_in: [BigInt!]
+  timestamp_not_in: [BigInt!]
+  searchPrimarySalePrice: BigInt
+  searchPrimarySalePrice_not: BigInt
+  searchPrimarySalePrice_gt: BigInt
+  searchPrimarySalePrice_lt: BigInt
+  searchPrimarySalePrice_gte: BigInt
+  searchPrimarySalePrice_lte: BigInt
+  searchPrimarySalePrice_in: [BigInt!]
+  searchPrimarySalePrice_not_in: [BigInt!]
+  searchContractAddress: String
+  searchContractAddress_not: String
+  searchContractAddress_gt: String
+  searchContractAddress_lt: String
+  searchContractAddress_gte: String
+  searchContractAddress_lte: String
+  searchContractAddress_in: [String!]
+  searchContractAddress_not_in: [String!]
+  searchContractAddress_contains: String
+  searchContractAddress_contains_nocase: String
+  searchContractAddress_not_contains: String
+  searchContractAddress_not_contains_nocase: String
+  searchContractAddress_starts_with: String
+  searchContractAddress_starts_with_nocase: String
+  searchContractAddress_not_starts_with: String
+  searchContractAddress_not_starts_with_nocase: String
+  searchContractAddress_ends_with: String
+  searchContractAddress_ends_with_nocase: String
+  searchContractAddress_not_ends_with: String
+  searchContractAddress_not_ends_with_nocase: String
+  searchItemId: BigInt
+  searchItemId_not: BigInt
+  searchItemId_gt: BigInt
+  searchItemId_lt: BigInt
+  searchItemId_gte: BigInt
+  searchItemId_lte: BigInt
+  searchItemId_in: [BigInt!]
+  searchItemId_not_in: [BigInt!]
+  searchTokenId: BigInt
+  searchTokenId_not: BigInt
+  searchTokenId_gt: BigInt
+  searchTokenId_lt: BigInt
+  searchTokenId_gte: BigInt
+  searchTokenId_lte: BigInt
+  searchTokenId_in: [BigInt!]
+  searchTokenId_not_in: [BigInt!]
+  searchIssuedId: BigInt
+  searchIssuedId_not: BigInt
+  searchIssuedId_gt: BigInt
+  searchIssuedId_lt: BigInt
+  searchIssuedId_gte: BigInt
+  searchIssuedId_lte: BigInt
+  searchIssuedId_in: [BigInt!]
+  searchIssuedId_not_in: [BigInt!]
+  searchIsStoreMinter: Boolean
+  searchIsStoreMinter_not: Boolean
+  searchIsStoreMinter_in: [Boolean!]
+  searchIsStoreMinter_not_in: [Boolean!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Mint_filter]
+  or: [Mint_filter]
+}
+
+enum Mint_orderBy {
+  id
+  item
+  item__id
+  item__blockchainId
+  item__creator
+  item__itemType
+  item__totalSupply
+  item__maxSupply
+  item__rarity
+  item__creationFee
+  item__available
+  item__price
+  item__beneficiary
+  item__contentHash
+  item__URI
+  item__image
+  item__rawMetadata
+  item__urn
+  item__createdAt
+  item__updatedAt
+  item__reviewedAt
+  item__soldAt
+  item__firstListedAt
+  item__sales
+  item__volume
+  item__searchText
+  item__searchItemType
+  item__searchIsCollectionApproved
+  item__searchIsStoreMinter
+  item__searchIsWearableHead
+  item__searchIsWearableAccessory
+  item__searchWearableCategory
+  item__searchWearableRarity
+  item__searchEmoteCategory
+  item__searchEmoteLoop
+  item__searchEmoteRarity
+  item__uniqueCollectorsTotal
+  nft
+  nft__id
+  nft__tokenId
+  nft__category
+  nft__contractAddress
+  nft__itemBlockchainId
+  nft__issuedId
+  nft__itemType
+  nft__tokenURI
+  nft__image
+  nft__urn
+  nft__createdAt
+  nft__updatedAt
+  nft__soldAt
+  nft__transferredAt
+  nft__sales
+  nft__volume
+  nft__searchText
+  nft__searchItemType
+  nft__searchIsWearableHead
+  nft__searchIsWearableAccessory
+  nft__searchWearableCategory
+  nft__searchWearableRarity
+  nft__searchEmoteCategory
+  nft__searchEmoteLoop
+  nft__searchEmoteRarity
+  nft__searchOrderStatus
+  nft__searchOrderPrice
+  nft__searchOrderExpiresAt
+  nft__searchOrderCreatedAt
+  creator
+  beneficiary
+  minter
+  timestamp
+  searchPrimarySalePrice
+  searchContractAddress
+  searchItemId
+  searchTokenId
+  searchIssuedId
+  searchIsStoreMinter
+}
+
+type Rarity {
+  id: ID!
+  name: String!
+  maxSupply: BigInt!
+  price: BigInt!
+  currency: Currency!
+}
+
+input Rarity_filter {
+  id: ID
+  id_not: ID
+  id_gt: ID
+  id_lt: ID
+  id_gte: ID
+  id_lte: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  name: String
+  name_not: String
+  name_gt: String
+  name_lt: String
+  name_gte: String
+  name_lte: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_contains: String
+  name_contains_nocase: String
+  name_not_contains: String
+  name_not_contains_nocase: String
+  name_starts_with: String
+  name_starts_with_nocase: String
+  name_not_starts_with: String
+  name_not_starts_with_nocase: String
+  name_ends_with: String
+  name_ends_with_nocase: String
+  name_not_ends_with: String
+  name_not_ends_with_nocase: String
+  maxSupply: BigInt
+  maxSupply_not: BigInt
+  maxSupply_gt: BigInt
+  maxSupply_lt: BigInt
+  maxSupply_gte: BigInt
+  maxSupply_lte: BigInt
+  maxSupply_in: [BigInt!]
+  maxSupply_not_in: [BigInt!]
+  price: BigInt
+  price_not: BigInt
+  price_gt: BigInt
+  price_lt: BigInt
+  price_gte: BigInt
+  price_lte: BigInt
+  price_in: [BigInt!]
+  price_not_in: [BigInt!]
+  currency: Currency
+  currency_not: Currency
+  currency_in: [Currency!]
+  currency_not_in: [Currency!]
+  """Filter for the block changed event."""
+  _change_block: BlockChangedFilter
+  and: [Rarity_filter]
+  or: [Rarity_filter]
+}
+
+enum Rarity_orderBy {
+  id
+  name
+  maxSupply
+  price
+  currency
+}

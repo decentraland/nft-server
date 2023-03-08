@@ -46,6 +46,7 @@ import { NFTResult } from './ports/nfts/types'
 import { ITrendingsComponent } from './ports/trendings/types'
 import { IProcessedPricesComponent } from './ports/prices/types'
 import { IStatsComponent } from './ports/stats/types'
+import { ICatalogComponent } from './ports/catalog/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -69,6 +70,7 @@ export type AppComponents = {
   contracts: IMergerComponent<Contract, ContractFilters, ContractSortBy>
   nfts: IMergerComponent<NFTResult, NFTFilters, NFTSortBy>
   items: IMergerComponent<Item, ItemFilters, ItemSortBy>
+  catalog: ICatalogComponent
   mints: IMergerComponent<Mint, MintFilters, MintSortBy>
   sales: IMergerComponent<Sale, SaleFilters, SaleSortBy>
   trendings: ITrendingsComponent

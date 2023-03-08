@@ -13,7 +13,9 @@
     "start:watch": "nodemon src/index.ts",
     "migrate": "ts-node migrations/index.ts",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "codegen": "graphclient build",
+    "start:graphql": "graphclient serve-dev"
   },
   "keywords": [
     "decentraland"
@@ -27,6 +29,7 @@
   },
   "dependencies": {
     "@dcl/schemas": "^6.11.1",
+    "@graphql-mesh/transform-rename": "^0.14.15",
     "@types/sqlite3": "^3.1.7",
     "@well-known-components/env-config-provider": "^1.2.0",
     "@well-known-components/http-server": "^1.1.6",
@@ -48,6 +51,7 @@
     "typescript": "^4.9.5"
   },
   "devDependencies": {
+    "@graphprotocol/client-cli": "^2.2.19",
     "@types/bn.js": "^5.1.1",
     "@types/compression": "^1.7.0",
     "@types/cors": "^2.8.10",

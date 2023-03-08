@@ -1,0 +1,43 @@
+# .graphclientrc.yml
+sources:
+  # - name: collections-matic-mainnet
+  - name: collections-matic
+    handler:
+      graphql:
+        # endpoint: https://api.thegraph.com/subgraphs/name/decentraland/collections-matic-mainnet
+        endpoint: https://api.thegraph.com/subgraphs/name/decentraland/collections-matic-mumbai
+    # transforms:
+    #   - autoPagination:
+    #       validateSchema: true
+
+  # - name: collections-ethereum-mainnet
+  - name: collections-ethereum
+    handler:
+      graphql:
+        # endpoint: https://api.thegraph.com/subgraphs/name/decentraland/collections-ethereum-goerli
+        endpoint: https://api.thegraph.com/subgraphs/name/decentraland/collections-ethereum-goerli
+    # transforms:
+    #   - autoPagination:
+    #       validateSchema: true
+
+  # - name: marketplace
+  - name: marketplace
+    handler:
+      graphql:
+        # endpoint: https://api.thegraph.com/subgraphs/name/decentraland/marketplace
+        endpoint: https://api.thegraph.com/subgraphs/name/decentraland/marketplace-goerli
+    transforms:
+      - rename:
+          - from:
+              type: Query
+              field: nfts
+            to:
+              type: Query
+              field: legacyNFTs
+    #   - autoPagination:
+    #       validateSchema: true
+
+documents:
+  - './graphql/*.{gql,graphql}'
+additionalResolvers:
+  - './resolvers'

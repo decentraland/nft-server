@@ -41,6 +41,7 @@ export function createPricesComponent(options: {
     let priceFragments: PriceFragment[] = []
     while (true) {
       const query = getPricesQuery(queryGetter, filters, lastId)
+      console.log('query: ', query);
       const queryVariables = {
         ...filters,
         lastId,

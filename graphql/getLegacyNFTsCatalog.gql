@@ -1,0 +1,28 @@
+fragment LegacyNFTFields on NFT {
+  id
+  searchOrderPrice # instead of `price`
+  tokenId # instead of `blockchainId`
+  image
+  searchWearableRarity # instead of `rarity`
+  category
+  searchWearableBodyShapes
+  createdAt
+  updatedAt
+  name
+  contractAddress # to find equals using also name
+  wearable {
+    bodyShapes
+    category
+    description
+    rarity
+  }
+  orders(orderBy: price, where: { status: open }) {
+    price
+  }
+}
+
+query getLegacyNFTsCatalog($first: Int) {
+  legacyNFTs(first: $first) {
+    ...LegacyNFTFields
+  }
+}
