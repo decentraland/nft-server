@@ -72,6 +72,10 @@ export function createNFTsHandler(
     const maxDistanceToPlaza = params.getNumber('maxDistanceToPlaza')
     const maxEstateSize = params.getNumber('maxEstateSize')
     const minEstateSize = params.getNumber('minEstateSize')
+    const rentalDays = params
+      .getList('rentalDays')
+      .map((days) => Number.parseInt(days))
+      .filter((number) => !Number.isNaN(number))
 
     return asJSON(() => {
       if (owner && tenant) {
@@ -126,6 +130,7 @@ export function createNFTsHandler(
           : undefined,
         minEstateSize,
         maxEstateSize,
+        rentalDays,
       })
     })
   }

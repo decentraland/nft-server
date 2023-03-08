@@ -26,7 +26,7 @@
     "printWidth": 80
   },
   "dependencies": {
-    "@dcl/schemas": "^6.11.1",
+    "@dcl/schemas": "^6.12.0",
     "@well-known-components/env-config-provider": "^1.2.0",
     "@well-known-components/http-requests-logger-component": "^2.0.0",
     "@well-known-components/http-server": "^1.1.6",

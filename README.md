@@ -81,6 +81,7 @@ type NFT = {
 - `maxDistanceToPlaza`: Filter land that has a distance to a plaza of maximun this value. Type `number`
 - `minEstateSize`: Filter results by minimum amount of parcels in the Estate. Type: `number`
 - `maxEstateSize`: Filter results by maximum amount of parcels in the Estate. Type: `number`
+- `rentalDays`: Filter lands that have the possibility to be rented at least one of the days listed on rentalDays. Type: `number`. Repeatable
 
 ## Items
 
