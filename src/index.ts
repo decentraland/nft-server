@@ -137,7 +137,7 @@ import {
   mapRentalsAnalyticsFragment,
 } from './ports/analyticsDayData/utils'
 import {
-  createHttRequestsLogger,
+  instrumentHttpServerWithRequestLogger,
   Verbosity,
 } from '@well-known-components/http-requests-logger-component'
 import {
@@ -204,7 +204,7 @@ async function initComponents(): Promise<AppComponents> {
 
   createHttpTracerComponent({ server, tracer })
 
-  createHttRequestsLogger(
+  instrumentHttpServerWithRequestLogger(
     { server, logger: logs },
     { verbosity: Verbosity.INFO }
   )

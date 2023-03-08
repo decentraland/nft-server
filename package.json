@@ -28,7 +28,7 @@
   "dependencies": {
     "@dcl/schemas": "^6.11.1",
     "@well-known-components/env-config-provider": "^1.2.0",
-    "@well-known-components/http-requests-logger-component": "^1.0.0",
+    "@well-known-components/http-requests-logger-component": "^2.0.0",
     "@well-known-components/http-server": "^1.1.6",
     "@well-known-components/http-tracer-component": "^1.1.0",
     "@well-known-components/interfaces": "^1.2.0",
