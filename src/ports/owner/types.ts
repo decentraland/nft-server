@@ -16,7 +16,7 @@ export type OwnersFilters = {
 }
 
 export enum OwnersSortBy {
-  ISSUED_ID = 'issued_id', 
+  ISSUED_ID = 'issuedId', 
 }
 
 export type OwnerFragment = {

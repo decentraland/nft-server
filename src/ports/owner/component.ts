@@ -27,6 +27,9 @@ export function createOwnersComponent(options: {
       sortBy: filters.sortBy as OwnersSortBy,
     }
 
+    const a1= getOwnersQuery(parsedFilters, false)
+    console.log('flo a ver', a1, 'filters', parsedFilters)
+
     const data: { nfts: OwnerFragment[] } = await subgraph.query(
       getOwnersQuery(parsedFilters, false)
     )

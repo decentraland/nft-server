@@ -10,7 +10,7 @@ import {
 
 let collectionSubgraphMock: ISubgraphComponent
 let getOwnersQueryMock: jest.Mock
-let ownersComponentMock: IOwnerDataComponent
+let ownersComponent: IOwnerDataComponent
 let queryFilters: FetchOptions<OwnersFilters, OwnersSortBy>
 
 describe('when fetching owners', () => {
@@ -21,7 +21,7 @@ describe('when fetching owners', () => {
       query: getOwnersQueryMock,
     }
 
-    ownersComponentMock = createOwnersComponent({
+    ownersComponent = createOwnersComponent({
       subgraph: collectionSubgraphMock,
     })
 
@@ -34,57 +34,134 @@ describe('when fetching owners', () => {
     }
   })
 
-  afterEach(() => {
-    getOwnersQueryMock.mockRestore()
-  })
-
   describe('and the request fails', () => {
-    beforeEach(() => {
-      getOwnersQueryMock.mockRejectedValueOnce(
-        new Error('itemId and contractAddress are neccesary params.')
-      )
+    describe('when contractAddress is not provided', () => {
+      beforeEach(() => {
+        delete queryFilters.contractAddress
+      })
+
+      it('should throw an http 400 error with a message requiring itemId and contractAddress', () => {
+        return expect(
+          ownersComponent.fetchAndCount(queryFilters)
+        ).rejects.toThrowError(
+          'itemId and contractAddress are neccesary params.'
+        )
+      })
     })
 
-    it('should propagate the error', () => {
-      return expect(
-        ownersComponentMock.fetchAndCount(queryFilters)
-      ).rejects.toThrowError('itemId and contractAddress are neccesary params.')
+    describe('when itemId is not provided', () => {
+      beforeEach(() => {
+        delete queryFilters.itemId
+      })
+
+      it('should throw an http 400 error with a message requiring itemId and contractAddress', () => {
+        return expect(
+          ownersComponent.fetchAndCount(queryFilters)
+        ).rejects.toThrowError(
+          'itemId and contractAddress are neccesary params.'
+        )
+      })
+    })
+
+    describe('when the subgraph component throws an error', () => {
+      beforeEach(() => {
+        getOwnersQueryMock.mockRejectedValueOnce(new Error('An error occurred'))
+      })
+
+      it('should be propagated to fetchAndCount', () => {
+        return expect(
+          ownersComponent.fetchAndCount(queryFilters)
+        ).rejects.toThrowError(
+          'An error occurred'
+        )
+      })
     })
   })
 
-  describe('and the request is successful', () => {
+  describe('when the subgraph component resolves 4 owner fragments', () => {
     let ownersFragment: OwnerFragment[]
     let countResponse: { id: string }[]
 
     beforeEach(() => {
-      ownersFragment = Array.from({ length: 2 }, (_, i) => ({
-        issuedId: `issue${i}`,
-        owner: { id: `${i}` },
-        searchOrderStatus: i % 2 ? 'open' : 'null',
-        searchOrderExpiresAt: i % 2 ? '1674604800000' : 'null',
-      }))
+      ownersFragment = [
+        {
+          issuedId: `issue1`,
+          owner: { id: `1` },
+          searchOrderStatus: 'null',
+          searchOrderExpiresAt: 'null',
+        },
+        {
+          issuedId: `issue2`,
+          owner: { id: `2` },
+          searchOrderStatus: 'open',
+          searchOrderExpiresAt: '1674604800000',
+        },
+        {
+          issuedId: `issue3`,
+          owner: { id: `3` },
+          searchOrderStatus: 'null',
+          searchOrderExpiresAt: 'null',
+        },
+        {
+          issuedId: `issue4`,
+          owner: { id: `4` },
+          searchOrderStatus: 'open',
+          searchOrderExpiresAt: '1674604800000',
+        },
+      ]
 
-      countResponse = Array.from({ length: 2 }, (_, i) => ({
-        id: `issue${i}`,
-      }))
+      countResponse = [
+        {
+          id: `issue1`,
+        },
+        {
+          id: `issue2`,
+        },
+        {
+          id: `issue3`,
+        },
+        {
+          id: `issue4`,
+        },
+      ]
 
       getOwnersQueryMock.mockResolvedValueOnce({ nfts: ownersFragment })
       getOwnersQueryMock.mockResolvedValueOnce({ nfts: countResponse })
     })
 
-    it('should return the converted fragment and counted data', () => {
+    it('should be mapped to 4 owners', () => {
       const expectedResult = {
-        data: ownersFragment.map((element: OwnerFragment) => ({
-          issuedId: element.issuedId,
-          ownerId: element.owner.id,
-          orderStatus: element.searchOrderStatus,
-          orderExpiresAt: element.searchOrderExpiresAt,
-        })),
+        data:  [
+        {
+          issuedId: `issue1`,
+          ownerId: `1` ,
+          orderStatus: 'null',
+          orderExpiresAt: 'null',
+        },
+        {
+          issuedId: `issue2`,
+          ownerId: `2` ,
+          orderStatus: 'open',
+          orderExpiresAt: '1674604800000',
+        },
+        {
+          issuedId: `issue3`,
+          ownerId: `3` ,
+          orderStatus: 'null',
+          orderExpiresAt: 'null',
+        },
+        {
+          issuedId: `issue4`,
+          ownerId: `4` ,
+          orderStatus: 'open',
+          orderExpiresAt: '1674604800000',
+        },
+      ],
         total: countResponse.length,
       }
 
       return expect(
-        ownersComponentMock.fetchAndCount(queryFilters)
+        ownersComponent.fetchAndCount(queryFilters)
       ).resolves.toEqual(expectedResult)
     })
   })
