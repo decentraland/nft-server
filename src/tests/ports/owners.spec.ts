@@ -34,47 +34,39 @@ describe('when fetching owners', () => {
     }
   })
 
-  describe('and the request fails', () => {
-    describe('when contractAddress is not provided', () => {
-      beforeEach(() => {
-        delete queryFilters.contractAddress
-      })
-
-      it('should throw an http 400 error with a message requiring itemId and contractAddress', () => {
-        return expect(
-          ownersComponent.fetchAndCount(queryFilters)
-        ).rejects.toThrowError(
-          'itemId and contractAddress are neccesary params.'
-        )
-      })
+  describe('when contractAddress is not provided', () => {
+    beforeEach(() => {
+      delete queryFilters.contractAddress
     })
 
-    describe('when itemId is not provided', () => {
-      beforeEach(() => {
-        delete queryFilters.itemId
-      })
+    it('should throw an http 400 error with a message requiring itemId and contractAddress', () => {
+      return expect(
+        ownersComponent.fetchAndCount(queryFilters)
+      ).rejects.toThrowError('itemId and contractAddress are neccesary params.')
+    })
+  })
 
-      it('should throw an http 400 error with a message requiring itemId and contractAddress', () => {
-        return expect(
-          ownersComponent.fetchAndCount(queryFilters)
-        ).rejects.toThrowError(
-          'itemId and contractAddress are neccesary params.'
-        )
-      })
+  describe('when itemId is not provided', () => {
+    beforeEach(() => {
+      delete queryFilters.itemId
     })
 
-    describe('when the subgraph component throws an error', () => {
-      beforeEach(() => {
-        getOwnersQueryMock.mockRejectedValueOnce(new Error('An error occurred'))
-      })
+    it('should throw an http 400 error with a message requiring itemId and contractAddress', () => {
+      return expect(
+        ownersComponent.fetchAndCount(queryFilters)
+      ).rejects.toThrowError('itemId and contractAddress are neccesary params.')
+    })
+  })
 
-      it('should be propagated to fetchAndCount', () => {
-        return expect(
-          ownersComponent.fetchAndCount(queryFilters)
-        ).rejects.toThrowError(
-          'An error occurred'
-        )
-      })
+  describe('when the subgraph component throws an error', () => {
+    beforeEach(() => {
+      getOwnersQueryMock.mockRejectedValueOnce(new Error('An error occurred'))
+    })
+
+    it('should be propagated to fetchAndCount', () => {
+      return expect(
+        ownersComponent.fetchAndCount(queryFilters)
+      ).rejects.toThrowError('An error occurred')
     })
   })
 
@@ -131,32 +123,32 @@ describe('when fetching owners', () => {
 
     it('should be mapped to 4 owners', () => {
       const expectedResult = {
-        data:  [
-        {
-          issuedId: `issue1`,
-          ownerId: `1` ,
-          orderStatus: 'null',
-          orderExpiresAt: 'null',
-        },
-        {
-          issuedId: `issue2`,
-          ownerId: `2` ,
-          orderStatus: 'open',
-          orderExpiresAt: '1674604800000',
-        },
-        {
-          issuedId: `issue3`,
-          ownerId: `3` ,
-          orderStatus: 'null',
-          orderExpiresAt: 'null',
-        },
-        {
-          issuedId: `issue4`,
-          ownerId: `4` ,
-          orderStatus: 'open',
-          orderExpiresAt: '1674604800000',
-        },
-      ],
+        data: [
+          {
+            issuedId: `issue1`,
+            ownerId: `1`,
+            orderStatus: 'null',
+            orderExpiresAt: 'null',
+          },
+          {
+            issuedId: `issue2`,
+            ownerId: `2`,
+            orderStatus: 'open',
+            orderExpiresAt: '1674604800000',
+          },
+          {
+            issuedId: `issue3`,
+            ownerId: `3`,
+            orderStatus: 'null',
+            orderExpiresAt: 'null',
+          },
+          {
+            issuedId: `issue4`,
+            ownerId: `4`,
+            orderStatus: 'open',
+            orderExpiresAt: '1674604800000',
+          },
+        ],
         total: countResponse.length,
       }
 
