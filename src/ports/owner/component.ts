@@ -14,44 +14,38 @@ export function createOwnersComponent(options: {
 }): IOwnerDataComponent {
   const { subgraph } = options
 
-  async function fetch(filters: FetchOptions<OwnersFilters, OwnersSortBy>) {
+  async function fetchAndCount(filters: FetchOptions<OwnersFilters, OwnersSortBy>) {
     if (filters.itemId === undefined || !filters.contractAddress) {
       throw new HttpError(
         'itemId and contractAddress are neccesary params.',
-        500
+        400
       )
     }
-
-    const sortBy = filters.sortBy ? filters.sortBy : 'issuedId'
-    const orderDirection = filters.orderDirection
-      ? filters.orderDirection
-      : 'desc'
-    const newFilters: FetchOptions<OwnersFilters, OwnersSortBy> = {
+    
+    const parsedFilters: FetchOptions<OwnersFilters, OwnersSortBy> = {
       ...filters,
-      sortBy: sortBy as OwnersSortBy,
-      orderDirection: orderDirection,
+      sortBy: filters.sortBy as OwnersSortBy,
     }
 
-    const results: { nfts: OwnerFragment[] } = await subgraph.query(
-      getOwnersQuery(newFilters)
+    const data: { nfts: OwnerFragment[] } = await subgraph.query(
+      getOwnersQuery(parsedFilters, false)
     )
-    return results.nfts.map((ownerF: OwnerFragment) => ({
+
+    const countData: { nfts: OwnerFragment[] } = await subgraph.query(
+      getOwnersQuery(parsedFilters, true)
+    )    
+
+    const results = data.nfts.map((ownerF: OwnerFragment) => ({
       issuedId: ownerF.issuedId,
       ownerId: ownerF.owner.id,
+      orderStatus: ownerF.searchOrderStatus ,
+      orderExpiresAt: ownerF.searchOrderExpiresAt
     }))
-  }
 
-  async function count(filters: OwnersFilters) {
-    const query = getOwnersQuery(filters)
-    const { orders: fragments } = await subgraph.query<{
-      orders: OwnerFragment[]
-    }>(query)
-
-    return fragments.length
+    return {data: results, total: countData.nfts.length}
   }
 
   return {
-    fetch,
-    count,
+    fetchAndCount
   }
 }

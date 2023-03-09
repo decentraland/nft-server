@@ -16,8 +16,11 @@ export function createOwnersHandler(
 
     const sortBy = params.getValue<OwnersSortBy>('sortBy', OwnersSortBy)
 
+    const first = params.getNumber('first')
+    const skip = params.getNumber('skip')
+
     return asJSON(() => 
-      owners.fetch({ contractAddress, itemId, sortBy })
+      owners.fetchAndCount({ contractAddress, itemId, sortBy,first, skip })
     )
   }
 }

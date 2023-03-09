@@ -13,24 +13,31 @@ export const getOwnerFragment = () => `
     owner {
       id
     }
+    searchOrderStatus
+    searchOrderExpiresAt
   }
 `
 
 export function getOwnersQuery(
   filters: FetchOptions<OwnersFilters, OwnersSortBy>,
+  isCount: boolean
 ) {
+  const first = isCount ? 1000 : filters.first
+  const skip = isCount ? undefined : filters.skip
+  
+
       return `
       query OwnersData{
        nfts(
-          ${filters.first ? `first: ${filters.first}` : ''}\
-          ${filters.skip ? `skip: ${filters.skip}` : ''}
-          orderBy: ${filters.sortBy || 'issuedId'}, 
-          orderDirection: ${filters.orderDirection || 'desc'},
+          ${first ? `first: ${first}` : ''}
+          ${skip ? `skip: ${skip}` : ''}
+          ${filters.sortBy ? `orderBy: ${filters.sortBy}` : ''}
+          ${filters.orderDirection ? `orderDirection: ${filters.orderDirection}` : ''}
           where: {contractAddress: "${filters.contractAddress}", itemBlockchainId: "${filters.itemId}" }) {
-            ...ownerFragment
+            ${isCount ? 'id' : `...ownerFragment`}
         }
       }
-      ${getOwnerFragment()}
+      ${isCount ? '' : getOwnerFragment()}
     `
   }
 

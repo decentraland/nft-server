@@ -3,6 +3,8 @@ import { FetchOptions } from '../merger/types'
 export declare type Owners = {
   issuedId: string
   ownerId: string
+  orderStatus: string
+  orderExpiresAt: string
 }
 
 export declare type OwnersFilters = {
@@ -22,11 +24,12 @@ export type OwnerFragment = {
   owner: {
     id: string
   }
+  searchOrderStatus: string
+  searchOrderExpiresAt: string
 }
 
 export interface IOwnerDataComponent {
-  fetch(
+  fetchAndCount(
     filters: FetchOptions<OwnersFilters, OwnersSortBy>
-  ): Promise<Owners[]>
-  count( filters: OwnersFilters): Promise<number>
+  ): Promise<{data: Owners[], total: number}>
 }
