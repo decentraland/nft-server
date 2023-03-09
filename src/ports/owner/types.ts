@@ -3,8 +3,8 @@ import { FetchOptions } from '../merger/types'
 export declare type Owners = {
   issuedId: string
   ownerId: string
-  orderStatus: string
-  orderExpiresAt: string
+  orderStatus: string | null
+  orderExpiresAt: string | null
 }
 
 export declare type OwnersFilters = {
