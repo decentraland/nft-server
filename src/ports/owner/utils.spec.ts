@@ -64,9 +64,9 @@ describe('#getOwnersQuery', () => {
     })
   })
 
-  describe('when sortby is undefined', () => {
+  describe('when the sortby filter is undefined', () => {
     beforeEach(() => {
-      queryFilters = { ...queryFilters, sortBy: undefined }
+      delete queryFilters.sortBy
     })
 
     it('should not contain orderBy', () => {
@@ -76,8 +76,8 @@ describe('#getOwnersQuery', () => {
     })
   })
 
-  describe('when sortby is not undefined', () => {
-    it('should have orderby value as sortbyprop ', () => {
+  describe('when sortBy is not undefined', () => {
+    it('should have orderBy value as sortBy prop ', () => {
       const query = getOwnersQuery(queryFilters, isCount)
 
       expect(query).toContain(`orderBy: ${queryFilters.sortBy}`)
