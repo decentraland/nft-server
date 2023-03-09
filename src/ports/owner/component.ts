@@ -31,7 +31,7 @@ export function createOwnersComponent(options: {
       getOwnersQuery(parsedFilters, false)
     )
 
-    const countData: { nfts: OwnerFragment[] } = await subgraph.query(
+    const countData: { nfts: {id: string}[] } = await subgraph.query(
       getOwnersQuery(parsedFilters, true)
     )    
 

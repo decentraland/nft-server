@@ -1,13 +1,13 @@
 import { FetchOptions } from '../merger/types'
 
-export declare type Owners = {
+export type Owners = {
   issuedId: string
   ownerId: string
   orderStatus: string | null
   orderExpiresAt: string | null
 }
 
-export declare type OwnersFilters = {
+export type OwnersFilters = {
   contractAddress?: string,
   first?: number, 
   itemId?: string,
@@ -15,7 +15,7 @@ export declare type OwnersFilters = {
   orderDirection?: string
 }
 
-export declare enum OwnersSortBy {
+export enum OwnersSortBy {
   ISSUED_ID = 'issued_id', 
 }
 

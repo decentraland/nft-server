@@ -24,7 +24,6 @@ export function getOwnersQuery(
 ) {
   const first = isCount ? 1000 : filters.first
   const skip = isCount ? undefined : filters.skip
-  
 
       return `
       query OwnersData{
