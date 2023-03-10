@@ -42,6 +42,7 @@ export function createOwnersComponent(options: {
       ownerId: ownerF.owner.id,
       orderStatus: ownerF.searchOrderStatus,
       orderExpiresAt: ownerF.searchOrderExpiresAt,
+      tokenId: ownerF.tokenId
     }))
 
     return { data: results, total: countData.nfts.length }

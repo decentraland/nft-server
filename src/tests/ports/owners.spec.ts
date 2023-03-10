@@ -81,24 +81,28 @@ describe('when fetching owners', () => {
           owner: { id: `1` },
           searchOrderStatus: 'null',
           searchOrderExpiresAt: 'null',
+          tokenId: '1'
         },
         {
           issuedId: `issue2`,
           owner: { id: `2` },
           searchOrderStatus: 'open',
           searchOrderExpiresAt: '1674604800000',
+          tokenId: '2'
         },
         {
           issuedId: `issue3`,
           owner: { id: `3` },
           searchOrderStatus: 'null',
           searchOrderExpiresAt: 'null',
+          tokenId: '3'
         },
         {
           issuedId: `issue4`,
           owner: { id: `4` },
           searchOrderStatus: 'open',
           searchOrderExpiresAt: '1674604800000',
+          tokenId: '4'
         },
       ]
 
@@ -129,24 +133,28 @@ describe('when fetching owners', () => {
             ownerId: `1`,
             orderStatus: 'null',
             orderExpiresAt: 'null',
+            tokenId: '1'
           },
           {
             issuedId: `issue2`,
             ownerId: `2`,
             orderStatus: 'open',
             orderExpiresAt: '1674604800000',
+            tokenId: '2'
           },
           {
             issuedId: `issue3`,
             ownerId: `3`,
             orderStatus: 'null',
             orderExpiresAt: 'null',
+            tokenId: '3'
           },
           {
             issuedId: `issue4`,
             ownerId: `4`,
             orderStatus: 'open',
             orderExpiresAt: '1674604800000',
+            tokenId: '4'
           },
         ],
         total: countResponse.length,

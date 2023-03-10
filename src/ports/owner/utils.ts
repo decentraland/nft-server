@@ -15,6 +15,7 @@ export const getOwnerFragment = () => `
     }
     searchOrderStatus
     searchOrderExpiresAt
+    tokenId
   }
 `
 

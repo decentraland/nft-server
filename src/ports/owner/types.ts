@@ -5,6 +5,7 @@ export type Owners = {
   ownerId: string
   orderStatus: string | null
   orderExpiresAt: string | null
+  tokenId: string
 }
 
 export type OwnersFilters = {
@@ -26,6 +27,7 @@ export type OwnerFragment = {
   }
   searchOrderStatus: string
   searchOrderExpiresAt: string
+  tokenId: string
 }
 
 export interface IOwnerDataComponent {
