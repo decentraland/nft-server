@@ -37,12 +37,12 @@ export function createOwnersComponent(options: {
       getOwnersQuery(parsedFilters, true)
     )
 
-    const results = data.nfts.map((ownerF: OwnerFragment) => ({
-      issuedId: ownerF.issuedId,
-      ownerId: ownerF.owner.id,
-      orderStatus: ownerF.searchOrderStatus,
-      orderExpiresAt: ownerF.searchOrderExpiresAt,
-      tokenId: ownerF.tokenId
+    const results = data.nfts.map((owner: OwnerFragment) => ({
+      issuedId: owner.issuedId,
+      ownerId: owner.owner.id,
+      orderStatus: owner.searchOrderStatus,
+      orderExpiresAt: owner.searchOrderExpiresAt,
+      tokenId: owner.tokenId
     }))
 
     return { data: results, total: countData.nfts.length }
