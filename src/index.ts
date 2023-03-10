@@ -339,15 +339,12 @@ async function initComponents(): Promise<AppComponents> {
     NFTFilters,
     NFTSortBy
   >[] = [
-    //va los agarra y los busca
     createNFTsSource(marketplaceNFTs, {
-      //este esta en ethereum
       shouldFetch: marketplaceShouldFetch,
       isRentalsEnabled,
       rentals: rentalsComponent,
     }),
     createNFTsSource(collectionsNFTs, {
-      //este esta en matic
       shouldFetch: collectionsShouldFetch,
     }),
   ]

@@ -14,14 +14,16 @@ export function createOwnersComponent(options: {
 }): IOwnerDataComponent {
   const { subgraph } = options
 
-  async function fetchAndCount(filters: FetchOptions<OwnersFilters, OwnersSortBy>) {
+  async function fetchAndCount(
+    filters: FetchOptions<OwnersFilters, OwnersSortBy>
+  ) {
     if (filters.itemId === undefined || !filters.contractAddress) {
       throw new HttpError(
         'itemId and contractAddress are neccesary params.',
         400
       )
     }
-    
+
     const parsedFilters: FetchOptions<OwnersFilters, OwnersSortBy> = {
       ...filters,
       sortBy: filters.sortBy as OwnersSortBy,
@@ -31,21 +33,21 @@ export function createOwnersComponent(options: {
       getOwnersQuery(parsedFilters, false)
     )
 
-    const countData: { nfts: {id: string}[] } = await subgraph.query(
+    const countData: { nfts: { id: string }[] } = await subgraph.query(
       getOwnersQuery(parsedFilters, true)
-    )    
+    )
 
     const results = data.nfts.map((ownerF: OwnerFragment) => ({
       issuedId: ownerF.issuedId,
       ownerId: ownerF.owner.id,
-      orderStatus: ownerF.searchOrderStatus ,
-      orderExpiresAt: ownerF.searchOrderExpiresAt
+      orderStatus: ownerF.searchOrderStatus,
+      orderExpiresAt: ownerF.searchOrderExpiresAt,
     }))
 
-    return {data: results, total: countData.nfts.length}
+    return { data: results, total: countData.nfts.length }
   }
 
   return {
-    fetchAndCount
+    fetchAndCount,
   }
 }
