@@ -135,6 +135,7 @@ import {
   getCollectionsAccountFragment,
   getCollectionsAccountOrderBy,
 } from '../logic/accounts/collections'
+import { createOwnersComponent } from '../ports/owner/component'
 
 // start TCP port for listeners
 let lastUsedPort = 19000 + parseInt(process.env.JEST_WORKER_ID || '1') * 1000
@@ -564,6 +565,10 @@ export async function initComponents(): Promise<AppComponents> {
 
   const statusChecks = await createStatusCheckComponent({ config, server })
 
+  const owners = createOwnersComponent({
+    subgraph: collectionsSubgraph
+  })
+
   return {
     config,
     logs,
@@ -588,5 +593,6 @@ export async function initComponents(): Promise<AppComponents> {
     rankings,
     prices,
     stats,
+    owners
   }
 }

@@ -153,6 +153,7 @@ import {
   getCollectionsAccountFragment,
   getCollectionsAccountOrderBy,
 } from './logic/accounts/collections'
+import { createOwnersComponent } from './ports/owner/component'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -423,6 +424,11 @@ async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
+  // owners
+  const owners = createOwnersComponent({
+    subgraph: collectionsSubgraph,
+  })
+
   // mints
   const collectionsMints = createMintsComponent({
     subgraph: collectionsSubgraph,
@@ -660,6 +666,7 @@ async function initComponents(): Promise<AppComponents> {
     collectionsSubgraph,
     marketplaceSubgraph,
     stats,
+    owners,
   }
 }
 
