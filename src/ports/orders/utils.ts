@@ -45,6 +45,7 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
     buyer,
     owner,
     status,
+    itemId,
   } = filters
 
   const where: string[] = []
@@ -69,6 +70,10 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
     where.push(`owner: "${owner}"`)
   }
 
+  if (itemId) {
+    where.push(`{nft_: {itemBlockchainId: "${itemId}"}`)
+  }
+
   if (status) {
     if (status === ListingStatus.OPEN) {
       where.push(`expiresAt_gt: "${Date.now()}"`)
@@ -80,10 +85,10 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
   const total = isCount
     ? max
     : typeof first !== 'undefined'
-      ? typeof skip !== 'undefined'
-        ? skip + first
-        : first
-      : max
+    ? typeof skip !== 'undefined'
+      ? skip + first
+      : first
+    : max
 
   let orderBy: string
   let orderDirection: string
@@ -98,6 +103,18 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
       break
     case OrderSortBy.CHEAPEST:
       orderBy = 'price'
+      orderDirection = 'asc'
+      break
+    case OrderSortBy.ISSUED_ID_ASC:
+      orderBy = 'tokenId'
+      orderDirection = 'asc'
+      break
+    case OrderSortBy.ISSUED_ID_DESC:
+      orderBy = 'tokenId'
+      orderDirection = 'desc'
+      break
+    case OrderSortBy.OLDEST:
+      orderBy = 'createdAt'
       orderDirection = 'asc'
       break
     default:

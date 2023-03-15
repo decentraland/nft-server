@@ -225,6 +225,9 @@ export async function initComponents(): Promise<AppComponents> {
       [OrderSortBy.RECENTLY_LISTED]: SortDirection.DESC,
       [OrderSortBy.RECENTLY_UPDATED]: SortDirection.DESC,
       [OrderSortBy.CHEAPEST]: SortDirection.ASC,
+      [OrderSortBy.ISSUED_ID_ASC]: SortDirection.ASC,
+      [OrderSortBy.ISSUED_ID_DESC]: SortDirection.DESC,
+      [OrderSortBy.OLDEST]: SortDirection.ASC,
     },
     maxCount: 1000,
   })
@@ -566,7 +569,7 @@ export async function initComponents(): Promise<AppComponents> {
   const statusChecks = await createStatusCheckComponent({ config, server })
 
   const owners = createOwnersComponent({
-    subgraph: collectionsSubgraph
+    subgraph: collectionsSubgraph,
   })
 
   return {
@@ -593,6 +596,6 @@ export async function initComponents(): Promise<AppComponents> {
     rankings,
     prices,
     stats,
-    owners
+    owners,
   }
 }

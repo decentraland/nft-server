@@ -21,6 +21,7 @@ export function createOrdersHandler(
     const tokenId = params.getString('tokenId')
     const status = params.getValue<ListingStatus>('status', ListingStatus)
     const network = params.getValue<Network>('network', Network)
+    const itemId = params.getString('itemId')
 
     return asJSON(() =>
       orders.fetchAndCount({
@@ -34,6 +35,7 @@ export function createOrdersHandler(
         tokenId,
         status,
         network,
+        itemId,
       })
     )
   }
