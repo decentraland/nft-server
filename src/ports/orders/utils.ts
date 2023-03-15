@@ -71,7 +71,7 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
   }
 
   if (itemId) {
-    where.push(`{nft_: {itemBlockchainId: "${itemId}"}`)
+    where.push(`nft_: {itemBlockchainId: "${itemId}"}`)
   }
 
   if (status) {
