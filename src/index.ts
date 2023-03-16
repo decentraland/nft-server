@@ -92,7 +92,13 @@ import {
   getMarketplaceContracts,
 } from './logic/contracts'
 import { BID_DEFAULT_SORT_BY } from './ports/bids/utils'
-import { ORDER_DEFAULT_SORT_BY } from './ports/orders/utils'
+import {
+  getCollectionsItemIdFilter,
+  getCollectionsNameFilter,
+  getMarketplaceItemIdFilter,
+  getMarketplaceNameFilter,
+  ORDER_DEFAULT_SORT_BY,
+} from './ports/orders/utils'
 import { createItemsSource } from './adapters/sources/items'
 import { createItemsComponent } from './ports/items/component'
 import { ITEM_DEFAULT_SORT_BY } from './ports/items/utils'
@@ -237,12 +243,16 @@ async function initComponents(): Promise<AppComponents> {
     subgraph: marketplaceSubgraph,
     network: Network.ETHEREUM,
     chainId: marketplaceChainId,
+    getItemIdFilter: getMarketplaceItemIdFilter,
+    getNameFilter: getMarketplaceNameFilter,
   })
 
   const collectionsOrders = createOrdersComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
     chainId: collectionsChainId,
+    getItemIdFilter: getCollectionsItemIdFilter,
+    getNameFilter: getCollectionsNameFilter,
   })
 
   const orders = createMergerComponent<Order, OrderFilters, OrderSortBy>({
