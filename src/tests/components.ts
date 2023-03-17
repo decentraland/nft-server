@@ -97,7 +97,13 @@ import { MINT_DEFAULT_SORT_BY } from '../ports/mints/utils'
 import { createNFTComponent } from '../ports/nfts/component'
 import { NFTResult } from '../ports/nfts/types'
 import { NFT_DEFAULT_SORT_BY } from '../ports/nfts/utils'
-import { ORDER_DEFAULT_SORT_BY } from '../ports/orders/utils'
+import {
+  getCollectionsItemIdFilter,
+  getCollectionsNameFilter,
+  getMarketplaceItemIdFilter,
+  getMarketplaceNameFilter,
+  ORDER_DEFAULT_SORT_BY,
+} from '../ports/orders/utils'
 import { createSalesComponent } from '../ports/sales/component'
 import { SALE_DEFAULT_SORT_BY } from '../ports/sales/utils'
 import { getMarketplaceChainId, getCollectionsChainId } from '../logic/chainIds'
@@ -207,12 +213,16 @@ export async function initComponents(): Promise<AppComponents> {
     subgraph: marketplaceSubgraph,
     network: Network.ETHEREUM,
     chainId: marketplaceChainId,
+    getItemIdFilter: getMarketplaceItemIdFilter,
+    getNameFilter: getMarketplaceNameFilter,
   })
 
   const collectionsOrders = createOrdersComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
     chainId: collectionsChainId,
+    getItemIdFilter: getCollectionsItemIdFilter,
+    getNameFilter: getCollectionsNameFilter,
   })
 
   const orders = createMergerComponent<Order, OrderFilters, OrderSortBy>({
