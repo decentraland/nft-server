@@ -22,7 +22,7 @@ export function createOrdersHandler(
     const status = params.getValue<ListingStatus>('status', ListingStatus)
     const network = params.getValue<Network>('network', Network)
     const itemId = params.getString('itemId')
-    const name = params.getString('name')
+    const nftName = params.getString('nftName')
 
     return asJSON(() =>
       orders.fetchAndCount({
@@ -37,7 +37,7 @@ export function createOrdersHandler(
         status,
         network,
         itemId,
-        name,
+        nftName,
       })
     )
   }

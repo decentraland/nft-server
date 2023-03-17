@@ -64,7 +64,7 @@ export const getOrdersQuery = (
     owner,
     status,
     itemId,
-    name,
+    nftName,
   } = filters
 
   const where: string[] = []
@@ -94,8 +94,8 @@ export const getOrdersQuery = (
     where.push(itemIdFilter)
   }
 
-  if (name) {
-    const nameFilter = getNameFilter(name)
+  if (nftName) {
+    const nameFilter = getNameFilter(nftName)
     where.push(nameFilter)
   }
 
