@@ -97,7 +97,13 @@ import { MINT_DEFAULT_SORT_BY } from '../ports/mints/utils'
 import { createNFTComponent } from '../ports/nfts/component'
 import { NFTResult } from '../ports/nfts/types'
 import { NFT_DEFAULT_SORT_BY } from '../ports/nfts/utils'
-import { ORDER_DEFAULT_SORT_BY } from '../ports/orders/utils'
+import {
+  getCollectionsItemIdFilter,
+  getCollectionsNameFilter,
+  getMarketplaceItemIdFilter,
+  getMarketplaceNameFilter,
+  ORDER_DEFAULT_SORT_BY,
+} from '../ports/orders/utils'
 import { createSalesComponent } from '../ports/sales/component'
 import { SALE_DEFAULT_SORT_BY } from '../ports/sales/utils'
 import { getMarketplaceChainId, getCollectionsChainId } from '../logic/chainIds'
@@ -207,12 +213,16 @@ export async function initComponents(): Promise<AppComponents> {
     subgraph: marketplaceSubgraph,
     network: Network.ETHEREUM,
     chainId: marketplaceChainId,
+    getItemIdFilter: getMarketplaceItemIdFilter,
+    getNameFilter: getMarketplaceNameFilter,
   })
 
   const collectionsOrders = createOrdersComponent({
     subgraph: collectionsSubgraph,
     network: Network.MATIC,
     chainId: collectionsChainId,
+    getItemIdFilter: getCollectionsItemIdFilter,
+    getNameFilter: getCollectionsNameFilter,
   })
 
   const orders = createMergerComponent<Order, OrderFilters, OrderSortBy>({
@@ -225,6 +235,9 @@ export async function initComponents(): Promise<AppComponents> {
       [OrderSortBy.RECENTLY_LISTED]: SortDirection.DESC,
       [OrderSortBy.RECENTLY_UPDATED]: SortDirection.DESC,
       [OrderSortBy.CHEAPEST]: SortDirection.ASC,
+      [OrderSortBy.ISSUED_ID_ASC]: SortDirection.ASC,
+      [OrderSortBy.ISSUED_ID_DESC]: SortDirection.DESC,
+      [OrderSortBy.OLDEST]: SortDirection.ASC,
     },
     maxCount: 1000,
   })
@@ -566,7 +579,7 @@ export async function initComponents(): Promise<AppComponents> {
   const statusChecks = await createStatusCheckComponent({ config, server })
 
   const owners = createOwnersComponent({
-    subgraph: collectionsSubgraph
+    subgraph: collectionsSubgraph,
   })
 
   return {
@@ -593,6 +606,6 @@ export async function initComponents(): Promise<AppComponents> {
     rankings,
     prices,
     stats,
-    owners
+    owners,
   }
 }

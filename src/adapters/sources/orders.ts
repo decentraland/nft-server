@@ -13,6 +13,9 @@ export function createOrdersSource(
         [OrderSortBy.RECENTLY_LISTED]: result.createdAt,
         [OrderSortBy.RECENTLY_UPDATED]: result.updatedAt,
         [OrderSortBy.CHEAPEST]: +result.price,
+        [OrderSortBy.ISSUED_ID_ASC]: result.tokenId,
+        [OrderSortBy.ISSUED_ID_DESC]: result.tokenId,
+        [OrderSortBy.OLDEST]: result.createdAt,
       },
     }))
   }

@@ -10,6 +10,18 @@ import { OrderFragment } from './types'
 
 export const ORDER_DEFAULT_SORT_BY = OrderSortBy.RECENTLY_LISTED
 
+// We're filtering on collections subgraph by itemId and on marketplace subgraph by name as there's not itemId
+export const getCollectionsItemIdFilter = (itemId: string) => `
+  nft_: {itemBlockchainId: "${itemId}"}
+`
+export const getCollectionsNameFilter = (_name: string) => ``
+
+export const getMarketplaceItemIdFilter = (_itemId: string) => ``
+
+export const getMarketplaceNameFilter = (name: string) => `
+  nft_: {name: "${name}"}
+`
+
 export const getOrderFields = () => `
   fragment orderFields on Order {
     id
@@ -27,6 +39,7 @@ export const getOrderFields = () => `
     }
   }
 `
+
 export const getOrderFragment = () => `
   fragment orderFragment on Order {
     ...orderFields
@@ -34,7 +47,12 @@ export const getOrderFragment = () => `
   ${getOrderFields()}
 `
 
-export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
+export const getOrdersQuery = (
+  filters: OrderFilters,
+  isCount = false,
+  getItemIdFilter: (itemId: string) => string,
+  getNameFilter: (name: string) => string
+) => {
   const {
     first,
     skip,
@@ -45,6 +63,8 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
     buyer,
     owner,
     status,
+    itemId,
+    nftName,
   } = filters
 
   const where: string[] = []
@@ -69,6 +89,16 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
     where.push(`owner: "${owner}"`)
   }
 
+  if (itemId) {
+    const itemIdFilter = getItemIdFilter(itemId)
+    where.push(itemIdFilter)
+  }
+
+  if (nftName) {
+    const nameFilter = getNameFilter(nftName)
+    where.push(nameFilter)
+  }
+
   if (status) {
     if (status === ListingStatus.OPEN) {
       where.push(`expiresAt_gt: "${Date.now()}"`)
@@ -80,13 +110,14 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
   const total = isCount
     ? max
     : typeof first !== 'undefined'
-      ? typeof skip !== 'undefined'
-        ? skip + first
-        : first
-      : max
+    ? typeof skip !== 'undefined'
+      ? skip + first
+      : first
+    : max
 
   let orderBy: string
   let orderDirection: string
+
   switch (sortBy || ORDER_DEFAULT_SORT_BY) {
     case OrderSortBy.RECENTLY_LISTED:
       orderBy = 'createdAt'
@@ -98,6 +129,18 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
       break
     case OrderSortBy.CHEAPEST:
       orderBy = 'price'
+      orderDirection = 'asc'
+      break
+    case OrderSortBy.ISSUED_ID_ASC:
+      orderBy = 'tokenId'
+      orderDirection = 'asc'
+      break
+    case OrderSortBy.ISSUED_ID_DESC:
+      orderBy = 'tokenId'
+      orderDirection = 'desc'
+      break
+    case OrderSortBy.OLDEST:
+      orderBy = 'createdAt'
       orderDirection = 'asc'
       break
     default:
