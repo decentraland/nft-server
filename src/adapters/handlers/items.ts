@@ -62,8 +62,14 @@ export function createItemsHandler(
     const urns = params.getList('urn')
 
     return asJSON(() => {
-      if (ids && (contractAddresses || itemId || urns)) {
-        throw new HttpError('Ids cannot be set with contractAddress, itemId, or urn.', 400)
+      if (
+        ids?.length > 0 &&
+        (contractAddresses?.length > 0 || itemId || urns?.length > 0)
+      ) {
+        throw new HttpError(
+          'Ids cannot be set with contractAddress, itemId, or urn.',
+          400
+        )
       }
 
       return items.fetchAndCount({
