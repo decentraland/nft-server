@@ -49,6 +49,8 @@ import { IStatsComponent } from './ports/stats/types'
 import { IOwnerDataComponent } from './ports/owner/types'
 import { ItemOptions } from './ports/items/types'
 import { IFavoritesComponent } from './ports/favorites/types'
+import { IPgComponent } from '@well-known-components/pg-component'
+import { ICatalogComponent } from './ports/catalog/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -90,6 +92,8 @@ export type AppComponents = {
   >
   owners: IOwnerDataComponent
   favorites: IFavoritesComponent
+  satsumaDatabase: IPgComponent
+  catalog: ICatalogComponent
 }
 
 export type Context<Path extends string = any> = RoutedContext<

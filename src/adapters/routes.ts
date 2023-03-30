@@ -17,6 +17,7 @@ import { createVolumeHandler } from './handlers/volume'
 import { createPricesHandler } from './handlers/prices'
 import { createStatsHandler } from './handlers/stats'
 import { createOwnersHandler } from './handlers/owners'
+import { createCatalogHandler } from './handlers/catalog'
 
 const FIVE_MINUTES = 5 * 60 * 1000
 
@@ -57,6 +58,7 @@ export async function setupRoutes(globalContext: GlobalContext) {
     createNFTHandler(components)
   )
   router.get('/owners', createOwnersHandler(components))
+  router.get('/catalog', createCatalogHandler(components))
 
   server.use(router.middleware())
 }
