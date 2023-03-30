@@ -12,7 +12,7 @@ import {
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { AppComponents, Context } from '../../types'
 import { Params } from '../../logic/http/params'
-import { asJSON } from '../../logic/http/response'
+import { asJSON, HttpError } from '../../logic/http/response'
 
 export function createItemsHandler(
   components: Pick<AppComponents, 'items'>
@@ -53,6 +53,7 @@ export function createItemsHandler(
       'emotePlayMode',
       EmotePlayMode
     )
+    const ids = params.getList('id')
     const contractAddresses = params.getList('contractAddress')
     const itemId = params.getString('itemId')
     const network = params.getValue<Network>('network', Network)
@@ -60,8 +61,12 @@ export function createItemsHandler(
     const minPrice = params.getString('minPrice')
     const urns = params.getList('urn')
 
-    return asJSON(() =>
-      items.fetchAndCount({
+    return asJSON(() => {
+      if (ids && (contractAddresses || itemId || urns)) {
+        throw new HttpError('Ids cannot be set with contractAddress, itemId, or urn.', 400)
+      }
+
+      return items.fetchAndCount({
         first,
         skip,
         sortBy,
@@ -78,6 +83,7 @@ export function createItemsHandler(
         emoteCategory,
         emoteGenders,
         emotePlayMode,
+        ids,
         contractAddresses,
         itemId,
         isWearableSmart,
@@ -90,6 +96,6 @@ export function createItemsHandler(
           : undefined,
         urns,
       })
-    )
+    })
   }
 }

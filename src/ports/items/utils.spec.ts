@@ -85,6 +85,23 @@ describe("#getItemsQuery", () => {
     })
   })
 
+  describe('when ids is defined', () => {
+    it('should check ids in the received list by params', () => {
+      expect(
+        getItemsQuery({
+          ids: [
+            '0x00a4b2e743c609256ade1cf99b8e69ecdf27ab8c-0',
+            '0x00a4b2e743c609256ade1cf99b8e69ecdf27ab8c-1',
+          ],
+        })
+      ).toEqual(
+        expect.stringContaining(
+          'id_in: ["0x00a4b2e743c609256ade1cf99b8e69ecdf27ab8c-0","0x00a4b2e743c609256ade1cf99b8e69ecdf27ab8c-1"]'
+        )
+      )
+    })
+  })
+
   describe('when urns is defined', () => {
     it('should check urns in the list of urns received by params', () => {
       expect(

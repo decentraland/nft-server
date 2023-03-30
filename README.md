@@ -131,6 +131,7 @@ type Item = {
 - `emoteCategory`: Filter results by `EmoteCategory`. Possible values: `dance`, `stunt`, `greetings`, `fun`, `poses`, `reactions`, `horror`, `miscellaneous`.
 - `emoteGender`: Filter results by `GenderFilterOption`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`, `unisex`.
 - `emotePlayMode`: Filter results by `EmotePlayMode`. It supports multiple values by adding the query param multiple times. Possible values: `simple`, `loop`
+- `id`: Filter results by id. It supports multiple values by adding the query param multiple times. Type: `contractAddress-itemId`.
 - `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
 - `itemId`: Filter results by `itemId`. Type: `string`.
 - `minPrice`: Return only sales with a price higher than this. Type `number`.
