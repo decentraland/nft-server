@@ -271,7 +271,7 @@ async function initComponents(): Promise<AppComponents> {
       [OrderSortBy.CHEAPEST]: SortDirection.ASC,
       [OrderSortBy.ISSUED_ID_ASC]: SortDirection.ASC,
       [OrderSortBy.ISSUED_ID_DESC]: SortDirection.DESC,
-      [OrderSortBy.OLDEST]: SortDirection.DESC,
+      [OrderSortBy.OLDEST]: SortDirection.ASC,
     },
     maxCount: 1000,
   })

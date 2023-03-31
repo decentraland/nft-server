@@ -59,24 +59,6 @@ fragment orderFields on Order {
 }
 `
 
-// export const getOrderFields = () => `
-//   fragment orderFields on Order {
-//     id
-//     marketplaceAddress
-//     nftAddress
-//     owner
-//     buyer
-//     price
-//     status
-//     expiresAt
-//     createdAt
-//     updatedAt
-//     nft {
-//       tokenId
-//     }
-//   }
-// `
-
 export const getOrderFragment = (getOrderFields: () => string) => `
   fragment orderFragment on Order {
     ...orderFields
