@@ -10,31 +10,87 @@ import { OrderFragment } from './types'
 
 export const ORDER_DEFAULT_SORT_BY = OrderSortBy.RECENTLY_LISTED
 
-export const getOrderFields = () => `
-  fragment orderFields on Order {
-    id
-    marketplaceAddress
-    nftAddress
-    owner
-    buyer
-    price
-    status
-    expiresAt
-    createdAt
-    updatedAt
-    nft {
-      tokenId
-    }
-  }
+// We're filtering on collections subgraph by itemId and on marketplace subgraph by name as there's not itemId
+export const getCollectionsItemIdFilter = (itemId: string) => `
+  nft_: {itemBlockchainId: "${itemId}"}
 `
-export const getOrderFragment = () => `
+export const getCollectionsNameFilter = (_name: string) => ``
+
+export const getCollectionsOrderFields = () => `
+fragment orderFields on Order {
+  id
+  marketplaceAddress
+  nftAddress
+  owner
+  buyer
+  price
+  status
+  expiresAt
+  createdAt
+  updatedAt
+  nft {
+    tokenId
+    issuedId
+  }
+}
+`
+
+export const getMarketplaceItemIdFilter = (_itemId: string) => ``
+
+export const getMarketplaceNameFilter = (name: string) => `
+  nft_: {name: "${name}"}
+`
+
+export const getMarketplaceOrderFields = () => `
+fragment orderFields on Order {
+  id
+  marketplaceAddress
+  nftAddress
+  owner
+  buyer
+  price
+  status
+  expiresAt
+  createdAt
+  updatedAt
+  nft {
+    tokenId
+  }
+}
+`
+
+// export const getOrderFields = () => `
+//   fragment orderFields on Order {
+//     id
+//     marketplaceAddress
+//     nftAddress
+//     owner
+//     buyer
+//     price
+//     status
+//     expiresAt
+//     createdAt
+//     updatedAt
+//     nft {
+//       tokenId
+//     }
+//   }
+// `
+
+export const getOrderFragment = (getOrderFields: () => string) => `
   fragment orderFragment on Order {
     ...orderFields
   }
   ${getOrderFields()}
 `
 
-export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
+export const getOrdersQuery = (
+  filters: OrderFilters,
+  isCount = false,
+  getItemIdFilter: (itemId: string) => string,
+  getNameFilter: (name: string) => string,
+  getOrderFields: () => string
+) => {
   const {
     first,
     skip,
@@ -80,10 +136,10 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
   const total = isCount
     ? max
     : typeof first !== 'undefined'
-      ? typeof skip !== 'undefined'
-        ? skip + first
-        : first
-      : max
+    ? typeof skip !== 'undefined'
+      ? skip + first
+      : first
+    : max
 
   let orderBy: string
   let orderDirection: string
@@ -116,7 +172,7 @@ export const getOrdersQuery = (filters: OrderFilters, isCount = false) => {
         })
       { ${isCount ? 'id' : `...orderFragment`} }
     }
-    ${isCount ? '' : getOrderFragment()}
+    ${isCount ? '' : getOrderFragment(getOrderFields)}
   `
 }
 
@@ -139,6 +195,9 @@ export function fromOrderFragment(
     expiresAt: +fragment.expiresAt,
     createdAt: +fragment.createdAt * 1000,
     updatedAt: +fragment.updatedAt * 1000,
+    issuedId: fragment.nft.issuedId
+      ? fragment.nft.issuedId
+      : fragment.nft.tokenId,
   }
 
   return order

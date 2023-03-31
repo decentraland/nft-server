@@ -10,7 +10,10 @@ import {
 import { NFTResult } from '../../ports/nfts/types'
 import { getId, NFT_DEFAULT_SORT_BY } from '../../ports/nfts/utils'
 import { OrderFragment } from '../../ports/orders/types'
-import { fromOrderFragment, getOrderFields } from '../../ports/orders/utils'
+import {
+  fromOrderFragment,
+  getMarketplaceOrderFields,
+} from '../../ports/orders/utils'
 import { getMarketplaceChainId } from '../chainIds'
 import { isExpired } from '../expiration'
 import { capitalize } from '../string'
@@ -81,7 +84,7 @@ export const getMarketplaceFragment = () => `
     }
   }
   ${getMarketplaceFields()}
-  ${getOrderFields()}
+  ${getMarketplaceOrderFields()}
 `
 
 export type MarketplaceNFTFields = {
