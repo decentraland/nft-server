@@ -101,6 +101,8 @@ export const getOrdersQuery = (
     buyer,
     owner,
     status,
+    itemId,
+    nftName,
   } = filters
 
   const where: string[] = []
@@ -125,6 +127,16 @@ export const getOrdersQuery = (
     where.push(`owner: "${owner}"`)
   }
 
+  if (itemId) {
+    const itemIdFilter = getItemIdFilter(itemId)
+    where.push(itemIdFilter)
+  }
+
+  if (nftName) {
+    const nameFilter = getNameFilter(nftName)
+    where.push(nameFilter)
+  }
+
   if (status) {
     if (status === ListingStatus.OPEN) {
       where.push(`expiresAt_gt: "${Date.now()}"`)
@@ -143,6 +155,7 @@ export const getOrdersQuery = (
 
   let orderBy: string
   let orderDirection: string
+
   switch (sortBy || ORDER_DEFAULT_SORT_BY) {
     case OrderSortBy.RECENTLY_LISTED:
       orderBy = 'createdAt'
@@ -154,6 +167,18 @@ export const getOrdersQuery = (
       break
     case OrderSortBy.CHEAPEST:
       orderBy = 'price'
+      orderDirection = 'asc'
+      break
+    case OrderSortBy.ISSUED_ID_ASC:
+      orderBy = 'tokenId'
+      orderDirection = 'asc'
+      break
+    case OrderSortBy.ISSUED_ID_DESC:
+      orderBy = 'tokenId'
+      orderDirection = 'desc'
+      break
+    case OrderSortBy.OLDEST:
+      orderBy = 'createdAt'
       orderDirection = 'asc'
       break
     default:
