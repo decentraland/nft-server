@@ -151,6 +151,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     wearableGenders,
     emoteCategory,
     emoteGenders,
+    ids,
     contractAddresses,
     itemId,
     minPrice,
@@ -212,6 +213,14 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
 
   if (minPrice) {
     where.push(`price_gte: "${minPrice}"`)
+  }
+
+  if (ids && ids.length > 0) {
+    where.push(
+      `id_in: [${ids
+        .map((id) => `"${id}"`)
+        .join(',')}]`
+    )
   }
 
   if (contractAddresses && contractAddresses.length > 0) {
