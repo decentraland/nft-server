@@ -1,4 +1,5 @@
 import { Router } from '@well-known-components/http-server'
+import * as authorizationMiddleware from 'decentraland-crypto-middleware'
 import { GlobalContext } from '../types'
 import { createBidsHandler } from './handlers/bids'
 import { createOrdersHandler } from './handlers/orders'
@@ -17,6 +18,8 @@ import { createPricesHandler } from './handlers/prices'
 import { createStatsHandler } from './handlers/stats'
 import { createOwnersHandler } from './handlers/owners'
 
+const FIVE_MINUTES = 5 * 60 * 1000
+
 export async function setupRoutes(globalContext: GlobalContext) {
   const { components } = globalContext
   const { config, server } = components
@@ -30,7 +33,14 @@ export async function setupRoutes(globalContext: GlobalContext) {
   router.get('/bids', createBidsHandler(components))
   router.get('/orders', createOrdersHandler(components))
   router.get('/nfts', createNFTsHandler(components))
-  router.get('/items', createItemsHandler(components))
+  router.get(
+    '/items',
+    authorizationMiddleware.wellKnownComponents({
+      optional: true,
+      expiration: FIVE_MINUTES,
+    }),
+    createItemsHandler(components)
+  )
   router.get('/contracts', createContractsHandler(components))
   router.get('/mints', createMintsHandler(components))
   router.get('/sales', createSalesHandler(components))
@@ -47,7 +57,6 @@ export async function setupRoutes(globalContext: GlobalContext) {
     createNFTHandler(components)
   )
   router.get('/owners', createOwnersHandler(components))
-
 
   server.use(router.middleware())
 }
