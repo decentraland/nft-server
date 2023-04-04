@@ -4,45 +4,49 @@ import { IItemsComponent } from '../../ports/items/types'
 import { IFavoritesComponent, PickStats } from '../../ports/favorites/types'
 
 export function createItemsSource(
-  items: IItemsComponent,
+  components: {
+    itemsComponent: IItemsComponent
+    favoritesComponent: IFavoritesComponent
+  },
   options?: {
-    favorites?: IFavoritesComponent
     isFavoritesEnabled?: boolean
   }
 ): IMergerComponent.Source<Item, ItemFilters, ItemSortBy> {
+  const { itemsComponent, favoritesComponent } = components
+
   async function enhanceItemsWithPicksStats(
-    filters: FetchOptions<ItemFilters, ItemSortBy>
+    items: Item[],
+    pickedBy?: string
   ): Promise<Item[]> {
-    const results = await items.fetch(filters)
-
-    if (!options || !options.favorites || !options.isFavoritesEnabled) {
-      return results
-    }
-
-    const picksStats = await options.favorites.getPicksStatsOfItems(
-      results.map((result) => result.id),
-      '???'
+    const picksStats = await favoritesComponent.getPicksStatsOfItems(
+      items.map((itemId) => itemId.id),
+      pickedBy
     )
 
     const picksStatsByItemId: Record<string, PickStats> = picksStats.reduce(
       (acc, pickStats) => {
-        return {
-          ...acc,
-          [pickStats.itemId]: pickStats,
-        }
+        acc[pickStats.itemId] = pickStats
+        return acc
       },
-      {}
+      {} as Record<string, PickStats>
     )
 
-    return results.map((itemResult) => ({
+    return items.map((itemResult) => ({
       ...itemResult,
-      favorites: picksStatsByItemId[itemResult.id] ?? null,
+      picks: picksStatsByItemId[itemResult.id] ?? null,
     }))
   }
 
-  async function fetch(filters: FetchOptions<ItemFilters, ItemSortBy>) {
-    await enhanceItemsWithPicksStats(filters)
-    const results = await items.fetch(filters)
+  async function fetch({
+    pickedBy,
+    ...filters
+  }: FetchOptions<ItemFilters & { pickedBy?: string }, ItemSortBy>) {
+    let results = await itemsComponent.fetch(filters)
+
+    if (options && options.isFavoritesEnabled) {
+      results = await enhanceItemsWithPicksStats(results, pickedBy)
+    }
+
     return results.map((result) => ({
       result,
       sort: {
@@ -58,7 +62,7 @@ export function createItemsSource(
   }
 
   async function count(filters: FetchOptions<ItemFilters, ItemSortBy>) {
-    const total = await items.count(filters)
+    const total = await itemsComponent.count(filters)
     return total
   }
 

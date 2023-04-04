@@ -421,9 +421,9 @@ async function initComponents(): Promise<AppComponents> {
   })
 
   // favorites
-  // Rentals component
+  // Favorites component
   const MARKETPLACE_FAVORITES_SERVER_URL = await config.requireString(
-    'MARKETPLACE_FAVORITES_SIGNATURES_SERVER_URL'
+    'MARKETPLACE_FAVORITES_SERVER_URL'
   )
 
   const favoritesComponent = createFavoritesComponent(
@@ -438,12 +438,18 @@ async function initComponents(): Promise<AppComponents> {
     chainId: collectionsChainId,
   })
 
-  const items = createMergerComponent<Item, ItemFilters, ItemSortBy>({
+  const items = createMergerComponent<
+    Item,
+    ItemFilters & { pickedBy?: string },
+    ItemSortBy
+  >({
     sources: [
-      createItemsSource(collectionsItems, {
-        isFavoritesEnabled,
-        favorites: favoritesComponent,
-      }),
+      createItemsSource(
+        { itemsComponent: collectionsItems, favoritesComponent },
+        {
+          isFavoritesEnabled,
+        }
+      ),
     ],
     defaultSortBy: ITEM_DEFAULT_SORT_BY,
     directions: {

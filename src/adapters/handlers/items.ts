@@ -10,13 +10,13 @@ import {
   WearableCategory,
 } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
-import { AppComponents, Context } from '../../types'
+import { AppComponents, AuthenticatedContext } from '../../types'
 import { Params } from '../../logic/http/params'
 import { asJSON, HttpError } from '../../logic/http/response'
 
 export function createItemsHandler(
   components: Pick<AppComponents, 'items'>
-): IHttpServerComponent.IRequestHandler<Context<'/items'>> {
+): IHttpServerComponent.IRequestHandler<AuthenticatedContext<'/items'>> {
   const { items } = components
   return async (context) => {
     const params = new Params(context.url.searchParams)
@@ -61,6 +61,9 @@ export function createItemsHandler(
     const minPrice = params.getString('minPrice')
     const urns = params.getList('urn')
 
+    const pickedBy: string | undefined =
+      context.verification?.auth.toLowerCase()
+
     return asJSON(() => {
       if (
         ids?.length > 0 &&
@@ -101,6 +104,7 @@ export function createItemsHandler(
           ? ethers.utils.parseEther(minPrice).toString()
           : undefined,
         urns,
+        pickedBy,
       })
     })
   }
