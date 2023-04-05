@@ -12,14 +12,14 @@ import {
 import pLimit from 'p-limit'
 import { IFetchComponent } from '@well-known-components/http-server'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
+import { HTTPErrorResponseBody } from '../../types/server'
+import { processRequestError } from '../utils'
 import {
   GetRentalAssetFilters,
   IRentalsComponent,
   RentalAsset,
-  SignaturesServerErrorResponse,
   SignaturesServerPaginatedResponse,
 } from './types'
-import { Response } from 'node-fetch'
 
 const MAX_CONCURRENT_REQUEST = 5
 const MAX_URL_LENGTH = 2048
@@ -48,7 +48,7 @@ export function createRentalsComponent(
     parameters.category =
       filters.category === NFTCategory.PARCEL ||
       filters.category === NFTCategory.ESTATE
-        ? ((filters.category as unknown) as RentalsListingsFilterByCategory)
+        ? (filters.category as unknown as RentalsListingsFilterByCategory)
         : undefined
     parameters.lessor = filters.owner
     parameters.tenant = filters.tenant
@@ -126,23 +126,6 @@ export function createRentalsComponent(
       .join('&')
   }
 
-  async function processGetRentalsError(response: Response) {
-    let parsedErrorResult: SignaturesServerErrorResponse<any> | undefined
-    try {
-      parsedErrorResult = await response.json()
-    } catch (_) {
-      // Ignore the JSON parse result error error.
-    }
-
-    if (parsedErrorResult) {
-      throw new Error(parsedErrorResult.message)
-    }
-
-    throw new Error(
-      `Error fetching rentals, the server responded with: ${response.status}`
-    )
-  }
-
   async function getRentalsListingsOfNFTs(
     nftIds: string[],
     status?: RentalStatus | RentalStatus[]
@@ -171,30 +154,29 @@ export function createRentalsComponent(
       urls.push(url)
     }
 
-    const results: SignaturesServerPaginatedResponse<
-      RentalListing[]
-    >[] = await Promise.all(
-      urls.map((url) =>
-        limit(async () => {
-          try {
-            const response = await fetchComponent.fetch(url)
-            if (!response.ok) {
-              await processGetRentalsError(response)
-            }
+    const results: SignaturesServerPaginatedResponse<RentalListing[]>[] =
+      await Promise.all(
+        urls.map((url) =>
+          limit(async () => {
+            try {
+              const response = await fetchComponent.fetch(url)
+              if (!response.ok) {
+                await processRequestError('fetching rentals', response)
+              }
 
-            const parsedResult = await response.json()
-            if (!parsedResult.ok) {
-              throw new Error(parsedResult.message)
-            }
+              const parsedResult = await response.json()
+              if (!parsedResult.ok) {
+                throw new Error(parsedResult.message)
+              }
 
-            return parsedResult
-          } catch (error) {
-            limit.clearQueue()
-            throw error
-          }
-        })
+              return parsedResult
+            } catch (error) {
+              limit.clearQueue()
+              throw error
+            }
+          })
+        )
       )
-    )
 
     return results.flatMap((result) => result.data.results)
   }
@@ -209,17 +191,14 @@ export function createRentalsComponent(
     )
 
     if (!response.ok) {
-      await processGetRentalsError(response)
+      await processRequestError('fetching rentals', response)
     }
 
-    const parsedResult: SignaturesServerPaginatedResponse<
-      RentalListing[]
-    > = await response.json()
+    const parsedResult: SignaturesServerPaginatedResponse<RentalListing[]> =
+      await response.json()
 
     if (!parsedResult.ok) {
-      throw new Error(
-        (parsedResult as SignaturesServerErrorResponse<any>).message
-      )
+      throw new Error((parsedResult as HTTPErrorResponseBody<any>).message)
     }
 
     return parsedResult

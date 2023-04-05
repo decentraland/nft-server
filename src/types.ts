@@ -15,7 +15,6 @@ import {
   ContractFilters,
   ContractSortBy,
   Item,
-  ItemFilters,
   ItemSortBy,
   Mint,
   MintFilters,
@@ -29,6 +28,7 @@ import {
   SaleFilters,
   SaleSortBy,
 } from '@dcl/schemas'
+import type * as authorizationMiddleware from 'decentraland-crypto-middleware'
 import { RoutedContext } from '@well-known-components/http-server'
 import type {
   IConfigComponent,
@@ -47,6 +47,7 @@ import { ITrendingsComponent } from './ports/trendings/types'
 import { IProcessedPricesComponent } from './ports/prices/types'
 import { IStatsComponent } from './ports/stats/types'
 import { IOwnerDataComponent } from './ports/owner/types'
+import { ItemOptions } from './ports/items/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -69,7 +70,7 @@ export type AppComponents = {
   bids: IMergerComponent<Bid, BidFilters, BidSortBy>
   contracts: IMergerComponent<Contract, ContractFilters, ContractSortBy>
   nfts: IMergerComponent<NFTResult, NFTFilters, NFTSortBy>
-  items: IMergerComponent<Item, ItemFilters, ItemSortBy>
+  items: IMergerComponent<Item, ItemOptions, ItemSortBy>
   mints: IMergerComponent<Mint, MintFilters, MintSortBy>
   sales: IMergerComponent<Sale, SaleFilters, SaleSortBy>
   trendings: ITrendingsComponent
@@ -93,3 +94,6 @@ export type Context<Path extends string = any> = RoutedContext<
   GlobalContext,
   Path
 >
+
+export type AuthenticatedContext<Path extends string = any> = Context<Path> &
+  authorizationMiddleware.DecentralandSignatureContext

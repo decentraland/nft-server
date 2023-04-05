@@ -142,6 +142,7 @@ import {
   getCollectionsAccountOrderBy,
 } from '../logic/accounts/collections'
 import { createOwnersComponent } from '../ports/owner/component'
+import { createFavoritesComponent } from '../ports/favorites/components'
 
 // start TCP port for listeners
 let lastUsedPort = 19000 + parseInt(process.env.JEST_WORKER_ID || '1') * 1000
@@ -355,6 +356,17 @@ export async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
+  // favorites
+  // Favorites component
+  const MARKETPLACE_FAVORITES_SERVER_URL = await config.requireString(
+    'MARKETPLACE_FAVORITES_SERVER_URL'
+  )
+
+  const favoritesComponent = createFavoritesComponent(
+    { fetch: fetchComponent },
+    MARKETPLACE_FAVORITES_SERVER_URL
+  )
+
   // items
   const collectionsItems = createItemsComponent({
     subgraph: collectionsSubgraph,
@@ -363,7 +375,15 @@ export async function initComponents(): Promise<AppComponents> {
   })
 
   const items = createMergerComponent<Item, ItemFilters, ItemSortBy>({
-    sources: [createItemsSource(collectionsItems)],
+    sources: [
+      createItemsSource(
+        {
+          itemsComponent: collectionsItems,
+          favoritesComponent,
+        },
+        { isFavoritesEnabled: (await config.getNumber('FF_FAVORITES')) === 1 }
+      ),
+    ],
     defaultSortBy: ITEM_DEFAULT_SORT_BY,
     directions: {
       [ItemSortBy.NEWEST]: SortDirection.DESC,

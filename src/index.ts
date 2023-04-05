@@ -16,7 +16,6 @@ import {
   ContractFilters,
   ContractSortBy,
   Item,
-  ItemFilters,
   ItemSortBy,
   Mint,
   MintFilters,
@@ -160,6 +159,8 @@ import {
   getCollectionsAccountOrderBy,
 } from './logic/accounts/collections'
 import { createOwnersComponent } from './ports/owner/component'
+import { createFavoritesComponent } from './ports/favorites/components'
+import { ItemOptions } from './ports/items/types'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -196,6 +197,9 @@ async function initComponents(): Promise<AppComponents> {
 
   // FF_RENTALS
   const isRentalsEnabled = (await config.getNumber('FF_RENTALS')) === 1
+
+  // FF_FAVORITES
+  const isFavoritesEnabled = (await config.getNumber('FF_FAVORITES')) === 1
 
   const logs = await createLogComponent({ tracer })
 
@@ -416,6 +420,17 @@ async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
+  // favorites
+  // Favorites component
+  const MARKETPLACE_FAVORITES_SERVER_URL = await config.requireString(
+    'MARKETPLACE_FAVORITES_SERVER_URL'
+  )
+
+  const favoritesComponent = createFavoritesComponent(
+    { fetch },
+    MARKETPLACE_FAVORITES_SERVER_URL
+  )
+
   // items
   const collectionsItems = createItemsComponent({
     subgraph: collectionsSubgraph,
@@ -423,8 +438,15 @@ async function initComponents(): Promise<AppComponents> {
     chainId: collectionsChainId,
   })
 
-  const items = createMergerComponent<Item, ItemFilters, ItemSortBy>({
-    sources: [createItemsSource(collectionsItems)],
+  const items = createMergerComponent<Item, ItemOptions, ItemSortBy>({
+    sources: [
+      createItemsSource(
+        { itemsComponent: collectionsItems, favoritesComponent },
+        {
+          isFavoritesEnabled,
+        }
+      ),
+    ],
     defaultSortBy: ITEM_DEFAULT_SORT_BY,
     directions: {
       [ItemSortBy.NEWEST]: SortDirection.DESC,
