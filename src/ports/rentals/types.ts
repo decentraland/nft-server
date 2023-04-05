@@ -24,12 +24,6 @@ export type SignaturesServerPaginatedResponse<T> = {
   }
 }
 
-export type SignaturesServerErrorResponse<T> = {
-  ok: boolean
-  message: string
-  data?: T
-}
-
 export type RentalAsset = {
   id: string
   contractAddress: string

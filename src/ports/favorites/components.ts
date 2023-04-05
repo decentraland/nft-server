@@ -1,12 +1,11 @@
 import pLimit from 'p-limit'
-import { Response } from 'node-fetch'
 import { IFetchComponent } from '@well-known-components/http-server'
 import {
-  FavoritesServerErrorResponse,
   FavoritesServerResponse,
   IFavoritesComponent,
   PickStats,
 } from './types'
+import { processRequestError } from '../utils'
 
 const MAX_CONCURRENT_REQUEST = 5
 const MAX_URL_LENGTH = 2048
@@ -15,23 +14,6 @@ export function createFavoritesComponent(
   { fetch: fetchComponent }: { fetch: IFetchComponent },
   favoritesUrl: string
 ): IFavoritesComponent {
-  async function processGetPicksStatsError(response: Response) {
-    let parsedErrorResult: FavoritesServerErrorResponse<any> | undefined
-    try {
-      parsedErrorResult = await response.json()
-    } catch (_) {
-      // Ignore the JSON parse result error error.
-    }
-
-    if (parsedErrorResult) {
-      throw new Error(parsedErrorResult.message)
-    }
-
-    throw new Error(
-      `Error fetching rentals, the server responded with: ${response.status}`
-    )
-  }
-
   async function getPicksStatsOfItems(
     itemIds: string[],
     userAddress?: string
@@ -64,7 +46,7 @@ export function createFavoritesComponent(
           try {
             const response = await fetchComponent.fetch(url)
             if (!response.ok) {
-              await processGetPicksStatsError(response)
+              await processRequestError('fetching favorites', response)
             }
 
             const parsedResult = await response.json()
