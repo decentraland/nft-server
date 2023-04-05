@@ -55,6 +55,7 @@ fragment orderFields on Order {
   updatedAt
   nft {
     tokenId
+    tokenURI
   }
 }
 `
@@ -188,6 +189,11 @@ export function fromOrderFragment(
   network: Network,
   chainId: ChainId
 ): Order {
+  const issuedId = fragment.nft.issuedId ? fragment.nft.issuedId : 
+  fragment.nft.tokenURI.split('/').pop() ?? ''
+
+  console.log('issuedId', issuedId)
+
   const order: Order = {
     id: fragment.id,
     marketplaceAddress: fragment.marketplaceAddress,
@@ -202,9 +208,7 @@ export function fromOrderFragment(
     expiresAt: +fragment.expiresAt,
     createdAt: +fragment.createdAt * 1000,
     updatedAt: +fragment.updatedAt * 1000,
-    issuedId: fragment.nft.issuedId
-      ? fragment.nft.issuedId
-      : fragment.nft.tokenId,
+    issuedId
   }
 
   return order
