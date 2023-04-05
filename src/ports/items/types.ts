@@ -50,6 +50,8 @@ export type ItemFragment = {
   firstListedAt: string | null
 }
 
+export type ItemOptions = ItemFilters & { pickedBy?: string }
+
 export interface IItemsComponent {
   fetch(filters: ItemFilters): Promise<Item[]>
   count(filters: ItemFilters): Promise<number>

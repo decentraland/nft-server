@@ -160,6 +160,7 @@ import {
 } from './logic/accounts/collections'
 import { createOwnersComponent } from './ports/owner/component'
 import { createFavoritesComponent } from './ports/favorites/components'
+import { ItemOptions } from './ports/items/types'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -437,11 +438,7 @@ async function initComponents(): Promise<AppComponents> {
     chainId: collectionsChainId,
   })
 
-  const items = createMergerComponent<
-    Item,
-    ItemFilters & { pickedBy?: string },
-    ItemSortBy
-  >({
+  const items = createMergerComponent<Item, ItemOptions, ItemSortBy>({
     sources: [
       createItemsSource(
         { itemsComponent: collectionsItems, favoritesComponent },
