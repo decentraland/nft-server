@@ -12,7 +12,7 @@ import {
 import pLimit from 'p-limit'
 import { IFetchComponent } from '@well-known-components/http-server'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
-import { ServerErrorResponse } from '../../types/server'
+import { HTTPErrorResponseBody } from '../../types/server'
 import { processRequestError } from '../utils'
 import {
   GetRentalAssetFilters,
@@ -198,7 +198,7 @@ export function createRentalsComponent(
       await response.json()
 
     if (!parsedResult.ok) {
-      throw new Error((parsedResult as ServerErrorResponse<any>).message)
+      throw new Error((parsedResult as HTTPErrorResponseBody<any>).message)
     }
 
     return parsedResult

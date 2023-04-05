@@ -10,14 +10,3 @@ export type PickStats = {
   count: number
   pickedByUser?: boolean
 }
-
-export type FavoritesServerErrorResponse<T> = {
-  ok: boolean
-  message: string
-  data?: T
-}
-
-export type FavoritesServerResponse<T> = {
-  ok: boolean
-  data: T
-}

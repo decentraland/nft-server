@@ -1,6 +1,6 @@
 import { Response } from 'node-fetch'
 import { GenderFilterOption, WearableGender } from '@dcl/schemas'
-import { ServerErrorResponse } from '../types/server'
+import { HTTPErrorResponseBody } from '../types/server'
 
 export function getGenderFilterQuery(
   genders: (WearableGender | GenderFilterOption)[],
@@ -41,7 +41,7 @@ export function getGenderFilterQuery(
 }
 
 export async function processRequestError(action: string, response: Response) {
-  let parsedErrorResult: ServerErrorResponse<any> | undefined
+  let parsedErrorResult: HTTPErrorResponseBody<any> | undefined
 
   try {
     parsedErrorResult = await response.json()

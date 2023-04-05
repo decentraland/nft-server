@@ -1,11 +1,8 @@
 import pLimit from 'p-limit'
 import { IFetchComponent } from '@well-known-components/http-server'
-import {
-  FavoritesServerResponse,
-  IFavoritesComponent,
-  PickStats,
-} from './types'
+import { HTTPSuccessResponseBody } from '../../types/server'
 import { processRequestError } from '../utils'
+import { IFavoritesComponent, PickStats } from './types'
 
 const MAX_CONCURRENT_REQUEST = 5
 const MAX_URL_LENGTH = 2048
@@ -40,7 +37,7 @@ export function createFavoritesComponent(
       urls.push(url)
     }
 
-    const results: FavoritesServerResponse<PickStats[]>[] = await Promise.all(
+    const results: HTTPSuccessResponseBody<PickStats[]>[] = await Promise.all(
       urls.map((url) =>
         limit(async () => {
           try {

@@ -2,11 +2,8 @@ import { URL } from 'url'
 import { IFetchComponent } from '@well-known-components/http-server'
 import { Response } from 'node-fetch'
 import { createFavoritesComponent } from '../../ports/favorites/components'
-import {
-  IFavoritesComponent,
-  FavoritesServerResponse,
-  PickStats,
-} from '../../ports/favorites/types'
+import { IFavoritesComponent, PickStats } from '../../ports/favorites/types'
+import { HTTPSuccessResponseBody } from '../../types/server'
 
 const favoritesURL = 'http://favorites.com'
 const error = 'An error occurred'
@@ -32,7 +29,7 @@ describe('when getting the picks stats of some items', () => {
   })
 
   describe("and the list of item ids doesn't exhaust the length of the signature server's URL", () => {
-    let response: FavoritesServerResponse<PickStats[]>
+    let response: HTTPSuccessResponseBody<PickStats[]>
 
     beforeEach(async () => {
       itemIds = Array.from({ length: 2 }, (_, i) => `0x0-${i}`)
@@ -67,7 +64,7 @@ describe('when getting the picks stats of some items', () => {
   })
 
   describe("and the list of item ids exhausts the length of the signature server's URL twice", () => {
-    let responses: FavoritesServerResponse<PickStats[]>[]
+    let responses: HTTPSuccessResponseBody<PickStats[]>[]
 
     beforeEach(async () => {
       itemIds = Array.from({ length: 200 }, (_, i) => `0x0000-${i}`)
