@@ -16,7 +16,6 @@ import {
   ContractFilters,
   ContractSortBy,
   Item,
-  ItemFilters,
   ItemSortBy,
   Mint,
   MintFilters,

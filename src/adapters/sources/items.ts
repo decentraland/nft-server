@@ -1,7 +1,8 @@
 import { Item, ItemFilters, ItemSortBy } from '@dcl/schemas'
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
-import { IItemsComponent } from '../../ports/items/types'
+import { IItemsComponent, ItemOptions } from '../../ports/items/types'
 import { IFavoritesComponent, PickStats } from '../../ports/favorites/types'
+import { convertItemToSortableResult } from '../../logic/items/utils'
 
 export function createItemsSource(
   components: {
@@ -19,7 +20,7 @@ export function createItemsSource(
     pickedBy?: string
   ): Promise<Item[]> {
     const picksStats = await favoritesComponent.getPicksStatsOfItems(
-      items.map((itemId) => itemId.id),
+      items.map(({ id }) => id),
       pickedBy
     )
 
@@ -40,25 +41,14 @@ export function createItemsSource(
   async function fetch({
     pickedBy,
     ...filters
-  }: FetchOptions<ItemFilters & { pickedBy?: string }, ItemSortBy>) {
+  }: FetchOptions<ItemOptions, ItemSortBy>) {
     let results = await itemsComponent.fetch(filters)
 
     if (options && options.isFavoritesEnabled) {
       results = await enhanceItemsWithPicksStats(results, pickedBy)
     }
 
-    return results.map((result) => ({
-      result,
-      sort: {
-        [ItemSortBy.NEWEST]: result.createdAt,
-        [ItemSortBy.RECENTLY_REVIEWED]: result.reviewedAt,
-        //@ts-ignore
-        [ItemSortBy.RECENTLY_SOLD]: result.soldAt,
-        [ItemSortBy.NAME]: result.name,
-        [ItemSortBy.CHEAPEST]: result.available > 0 ? +result.price : null,
-        [ItemSortBy.RECENTLY_LISTED]: result.firstListedAt,
-      },
-    }))
+    return results.map(convertItemToSortableResult)
   }
 
   async function count(filters: FetchOptions<ItemFilters, ItemSortBy>) {
