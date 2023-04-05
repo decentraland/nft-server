@@ -165,7 +165,7 @@ describe('when fetching items', () => {
         )
       })
 
-      it('should have queried the picks stats of all items without taking in account the logged user', async () => {
+      it('should have queried the picks stats of all items taking in account the logged user', async () => {
         expect(getPicksStatsOfItemsMock).toHaveBeenCalledWith(
           items.map((item) => item.id),
           pickedBy
