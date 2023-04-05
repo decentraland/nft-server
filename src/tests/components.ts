@@ -376,10 +376,13 @@ export async function initComponents(): Promise<AppComponents> {
 
   const items = createMergerComponent<Item, ItemFilters, ItemSortBy>({
     sources: [
-      createItemsSource({
-        itemsComponent: collectionsItems,
-        favoritesComponent,
-      }),
+      createItemsSource(
+        {
+          itemsComponent: collectionsItems,
+          favoritesComponent,
+        },
+        { isFavoritesEnabled: (await config.getNumber('FF_FAVORITES')) === 1 }
+      ),
     ],
     defaultSortBy: ITEM_DEFAULT_SORT_BY,
     directions: {
