@@ -212,7 +212,7 @@ describe('when counting items', () => {
     })
   })
 
-  describe('and fetching the items fails', () => {
+  describe('and fetching the count of items fails', () => {
     beforeEach(() => {
       countMock.mockRejectedValueOnce(new Error('An error occurred'))
     })
