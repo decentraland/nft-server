@@ -619,6 +619,8 @@ export async function initComponents(): Promise<AppComponents> {
   })
 
   const satsumaDatabase = await createPgComponent({ config, logs, metrics })
+  // Mock the start function to avoid connecting to a local database
+  jest.spyOn(satsumaDatabase, 'start').mockResolvedValue(undefined)
   const catalog = await createCatalogComponent({ database: satsumaDatabase })
 
   return {
