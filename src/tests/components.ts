@@ -5,6 +5,8 @@ import {
   createServerComponent,
   createStatusCheckComponent,
 } from '@well-known-components/http-server'
+import { IPgComponent } from '@well-known-components/pg-component'
+import { createPgComponent } from '@well-known-components/pg-component'
 import {
   createSubgraphComponent,
   metricDeclarations,
@@ -145,6 +147,7 @@ import {
 } from '../logic/accounts/collections'
 import { createOwnersComponent } from '../ports/owner/component'
 import { createFavoritesComponent } from '../ports/favorites/components'
+import { createCatalogComponent } from '../ports/catalog/component'
 
 // start TCP port for listeners
 let lastUsedPort = 19000 + parseInt(process.env.JEST_WORKER_ID || '1') * 1000
@@ -615,6 +618,9 @@ export async function initComponents(): Promise<AppComponents> {
     subgraph: collectionsSubgraph,
   })
 
+  const satsumaDatabase = await createPgComponent({ config, logs, metrics })
+  const catalog = await createCatalogComponent({ database: satsumaDatabase })
+
   return {
     config,
     logs,
@@ -641,5 +647,31 @@ export async function initComponents(): Promise<AppComponents> {
     stats,
     owners,
     favorites: favoritesComponent,
+    catalog,
+    satsumaDatabase,
+  }
+}
+
+export function createTestDbComponent(
+  {
+    query = jest.fn(),
+    start = jest.fn(),
+    streamQuery = jest.fn(),
+    getPool = jest.fn(),
+    stop = jest.fn(),
+  } = {
+    query: jest.fn(),
+    start: jest.fn(),
+    streamQuery: jest.fn(),
+    getPool: jest.fn(),
+    stop: jest.fn(),
+  }
+): IPgComponent {
+  return {
+    start,
+    streamQuery,
+    query,
+    getPool,
+    stop,
   }
 }
