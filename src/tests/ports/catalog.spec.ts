@@ -1,4 +1,4 @@
-import { ChainId, Network, Rarity } from '@dcl/schemas'
+import { ChainId, Network } from '@dcl/schemas'
 import { IPgComponent } from '@well-known-components/pg-component'
 import { createTestDbComponent, test } from '../../../src/tests/components'
 import { createCatalogComponent } from '../../ports/catalog/component'
@@ -19,7 +19,7 @@ let dbClientReleaseMock: jest.Mock
 let database: IPgComponent
 let catalogComponent: ICatalogComponent
 
-test('catalog component', function ({ components }) {
+test('catalog component', function () {
   beforeEach(() => {
     dbQueryMock = jest.fn()
     dbClientQueryMock = jest.fn()
@@ -50,7 +50,6 @@ test('catalog component', function ({ components }) {
       let dbItemResponse: CollectionsItemDBResult
 
       beforeEach(() => {
-        const { satsumaDatabase } = components
         filters = {
           network,
         }
@@ -131,7 +130,6 @@ test('catalog component', function ({ components }) {
       let dbItemResponse: CollectionsItemDBResult
 
       beforeEach(() => {
-        const { satsumaDatabase } = components
         filters = {
           network: undefined,
         }
