@@ -50,7 +50,6 @@ export function createCatalogComponent(options: {
         })
 
       const schemas = await Promise.all(latestSchemasPromises)
-      const reduced = schemas.reduce((acc, curr) => ({ ...acc, ...curr }), {})
 
       const results = await client.query<CollectionsItemDBResult>(
         getCatalogQuery(
