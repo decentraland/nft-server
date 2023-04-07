@@ -9,11 +9,13 @@ import {
   RentalsListingsSortBy,
   RentalStatus,
 } from '@dcl/schemas'
-import pLimit from 'p-limit'
 import { IFetchComponent } from '@well-known-components/http-server'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { HTTPErrorResponseBody } from '../../types/server'
-import { processRequestError } from '../utils'
+import {
+  processRequestError,
+  queryMultipleTimesWhenExceedingUrlLimit,
+} from '../utils'
 import {
   GetRentalAssetFilters,
   IRentalsComponent,
@@ -21,8 +23,6 @@ import {
   SignaturesServerPaginatedResponse,
 } from './types'
 
-const MAX_CONCURRENT_REQUEST = 5
-const MAX_URL_LENGTH = 2048
 const DEFAULT_FIRST = 24
 const DEFAULT_OFFSET = 0
 
@@ -135,50 +135,13 @@ export function createRentalsComponent(
         rentalStatus: status,
       }
     )}`
-    const limit = pLimit(MAX_CONCURRENT_REQUEST)
 
-    // Build URLs to get all the queried NFTs
-    let urls: string[] = []
-    let url = baseUrl
-    for (let nftId of nftIds) {
-      if (url.length < MAX_URL_LENGTH) {
-        url += `&nftIds=${nftId}`
-      } else {
-        urls.push(url)
-        url = baseUrl + `&nftIds=${nftId}`
-      }
-    }
-
-    // Push the last url
-    if (url !== baseUrl) {
-      urls.push(url)
-    }
-
-    const results: SignaturesServerPaginatedResponse<RentalListing[]>[] =
-      await Promise.all(
-        urls.map((url) =>
-          limit(async () => {
-            try {
-              const response = await fetchComponent.fetch(url)
-              if (!response.ok) {
-                await processRequestError('fetching rentals', response)
-              }
-
-              const parsedResult = await response.json()
-              if (!parsedResult.ok) {
-                throw new Error(parsedResult.message)
-              }
-
-              return parsedResult
-            } catch (error) {
-              limit.clearQueue()
-              throw error
-            }
-          })
-        )
-      )
-
-    return results.flatMap((result) => result.data.results)
+    return queryMultipleTimesWhenExceedingUrlLimit(
+      baseUrl,
+      'nftIds',
+      nftIds,
+      fetchComponent
+    )
   }
 
   async function getRentalsListings(
