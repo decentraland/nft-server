@@ -247,6 +247,7 @@ export const getCollectionsItemsCatalogQuery = (
               nfts.min_price AS min_listing_price,
               nfts.max_price AS max_listing_price, 
               nfts.listings_count as listings_count,
+              nfts.owners_count as owners_count,
               CASE
                 WHEN items.available > 0 THEN LEAST(items.price, nfts.min_price) 
                 ELSE nfts.min_price 
@@ -258,28 +259,29 @@ export const getCollectionsItemsCatalogQuery = (
             FROM `
     .append(schemaVersion)
     .append(
-      `.item AS items 
+      `.item_active AS items 
             LEFT JOIN (
               SELECT 
                 nft.item, 
                 COUNT(orders.id) AS listings_count,
                 MIN(orders.price) AS min_price,
-                MAX(orders.price) AS max_price
+                MAX(orders.price) AS max_price,
+                COUNT(DISTINCT nft.owner) as owners_count
               FROM `
     )
     .append(schemaVersion)
     .append(
-      `.nft AS nft 
+      `.nft_active AS nft 
                 JOIN 
               `
     )
     .append(schemaVersion)
     .append(
-      `.order AS orders ON orders.nft = nft.id 
+      `.order_active AS orders ON orders.nft = nft.id 
               WHERE 
                 orders.status = 'open' 
                 AND orders.expires_at < 253378408747000 
-                AND to_timestamp(orders.expires_at / 1000.0) > now() 
+                AND to_timestamp(orders.expires_at / 100.0) > now() 
                 GROUP BY nft.item
               ) AS nfts ON nfts.item = items.id 
               LEFT JOIN (
@@ -294,12 +296,12 @@ export const getCollectionsItemsCatalogQuery = (
     )
     .append(schemaVersion)
     .append(
-      `.wearable AS wearable
+      `.wearable_active AS wearable
             JOIN `
     )
     .append(schemaVersion)
     .append(
-      `.metadata AS metadata ON metadata.wearable = wearable.id
+      `.metadata_active AS metadata ON metadata.wearable = wearable.id
             ) AS metadata_wearable ON metadata_wearable.id = items.metadata AND (items.item_type = 'wearable_v1' OR items.item_type = 'wearable_v2' OR items.item_type = 'smart_wearable_v1')
             LEFT JOIN (
               SELECT 
@@ -314,12 +316,12 @@ export const getCollectionsItemsCatalogQuery = (
     )
     .append(schemaVersion)
     .append(
-      `.emote AS emote
+      `.emote_active AS emote
             JOIN `
     )
     .append(schemaVersion)
     .append(
-      `.metadata AS metadata ON metadata.emote = emote.id
+      `.metadata_active AS metadata ON metadata.emote = emote.id
             ) AS metadata_emote ON metadata_emote.id = items.metadata AND items.item_type = 'emote_v1' `
     )
     .append(getCollectionsQueryWheres(filters))

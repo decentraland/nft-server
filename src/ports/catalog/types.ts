@@ -22,6 +22,7 @@ export type CollectionsItemDBResult = {
   min_listing_price: string | null
   max_listing_price: string | null
   listings_count: number | null
+  owners_count: number | null
   min_price: string
   max_price: string
   network?: Network
@@ -51,11 +52,13 @@ export type CatalogItem = Pick<
   | 'chainId'
   | 'available'
   | 'isOnSale'
+  | 'price'
 > & {
   minPrice: string
   minListingPrice: string | null
   maxListingPrice: string | null
   listings: number | null
+  owners: number | null
 }
 
 export enum CatalogSortBy {

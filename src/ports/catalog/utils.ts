@@ -166,6 +166,7 @@ export function fromCollectionsItemDbResultToCatalogItem(
     category,
     contractAddress: dbItem.collection,
     rarity: dbItem.rarity as Rarity,
+    price: dbItem.price,
     available: +dbItem.available,
     isOnSale: dbItem.search_is_store_minter && +dbItem.available > 0,
     creator: dbItem.creator,
@@ -176,5 +177,6 @@ export function fromCollectionsItemDbResultToCatalogItem(
     maxListingPrice: dbItem.max_listing_price,
     minListingPrice: dbItem.min_listing_price,
     listings: dbItem.listings_count,
+    owners: dbItem.owners_count,
   }
 }
