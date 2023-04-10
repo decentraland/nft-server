@@ -191,7 +191,7 @@ describe('when getting rental listings', () => {
         offset: filter.skip,
         sortBy: RentalsListingsSortBy.MIN_RENTAL_PRICE,
         sortDirection: RentalsListingSortDirection.ASC,
-        category: (filter.category as unknown) as RentalsListingsFilterByCategory,
+        category: filter.category as unknown as RentalsListingsFilterByCategory,
         lessor: filter.owner,
         text: filter.search,
         contractAddresses: filter.contractAddresses,
