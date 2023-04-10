@@ -94,6 +94,7 @@ test('catalog component', function () {
           min_listing_price: null,
           max_listing_price: null,
           listings_count: null,
+          owners_count: 1,
           min_price: '2000000000000000000',
           max_price: '2000000000000000000',
         }
@@ -182,6 +183,7 @@ test('catalog component', function () {
           min_listing_price: null,
           max_listing_price: null,
           listings_count: null,
+          owners_count: null,
           min_price: '2000000000000000000',
           max_price: '2000000000000000000',
         }
