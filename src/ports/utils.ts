@@ -81,7 +81,7 @@ export async function queryMultipleTimesWhenExceedingUrlLimit<T>(
 ): Promise<T[]> {
   const limit = pLimit(MAX_CONCURRENT_REQUEST)
 
-  // Build URLs to get all the queried Picks Stats
+  // Build URLs to get all the queried results
   let urls: string[] = []
   let url = baseUrl
 
