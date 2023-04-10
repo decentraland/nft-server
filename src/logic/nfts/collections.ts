@@ -14,7 +14,10 @@ import { FragmentItemType } from '../../ports/items/types'
 import { NFTResult } from '../../ports/nfts/types'
 import { getId, NFT_DEFAULT_SORT_BY } from '../../ports/nfts/utils'
 import { OrderFragment } from '../../ports/orders/types'
-import { fromOrderFragment, getOrderFields } from '../../ports/orders/utils'
+import {
+  fromOrderFragment,
+  getCollectionsOrderFields,
+} from '../../ports/orders/utils'
 import { getCollectionsChainId } from '../chainIds'
 import { isExpired } from '../expiration'
 
@@ -63,7 +66,7 @@ export const getCollectionsFragment = () => `
     }
   }
   ${getCollectionsFields()}
-  ${getOrderFields()}
+  ${getCollectionsOrderFields()}
 `
 
 export type CollectionsFields = Omit<

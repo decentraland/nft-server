@@ -16,31 +16,51 @@ export const getCollectionsItemIdFilter = (itemId: string) => `
 `
 export const getCollectionsNameFilter = (_name: string) => ``
 
+export const getCollectionsOrderFields = () => `
+fragment orderFields on Order {
+  id
+  marketplaceAddress
+  nftAddress
+  owner
+  buyer
+  price
+  status
+  expiresAt
+  createdAt
+  updatedAt
+  nft {
+    tokenId
+    issuedId
+  }
+}
+`
+
 export const getMarketplaceItemIdFilter = (_itemId: string) => ``
 
 export const getMarketplaceNameFilter = (name: string) => `
   nft_: {name: "${name}"}
 `
 
-export const getOrderFields = () => `
-  fragment orderFields on Order {
-    id
-    marketplaceAddress
-    nftAddress
-    owner
-    buyer
-    price
-    status
-    expiresAt
-    createdAt
-    updatedAt
-    nft {
-      tokenId
-    }
+export const getMarketplaceOrderFields = () => `
+fragment orderFields on Order {
+  id
+  marketplaceAddress
+  nftAddress
+  owner
+  buyer
+  price
+  status
+  expiresAt
+  createdAt
+  updatedAt
+  nft {
+    tokenId
+    tokenURI
   }
+}
 `
 
-export const getOrderFragment = () => `
+export const getOrderFragment = (getOrderFields: () => string) => `
   fragment orderFragment on Order {
     ...orderFields
   }
@@ -51,7 +71,8 @@ export const getOrdersQuery = (
   filters: OrderFilters,
   isCount = false,
   getItemIdFilter: (itemId: string) => string,
-  getNameFilter: (name: string) => string
+  getNameFilter: (name: string) => string,
+  getOrderFields: () => string
 ) => {
   const {
     first,
@@ -159,7 +180,7 @@ export const getOrdersQuery = (
         })
       { ${isCount ? 'id' : `...orderFragment`} }
     }
-    ${isCount ? '' : getOrderFragment()}
+    ${isCount ? '' : getOrderFragment(getOrderFields)}
   `
 }
 
@@ -168,6 +189,10 @@ export function fromOrderFragment(
   network: Network,
   chainId: ChainId
 ): Order {
+  const issuedId = fragment.nft.issuedId
+    ? fragment.nft.issuedId
+    : fragment.nft.tokenURI.split('/').pop() ?? ''
+
   const order: Order = {
     id: fragment.id,
     marketplaceAddress: fragment.marketplaceAddress,
@@ -182,6 +207,7 @@ export function fromOrderFragment(
     expiresAt: +fragment.expiresAt,
     createdAt: +fragment.createdAt * 1000,
     updatedAt: +fragment.updatedAt * 1000,
+    issuedId,
   }
 
   return order

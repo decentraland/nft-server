@@ -94,8 +94,10 @@ import { BID_DEFAULT_SORT_BY } from './ports/bids/utils'
 import {
   getCollectionsItemIdFilter,
   getCollectionsNameFilter,
+  getCollectionsOrderFields,
   getMarketplaceItemIdFilter,
   getMarketplaceNameFilter,
+  getMarketplaceOrderFields,
   ORDER_DEFAULT_SORT_BY,
 } from './ports/orders/utils'
 import { createItemsSource } from './adapters/sources/items'
@@ -249,6 +251,7 @@ async function initComponents(): Promise<AppComponents> {
     chainId: marketplaceChainId,
     getItemIdFilter: getMarketplaceItemIdFilter,
     getNameFilter: getMarketplaceNameFilter,
+    getOrderFields: getMarketplaceOrderFields,
   })
 
   const collectionsOrders = createOrdersComponent({
@@ -257,6 +260,7 @@ async function initComponents(): Promise<AppComponents> {
     chainId: collectionsChainId,
     getItemIdFilter: getCollectionsItemIdFilter,
     getNameFilter: getCollectionsNameFilter,
+    getOrderFields: getCollectionsOrderFields,
   })
 
   const orders = createMergerComponent<Order, OrderFilters, OrderSortBy>({

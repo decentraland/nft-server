@@ -100,8 +100,10 @@ import { NFT_DEFAULT_SORT_BY } from '../ports/nfts/utils'
 import {
   getCollectionsItemIdFilter,
   getCollectionsNameFilter,
+  getCollectionsOrderFields,
   getMarketplaceItemIdFilter,
   getMarketplaceNameFilter,
+  getMarketplaceOrderFields,
   ORDER_DEFAULT_SORT_BY,
 } from '../ports/orders/utils'
 import { createSalesComponent } from '../ports/sales/component'
@@ -216,6 +218,7 @@ export async function initComponents(): Promise<AppComponents> {
     chainId: marketplaceChainId,
     getItemIdFilter: getMarketplaceItemIdFilter,
     getNameFilter: getMarketplaceNameFilter,
+    getOrderFields: getMarketplaceOrderFields,
   })
 
   const collectionsOrders = createOrdersComponent({
@@ -224,6 +227,7 @@ export async function initComponents(): Promise<AppComponents> {
     chainId: collectionsChainId,
     getItemIdFilter: getCollectionsItemIdFilter,
     getNameFilter: getCollectionsNameFilter,
+    getOrderFields: getCollectionsOrderFields,
   })
 
   const orders = createMergerComponent<Order, OrderFilters, OrderSortBy>({
