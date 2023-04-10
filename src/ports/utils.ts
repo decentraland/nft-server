@@ -87,17 +87,20 @@ export async function queryMultipleTimesWhenExceedingUrlLimit<T>(
 
   const alreadyHasQueryParams = baseUrl.includes('?')
 
-  for (let value of queryParameterValues) {
-    const param =
-      (alreadyHasQueryParams ? `&` : '') + `${queryParameterName}=${value}`
+  if (!alreadyHasQueryParams) {
+    url += '?'
+  }
+
+  queryParameterValues.forEach((value, i) => {
+    const param = `${queryParameterName}=${value}`
 
     if (url.length < MAX_URL_LENGTH) {
-      url += param
+      url += i === 0 && !alreadyHasQueryParams ? param : `&${param}`
     } else {
       urls.push(url)
-      url = baseUrl + param
+      url = baseUrl + (!alreadyHasQueryParams ? '?' : '&') + param
     }
-  }
+  })
 
   // Push the last url
   if (url !== baseUrl) {
