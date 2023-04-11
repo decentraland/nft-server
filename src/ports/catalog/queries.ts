@@ -25,25 +25,33 @@ export const getLatestSubgraphSchema = (subgraphName: string) =>
         satsuma_subgraph_name = ${subgraphName}
     `
 
-export function getOrderBy(
-  sortBy: CatalogSortBy | null,
-  sortDirection: CatalogSortDirection | null
-) {
+export function getOrderBy(filters: CatalogFilters) {
+  const { sortBy, sortDirection, onlyListing, isOnSale } = filters
   const sortByParam = sortBy ?? CatalogSortBy.NEWEST
   const sortDirectionParam = sortDirection ?? CatalogSortDirection.ASC
 
+  // When seeing "Not for sale", the only sort available is the Newest one
+  if (isOnSale === false) {
+    if (sortByParam === CatalogSortBy.NEWEST) {
+      return `ORDER BY items.first_listed_at ${sortDirectionParam}\n`
+    }
+    return ''
+  }
+
   let sortByQuery:
     | SQLStatement
-    | string = `ORDER BY created_at ${sortDirectionParam}\n`
+    | string = `ORDER BY items.first_listed_at ${sortDirectionParam}\n`
   switch (sortByParam) {
     case CatalogSortBy.NEWEST:
-      sortByQuery = `ORDER BY created_at ${sortDirectionParam}\n`
+      sortByQuery = `ORDER BY items.first_listed_at ${sortDirectionParam}\n`
       break
     case CatalogSortBy.MOST_EXPENSIVE:
       sortByQuery = `ORDER BY max_price ${sortDirectionParam}\n`
       break
     case CatalogSortBy.RECENTLY_LISTED:
-      sortByQuery = `ORDER BY created_at ${sortDirectionParam}\n`
+      sortByQuery = onlyListing
+        ? `ORDER BY nfts.max_order_created_at ${sortDirectionParam}\n`
+        : ``
       break
     case CatalogSortBy.RECENTLY_SOLD:
       sortByQuery = `ORDER BY sold_at ${sortDirectionParam}\n`
@@ -62,7 +70,7 @@ export const addQuerySortAndPagination = (
 ) => {
   const { sortBy, sortDirection, limit, offset } = filters
   if (sortBy && sortDirection) {
-    query.append(getOrderBy(sortBy, sortDirection)) // VER TODO
+    query.append(getOrderBy(filters)) // VER TODO
   }
 
   if (limit !== undefined && offset !== undefined) {
@@ -117,6 +125,18 @@ export const getEmotePlayModeWhere = (
     : SQL`metadata_emote.loop = ${emotePlayMode === EmotePlayMode.LOOP}`
 }
 
+export const getSearchWhere = (search: string) => {
+  return SQL`items.search_text ILIKE '%' || ${search} || '%'`
+}
+
+export const getIsSoldOutWhere = () => {
+  return SQL`items.available = 0`
+}
+
+export const getIsOnSale = () => {
+  return SQL`((search_is_store_minter = true AND available > 0) OR listings_count > 0)`
+}
+
 export const getisWearableHeadAccessoryWhere = () => {
   return SQL`items.search_is_wearable_head = true`
 }
@@ -156,46 +176,49 @@ export const getMaxPriceWhere = (maxPrice: string) => {
   return SQL`(max_price <= ${maxPrice} OR (price <= ${maxPrice} AND available > 0))`
 }
 
+export const getContractAddressWhere = (contractAddresses: string[]) => {
+  return SQL`items.collection = ANY(${contractAddresses})`
+}
+
+export const getOnlyListingsWhere = () => {
+  return SQL`(items.search_is_store_minter = false OR (items.search_is_store_minter = true AND available = 0)) AND listings_count > 1`
+}
+
+export const getOnlyMintingWhere = () => {
+  return SQL`items.search_is_store_minter = true AND available > 0`
+}
+
 export const getCollectionsQueryWheres = (filters: CatalogFilters) => {
   const conditions = [
     filters.category
       ? getCategoryWhere(filters.category, filters.isWearableSmart)
       : undefined,
+    filters.rarities?.length ? getRaritiesWhere(filters.rarities) : undefined,
     filters.creator?.length ? getCreatorWhere(filters.creator) : undefined,
-    filters.isSoldOut ? SQL`items.available = 0` : undefined,
-    filters.isOnSale ? SQL`items.search_is_store_minter = true` : undefined,
-    filters.search
-      ? SQL`items.search_text ILIKE '%' || ${filters.search} || '%'`
-      : undefined,
+    filters.isSoldOut ? getIsSoldOutWhere() : undefined,
+    filters.isOnSale ? getIsOnSale() : undefined,
+    filters.search ? getSearchWhere(filters.search) : undefined,
     filters.isWearableHead ? getisWearableHeadAccessoryWhere() : undefined,
     filters.isWearableAccessory ? getWearableAccessoryWhere() : undefined,
     filters.wearableCategory
       ? getWearableCategoryWhere(filters.wearableCategory)
       : undefined,
-    filters.rarities?.length ? getRaritiesWhere(filters.rarities) : undefined,
     filters.wearableGenders?.length
       ? getWearableGenderWhere(filters.wearableGenders)
       : undefined,
-
     filters.emoteCategory
       ? getEmoteCategoryWhere(filters.emoteCategory)
       : undefined,
-
     filters.emotePlayMode?.length
       ? getEmotePlayModeWhere(filters.emotePlayMode)
       : undefined,
     filters.contractAddresses?.length
-      ? SQL`items.collection = ANY(${filters.contractAddresses})`
+      ? getContractAddressWhere(filters.contractAddresses)
       : undefined,
-
     filters.minPrice ? getMinPriceWhere(filters.minPrice) : undefined,
     filters.maxPrice ? getMaxPriceWhere(filters.maxPrice) : undefined,
-    filters.onlyListing
-      ? SQL`items.search_is_store_minter = false AND listings_count > 1`
-      : undefined,
-    filters.onlyMinting
-      ? SQL`items.search_is_store_minter = true AND available > 0`
-      : undefined,
+    filters.onlyListing ? getOnlyListingsWhere() : undefined,
+    filters.onlyMinting ? getOnlyMintingWhere() : undefined,
   ].filter(Boolean)
 
   if (!conditions.length) {
@@ -267,6 +290,7 @@ export const getCollectionsItemsCatalogQuery = (
                 MIN(orders.price) AS min_price,
                 MAX(orders.price) AS max_price,
                 COUNT(DISTINCT nft.owner) as owners_count
+                MAX(orders.updated_at) AS max_order_created_at
               FROM `
     )
     .append(schemaVersion)
