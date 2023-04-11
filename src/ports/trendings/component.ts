@@ -1,8 +1,10 @@
 import BN from 'bn.js'
 import seedrandom from 'seedrandom'
-import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { Item, Sale } from '@dcl/schemas'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
+import { enhanceItemsWithPicksStats } from '../../logic/favorites/utils'
 import { getDateXDaysAgo } from '../analyticsDayData/utils'
+import { IFavoritesComponent } from '../favorites/types'
 import { IItemsComponent } from '../items/types'
 import { ITrendingsComponent, TrendingFilters } from './types'
 import {
@@ -18,15 +20,24 @@ export const SALES_CUT = 0.6
 export const VOLUME_CUT = 0.4
 
 export function createTrendingsComponent(
-  collectionsSubgraph: ISubgraphComponent,
-  itemsComponent: IItemsComponent
+  components: {
+    collectionsSubgraphComponent: ISubgraphComponent
+    itemsComponent: IItemsComponent
+    favoritesComponent: IFavoritesComponent
+  },
+  options?: {
+    isFavoritesEnabled?: boolean
+  }
 ): ITrendingsComponent {
+  const { itemsComponent, collectionsSubgraphComponent, favoritesComponent } =
+    components
+
   async function fetchTrendingSales(skip: number) {
     const query = getTrendingsQuery(
       { from: getDateXDaysAgo(1).getTime(), first: 1000, skip },
       false
     )
-    const { sales: fragments } = await collectionsSubgraph.query<{
+    const { sales: fragments } = await collectionsSubgraphComponent.query<{
       sales: TrendingSaleFragment[]
     }>(query)
 
@@ -42,7 +53,7 @@ export function createTrendingsComponent(
    * @param filters TrendingFilters
    * @returns NFT
    */
-  async function fetch(filters: TrendingFilters) {
+  async function fetch({ pickedBy, ...filters }: TrendingFilters) {
     // Fetch all sales from the past 48hs
     let sales: Pick<Sale, 'itemId' | 'contractAddress'>[] = []
     let items: Item[] = []
@@ -79,6 +90,14 @@ export function createTrendingsComponent(
           })
         )
       ).reduce((a, b) => a.concat(b), []) // flatten the array of arrays
+    }
+
+    if (options && options.isFavoritesEnabled) {
+      items = await enhanceItemsWithPicksStats(
+        favoritesComponent,
+        items,
+        pickedBy
+      )
     }
 
     const trendingBySales: Item[] = []

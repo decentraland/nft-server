@@ -1,11 +1,11 @@
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { Params } from '../../logic/http/params'
 import { asJSON } from '../../logic/http/response'
-import { AppComponents, Context } from '../../types'
+import { AppComponents, AuthenticatedContext } from '../../types'
 
 export function createTrendingHandler(
   components: Pick<AppComponents, 'trendings'>
-): IHttpServerComponent.IRequestHandler<Context<'/trendings'>> {
+): IHttpServerComponent.IRequestHandler<AuthenticatedContext<'/trendings'>> {
   const { trendings } = components
 
   return async (context) => {
@@ -17,9 +17,12 @@ export function createTrendingHandler(
 
     const size = params.getNumber('size')
 
+    const pickedBy: string | undefined =
+      context.verification?.auth.toLowerCase()
+
     return asJSON(
       async () => ({
-        data: await trendings.fetch({ size }),
+        data: await trendings.fetch({ size, pickedBy }),
       }),
       responseHeaders
     )

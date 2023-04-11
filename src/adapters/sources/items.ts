@@ -1,7 +1,8 @@
 import { Item, ItemFilters, ItemSortBy } from '@dcl/schemas'
 import { FetchOptions, IMergerComponent } from '../../ports/merger/types'
 import { IItemsComponent, ItemOptions } from '../../ports/items/types'
-import { IFavoritesComponent, PickStats } from '../../ports/favorites/types'
+import { IFavoritesComponent } from '../../ports/favorites/types'
+import { enhanceItemsWithPicksStats } from '../../logic/favorites/utils'
 import { convertItemToSortableResult } from '../../logic/items/utils'
 
 export function createItemsSource(
@@ -15,29 +16,6 @@ export function createItemsSource(
 ): IMergerComponent.Source<Item, ItemFilters, ItemSortBy> {
   const { itemsComponent, favoritesComponent } = components
 
-  async function enhanceItemsWithPicksStats(
-    items: Item[],
-    pickedBy?: string
-  ): Promise<Item[]> {
-    const picksStats = await favoritesComponent.getPicksStatsOfItems(
-      items.map(({ id }) => id),
-      pickedBy
-    )
-
-    const picksStatsByItemId: Record<string, PickStats> = picksStats.reduce(
-      (acc, pickStats) => {
-        acc[pickStats.itemId] = pickStats
-        return acc
-      },
-      {} as Record<string, PickStats>
-    )
-
-    return items.map((itemResult) => ({
-      ...itemResult,
-      picks: picksStatsByItemId[itemResult.id] ?? null,
-    }))
-  }
-
   async function fetch({
     pickedBy,
     ...filters
@@ -45,7 +23,11 @@ export function createItemsSource(
     let results = await itemsComponent.fetch(filters)
 
     if (options && options.isFavoritesEnabled) {
-      results = await enhanceItemsWithPicksStats(results, pickedBy)
+      results = await enhanceItemsWithPicksStats(
+        favoritesComponent,
+        results,
+        pickedBy
+      )
     }
 
     return results.map(convertItemToSortableResult)
