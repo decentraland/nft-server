@@ -93,11 +93,12 @@ export function createTrendingsComponent(
     }
 
     if (options && options.isFavoritesEnabled) {
-      items = await enhanceItemsWithPicksStats(
-        favoritesComponent,
-        items,
+      const picksStats = await favoritesComponent.getPicksStatsOfItems(
+        items.map(({ id }) => id),
         pickedBy
       )
+
+      items = await enhanceItemsWithPicksStats(items, picksStats)
     }
 
     const trendingBySales: Item[] = []

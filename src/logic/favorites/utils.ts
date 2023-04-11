@@ -1,16 +1,10 @@
 import { Item } from '@dcl/schemas'
-import { IFavoritesComponent, PickStats } from '../../ports/favorites/types'
+import { PickStats } from '../../ports/favorites/types'
 
 export async function enhanceItemsWithPicksStats(
-  favoritesComponent: IFavoritesComponent,
   items: Item[],
-  pickedBy?: string
+  picksStats: PickStats[]
 ): Promise<Item[]> {
-  const picksStats = await favoritesComponent.getPicksStatsOfItems(
-    items.map(({ id }) => id),
-    pickedBy
-  )
-
   const picksStatsByItemId: Record<string, PickStats> = picksStats.reduce(
     (acc, pickStats) => {
       acc[pickStats.itemId] = pickStats

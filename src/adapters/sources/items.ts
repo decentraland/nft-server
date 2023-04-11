@@ -20,17 +20,18 @@ export function createItemsSource(
     pickedBy,
     ...filters
   }: FetchOptions<ItemOptions, ItemSortBy>) {
-    let results = await itemsComponent.fetch(filters)
+    let items = await itemsComponent.fetch(filters)
 
     if (options && options.isFavoritesEnabled) {
-      results = await enhanceItemsWithPicksStats(
-        favoritesComponent,
-        results,
+      const picksStats = await favoritesComponent.getPicksStatsOfItems(
+        items.map(({ id }) => id),
         pickedBy
       )
+
+      items = await enhanceItemsWithPicksStats(items, picksStats)
     }
 
-    return results.map(convertItemToSortableResult)
+    return items.map(convertItemToSortableResult)
   }
 
   async function count(filters: FetchOptions<ItemFilters, ItemSortBy>) {
