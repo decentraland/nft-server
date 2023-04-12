@@ -6,7 +6,7 @@ describe('when enhancing items with their picks stats', () => {
   let items: Item[]
   let picksStats: PickStats[]
 
-  beforeEach(async () => {
+  beforeEach(() => {
     items = Array.from(
       { length: 2 },
       (_, i) =>
