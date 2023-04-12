@@ -362,7 +362,7 @@ test('trendings component', function ({ components }) {
             )
           })
 
-          it('should fetch the data from the subgraph', async () => {
+          it('should fetch the data from the subgraph', () => {
             // assert the retry calls, it should ask for all pages
             const { collectionsSubgraph } = components
 
