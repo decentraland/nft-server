@@ -189,9 +189,9 @@ export function fromOrderFragment(
   network: Network,
   chainId: ChainId
 ): Order {
-  const issuedId = fragment.nft.issuedId
+  const issuedId: string = fragment.nft.issuedId
     ? fragment.nft.issuedId
-    : fragment.nft.tokenURI.split('/').pop() ?? ''
+    : fragment.nft.tokenURI?.split('/').pop() ?? ''
 
   const order: Order = {
     id: fragment.id,
