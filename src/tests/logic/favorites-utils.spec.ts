@@ -27,7 +27,7 @@ describe('when enhancing items with their picks stats', () => {
     )
   })
 
-  it.only('should merge each pick stats in its correspondent item', () => {
+  it('should merge each pick stats in its correspondent item', () => {
     expect(enhanceItemsWithPicksStats(items, picksStats)).resolves.toEqual(
       items.map((item) => ({
         ...item,
