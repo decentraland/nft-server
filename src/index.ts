@@ -715,6 +715,7 @@ async function initComponents(): Promise<AppComponents> {
     marketplaceSubgraph,
     stats,
     owners,
+    favorites: favoritesComponent,
   }
 }
 
