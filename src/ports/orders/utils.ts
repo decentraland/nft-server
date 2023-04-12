@@ -189,7 +189,7 @@ export function fromOrderFragment(
   network: Network,
   chainId: ChainId
 ): Order {
-  const issuedId: string = fragment.nft.issuedId
+  const issuedId = fragment.nft.issuedId
     ? fragment.nft.issuedId
     : fragment.nft.tokenURI?.split('/').pop() ?? ''
 
