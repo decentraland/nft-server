@@ -92,7 +92,6 @@ export type CatalogFilters = Pick<
   | 'emoteGenders'
   | 'emotePlayMode'
   | 'contractAddresses'
-  | 'itemId'
   | 'network'
   | 'minPrice'
   | 'maxPrice'
