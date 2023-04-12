@@ -213,7 +213,7 @@ test('trendings component', function ({ components }) {
             )
         })
 
-        it('should return the trending results by sales and volume shuffled', async () => {
+        it('should return the trending results by sales and volume shuffled', () => {
           // 40% of the big volumes items should be in the trendings array
           expect(trendings).toEqual(
             expect.arrayContaining(trendingItemsWithMostVolume)
