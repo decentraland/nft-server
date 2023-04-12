@@ -1,11 +1,5 @@
 import SQL, { SQLStatement } from 'sql-template-strings'
 import {
-  CatalogFilters,
-  CatalogQueryFilters,
-  CatalogSortBy,
-  CatalogSortDirection,
-} from './types'
-import {
   EmoteCategory,
   EmotePlayMode,
   GenderFilterOption,
@@ -14,6 +8,20 @@ import {
   WearableGender,
 } from '@dcl/schemas'
 import { FragmentItemType } from '../items/types'
+import {
+  CatalogFilters,
+  CatalogQueryFilters,
+  CatalogSortBy,
+  CatalogSortDirection,
+} from './types'
+
+const WEARABLE_ITEM_TYPES = [
+  FragmentItemType.WEARABLE_V1,
+  FragmentItemType.WEARABLE_V2,
+  FragmentItemType.SMART_WEARABLE_V1,
+]
+
+const MAX_ORDER_TIMESTAMP = 253378408747000 // some orders have a timestmap that can't be cast by Postgres, this is the max possible value
 
 export const getLatestSubgraphSchema = (subgraphName: string) =>
   SQL`
@@ -30,11 +38,8 @@ export function getOrderBy(filters: CatalogFilters) {
   const sortByParam = sortBy ?? CatalogSortBy.NEWEST
   const sortDirectionParam = sortDirection ?? CatalogSortDirection.ASC
 
-  // When seeing "Not for sale", the only sort available is the Newest one
-  if (isOnSale === false) {
-    if (sortByParam === CatalogSortBy.NEWEST) {
-      return `ORDER BY items.first_listed_at ${sortDirectionParam}\n`
-    }
+  // // When seeing "Not for sale", the only sort available is the Newest one
+  if (isOnSale === false && sortByParam !== CatalogSortBy.NEWEST) {
     return ''
   }
 
@@ -70,7 +75,7 @@ export const addQuerySortAndPagination = (
 ) => {
   const { sortBy, sortDirection, limit, offset } = filters
   if (sortBy && sortDirection) {
-    query.append(getOrderBy(filters)) // VER TODO
+    query.append(getOrderBy(filters))
   }
 
   if (limit !== undefined && offset !== undefined) {
@@ -87,13 +92,14 @@ export const getCategoryWhere = (
       ? SQL`items.item_type = '`
           .append(FragmentItemType.SMART_WEARABLE_V1)
           .append(SQL`'`)
-      : SQL`(items.item_type = '`
-          .append(FragmentItemType.WEARABLE_V1)
-          .append(SQL`' OR items.item_type = '`)
-          .append(FragmentItemType.WEARABLE_V2)
-          .append(SQL`' OR items.item_type = '`)
-          .append(FragmentItemType.SMART_WEARABLE_V1)
-          .append(SQL`')`)
+      : SQL`items.item_type IN `.append(
+          SQL`
+            (`
+            .append(
+              WEARABLE_ITEM_TYPES.map((itemType) => `'${itemType}'`).join(', ')
+            )
+            .append(SQL`)`)
+        )
     : category === NFTCategory.EMOTE
     ? SQL`items.item_type = '`.append(FragmentItemType.EMOTE_V1).append(SQL`'`)
     : SQL``
@@ -188,7 +194,7 @@ export const getOnlyMintingWhere = () => {
   return SQL`items.search_is_store_minter = true AND available > 0`
 }
 
-export const getCollectionsQueryWheres = (filters: CatalogFilters) => {
+export const getCollectionsQueryWhere = (filters: CatalogFilters) => {
   const conditions = [
     filters.category
       ? getCategoryWhere(filters.category, filters.isWearableSmart)
@@ -289,8 +295,8 @@ export const getCollectionsItemsCatalogQuery = (
                 COUNT(orders.id) AS listings_count,
                 MIN(orders.price) AS min_price,
                 MAX(orders.price) AS max_price,
-                COUNT(DISTINCT nft.owner) as owners_count
-                MAX(orders.updated_at) AS max_order_created_at
+                COUNT(DISTINCT nft.owner) as owners_count,
+                MAX(orders.created_at) AS max_order_created_at
               FROM `
     )
     .append(schemaVersion)
@@ -304,7 +310,11 @@ export const getCollectionsItemsCatalogQuery = (
       `.order_active AS orders ON orders.nft = nft.id 
               WHERE 
                 orders.status = 'open' 
-                AND orders.expires_at < 253378408747000 
+                AND orders.expires_at < `
+    )
+    .append(MAX_ORDER_TIMESTAMP)
+    .append(
+      ` 
                 AND to_timestamp(orders.expires_at / 100.0) > now() 
                 GROUP BY nft.item
               ) AS nfts ON nfts.item = items.id 
@@ -326,7 +336,7 @@ export const getCollectionsItemsCatalogQuery = (
     .append(schemaVersion)
     .append(
       `.metadata_active AS metadata ON metadata.wearable = wearable.id
-            ) AS metadata_wearable ON metadata_wearable.id = items.metadata AND (items.item_type = 'wearable_v1' OR items.item_type = 'wearable_v2' OR items.item_type = 'smart_wearable_v1')
+      ) AS metadata_wearable ON metadata_wearable.id = items.metadata AND (items.item_type = 'wearable_v1' OR items.item_type = 'wearable_v2' OR items.item_type = 'smart_wearable_v1')
             LEFT JOIN (
               SELECT 
                 metadata.id, 
@@ -348,8 +358,9 @@ export const getCollectionsItemsCatalogQuery = (
       `.metadata_active AS metadata ON metadata.emote = emote.id
             ) AS metadata_emote ON metadata_emote.id = items.metadata AND items.item_type = 'emote_v1' `
     )
-    .append(getCollectionsQueryWheres(filters))
+    .append(getCollectionsQueryWhere(filters))
 
   addQuerySortAndPagination(query, filters)
+  console.log('query: ', query.text)
   return query
 }

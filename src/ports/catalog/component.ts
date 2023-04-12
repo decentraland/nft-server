@@ -1,6 +1,11 @@
 import { IPgComponent } from '@well-known-components/pg-component'
 import { Network } from '@dcl/schemas'
 import {
+  getCollectionsChainId,
+  getMarketplaceChainId,
+} from '../../logic/chainIds'
+import { HttpError } from '../../logic/http/response'
+import {
   CatalogFilters,
   CatalogItem,
   ICatalogComponent,
@@ -11,10 +16,6 @@ import {
   getCatalogQuery,
   fromCollectionsItemDbResultToCatalogItem,
 } from './utils'
-import {
-  getCollectionsChainId,
-  getMarketplaceChainId,
-} from '../../logic/chainIds'
 import { getLatestSubgraphSchema } from './queries'
 
 export function createCatalogComponent(options: {
@@ -50,7 +51,6 @@ export function createCatalogComponent(options: {
         })
 
       const schemas = await Promise.all(latestSchemasPromises)
-
       const results = await client.query<CollectionsItemDBResult>(
         getCatalogQuery(
           schemas.reduce((acc, curr) => ({ ...acc, ...curr }), {}),
@@ -61,7 +61,10 @@ export function createCatalogComponent(options: {
         fromCollectionsItemDbResultToCatalogItem(res, network)
       )
     } catch (e) {
-      console.log(e)
+      throw new HttpError(
+        "Couldn't fetch the catalog with the filters provided",
+        400
+      )
     }
 
     client.release()

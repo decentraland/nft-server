@@ -29,6 +29,7 @@ import {
   SaleSortBy,
 } from '@dcl/schemas'
 import type * as authorizationMiddleware from 'decentraland-crypto-middleware'
+import { IPgComponent } from '@well-known-components/pg-component'
 import { RoutedContext } from '@well-known-components/http-server'
 import type {
   IConfigComponent,

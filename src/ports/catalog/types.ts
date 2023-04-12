@@ -1,5 +1,3 @@
-// import { ListingStatus } from '@dcl/schemas'
-
 import { Item, ItemFilters, Network } from '@dcl/schemas'
 
 export type CollectionsItemDBResult = {

@@ -1,8 +1,14 @@
 import SQL, { SQLStatement } from 'sql-template-strings'
-import { test } from '../components'
+import {
+  EmoteCategory,
+  EmotePlayMode,
+  NFTCategory,
+  Rarity,
+  WearableGender,
+} from '@dcl/schemas'
 import {
   addQuerySortAndPagination,
-  getCollectionsQueryWheres,
+  getCollectionsQueryWhere,
   getLatestSubgraphSchema,
   getOrderBy,
 } from '../../ports/catalog/queries'
@@ -12,13 +18,7 @@ import {
   CatalogSortDirection,
 } from '../../ports/catalog/types'
 import { FragmentItemType } from '../../ports/items/types'
-import {
-  EmoteCategory,
-  EmotePlayMode,
-  NFTCategory,
-  Rarity,
-  WearableGender,
-} from '@dcl/schemas'
+import { test } from '../components'
 
 test('catalog utils', function () {
   beforeEach(() => {})
@@ -49,7 +49,7 @@ test('catalog utils', function () {
             filters.isWearableSmart = true
           })
           it('should only set smart_wearable_v1 as item.type', () => {
-            expect(getCollectionsQueryWheres(filters).text).toContain(
+            expect(getCollectionsQueryWhere(filters).text).toContain(
               `WHERE items.item_type = '${FragmentItemType.SMART_WEARABLE_V1}'`
             )
           })
@@ -59,8 +59,9 @@ test('catalog utils', function () {
             filters.isWearableSmart = undefined
           })
           it('should set all the wearable valid item types', () => {
-            expect(getCollectionsQueryWheres(filters).text).toContain(
-              `WHERE (items.item_type = '${FragmentItemType.WEARABLE_V1}' OR items.item_type = '${FragmentItemType.WEARABLE_V2}' OR items.item_type = '${FragmentItemType.SMART_WEARABLE_V1}')`
+            expect(getCollectionsQueryWhere(filters).text).toContain(
+              `WHERE items.item_type IN 
+            ('${FragmentItemType.WEARABLE_V1}', '${FragmentItemType.WEARABLE_V2}', '${FragmentItemType.SMART_WEARABLE_V1}')`
             )
           })
         })
@@ -73,7 +74,7 @@ test('catalog utils', function () {
         })
 
         it('should set the emote item type', () => {
-          expect(getCollectionsQueryWheres(filters).text).toContain(
+          expect(getCollectionsQueryWhere(filters).text).toContain(
             `WHERE items.item_type = '${FragmentItemType.EMOTE_V1}'`
           )
         })
@@ -88,10 +89,10 @@ test('catalog utils', function () {
         }
       })
       it('should add the creator field to the WHERE', () => {
-        expect(getCollectionsQueryWheres(filters).text).toContain(
+        expect(getCollectionsQueryWhere(filters).text).toContain(
           `WHERE items.creator = $1`
         )
-        expect(getCollectionsQueryWheres(filters).values).toStrictEqual([
+        expect(getCollectionsQueryWhere(filters).values).toStrictEqual([
           filters.creator,
         ])
       })
@@ -106,7 +107,7 @@ test('catalog utils', function () {
         }
       })
       it('should add the creator field to the WHERE', () => {
-        expect(getCollectionsQueryWheres(filters).text).toContain(
+        expect(getCollectionsQueryWhere(filters).text).toContain(
           `WHERE items.available = 0`
         )
       })
@@ -121,7 +122,7 @@ test('catalog utils', function () {
         }
       })
       it('should add the is on sale definition to the WHERE', () => {
-        expect(getCollectionsQueryWheres(filters).text).toContain(
+        expect(getCollectionsQueryWhere(filters).text).toContain(
           `((search_is_store_minter = true AND available > 0) OR listings_count > 0)`
         )
       })
@@ -136,10 +137,10 @@ test('catalog utils', function () {
         }
       })
       it('should add the is search definition to the WHERE', () => {
-        expect(getCollectionsQueryWheres(filters).text).toContain(
+        expect(getCollectionsQueryWhere(filters).text).toContain(
           `items.search_text ILIKE '%' || $1 || '%'`
         )
-        expect(getCollectionsQueryWheres(filters).values).toStrictEqual([
+        expect(getCollectionsQueryWhere(filters).values).toStrictEqual([
           filters.search,
         ])
       })
@@ -154,10 +155,10 @@ test('catalog utils', function () {
         }
       })
       it('should add the rarities definition to the WHERE', () => {
-        expect(getCollectionsQueryWheres(filters).text).toContain(
+        expect(getCollectionsQueryWhere(filters).text).toContain(
           `items.rarity = ANY($1)`
         )
-        expect(getCollectionsQueryWheres(filters).values).toStrictEqual([
+        expect(getCollectionsQueryWhere(filters).values).toStrictEqual([
           filters.rarities,
         ])
       })
@@ -172,10 +173,10 @@ test('catalog utils', function () {
         }
       })
       it('should add the contract addresses definition to the WHERE', () => {
-        expect(getCollectionsQueryWheres(filters).text).toContain(
+        expect(getCollectionsQueryWhere(filters).text).toContain(
           `items.collection = ANY($1)`
         )
-        expect(getCollectionsQueryWheres(filters).values).toStrictEqual([
+        expect(getCollectionsQueryWhere(filters).values).toStrictEqual([
           filters.contractAddresses,
         ])
       })
@@ -190,10 +191,10 @@ test('catalog utils', function () {
         }
       })
       it('should add the min price definition to the WHERE', () => {
-        expect(getCollectionsQueryWheres(filters).text).toContain(
+        expect(getCollectionsQueryWhere(filters).text).toContain(
           `(min_price >= $1 OR (price >= $2 AND available > 0))`
         )
-        expect(getCollectionsQueryWheres(filters).values).toStrictEqual([
+        expect(getCollectionsQueryWhere(filters).values).toStrictEqual([
           filters.minPrice,
           filters.minPrice,
         ])
@@ -209,10 +210,10 @@ test('catalog utils', function () {
         }
       })
       it('should add the max price definition to the WHERE', () => {
-        expect(getCollectionsQueryWheres(filters).text).toContain(
+        expect(getCollectionsQueryWhere(filters).text).toContain(
           `(max_price <= $1 OR (price <= $2 AND available > 0))`
         )
-        expect(getCollectionsQueryWheres(filters).values).toStrictEqual([
+        expect(getCollectionsQueryWhere(filters).values).toStrictEqual([
           filters.maxPrice,
           filters.maxPrice,
         ])
@@ -228,7 +229,7 @@ test('catalog utils', function () {
         }
       })
       it('should add the only listing definition to the WHERE', () => {
-        expect(getCollectionsQueryWheres(filters).text).toContain(
+        expect(getCollectionsQueryWhere(filters).text).toContain(
           `(items.search_is_store_minter = false OR (items.search_is_store_minter = true AND available = 0)) AND listings_count > 1`
         )
       })
@@ -243,7 +244,7 @@ test('catalog utils', function () {
         }
       })
       it('should add the only minting definition to the WHERE', () => {
-        expect(getCollectionsQueryWheres(filters).text).toContain(
+        expect(getCollectionsQueryWhere(filters).text).toContain(
           `items.search_is_store_minter = true AND available > 0`
         )
       })
@@ -260,10 +261,10 @@ test('catalog utils', function () {
         }
       })
       it('should add the wearable related definitions to the WHERE', () => {
-        expect(getCollectionsQueryWheres(filters).text).toContain(
+        expect(getCollectionsQueryWhere(filters).text).toContain(
           `items.search_is_wearable_head = true AND items.search_is_wearable_accessory = true AND items.search_wearable_body_shapes @> ($1)`
         )
-        expect(getCollectionsQueryWheres(filters).values).toStrictEqual([
+        expect(getCollectionsQueryWhere(filters).values).toStrictEqual([
           ['BaseFemale', 'BaseMale'],
         ])
       })
@@ -283,7 +284,7 @@ test('catalog utils', function () {
             })
         })
         it('should ignore them since it is the same as asking all of them', () => {
-          expect(getCollectionsQueryWheres(filters).text).not.toContain(
+          expect(getCollectionsQueryWhere(filters).text).not.toContain(
             `metadata_emote.loop =`
           )
         })
@@ -297,15 +298,13 @@ test('catalog utils', function () {
             })
         })
         it('should add the emote related definition to the WHERE', () => {
-          expect(getCollectionsQueryWheres(filters).text).toContain(
+          expect(getCollectionsQueryWhere(filters).text).toContain(
             `metadata_emote.category = '${EmoteCategory.DANCE}'`
           )
-          expect(getCollectionsQueryWheres(filters).text).toContain(
+          expect(getCollectionsQueryWhere(filters).text).toContain(
             `metadata_emote.loop = $1`
           )
-          expect(getCollectionsQueryWheres(filters).values).toStrictEqual([
-            true,
-          ])
+          expect(getCollectionsQueryWhere(filters).values).toStrictEqual([true])
         })
       })
     })
