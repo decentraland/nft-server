@@ -384,7 +384,7 @@ test('trendings component', function ({ components }) {
             )
           })
 
-          it('should fetch the data from favorites component', async () => {
+          it('should fetch the data from the favorites component', async () => {
             const { favorites } = components
             expect(favorites.getPicksStatsOfItems).toHaveBeenCalledWith(
               itemIds,
