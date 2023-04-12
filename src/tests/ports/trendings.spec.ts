@@ -112,6 +112,8 @@ test('trendings component', function ({ components }) {
       let trendingItemsWithMostSales: Item[]
       let notTrendingItemsWithMostSales: Item[]
 
+      let itemIds: string[]
+
       beforeEach(() => {
         const { items, collectionsSubgraph } = components
         filters = { size: RESULTS_PAGE_SIZE }
@@ -150,6 +152,17 @@ test('trendings component', function ({ components }) {
           .mockImplementation(({ contractAddresses, itemId }) =>
             Promise.resolve([getItem(contractAddresses![0], itemId!)])
           )
+
+        itemIds = Array.from(
+          new Set(
+            salesResponse
+              .filter(({ searchItemId }) => searchItemId)
+              .map(
+                ({ searchContractAddress, searchItemId }) =>
+                  `${searchContractAddress}-${searchItemId}`
+              )
+          )
+        )
       })
 
       describe('when the favorites feature is disabled', () => {
@@ -371,10 +384,10 @@ test('trendings component', function ({ components }) {
             )
           })
 
-          it.skip('should fetch the data from favorites component', async () => {
+          it('should fetch the data from favorites component', async () => {
             const { favorites } = components
             expect(favorites.getPicksStatsOfItems).toHaveBeenCalledWith(
-              trendings.map(({ id }) => id),
+              itemIds,
               undefined
             )
           })
@@ -389,10 +402,10 @@ test('trendings component', function ({ components }) {
             trendings = await trendingsComponent.fetch(filters)
           })
 
-          it.skip('should fetch the data from favorites component', async () => {
+          it('should fetch the data from favorites component', async () => {
             const { favorites } = components
             expect(favorites.getPicksStatsOfItems).toHaveBeenCalledWith(
-              trendings.map(({ id }) => id),
+              itemIds,
               pickedBy
             )
           })
