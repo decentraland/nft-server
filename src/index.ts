@@ -693,7 +693,11 @@ async function initComponents(): Promise<AppComponents> {
   })
 
   const satsumaDatabase = await createPgComponent({ config, logs, metrics })
-  const catalog = await createCatalogComponent({ database: satsumaDatabase })
+  const catalog = await createCatalogComponent({
+    favoritesComponent,
+    isFavoritesEnabled,
+    database: satsumaDatabase,
+  })
 
   return {
     config,

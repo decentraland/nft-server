@@ -1,5 +1,8 @@
 import SQL, { SQLStatement } from 'sql-template-strings'
 import {
+  CatalogFilters,
+  CatalogSortBy,
+  CatalogSortDirection,
   EmoteCategory,
   EmotePlayMode,
   GenderFilterOption,
@@ -8,12 +11,7 @@ import {
   WearableGender,
 } from '@dcl/schemas'
 import { FragmentItemType } from '../items/types'
-import {
-  CatalogFilters,
-  CatalogQueryFilters,
-  CatalogSortBy,
-  CatalogSortDirection,
-} from './types'
+import { CatalogQueryFilters } from './types'
 
 const WEARABLE_ITEM_TYPES = [
   FragmentItemType.WEARABLE_V1,

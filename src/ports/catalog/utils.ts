@@ -8,17 +8,14 @@ import {
   EmoteCategory,
   Network,
   ChainId,
+  CatalogFilters,
+  CatalogItem,
+  CatalogSortBy,
+  CatalogSortDirection,
 } from '@dcl/schemas'
 import { getCollectionsChainId } from '../../logic/chainIds'
 import { FragmentItemType } from '../items/types'
-import {
-  CatalogFilters,
-  CatalogItem,
-  CatalogQueryFilters,
-  CatalogSortBy,
-  CatalogSortDirection,
-  CollectionsItemDBResult,
-} from './types'
+import { CatalogQueryFilters, CollectionsItemDBResult } from './types'
 import {
   addQuerySortAndPagination,
   getCollectionsItemsCatalogQuery,

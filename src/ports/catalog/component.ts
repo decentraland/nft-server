@@ -1,15 +1,16 @@
 import { IPgComponent } from '@well-known-components/pg-component'
-import { Network } from '@dcl/schemas'
+import { CatalogItem, Network } from '@dcl/schemas'
 import {
   getCollectionsChainId,
   getMarketplaceChainId,
 } from '../../logic/chainIds'
 import { HttpError } from '../../logic/http/response'
+import { enhanceItemsWithPicksStats } from '../../logic/favorites/utils'
+import { IFavoritesComponent } from '../favorites/types'
 import {
-  CatalogFilters,
-  CatalogItem,
   ICatalogComponent,
   CollectionsItemDBResult,
+  CatalogOptions,
 } from './types'
 import {
   getSubgraphNameForNetwork,
@@ -20,10 +21,12 @@ import { getLatestSubgraphSchema } from './queries'
 
 export function createCatalogComponent(options: {
   database: IPgComponent
+  favoritesComponent: IFavoritesComponent
+  isFavoritesEnabled: boolean
 }): ICatalogComponent {
-  const { database } = options
+  const { database, favoritesComponent, isFavoritesEnabled } = options
 
-  async function fetch(filters: CatalogFilters) {
+  async function fetch(filters: CatalogOptions) {
     const { network } = filters
     const marketplaceChainId = getMarketplaceChainId()
     const collectionsChainId = getCollectionsChainId()
@@ -60,6 +63,15 @@ export function createCatalogComponent(options: {
       catalogItems = results.rows.map((res) =>
         fromCollectionsItemDbResultToCatalogItem(res, network)
       )
+
+      if (isFavoritesEnabled) {
+        const picksStats = await favoritesComponent.getPicksStatsOfItems(
+          catalogItems.map(({ id }) => id),
+          filters.pickedBy
+        )
+
+        catalogItems = enhanceItemsWithPicksStats(catalogItems, picksStats)
+      }
     } catch (e) {
       throw new HttpError(
         "Couldn't fetch the catalog with the filters provided",

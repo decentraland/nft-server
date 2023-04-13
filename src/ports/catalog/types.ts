@@ -1,4 +1,10 @@
-import { Item, ItemFilters, Network } from '@dcl/schemas'
+import {
+  CatalogFilters,
+  CatalogItem,
+  CatalogSortBy,
+  CatalogSortDirection,
+  Network,
+} from '@dcl/schemas'
 
 export type CollectionsItemDBResult = {
   id: string
@@ -35,75 +41,6 @@ export type CollectionsItemDBResult = {
   }
 }
 
-export type CatalogItem = Pick<
-  Item,
-  | 'id'
-  | 'name'
-  | 'contractAddress'
-  | 'thumbnail'
-  | 'url'
-  | 'rarity'
-  | 'category'
-  | 'creator'
-  | 'data'
-  | 'network'
-  | 'chainId'
-  | 'available'
-  | 'isOnSale'
-  | 'price'
-> & {
-  minPrice: string
-  minListingPrice: string | null
-  maxListingPrice: string | null
-  listings: number | null
-  owners: number | null
-}
-
-export enum CatalogSortBy {
-  NEWEST = 'newest',
-  RECENTLY_SOLD = 'recently_sold',
-  CHEAPEST = 'cheapest',
-  MOST_EXPENSIVE = 'most_expensive',
-  RECENTLY_LISTED = 'recently_listed',
-}
-
-export enum CatalogSortDirection {
-  ASC = 'asc',
-  DESC = 'desc',
-}
-
-export type CatalogFilters = Pick<
-  ItemFilters,
-  | 'first'
-  | 'skip'
-  | 'category'
-  | 'creator'
-  | 'isSoldOut'
-  | 'isOnSale'
-  | 'search'
-  | 'isWearableHead'
-  | 'isWearableSmart'
-  | 'isWearableAccessory'
-  | 'isWearableAccessory'
-  | 'wearableCategory'
-  | 'rarities'
-  | 'wearableGenders'
-  | 'emoteCategory'
-  | 'emoteGenders'
-  | 'emotePlayMode'
-  | 'contractAddresses'
-  | 'network'
-  | 'minPrice'
-  | 'maxPrice'
-> & {
-  onlyMinting?: boolean
-  onlyListing?: boolean
-  sortBy?: CatalogSortBy
-  sortDirection?: CatalogSortDirection
-  limit?: number
-  offset?: number
-}
-
 export type CatalogQueryFilters = Omit<
   CatalogFilters,
   'sortBy' | 'sortDirection' | 'limit' | 'offset'
@@ -114,6 +51,8 @@ export type CatalogQueryFilters = Omit<
   offset?: number
 }
 
+export type CatalogOptions = CatalogFilters & { pickedBy?: string }
+
 export interface ICatalogComponent {
-  fetch(filters: CatalogFilters): Promise<CatalogItem[]>
+  fetch(filters: CatalogOptions): Promise<CatalogItem[]>
 }
