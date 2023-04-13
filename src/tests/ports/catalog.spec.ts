@@ -1,10 +1,9 @@
-import { ChainId, Network } from '@dcl/schemas'
+import { CatalogFilters, ChainId, Network } from '@dcl/schemas'
 import { IPgComponent } from '@well-known-components/pg-component'
 import { createTestDbComponent, test } from '../../../src/tests/components'
 import { createCatalogComponent } from '../../ports/catalog/component'
 import { getLatestSubgraphSchema } from '../../ports/catalog/queries'
 import {
-  CatalogFilters,
   CollectionsItemDBResult,
   ICatalogComponent,
 } from '../../ports/catalog/types'
@@ -12,18 +11,25 @@ import {
   getSubgraphNameForNetwork,
   fromCollectionsItemDbResultToCatalogItem,
 } from '../../ports/catalog/utils'
+import { IFavoritesComponent } from '../../ports/favorites/types'
 
 let dbQueryMock: jest.Mock
 let dbClientQueryMock: jest.Mock
 let dbClientReleaseMock: jest.Mock
 let database: IPgComponent
 let catalogComponent: ICatalogComponent
+let favoritesComponentMock: IFavoritesComponent
+let getPicksStatsOfItemsMock: jest.Mock
 
 test('catalog component', function () {
   beforeEach(() => {
     dbQueryMock = jest.fn()
     dbClientQueryMock = jest.fn()
     dbClientReleaseMock = jest.fn()
+    favoritesComponentMock = {
+      getPicksStatsOfItems: getPicksStatsOfItemsMock,
+    }
+
     database = createTestDbComponent({
       query: dbQueryMock,
       getPool: jest.fn().mockReturnValue({
@@ -35,6 +41,8 @@ test('catalog component', function () {
     })
     catalogComponent = createCatalogComponent({
       database,
+      favoritesComponent: favoritesComponentMock,
+      isFavoritesEnabled: false,
     })
   })
 

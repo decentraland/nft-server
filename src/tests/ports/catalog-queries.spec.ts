@@ -1,5 +1,8 @@
 import SQL, { SQLStatement } from 'sql-template-strings'
 import {
+  CatalogFilters,
+  CatalogSortBy,
+  CatalogSortDirection,
   EmoteCategory,
   EmotePlayMode,
   NFTCategory,
@@ -12,17 +15,10 @@ import {
   getLatestSubgraphSchema,
   getOrderBy,
 } from '../../ports/catalog/queries'
-import {
-  CatalogFilters,
-  CatalogSortBy,
-  CatalogSortDirection,
-} from '../../ports/catalog/types'
 import { FragmentItemType } from '../../ports/items/types'
 import { test } from '../components'
 
 test('catalog utils', function () {
-  beforeEach(() => {})
-
   describe('when getting the latest subgraph schema by subgraph name', () => {
     let subgrahName = 'collections-matic'
     it('should contain the subgraph name asked as part of the query values', () => {
