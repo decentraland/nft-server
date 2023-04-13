@@ -1,10 +1,10 @@
 import { Item } from '@dcl/schemas'
 import { PickStats } from '../../ports/favorites/types'
 
-export async function enhanceItemsWithPicksStats(
+export function enhanceItemsWithPicksStats(
   items: Item[],
   picksStats: PickStats[]
-): Promise<Item[]> {
+): Item[] {
   const picksStatsByItemId: Record<string, PickStats> = picksStats.reduce(
     (acc, pickStats) => {
       acc[pickStats.itemId] = pickStats

@@ -28,7 +28,7 @@ export function createItemsSource(
         pickedBy
       )
 
-      items = await enhanceItemsWithPicksStats(items, picksStats)
+      items = enhanceItemsWithPicksStats(items, picksStats)
     }
 
     return items.map(convertItemToSortableResult)

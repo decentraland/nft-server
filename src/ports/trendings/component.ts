@@ -98,7 +98,7 @@ export function createTrendingsComponent(
         pickedBy
       )
 
-      items = await enhanceItemsWithPicksStats(items, picksStats)
+      items = enhanceItemsWithPicksStats(items, picksStats)
     }
 
     const trendingBySales: Item[] = []
