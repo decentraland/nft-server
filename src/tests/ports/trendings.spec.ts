@@ -1,5 +1,8 @@
-import { Network, NFTCategory, Rarity } from '@dcl/schemas'
+import { Item, Network, NFTCategory, Rarity } from '@dcl/schemas'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { getDateXDaysAgo } from '../../ports/analyticsDayData/utils'
+import { IFavoritesComponent, PickStats } from '../../ports/favorites/types'
+import { IItemsComponent } from '../../ports/items/types'
 import {
   createTrendingsComponent,
   SALES_CUT,
@@ -50,17 +53,39 @@ const getItem = (contractAddress: string, itemId: string) => ({
   updatedAt: 1653899245000,
   reviewedAt: 1631882258000,
   soldAt: 1653899245000,
-  firstListedAt: null
+  firstListedAt: null,
 })
+
+const getPickStats = (itemId: string): PickStats => {
+  let [_, num] = <[string, number]>itemId.split('-')
+  return { itemId, pickedByUser: num > 0, count: num }
+}
+
+const getItemWithPickStats = (contractAddress: string, itemId: string) => {
+  const item = getItem(contractAddress, itemId)
+  return {
+    ...item,
+    picks: getPickStats(item.id),
+  }
+}
 
 const RESULTS_PAGE_SIZE = 10
 
 test('trendings component', function ({ components }) {
+  let initialComponents: {
+    collectionsSubgraphComponent: ISubgraphComponent
+    itemsComponent: IItemsComponent
+    favoritesComponent: IFavoritesComponent
+  }
   let trendingsComponent: ITrendingsComponent
 
   beforeEach(() => {
-    const { collectionsSubgraph, items } = components
-    trendingsComponent = createTrendingsComponent(collectionsSubgraph, items)
+    const { collectionsSubgraph, items, favorites } = components
+    initialComponents = {
+      collectionsSubgraphComponent: collectionsSubgraph,
+      itemsComponent: items,
+      favoritesComponent: favorites,
+    }
   })
 
   beforeAll(() => {
@@ -77,6 +102,18 @@ test('trendings component', function ({ components }) {
       let salesResponse: TrendingSaleFragment[]
       let filters: TrendingFilters
       let salesOfSameItems: TrendingSaleFragment[]
+
+      let trendings: Item[]
+      let trendingItemsWithMostVolume: Item[]
+      let notTrendingItemsWithMostVolume: Item[]
+
+      let mostSales: TrendingSaleFragment[]
+      let trendingItemButNotInSale: TrendingSaleFragment[]
+      let trendingItemsWithMostSales: Item[]
+      let notTrendingItemsWithMostSales: Item[]
+
+      let itemIds: string[]
+
       beforeEach(() => {
         const { items, collectionsSubgraph } = components
         filters = { size: RESULTS_PAGE_SIZE }
@@ -115,86 +152,270 @@ test('trendings component', function ({ components }) {
           .mockImplementation(({ contractAddresses, itemId }) =>
             Promise.resolve([getItem(contractAddresses![0], itemId!)])
           )
+
+        itemIds = Array.from(
+          new Set(
+            salesResponse
+              .filter(({ searchItemId }) => searchItemId)
+              .map(
+                ({ searchContractAddress, searchItemId }) =>
+                  `${searchContractAddress}-${searchItemId}`
+              )
+          )
+        )
       })
 
-      it('should fetch the data and return the trending results by sales and volume shuffled', async () => {
-        const trendings = await trendingsComponent.fetch(filters)
-        const trendingItemsWithMostVolume = getSalesWithBigPrice(10)
-          .slice(-VOLUME_CUT * 10) //the big volume sales with most volume
-          .map((sale) => getItem(sale.searchContractAddress, sale.searchItemId))
+      describe('when the favorites feature is disabled', () => {
+        beforeEach(async () => {
+          trendingsComponent = createTrendingsComponent(initialComponents)
 
-        const notTrendingItemsWithMostVolume = getSalesWithBigPrice(10)
-          .slice(-(1 - VOLUME_CUT) * 10) //the big volume sales with less volume
-          .map((sale) => getItem(sale.searchContractAddress, sale.searchItemId))
-
-        // 40% of the big volumes items should be in the trendings array
-        expect(trendings).toEqual(
-          expect.arrayContaining(trendingItemsWithMostVolume)
-        )
-        // the rest of the big volume sales shouldn't be in the trendings array
-        expect(trendings).not.toEqual(
-          expect.arrayContaining(notTrendingItemsWithMostVolume)
-        )
-
-        // get just one sale of each item
-        const mostSales = salesOfSameItems.filter(
-          (value, index, self) =>
-            index ===
-            self.findIndex(
-              (t) => t.searchContractAddress === value.searchContractAddress
+          trendings = await trendingsComponent.fetch(filters)
+          trendingItemsWithMostVolume = getSalesWithBigPrice(10)
+            .slice(-VOLUME_CUT * 10) //the big volume sales with most volume
+            .map((sale) =>
+              getItem(sale.searchContractAddress, sale.searchItemId)
             )
-        )
 
-        const trendingItemButNotInSale = mostSales.filter(
-          (sale) =>
-            !getItem(sale.searchContractAddress, sale.searchItemId).isOnSale
-        )
-        // the trendings but not in sale, should not be part of the results
-        expect(trendings).not.toEqual(
-          expect.arrayContaining(trendingItemButNotInSale)
-        )
+          notTrendingItemsWithMostVolume = getSalesWithBigPrice(10)
+            .slice(-(1 - VOLUME_CUT) * 10) //the big volume sales with less volume
+            .map((sale) =>
+              getItem(sale.searchContractAddress, sale.searchItemId)
+            )
 
-        const trendingItemsWithMostSales = mostSales
-          .filter(
+          // get just one sale of each item
+          mostSales = salesOfSameItems.filter(
+            (value, index, self) =>
+              index ===
+              self.findIndex(
+                (t) => t.searchContractAddress === value.searchContractAddress
+              )
+          )
+
+          trendingItemButNotInSale = mostSales.filter(
             (sale) =>
-              getItem(sale.searchContractAddress, sale.searchItemId).isOnSale
-          ) // only the onSale items should appear in the trending
-          .slice(-SALES_CUT * 10) // get the ones with most sales
-          .map((sale) =>
-            getItem(sale.searchContractAddress, sale.searchItemId!)
+              !getItem(sale.searchContractAddress, sale.searchItemId).isOnSale
           )
 
-        const notTrendingItemsWithMostSales = mostSales
-          .slice(0, (1 - SALES_CUT) * 10) // get the ones with less sales
-          .map((sale) =>
-            getItem(sale.searchContractAddress, sale.searchItemId!)
-          )
-
-        // 60% of the big amount of sales items should be in the trendings array
-        expect(trendings).toEqual(
-          expect.arrayContaining(trendingItemsWithMostSales)
-        )
-        // the rest of the big amount of sales items shouldn't be in the trendings array
-        expect(trendings).not.toEqual(
-          expect.arrayContaining(notTrendingItemsWithMostSales)
-        )
-        // assert the retry calls, it should ask for all pages
-        const { collectionsSubgraph } = components
-        expect(collectionsSubgraph.query).toHaveBeenCalledTimes(
-          Math.ceil(salesResponse.length / 1000)
-        )
-        Array.from(
-          { length: Math.ceil(salesResponse.length / 1000) }, // the mock is returning 10000 results
-          (_, i) => {
-            expect(collectionsSubgraph.query).toHaveBeenCalledWith(
-              getTrendingsQuery({
-                from: getDateXDaysAgo(1).getTime(),
-                first: 1000,
-                skip: 1000 * i, // 1000 is the max number of results per page
-              })
+          trendingItemsWithMostSales = mostSales
+            .filter(
+              (sale) =>
+                getItem(sale.searchContractAddress, sale.searchItemId).isOnSale
+            ) // only the onSale items should appear in the trending
+            .slice(-SALES_CUT * 10) // get the ones with most sales
+            .map((sale) =>
+              getItem(sale.searchContractAddress, sale.searchItemId!)
             )
-          }
-        )
+
+          notTrendingItemsWithMostSales = mostSales
+            .slice(0, (1 - SALES_CUT) * 10) // get the ones with less sales
+            .map((sale) =>
+              getItem(sale.searchContractAddress, sale.searchItemId!)
+            )
+        })
+
+        it('should return the trending results by sales and volume shuffled', () => {
+          // 40% of the big volumes items should be in the trendings array
+          expect(trendings).toEqual(
+            expect.arrayContaining(trendingItemsWithMostVolume)
+          )
+
+          // the rest of the big volume sales shouldn't be in the trendings array
+          expect(trendings).not.toEqual(
+            expect.arrayContaining(notTrendingItemsWithMostVolume)
+          )
+
+          // the trendings but not in sale, should not be part of the results
+          expect(trendings).not.toEqual(
+            expect.arrayContaining(trendingItemButNotInSale)
+          )
+
+          // 60% of the big amount of sales items should be in the trendings array
+          expect(trendings).toEqual(
+            expect.arrayContaining(trendingItemsWithMostSales)
+          )
+          // the rest of the big amount of sales items shouldn't be in the trendings array
+          expect(trendings).not.toEqual(
+            expect.arrayContaining(notTrendingItemsWithMostSales)
+          )
+        })
+
+        it('should fetch the data from the subgraph', () => {
+          // assert the retry calls, it should ask for all pages
+          const { collectionsSubgraph } = components
+
+          expect(collectionsSubgraph.query).toHaveBeenCalledTimes(
+            Math.ceil(salesResponse.length / 1000)
+          )
+
+          Array.from(
+            { length: Math.ceil(salesResponse.length / 1000) }, // the mock is returning 10000 results
+            (_, i) => {
+              expect(collectionsSubgraph.query).toHaveBeenCalledWith(
+                getTrendingsQuery({
+                  from: getDateXDaysAgo(1).getTime(),
+                  first: 1000,
+                  skip: 1000 * i, // 1000 is the max number of results per page
+                })
+              )
+            }
+          )
+        })
+      })
+
+      describe('when the favorites feature is enabled', () => {
+        beforeEach(async () => {
+          const { favorites } = components
+
+          trendingsComponent = createTrendingsComponent(initialComponents, {
+            isFavoritesEnabled: true,
+          })
+
+          jest
+            .spyOn(favorites, 'getPicksStatsOfItems')
+            .mockImplementation((itemIds: string[]) =>
+              Promise.resolve(itemIds.map(getPickStats))
+            )
+        })
+
+        describe('and there is no filter of "pickedBy"', () => {
+          beforeEach(async () => {
+            trendings = await trendingsComponent.fetch(filters)
+            trendingItemsWithMostVolume = getSalesWithBigPrice(10)
+              .slice(-VOLUME_CUT * 10) //the big volume sales with most volume
+              .map((sale) =>
+                getItemWithPickStats(
+                  sale.searchContractAddress,
+                  sale.searchItemId
+                )
+              )
+
+            notTrendingItemsWithMostVolume = getSalesWithBigPrice(10)
+              .slice(-(1 - VOLUME_CUT) * 10) //the big volume sales with less volume
+              .map((sale) =>
+                getItemWithPickStats(
+                  sale.searchContractAddress,
+                  sale.searchItemId
+                )
+              )
+
+            // get just one sale of each item
+            mostSales = salesOfSameItems.filter(
+              (value, index, self) =>
+                index ===
+                self.findIndex(
+                  (t) => t.searchContractAddress === value.searchContractAddress
+                )
+            )
+
+            trendingItemButNotInSale = mostSales.filter(
+              (sale) =>
+                !getItem(sale.searchContractAddress, sale.searchItemId).isOnSale
+            )
+
+            trendingItemsWithMostSales = mostSales
+              .filter(
+                (sale) =>
+                  getItem(sale.searchContractAddress, sale.searchItemId)
+                    .isOnSale
+              ) // only the onSale items should appear in the trending
+              .slice(-SALES_CUT * 10) // get the ones with most sales
+              .map((sale) =>
+                getItemWithPickStats(
+                  sale.searchContractAddress,
+                  sale.searchItemId!
+                )
+              )
+
+            notTrendingItemsWithMostSales = mostSales
+              .slice(0, (1 - SALES_CUT) * 10) // get the ones with less sales
+              .map((sale) =>
+                getItemWithPickStats(
+                  sale.searchContractAddress,
+                  sale.searchItemId!
+                )
+              )
+          })
+
+          it('should return the trending results by sales and volume shuffled', () => {
+            // 40% of the big volumes items should be in the trendings array
+            expect(trendings).toEqual(
+              expect.arrayContaining(trendingItemsWithMostVolume)
+            )
+
+            // the rest of the big volume sales shouldn't be in the trendings array
+            expect(trendings).not.toEqual(
+              expect.arrayContaining(notTrendingItemsWithMostVolume)
+            )
+
+            // the trendings but not in sale, should not be part of the results
+            expect(trendings).not.toEqual(
+              expect.arrayContaining(trendingItemButNotInSale)
+            )
+
+            // 60% of the big amount of sales items should be in the trendings array
+            expect(trendings).toEqual(
+              expect.arrayContaining(trendingItemsWithMostSales)
+            )
+            // the rest of the big amount of sales items shouldn't be in the trendings array
+            expect(trendings).not.toEqual(
+              expect.arrayContaining(notTrendingItemsWithMostSales)
+            )
+          })
+
+          it('should fetch the data from the subgraph', () => {
+            // assert the retry calls, it should ask for all pages
+            const { collectionsSubgraph } = components
+
+            expect(collectionsSubgraph.query).toHaveBeenCalledTimes(
+              Math.ceil(salesResponse.length / 1000)
+            )
+
+            Array.from(
+              { length: Math.ceil(salesResponse.length / 1000) }, // the mock is returning 10000 results
+              (_, i) => {
+                expect(collectionsSubgraph.query).toHaveBeenCalledWith(
+                  getTrendingsQuery({
+                    from: getDateXDaysAgo(1).getTime(),
+                    first: 1000,
+                    skip: 1000 * i, // 1000 is the max number of results per page
+                  })
+                )
+              }
+            )
+          })
+
+          it('should fetch the data from the favorites component', async () => {
+            const { favorites } = components
+            expect(favorites.getPicksStatsOfItems).toHaveBeenCalledWith(
+              itemIds,
+              undefined
+            )
+          })
+
+          it('should enhance the trending items with their picks stats', () => {
+            expect(trendings.map(({ picks }) => picks)).toEqual(
+              trendings.map(({ id }) => getPickStats(id))
+            )
+          })
+        })
+
+        describe('and there is a filter of "pickedBy"', () => {
+          let pickedBy: string
+
+          beforeEach(async () => {
+            pickedBy = '0x123'
+            filters = { ...filters, pickedBy }
+            trendings = await trendingsComponent.fetch(filters)
+          })
+
+          it('should fetch the data from the favorites component', async () => {
+            const { favorites } = components
+            expect(favorites.getPicksStatsOfItems).toHaveBeenCalledWith(
+              itemIds,
+              pickedBy
+            )
+          })
+        })
       })
     })
   })

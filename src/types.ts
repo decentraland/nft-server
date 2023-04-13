@@ -48,6 +48,7 @@ import { IProcessedPricesComponent } from './ports/prices/types'
 import { IStatsComponent } from './ports/stats/types'
 import { IOwnerDataComponent } from './ports/owner/types'
 import { ItemOptions } from './ports/items/types'
+import { IFavoritesComponent } from './ports/favorites/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -88,6 +89,7 @@ export type AppComponents = {
     AnalyticsDayDataSortBy
   >
   owners: IOwnerDataComponent
+  favorites: IFavoritesComponent
 }
 
 export type Context<Path extends string = any> = RoutedContext<

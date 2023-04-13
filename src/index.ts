@@ -512,7 +512,16 @@ async function initComponents(): Promise<AppComponents> {
   })
 
   // trendings
-  const trendings = createTrendingsComponent(collectionsSubgraph, items)
+  const trendings = createTrendingsComponent(
+    {
+      collectionsSubgraphComponent: collectionsSubgraph,
+      itemsComponent: items,
+      favoritesComponent,
+    },
+    {
+      isFavoritesEnabled,
+    }
+  )
 
   // analytics day data for the marketplace subgraph
   const marketplaceAnalyticsDayData =
@@ -706,6 +715,7 @@ async function initComponents(): Promise<AppComponents> {
     marketplaceSubgraph,
     stats,
     owners,
+    favorites: favoritesComponent,
   }
 }
 

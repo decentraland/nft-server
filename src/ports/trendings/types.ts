@@ -5,6 +5,7 @@ export type TrendingFilters = {
   from?: number
   skip?: number
   first?: number
+  pickedBy?: string
 }
 
 export interface ITrendingsComponent {

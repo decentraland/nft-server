@@ -179,6 +179,8 @@ export async function initComponents(): Promise<AppComponents> {
   const collectionsChainId = getCollectionsChainId()
   const signaturesServer = await config.requireString('SIGNATURES_SERVER_URL')
 
+  const isFavoritesEnabled = (await config.getNumber('FF_FAVORITES')) === 1
+
   const cors = {
     origin: await config.getString('CORS_ORIGIN'),
     method: await config.getString('CORS_METHOD'),
@@ -385,7 +387,7 @@ export async function initComponents(): Promise<AppComponents> {
           itemsComponent: collectionsItems,
           favoritesComponent,
         },
-        { isFavoritesEnabled: (await config.getNumber('FF_FAVORITES')) === 1 }
+        { isFavoritesEnabled }
       ),
     ],
     defaultSortBy: ITEM_DEFAULT_SORT_BY,
@@ -444,7 +446,14 @@ export async function initComponents(): Promise<AppComponents> {
   })
 
   // trendings
-  const trendings = createTrendingsComponent(collectionsSubgraph, items)
+  const trendings = createTrendingsComponent(
+    {
+      collectionsSubgraphComponent: collectionsSubgraph,
+      itemsComponent: items,
+      favoritesComponent,
+    },
+    { isFavoritesEnabled }
+  )
 
   // analytics day data for the marketplace subgraph
   const marketplaceAnalyticsDayData = createAnalyticsDayDataComponent({
@@ -631,5 +640,6 @@ export async function initComponents(): Promise<AppComponents> {
     prices,
     stats,
     owners,
+    favorites: favoritesComponent,
   }
 }
