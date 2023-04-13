@@ -36,7 +36,7 @@
     "@well-known-components/metrics": "^1.1.1",
     "@well-known-components/thegraph-component": "^1.4.3",
     "@well-known-components/tracer-component": "^1.2.0",
-    "ajv": "^7.1.1",
+    "ajv": "^8.12.0",
     "bn.js": "^5.2.1",
     "decentraland-crypto-middleware": "^1.1.0",
     "dotenv": "^8.2.0",
