@@ -1,5 +1,8 @@
 import { Item, Network, NFTCategory, Rarity } from '@dcl/schemas'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { getDateXDaysAgo } from '../../ports/analyticsDayData/utils'
+import { IFavoritesComponent, PickStats } from '../../ports/favorites/types'
+import { IItemsComponent } from '../../ports/items/types'
 import {
   createTrendingsComponent,
   SALES_CUT,
@@ -14,9 +17,6 @@ import {
   TrendingSaleFragment,
 } from '../../ports/trendings/utils'
 import { test } from '../components'
-import { ISubgraphComponent } from '@well-known-components/thegraph-component'
-import { IFavoritesComponent, PickStats } from '../../ports/favorites/types'
-import { IItemsComponent } from '../../ports/items/types'
 
 const getSalesWithBigPrice = (qty: number, isOnSale = true) =>
   Array.from({ length: qty }, (_, i) => ({
