@@ -195,6 +195,8 @@ export function getFetchQuery(
   ) {
     where.push('searchOrderStatus: open')
     where.push('searchOrderExpiresAt_gt: $expiresAt')
+  } else if (!filters.isOnSale) {
+    where.push('searchOrderStatus: null')
   }
 
   if (filters.search) {

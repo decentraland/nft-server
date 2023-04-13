@@ -28,7 +28,7 @@ export function createNFTsHandler(
     const category = params.getValue<NFTCategory>('category', NFTCategory)
     const owner = params.getAddress('owner')
     const tenant = params.getAddress('tenant')?.toLowerCase()
-    const isOnSale = params.getBoolean('isOnSale')
+    const isOnSale = params.getString('isOnSale') === 'true'
     const search = params.getString('search')
     const isLand = params.getBoolean('isLand')
     const isOnRent = params.getBoolean('isOnRent')
