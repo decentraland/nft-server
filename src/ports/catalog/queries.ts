@@ -359,6 +359,5 @@ export const getCollectionsItemsCatalogQuery = (
     .append(getCollectionsQueryWhere(filters))
 
   addQuerySortAndPagination(query, filters)
-  console.log('query: ', query.text)
   return query
 }

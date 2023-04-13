@@ -11,7 +11,7 @@ import {
   getSubgraphNameForNetwork,
   fromCollectionsItemDbResultToCatalogItem,
 } from '../../ports/catalog/utils'
-import { IFavoritesComponent } from '../../ports/favorites/types'
+import { IFavoritesComponent, PickStats } from '../../ports/favorites/types'
 
 let dbQueryMock: jest.Mock
 let dbClientQueryMock: jest.Mock
@@ -26,6 +26,7 @@ test('catalog component', function () {
     dbQueryMock = jest.fn()
     dbClientQueryMock = jest.fn()
     dbClientReleaseMock = jest.fn()
+    getPicksStatsOfItemsMock = jest.fn()
     favoritesComponentMock = {
       getPicksStatsOfItems: getPicksStatsOfItemsMock,
     }
@@ -42,7 +43,7 @@ test('catalog component', function () {
     catalogComponent = createCatalogComponent({
       database,
       favoritesComponent: favoritesComponentMock,
-      isFavoritesEnabled: false,
+      isFavoritesEnabled: true,
     })
   })
 
@@ -56,8 +57,15 @@ test('catalog component', function () {
       let filters: CatalogFilters
       let latestSchema = 'sgd1234'
       let dbItemResponse: CollectionsItemDBResult
+      let pickStats: PickStats
 
       beforeEach(() => {
+        pickStats = {
+          itemId: '0xe42257bb4aada439179d736a64a736be0693a4ec-2',
+          count: 1,
+          pickedByUser: true,
+        }
+        getPicksStatsOfItemsMock.mockResolvedValue([pickStats])
         filters = {
           network,
         }
@@ -116,7 +124,13 @@ test('catalog component', function () {
 
       it('should fetch the data from one subgraph return the catalog items', async () => {
         expect(await catalogComponent.fetch(filters)).toEqual([
-          fromCollectionsItemDbResultToCatalogItem(dbItemResponse, network),
+          {
+            ...fromCollectionsItemDbResultToCatalogItem(
+              dbItemResponse,
+              network
+            ),
+            picks: pickStats,
+          },
         ])
         expect(dbClientQueryMock.mock.calls.length).toEqual(2)
         expect(dbClientQueryMock.mock.calls[0][0]).toEqual(
@@ -137,8 +151,15 @@ test('catalog component', function () {
       let latestSchemaMatic = 'sgd1234'
       let latestSchemaEthereum = 'sgd1234'
       let dbItemResponse: CollectionsItemDBResult
+      let pickStats: PickStats
 
       beforeEach(() => {
+        pickStats = {
+          itemId: '0xe42257bb4aada439179d736a64a736be0693a4ec-2',
+          count: 1,
+          pickedByUser: true,
+        }
+        getPicksStatsOfItemsMock.mockResolvedValue([pickStats])
         filters = {
           network: undefined,
         }
@@ -210,7 +231,10 @@ test('catalog component', function () {
 
       it('should fetch the data from one subgraph return the catalog items', async () => {
         expect(await catalogComponent.fetch(filters)).toEqual([
-          fromCollectionsItemDbResultToCatalogItem(dbItemResponse),
+          {
+            ...fromCollectionsItemDbResultToCatalogItem(dbItemResponse),
+            picks: pickStats,
+          },
         ])
         expect(dbClientQueryMock.mock.calls.length).toEqual(3) // 2 for the schema name and 1 for the catalog query
         expect(dbClientQueryMock.mock.calls[0][0]).toEqual(
