@@ -391,6 +391,12 @@ test('trendings component', function ({ components }) {
               undefined
             )
           })
+
+          it('should enhance the trending items with their picks stats', () => {
+            expect(trendings.map(({ picks }) => picks)).toEqual(
+              trendings.map(({ id }) => getPickStats(id))
+            )
+          })
         })
 
         describe('and there is a filter of "pickedBy"', () => {
