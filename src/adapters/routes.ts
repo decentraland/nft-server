@@ -58,7 +58,14 @@ export async function setupRoutes(globalContext: GlobalContext) {
     createNFTHandler(components)
   )
   router.get('/owners', createOwnersHandler(components))
-  router.get('/catalog', createCatalogHandler(components))
+  router.get(
+    '/catalog',
+    authorizationMiddleware.wellKnownComponents({
+      optional: true,
+      expiration: FIVE_MINUTES,
+    }),
+    createCatalogHandler(components)
+  )
 
   server.use(router.middleware())
 }
