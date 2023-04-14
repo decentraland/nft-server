@@ -8,7 +8,6 @@ import {
   GenderFilterOption,
   NFTCategory,
   WearableCategory,
-  WearableGender,
 } from '@dcl/schemas'
 import { FragmentItemType } from '../items/types'
 import { CatalogQueryFilters } from './types'
@@ -81,10 +80,8 @@ export const addQuerySortAndPagination = (
   }
 }
 
-export const getCategoryWhere = (
-  category: NFTCategory,
-  isWearableSmart?: boolean
-) => {
+export const getCategoryWhere = (filters: CatalogFilters) => {
+  const { category, isWearableSmart } = filters
   return category === NFTCategory.WEARABLE
     ? isWearableSmart
       ? SQL`items.item_type = '`
@@ -103,34 +100,34 @@ export const getCategoryWhere = (
     : SQL``
 }
 
-export const getWearableCategoryWhere = (
-  wearableCategory: WearableCategory
-) => {
-  return WearableCategory.validate(wearableCategory)
+export const getWearableCategoryWhere = (filters: CatalogFilters) => {
+  return WearableCategory.validate(filters.wearableCategory)
     ? SQL`metadata_wearable.category = '`
-        .append(wearableCategory)
+        .append(filters.wearableCategory)
         .append(SQL`'`)
     : SQL``
 }
 
-export const getEmoteCategoryWhere = (emoteCategory: EmoteCategory) => {
-  return EmoteCategory.validate(emoteCategory)
-    ? SQL`metadata_emote.category = '`.append(emoteCategory).append(SQL`'`)
+export const getEmoteCategoryWhere = (filters: CatalogFilters) => {
+  return EmoteCategory.validate(filters.emoteCategory)
+    ? SQL`metadata_emote.category = '`
+        .append(filters.emoteCategory)
+        .append(SQL`'`)
     : SQL``
 }
 
-export const getEmotePlayModeWhere = (
-  emotePlayMode: EmotePlayMode | EmotePlayMode[]
-) => {
-  return Array.isArray(emotePlayMode)
-    ? emotePlayMode.length === 1
-      ? SQL`metadata_emote.loop = ${emotePlayMode[0] === EmotePlayMode.LOOP}`
+export const getEmotePlayModeWhere = (filters: CatalogFilters) => {
+  return Array.isArray(filters.emotePlayMode)
+    ? filters.emotePlayMode.length === 1
+      ? SQL`metadata_emote.loop = ${
+          filters.emotePlayMode[0] === EmotePlayMode.LOOP
+        }`
       : SQL``
-    : SQL`metadata_emote.loop = ${emotePlayMode === EmotePlayMode.LOOP}`
+    : SQL`metadata_emote.loop = ${filters.emotePlayMode === EmotePlayMode.LOOP}`
 }
 
-export const getSearchWhere = (search: string) => {
-  return SQL`items.search_text ILIKE '%' || ${search} || '%'`
+export const getSearchWhere = (filters: CatalogFilters) => {
+  return SQL`items.search_text ILIKE '%' || ${filters.search} || '%'`
 }
 
 export const getIsSoldOutWhere = () => {
@@ -149,39 +146,40 @@ export const getWearableAccessoryWhere = () => {
   return SQL`items.search_is_wearable_accessory = true`
 }
 
-export const getWearableGenderWhere = (
-  genders: (WearableGender | GenderFilterOption)[]
-) => {
+export const getWearableGenderWhere = (filters: CatalogFilters) => {
+  const { wearableGenders: genders } = filters
   const parsedGenders = []
-  if (genders.includes(GenderFilterOption.FEMALE)) {
+  if (genders?.includes(GenderFilterOption.FEMALE)) {
     parsedGenders.push('BaseFemale')
   }
-  if (genders.includes(GenderFilterOption.MALE)) {
+  if (genders?.includes(GenderFilterOption.MALE)) {
     parsedGenders.push('BaseMale')
   }
-  return SQL`items.search_wearable_body_shapes @> (${parsedGenders})`
+  return parsedGenders.length
+    ? SQL`items.search_wearable_body_shapes @> (${parsedGenders})`
+    : SQL``
 }
 
-export const getCreatorWhere = (creator: string | string[]) => {
-  return Array.isArray(creator)
-    ? SQL`items.creator = ANY(${creator})`
-    : SQL`items.creator = ${creator}`
+export const getCreatorWhere = (filters: CatalogFilters) => {
+  return Array.isArray(filters.creator)
+    ? SQL`items.creator = ANY(${filters.creator})`
+    : SQL`items.creator = ${filters.creator}`
 }
 
-export const getRaritiesWhere = (rarities: string[]) => {
-  return SQL`items.rarity = ANY(${rarities})`
+export const getRaritiesWhere = (filters: CatalogFilters) => {
+  return SQL`items.rarity = ANY(${filters.rarities})`
 }
 
-export const getMinPriceWhere = (minPrice: string) => {
-  return SQL`(min_price >= ${minPrice} OR (price >= ${minPrice} AND available > 0))`
+export const getMinPriceWhere = (filters: CatalogFilters) => {
+  return SQL`(min_price >= ${filters.minPrice} OR (price >= ${filters.minPrice} AND available > 0))`
 }
 
-export const getMaxPriceWhere = (maxPrice: string) => {
-  return SQL`(max_price <= ${maxPrice} OR (price <= ${maxPrice} AND available > 0))`
+export const getMaxPriceWhere = (filters: CatalogFilters) => {
+  return SQL`(max_price <= ${filters.maxPrice} OR (price <= ${filters.maxPrice} AND available > 0))`
 }
 
-export const getContractAddressWhere = (contractAddresses: string[]) => {
-  return SQL`items.collection = ANY(${contractAddresses})`
+export const getContractAddressWhere = (filters: CatalogFilters) => {
+  return SQL`items.collection = ANY(${filters.contractAddresses})`
 }
 
 export const getOnlyListingsWhere = () => {
@@ -194,33 +192,25 @@ export const getOnlyMintingWhere = () => {
 
 export const getCollectionsQueryWhere = (filters: CatalogFilters) => {
   const conditions = [
-    filters.category
-      ? getCategoryWhere(filters.category, filters.isWearableSmart)
-      : undefined,
-    filters.rarities?.length ? getRaritiesWhere(filters.rarities) : undefined,
-    filters.creator?.length ? getCreatorWhere(filters.creator) : undefined,
+    filters.category ? getCategoryWhere(filters) : undefined,
+    filters.rarities?.length ? getRaritiesWhere(filters) : undefined,
+    filters.creator?.length ? getCreatorWhere(filters) : undefined,
     filters.isSoldOut ? getIsSoldOutWhere() : undefined,
     filters.isOnSale ? getIsOnSale() : undefined,
-    filters.search ? getSearchWhere(filters.search) : undefined,
+    filters.search ? getSearchWhere(filters) : undefined,
     filters.isWearableHead ? getisWearableHeadAccessoryWhere() : undefined,
     filters.isWearableAccessory ? getWearableAccessoryWhere() : undefined,
-    filters.wearableCategory
-      ? getWearableCategoryWhere(filters.wearableCategory)
-      : undefined,
+    filters.wearableCategory ? getWearableCategoryWhere(filters) : undefined,
     filters.wearableGenders?.length
-      ? getWearableGenderWhere(filters.wearableGenders)
+      ? getWearableGenderWhere(filters)
       : undefined,
-    filters.emoteCategory
-      ? getEmoteCategoryWhere(filters.emoteCategory)
-      : undefined,
-    filters.emotePlayMode?.length
-      ? getEmotePlayModeWhere(filters.emotePlayMode)
-      : undefined,
+    filters.emoteCategory ? getEmoteCategoryWhere(filters) : undefined,
+    filters.emotePlayMode?.length ? getEmotePlayModeWhere(filters) : undefined,
     filters.contractAddresses?.length
-      ? getContractAddressWhere(filters.contractAddresses)
+      ? getContractAddressWhere(filters)
       : undefined,
-    filters.minPrice ? getMinPriceWhere(filters.minPrice) : undefined,
-    filters.maxPrice ? getMaxPriceWhere(filters.maxPrice) : undefined,
+    filters.minPrice ? getMinPriceWhere(filters) : undefined,
+    filters.maxPrice ? getMaxPriceWhere(filters) : undefined,
     filters.onlyListing ? getOnlyListingsWhere() : undefined,
     filters.onlyMinting ? getOnlyMintingWhere() : undefined,
   ].filter(Boolean)
