@@ -97,7 +97,7 @@ export const getCategoryWhere = (filters: CatalogFilters) => {
         )
     : category === NFTCategory.EMOTE
     ? SQL`items.item_type = '`.append(FragmentItemType.EMOTE_V1).append(SQL`'`)
-    : SQL``
+    : undefined
 }
 
 export const getWearableCategoryWhere = (filters: CatalogFilters) => {
@@ -105,7 +105,7 @@ export const getWearableCategoryWhere = (filters: CatalogFilters) => {
     ? SQL`metadata_wearable.category = '`
         .append(filters.wearableCategory)
         .append(SQL`'`)
-    : SQL``
+    : undefined
 }
 
 export const getEmoteCategoryWhere = (filters: CatalogFilters) => {
@@ -113,7 +113,7 @@ export const getEmoteCategoryWhere = (filters: CatalogFilters) => {
     ? SQL`metadata_emote.category = '`
         .append(filters.emoteCategory)
         .append(SQL`'`)
-    : SQL``
+    : undefined
 }
 
 export const getEmotePlayModeWhere = (filters: CatalogFilters) => {
@@ -122,7 +122,7 @@ export const getEmotePlayModeWhere = (filters: CatalogFilters) => {
       ? SQL`metadata_emote.loop = ${
           filters.emotePlayMode[0] === EmotePlayMode.LOOP
         }`
-      : SQL``
+      : undefined
     : SQL`metadata_emote.loop = ${filters.emotePlayMode === EmotePlayMode.LOOP}`
 }
 
@@ -157,7 +157,7 @@ export const getWearableGenderWhere = (filters: CatalogFilters) => {
   }
   return parsedGenders.length
     ? SQL`items.search_wearable_body_shapes @> (${parsedGenders})`
-    : SQL``
+    : undefined
 }
 
 export const getCreatorWhere = (filters: CatalogFilters) => {
