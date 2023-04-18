@@ -90,7 +90,7 @@ test('catalog component', function () {
             name: 'Descension',
             loop: false,
           },
-          thumbnail:
+          image:
             'https://peer-lb.decentraland.org/lambdas/collections/contents/urn:decentraland:matic:collections-v2:0xe42257bb4aada439179d736a64a736be0693a4ec:2/thumbnail',
           blockchain_id: '2',
           collection: '0xe42257bb4aada439179d736a64a736be0693a4ec',
@@ -192,7 +192,7 @@ test('catalog component', function () {
             name: 'Descension',
             loop: false,
           },
-          thumbnail:
+          image:
             'https://peer-lb.decentraland.org/lambdas/collections/contents/urn:decentraland:matic:collections-v2:0xe42257bb4aada439179d736a64a736be0693a4ec:2/thumbnail',
           blockchain_id: '2',
           collection: '0xe42257bb4aada439179d736a64a736be0693a4ec',

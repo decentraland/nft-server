@@ -316,7 +316,7 @@ test('catalog utils', function () {
       })
       it('should ORDER BY created_at field', () => {
         expect(getOrderBy({ sortBy, sortDirection })).toContain(
-          `ORDER BY items.first_listed_at ${sortDirection}`
+          `ORDER BY first_listed_at ${sortDirection}`
         )
       })
     })
@@ -343,7 +343,7 @@ test('catalog utils', function () {
         })
         it('should ORDER BY created_at field', () => {
           expect(getOrderBy({ sortBy, sortDirection, onlyListing })).toContain(
-            `ORDER BY nfts.max_order_created_at ${sortDirection}`
+            `ORDER BY max_order_created_at ${sortDirection}`
           )
         })
       })
