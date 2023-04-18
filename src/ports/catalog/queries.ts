@@ -239,7 +239,7 @@ export const getCollectionsItemsCatalogQuery = (
   const query = SQL`
             SELECT
               items.id,
-              items.blockchainId,
+              items.blockchain_id,
               to_json(
                 CASE WHEN (
                   items.item_type = 'wearable_v1' OR items.item_type = 'wearable_v2' OR items.item_type = 'smart_wearable_v1') THEN metadata_wearable 
