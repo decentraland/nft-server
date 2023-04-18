@@ -13,7 +13,10 @@ import {
   CatalogSortBy,
   CatalogSortDirection,
 } from '@dcl/schemas'
-import { getCollectionsChainId } from '../../logic/chainIds'
+import {
+  getCollectionsChainId,
+  getMarketplaceChainId,
+} from '../../logic/chainIds'
 import { FragmentItemType } from '../items/types'
 import { CatalogQueryFilters, CollectionsItemDBResult } from './types'
 import {
@@ -27,10 +30,10 @@ export const getSubgraphNameForNetwork = (
 ) => {
   return network === Network.ETHEREUM
     ? `collections-ethereum-${
-        chainId !== ChainId.ETHEREUM_MAINNET ? 'mainnet' : 'goerli'
+        chainId === ChainId.ETHEREUM_MAINNET ? 'mainnet' : 'goerli'
       }`
     : `collections-matic-${
-        chainId !== ChainId.MATIC_MAINNET ? 'mainnet' : 'mumbai'
+        chainId === ChainId.MATIC_MAINNET ? 'mainnet' : 'mumbai'
       }`
 }
 
@@ -155,6 +158,7 @@ export function fromCollectionsItemDbResultToCatalogItem(
     }
   }
 
+  const itemNetwork = dbItem.network ?? network ?? Network.MATIC
   return {
     id: dbItem.id,
     itemId: dbItem.blockchain_id,
@@ -168,8 +172,11 @@ export function fromCollectionsItemDbResultToCatalogItem(
     isOnSale: dbItem.search_is_store_minter && +dbItem.available > 0,
     creator: dbItem.creator,
     data,
-    network: dbItem.network ?? network ?? Network.MATIC,
-    chainId: getCollectionsChainId(),
+    network: itemNetwork,
+    chainId:
+      itemNetwork === Network.ETHEREUM
+        ? getMarketplaceChainId()
+        : getCollectionsChainId(),
     price: dbItem.price,
     minPrice: dbItem.min_price,
     maxListingPrice: dbItem.max_listing_price,
