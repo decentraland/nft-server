@@ -72,8 +72,8 @@ const getMultiNetworkQuery = (
   const { sortBy, sortDirection, limit, offset, ...restOfFilters } = filters
   const queries = Object.entries(schemas).map(([network, schema]) =>
     getCollectionsItemsCatalogQuery(schema, {
-      network: network as Network,
       ...restOfFilters,
+      network: network as Network,
     })
   )
   const unionQuery = SQL``
@@ -158,7 +158,7 @@ export function fromCollectionsItemDbResultToCatalogItem(
   return {
     id: dbItem.id,
     name,
-    thumbnail: dbItem.thumbnail,
+    thumbnail: dbItem.image,
     url: `/contracts/${dbItem.collection}/items/${dbItem.blockchain_id}`,
     category,
     contractAddress: dbItem.collection,

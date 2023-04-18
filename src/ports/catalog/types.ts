@@ -8,7 +8,7 @@ import {
 
 export type CollectionsItemDBResult = {
   id: string
-  thumbnail: string
+  image: string
   collection: string
   blockchain_id: string
   rarity: string

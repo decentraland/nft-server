@@ -42,17 +42,17 @@ export function getOrderBy(filters: CatalogFilters) {
 
   let sortByQuery:
     | SQLStatement
-    | string = `ORDER BY items.first_listed_at ${sortDirectionParam}\n`
+    | string = `ORDER BY first_listed_at ${sortDirectionParam}\n`
   switch (sortByParam) {
     case CatalogSortBy.NEWEST:
-      sortByQuery = `ORDER BY items.first_listed_at ${sortDirectionParam}\n`
+      sortByQuery = `ORDER BY first_listed_at ${sortDirectionParam}\n`
       break
     case CatalogSortBy.MOST_EXPENSIVE:
       sortByQuery = `ORDER BY max_price ${sortDirectionParam}\n`
       break
     case CatalogSortBy.RECENTLY_LISTED:
       sortByQuery = onlyListing
-        ? `ORDER BY nfts.max_order_created_at ${sortDirectionParam}\n`
+        ? `ORDER BY max_order_created_at ${sortDirectionParam}\n`
         : ``
       break
     case CatalogSortBy.RECENTLY_SOLD:
@@ -265,6 +265,7 @@ export const getCollectionsItemsCatalogQuery = (
               nfts.max_price AS max_listing_price, 
               nfts.listings_count as listings_count,
               nfts.owners_count as owners_count,
+              nfts.max_order_created_at as max_order_created_at,
               CASE
                 WHEN items.available > 0 THEN LEAST(items.price, nfts.min_price) 
                 ELSE nfts.min_price 
