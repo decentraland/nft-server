@@ -238,7 +238,8 @@ export const getCollectionsItemsCatalogQuery = (
 ) => {
   const query = SQL`
             SELECT
-              items.id, 
+              items.id,
+              items.blockchainId,
               to_json(
                 CASE WHEN (
                   items.item_type = 'wearable_v1' OR items.item_type = 'wearable_v2' OR items.item_type = 'smart_wearable_v1') THEN metadata_wearable 
@@ -267,11 +268,11 @@ export const getCollectionsItemsCatalogQuery = (
               nfts.owners_count as owners_count,
               nfts.max_order_created_at as max_order_created_at,
               CASE
-                WHEN items.available > 0 THEN LEAST(items.price, nfts.min_price) 
+                WHEN items.available > 0 AND items.search_is_store_minter = true THEN LEAST(items.price, nfts.min_price) 
                 ELSE nfts.min_price 
               END AS min_price,
               CASE 
-                WHEN available > 0 THEN GREATEST(items.price, nfts.max_price) 
+                WHEN available > 0 AND items.search_is_store_minter = true THEN GREATEST(items.price, nfts.max_price) 
                 ELSE nfts.max_price END
              AS max_price
             FROM `

@@ -157,6 +157,7 @@ export function fromCollectionsItemDbResultToCatalogItem(
 
   return {
     id: dbItem.id,
+    itemId: dbItem.blockchain_id,
     name,
     thumbnail: dbItem.image,
     url: `/contracts/${dbItem.collection}/items/${dbItem.blockchain_id}`,
