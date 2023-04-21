@@ -122,7 +122,7 @@ test('catalog component', function () {
         })
       })
 
-      it('should fetch the data from one subgraph return the catalog items', async () => {
+      it('should fetch the data from one subgraph and return the catalog items', async () => {
         expect(await catalogComponent.fetch(filters)).toEqual([
           {
             ...fromCollectionsItemDbResultToCatalogItem(
@@ -229,7 +229,7 @@ test('catalog component', function () {
         })
       })
 
-      it('should fetch the data from one subgraph return the catalog items', async () => {
+      it('should fetch the data from one subgraph and return the catalog items', async () => {
         expect(await catalogComponent.fetch(filters)).toEqual([
           {
             ...fromCollectionsItemDbResultToCatalogItem(dbItemResponse),
