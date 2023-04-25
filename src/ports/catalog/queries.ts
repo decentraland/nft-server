@@ -33,7 +33,7 @@ export const getLatestSubgraphSchema = (subgraphName: string) =>
 export function getOrderBy(filters: CatalogFilters) {
   const { sortBy, sortDirection, onlyListing, isOnSale } = filters
   const sortByParam = sortBy ?? CatalogSortBy.NEWEST
-  const sortDirectionParam = sortDirection ?? CatalogSortDirection.ASC
+  const sortDirectionParam = sortDirection ?? CatalogSortDirection.DESC
 
   // // When seeing "Not for sale", the only sort available is the Newest one
   if (isOnSale === false && sortByParam !== CatalogSortBy.NEWEST) {
@@ -45,21 +45,19 @@ export function getOrderBy(filters: CatalogFilters) {
     | string = `ORDER BY first_listed_at ${sortDirectionParam}\n`
   switch (sortByParam) {
     case CatalogSortBy.NEWEST:
-      sortByQuery = `ORDER BY first_listed_at ${sortDirectionParam}\n`
+      sortByQuery = `ORDER BY first_listed_at desc NULLS last \n`
       break
     case CatalogSortBy.MOST_EXPENSIVE:
-      sortByQuery = `ORDER BY max_price ${sortDirectionParam}\n`
+      sortByQuery = `ORDER BY max_price desc \n`
       break
     case CatalogSortBy.RECENTLY_LISTED:
-      sortByQuery = onlyListing
-        ? `ORDER BY max_order_created_at ${sortDirectionParam}\n`
-        : ``
+      sortByQuery = onlyListing ? `ORDER BY max_order_created_at desc \n` : ``
       break
     case CatalogSortBy.RECENTLY_SOLD:
-      sortByQuery = `ORDER BY sold_at ${sortDirectionParam}\n`
+      sortByQuery = `ORDER BY sold_at desc \n`
       break
     case CatalogSortBy.CHEAPEST:
-      sortByQuery = `ORDER BY min_price ${sortDirectionParam}\n`
+      sortByQuery = `ORDER BY min_price asc \n`
       break
   }
 
@@ -238,6 +236,7 @@ export const getCollectionsItemsCatalogQuery = (
 ) => {
   const query = SQL`
             SELECT
+              COUNT(*) OVER() as total_rows,
               items.id,
               items.blockchain_id,
               to_json(

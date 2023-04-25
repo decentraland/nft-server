@@ -31,6 +31,7 @@ export function createCatalogComponent(options: {
     const marketplaceChainId = getMarketplaceChainId()
     const collectionsChainId = getCollectionsChainId()
     let catalogItems: CatalogItem[] = []
+    let total = 0
     const client = await database.getPool().connect()
     try {
       const sources = (
@@ -63,6 +64,8 @@ export function createCatalogComponent(options: {
       catalogItems = results.rows.map((res) =>
         fromCollectionsItemDbResultToCatalogItem(res, network)
       )
+      const totals = new Set(results.rows.map((res) => res.total_rows))
+      totals.forEach((t) => (total += +t))
 
       if (isFavoritesEnabled) {
         const picksStats = await favoritesComponent.getPicksStatsOfItems(
@@ -80,7 +83,7 @@ export function createCatalogComponent(options: {
     }
 
     client.release()
-    return catalogItems
+    return { data: catalogItems, total }
   }
 
   return {

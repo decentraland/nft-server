@@ -28,17 +28,18 @@ export function createCatalogHandler(
     const pickedBy: string | undefined =
       context.verification?.auth.toLowerCase()
 
-    return asJSON(async () => ({
-      data: await catalog.fetch({
-        limit,
-        offset,
-        sortBy,
-        sortDirection,
-        onlyListing,
-        onlyMinting,
-        pickedBy,
-        ...getItemsParams(params),
-      }),
-    }))
+    return asJSON(
+      async () =>
+        await catalog.fetch({
+          limit,
+          offset,
+          sortBy,
+          sortDirection,
+          onlyListing,
+          onlyMinting,
+          pickedBy,
+          ...getItemsParams(params),
+        })
+    )
   }
 }

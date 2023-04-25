@@ -7,6 +7,7 @@ import {
 } from '@dcl/schemas'
 
 export type CollectionsItemDBResult = {
+  total_rows: number,
   id: string
   image: string
   collection: string
@@ -54,5 +55,7 @@ export type CatalogQueryFilters = Omit<
 export type CatalogOptions = CatalogFilters & { pickedBy?: string }
 
 export interface ICatalogComponent {
-  fetch(filters: CatalogOptions): Promise<CatalogItem[]>
+  fetch(
+    filters: CatalogOptions
+  ): Promise<{ data: CatalogItem[]; total: number }>
 }
