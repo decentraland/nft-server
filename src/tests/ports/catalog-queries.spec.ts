@@ -45,7 +45,7 @@ test('catalog utils', function () {
           })
           it('should only set smart_wearable_v1 as item.type', () => {
             expect(getCollectionsQueryWhere(filters).text).toContain(
-              `WHERE items.item_type = '${FragmentItemType.SMART_WEARABLE_V1}'`
+              `items.item_type = '${FragmentItemType.SMART_WEARABLE_V1}'`
             )
           })
         })
@@ -55,7 +55,7 @@ test('catalog utils', function () {
           })
           it('should set all the wearable valid item types', () => {
             expect(getCollectionsQueryWhere(filters).text).toContain(
-              `WHERE items.item_type IN 
+              `items.item_type IN 
             ('${FragmentItemType.WEARABLE_V1}', '${FragmentItemType.WEARABLE_V2}', '${FragmentItemType.SMART_WEARABLE_V1}')`
             )
           })
@@ -70,7 +70,7 @@ test('catalog utils', function () {
 
         it('should set the emote item type', () => {
           expect(getCollectionsQueryWhere(filters).text).toContain(
-            `WHERE items.item_type = '${FragmentItemType.EMOTE_V1}'`
+            `items.item_type = '${FragmentItemType.EMOTE_V1}'`
           )
         })
       })
@@ -85,7 +85,7 @@ test('catalog utils', function () {
       })
       it('should add the creator field to the WHERE', () => {
         expect(getCollectionsQueryWhere(filters).text).toContain(
-          `WHERE items.creator = $1`
+          `items.creator = $1`
         )
         expect(getCollectionsQueryWhere(filters).values).toStrictEqual([
           filters.creator,
@@ -103,7 +103,7 @@ test('catalog utils', function () {
       })
       it('should add the creator field to the WHERE', () => {
         expect(getCollectionsQueryWhere(filters).text).toContain(
-          `WHERE items.available = 0`
+          `WHERE items.search_is_collection_approved = true AND items.available = 0`
         )
       })
     })
