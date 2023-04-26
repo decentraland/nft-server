@@ -81,6 +81,7 @@ test('catalog component', function () {
 
         dbItemResponse = {
           id: '0xe42257bb4aada439179d736a64a736be0693a4ec-2',
+          total_rows: 1,
           metadata: {
             id: '0xe42257bb4aada439179d736a64a736be0693a4ec-2',
             description: 'Or will it make sense when we fall from grace?',
@@ -123,15 +124,18 @@ test('catalog component', function () {
       })
 
       it('should fetch the data from one subgraph and return the catalog items', async () => {
-        expect(await catalogComponent.fetch(filters)).toEqual([
-          {
-            ...fromCollectionsItemDbResultToCatalogItem(
-              dbItemResponse,
-              network
-            ),
-            picks: pickStats,
-          },
-        ])
+        expect(await catalogComponent.fetch(filters)).toEqual({
+          data: [
+            {
+              ...fromCollectionsItemDbResultToCatalogItem(
+                dbItemResponse,
+                network
+              ),
+              picks: pickStats,
+            },
+          ],
+          total: 1,
+        })
         expect(dbClientQueryMock.mock.calls.length).toEqual(2)
         expect(dbClientQueryMock.mock.calls[0][0]).toEqual(
           getLatestSubgraphSchema(
@@ -183,6 +187,7 @@ test('catalog component', function () {
 
         dbItemResponse = {
           id: '0xe42257bb4aada439179d736a64a736be0693a4ec-2',
+          total_rows: 1,
           metadata: {
             id: '0xe42257bb4aada439179d736a64a736be0693a4ec-2',
             description: 'Or will it make sense when we fall from grace?',
@@ -230,12 +235,15 @@ test('catalog component', function () {
       })
 
       it('should fetch the data from one subgraph and return the catalog items', async () => {
-        expect(await catalogComponent.fetch(filters)).toEqual([
-          {
-            ...fromCollectionsItemDbResultToCatalogItem(dbItemResponse),
-            picks: pickStats,
-          },
-        ])
+        expect(await catalogComponent.fetch(filters)).toEqual({
+          data: [
+            {
+              ...fromCollectionsItemDbResultToCatalogItem(dbItemResponse),
+              picks: pickStats,
+            },
+          ],
+          total: 1,
+        })
         expect(dbClientQueryMock.mock.calls.length).toEqual(3) // 2 for the schema name and 1 for the catalog query
         expect(dbClientQueryMock.mock.calls[0][0]).toEqual(
           getLatestSubgraphSchema(

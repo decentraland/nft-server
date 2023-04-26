@@ -308,71 +308,59 @@ test('catalog utils', function () {
 
   describe('when getting the catalog "ORDER BY" statement', () => {
     let sortBy: CatalogSortBy
-    let sortDirection: CatalogSortDirection
     describe('when sorting by NEWEST', () => {
       beforeEach(() => {
         sortBy = CatalogSortBy.NEWEST
-        sortDirection = CatalogSortDirection.ASC
       })
       it('should ORDER BY created_at field', () => {
-        expect(getOrderBy({ sortBy, sortDirection })).toContain(
-          `ORDER BY first_listed_at ${sortDirection}`
+        expect(getOrderBy({ sortBy })).toContain(
+          `ORDER BY first_listed_at desc NULLS last`
         )
       })
     })
     describe('when sorting by MOST_EXPENSIVE', () => {
       beforeEach(() => {
         sortBy = CatalogSortBy.MOST_EXPENSIVE
-        sortDirection = CatalogSortDirection.ASC
       })
       it('should ORDER BY max_price field', () => {
-        expect(getOrderBy({ sortBy, sortDirection })).toContain(
-          `ORDER BY max_price ${sortDirection}`
-        )
+        expect(getOrderBy({ sortBy })).toContain(`ORDER BY max_price desc`)
       })
     })
     describe('when sorting by RECENTLY_LISTED', () => {
       let onlyListing: boolean
       beforeEach(() => {
         sortBy = CatalogSortBy.RECENTLY_LISTED
-        sortDirection = CatalogSortDirection.ASC
       })
       describe('and the onlyListing filter is ON', () => {
         beforeEach(() => {
           onlyListing = true
         })
         it('should ORDER BY created_at field', () => {
-          expect(getOrderBy({ sortBy, sortDirection, onlyListing })).toContain(
-            `ORDER BY max_order_created_at ${sortDirection}`
+          expect(getOrderBy({ sortBy, onlyListing })).toContain(
+            `ORDER BY max_order_created_at desc`
           )
         })
       })
       describe('and the onlyListing filter is ON', () => {
         it('should not ORDER BY any field since the combination is not valid', () => {
-          expect(getOrderBy({ sortBy, sortDirection })).toBe('')
+          expect(getOrderBy({ sortBy })).toBe('')
         })
       })
     })
     describe('when sorting by RECENTLY_SOLD', () => {
       beforeEach(() => {
         sortBy = CatalogSortBy.RECENTLY_SOLD
-        sortDirection = CatalogSortDirection.ASC
       })
       it('should ORDER BY sold_at field', () => {
-        expect(getOrderBy({ sortBy, sortDirection })).toContain(
-          `ORDER BY sold_at ${sortDirection}`
-        )
+        expect(getOrderBy({ sortBy })).toContain(`ORDER BY sold_at desc`)
       })
     })
     describe('when sorting by CHEAPEST', () => {
       beforeEach(() => {
         sortBy = CatalogSortBy.CHEAPEST
-        sortDirection = CatalogSortDirection.ASC
       })
       it('should ORDER BY min_price field', () => {
-        expect(getOrderBy({ sortBy, sortDirection })).toContain(
-          `ORDER BY min_price ${sortDirection}`
-        )
+        expect(getOrderBy({ sortBy })).toContain(`ORDER BY min_price asc`)
       })
     })
   })

@@ -35,7 +35,7 @@ export function getOrderBy(filters: CatalogFilters) {
   const sortByParam = sortBy ?? CatalogSortBy.NEWEST
   const sortDirectionParam = sortDirection ?? CatalogSortDirection.DESC
 
-  // // When seeing "Not for sale", the only sort available is the Newest one
+  // When seeing "Not for sale", the only sort available is the Newest one
   if (isOnSale === false && sortByParam !== CatalogSortBy.NEWEST) {
     return ''
   }
