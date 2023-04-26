@@ -139,6 +139,63 @@ type Item = {
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 - `urn`: Filter results by URN. It supports multiple values by adding the query param multiple times. Type: `string`.
 
+## Catalog
+
+**Endpoint**: `/v1/catalog`
+
+**Type**:
+
+```ts
+type CatalogItem = {
+  id: string
+  name: string
+  contractAddress: string
+  thumbnail: string
+  url: string
+  rarity: Rarity
+  category: NFTCategory
+  creator: string
+  data: Data
+  network: Network
+  chainId: ChainId
+  available: number
+  isOnSale: boolean
+  price: string
+  minPrice: string
+  minListingPrice: string | null
+  maxListingPrice: string | null
+  listings: number | null
+  owners: number | null
+}
+```
+
+**Query Params**:
+
+- `limit`: Limit the number of results. Type: `number`.
+- `offset`: Skip results. Type: `number`.
+- `sortBy`: Sort results. Possible values: `newest`, `recently_sold`, `cheapest`, `most_expensive`, `recently_listed`.
+- `sortDirection`: Sort direction results. Possible values: `asc`, `desc`.
+- `creator`: Filter by creator. It supports multiple values by adding the query param multiple times. Type: `string`.
+- `rarity`: Filter results by `Rarity`. It supports multiple values by adding the query param multiple times. Possible values: `unique`, `mythic`, `legendary`, `epic`, `rare`, `uncommon`, `common`.
+- `isSoldOut`: Only return results that are sold out (all NFTs have been minted). Type: `boolean`.
+- `isOnSale`: Only return results that can be bought (`CollectionStore` has been added as minter, and there's still available supply to mint). Type: `boolean`.
+- `search`: Free text search. Type: `string`.
+- `isWearableHead`: Only return results that their category is `wearable` and are part of the avatar's head. Type `boolean`.
+- `isWearableAccessory`: Only return results that their category is `wearable` and accessories (not a part of the body).
+- `isWearableSmart`: Only return smart wearables. Type `boolean`.
+- `wearableCategory`: Filter results by `WearableCategory`. Possible values: `eyebrows`,`eyes`,`facial_hair`,`hair`,`mouth`,`upper_body`,`lower_body`,`feet`,`earring`,`eyewear`,`hat`,`helmet`,`mask`,`tiara`,`top_head`, `skin`.
+- `wearableGender`: Filter results by `GenderFilterOption`. It supports multiple values by adding the query param multiple times. Possible values: `male`, `female`, `unisex`.
+- `emoteCategory`: Filter results by `EmoteCategory`. Possible values: `dance`, `stunt`, `greetings`, `fun`, `poses`, `reactions`, `horror`, `miscellaneous`.
+- `emotePlayMode`: Filter results by `EmotePlayMode`. It supports multiple values by adding the query param multiple times. Possible values: `simple`, `loop`
+- `id`: Filter results by id. It supports multiple values by adding the query param multiple times. Type: `contractAddress-itemId`.
+- `contractAddress`: Filter results by contract address. It supports multiple values by adding the query param multiple times. Type: `address`.
+- `minPrice`: Return only sales with a price higher than this. Type `number`.
+- `maxPrice`: Return only sales with a price lower than this. Type `number`.
+- `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
+- `onlyMinting`: Only return results that are only available for minting. Type `boolean`.
+- `onlyListing`: Only return results that have opened listing and no minting. Type `boolean`.
+
+
 ## Orders
 
 **Endpoint**: `/v1/orders`

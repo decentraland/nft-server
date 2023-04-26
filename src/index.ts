@@ -44,6 +44,7 @@ import {
   IFetchComponent,
 } from '@well-known-components/http-server'
 import { createHttpTracerComponent } from '@well-known-components/http-tracer-component'
+import { createPgComponent } from '@well-known-components/pg-component'
 import { Lifecycle } from '@well-known-components/interfaces'
 import { createMetricsComponent } from '@well-known-components/metrics'
 import { createTracerComponent } from '@well-known-components/tracer-component'
@@ -163,6 +164,7 @@ import {
 import { createOwnersComponent } from './ports/owner/component'
 import { createFavoritesComponent } from './ports/favorites/components'
 import { ItemOptions } from './ports/items/types'
+import { createCatalogComponent } from './ports/catalog/component'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -690,6 +692,13 @@ async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
+  const satsumaDatabase = await createPgComponent({ config, logs, metrics })
+  const catalog = await createCatalogComponent({
+    favoritesComponent,
+    isFavoritesEnabled,
+    database: satsumaDatabase,
+  })
+
   return {
     config,
     logs,
@@ -716,6 +725,8 @@ async function initComponents(): Promise<AppComponents> {
     stats,
     owners,
     favorites: favoritesComponent,
+    catalog,
+    satsumaDatabase,
   }
 }
 

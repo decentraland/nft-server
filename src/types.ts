@@ -29,6 +29,7 @@ import {
   SaleSortBy,
 } from '@dcl/schemas'
 import type * as authorizationMiddleware from 'decentraland-crypto-middleware'
+import { IPgComponent } from '@well-known-components/pg-component'
 import { RoutedContext } from '@well-known-components/http-server'
 import type {
   IConfigComponent,
@@ -49,6 +50,7 @@ import { IStatsComponent } from './ports/stats/types'
 import { IOwnerDataComponent } from './ports/owner/types'
 import { ItemOptions } from './ports/items/types'
 import { IFavoritesComponent } from './ports/favorites/types'
+import { ICatalogComponent } from './ports/catalog/types'
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string
@@ -90,6 +92,8 @@ export type AppComponents = {
   >
   owners: IOwnerDataComponent
   favorites: IFavoritesComponent
+  satsumaDatabase: IPgComponent
+  catalog: ICatalogComponent
 }
 
 export type Context<Path extends string = any> = RoutedContext<
