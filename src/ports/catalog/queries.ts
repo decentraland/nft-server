@@ -213,11 +213,12 @@ export const getCollectionsQueryWhere = (filters: CatalogFilters) => {
     filters.onlyMinting ? getOnlyMintingWhere() : undefined,
   ].filter(Boolean)
 
+  const result = SQL`WHERE items.search_is_collection_approved = true`
   if (!conditions.length) {
-    return SQL``
+    return result
+  } else {
+    result.append(SQL` AND `)
   }
-
-  const result = SQL`WHERE `
   conditions.forEach((condition, index) => {
     if (condition) {
       result.append(condition)
@@ -239,6 +240,7 @@ export const getCollectionsItemsCatalogQuery = (
               COUNT(*) OVER() as total_rows,
               items.id,
               items.blockchain_id,
+              items.search_is_collection_approved,
               to_json(
                 CASE WHEN (
                   items.item_type = 'wearable_v1' OR items.item_type = 'wearable_v2' OR items.item_type = 'smart_wearable_v1') THEN metadata_wearable 
