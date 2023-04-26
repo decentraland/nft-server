@@ -2,7 +2,6 @@ import SQL, { SQLStatement } from 'sql-template-strings'
 import {
   CatalogFilters,
   CatalogSortBy,
-  CatalogSortDirection,
   EmoteCategory,
   EmotePlayMode,
   NFTCategory,
