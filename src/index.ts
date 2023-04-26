@@ -197,9 +197,6 @@ async function initComponents(): Promise<AppComponents> {
     methods: await config.getString('CORS_METHOD'),
   }
 
-  // FF_RENTALS
-  const isRentalsEnabled = (await config.getNumber('FF_RENTALS')) === 1
-
   // FF_FAVORITES
   const isFavoritesEnabled = (await config.getNumber('FF_FAVORITES')) === 1
 
@@ -385,7 +382,6 @@ async function initComponents(): Promise<AppComponents> {
   >[] = [
     createNFTsSource(marketplaceNFTs, {
       shouldFetch: marketplaceShouldFetch,
-      isRentalsEnabled,
       rentals: rentalsComponent,
     }),
     createNFTsSource(collectionsNFTs, {
@@ -393,16 +389,13 @@ async function initComponents(): Promise<AppComponents> {
     }),
   ]
 
-  if (isRentalsEnabled) {
-    nftSources.push(createRentalsNFTSource(rentalsComponent, marketplaceNFTs))
-    nftSources.push(
-      createNFTsSource(rentalsNFTs, {
-        shouldFetch: rentalNFTComponentShouldFetch,
-        isRentalsEnabled,
-        rentals: rentalsComponent,
-      })
-    )
-  }
+  nftSources.push(createRentalsNFTSource(rentalsComponent, marketplaceNFTs))
+  nftSources.push(
+    createNFTsSource(rentalsNFTs, {
+      shouldFetch: rentalNFTComponentShouldFetch,
+      rentals: rentalsComponent,
+    })
+  )
 
   const nfts = createMergerComponent<NFTResult, NFTFilters, NFTSortBy>({
     sources: nftSources,
