@@ -236,7 +236,6 @@ async function initComponents(): Promise<AppComponents> {
     await config.requireString('MARKETPLACE_SUBGRAPH_URL')
   )
 
-  //este cambiarlo a collectionsMaticCSubraph
   const collectionsSubgraph = await createSubgraphComponent(
     { logs, config, fetch, metrics },
     await config.requireString('COLLECTIONS_SUBGRAPH_URL')
