@@ -54,7 +54,7 @@ export function getOrderBy(filters: CatalogFilters) {
       sortByQuery = onlyListing ? `ORDER BY max_order_created_at desc \n` : ``
       break
     case CatalogSortBy.RECENTLY_SOLD:
-      sortByQuery = `ORDER BY sold_at desc \n`
+      sortByQuery = `ORDER BY sold_at desc NULLS last \n`
       break
     case CatalogSortBy.CHEAPEST:
       sortByQuery = `ORDER BY min_price asc \n`
@@ -306,7 +306,7 @@ export const getCollectionsItemsCatalogQuery = (
     .append(MAX_ORDER_TIMESTAMP)
     .append(
       ` 
-                AND to_timestamp(orders.expires_at / 100.0) > now() 
+                AND to_timestamp(orders.expires_at / 1000.0) > now() 
                 GROUP BY nft.item
               ) AS nfts ON nfts.item = items.id 
               LEFT JOIN (
