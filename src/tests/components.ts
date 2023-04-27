@@ -377,11 +377,13 @@ export async function initComponents(): Promise<AppComponents> {
   )
 
   // items
-  const collectionsItems = createItemsComponent({
-    subgraph: collectionsSubgraph,
-    network: Network.MATIC,
-    chainId: collectionsChainId,
-  })
+  const collectionsItems = createItemsComponent([
+    {
+      subgraph: collectionsSubgraph,
+      network: Network.MATIC,
+      chainId: collectionsChainId,
+    },
+  ])
 
   const items = createMergerComponent<Item, ItemFilters, ItemSortBy>({
     sources: [
