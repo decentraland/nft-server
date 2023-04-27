@@ -12,19 +12,27 @@ export function createItemsComponent(
     chainId: ChainId
   }[]
 ): IItemsComponent {
-  // const { subgraph, network, chainId } = options
-
   async function fetch(filters: ItemFilters) {
+    // By default, we use the MATIC subgraph, unless we're asking for an item with a contractAddress that belongs to the Marketplace legacy contracts
     let option = options.find((option) => option.network === Network.MATIC)
-    if (
-      getMarketplaceContracts(getMarketplaceChainId()).find(
-        (marketplaceContract) =>
-          filters.contractAddresses &&
-          filters.contractAddresses[0] &&
-          marketplaceContract.address === filters.contractAddresses[0]
+    if (filters.contractAddresses?.length) {
+      const marketplaceContracts = getMarketplaceContracts(
+        getMarketplaceChainId()
       )
-    ) {
-      option = options.find((option) => option.network === Network.ETHEREUM)
+      const marketplaceContract = marketplaceContracts.find(
+        (marketplaceContract) =>
+          !!filters.contractAddresses &&
+          filters.contractAddresses[0] &&
+          marketplaceContract.address.toLocaleLowerCase() ===
+            filters.contractAddresses[0]
+      )
+      if (marketplaceContract) {
+        option = options.find(
+          (option) =>
+            option.network === marketplaceContract.network &&
+            option.chainId === marketplaceContract.chainId
+        )
+      }
     }
 
     if (!option) return []
