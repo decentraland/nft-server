@@ -19,10 +19,7 @@ import {
 } from '../../logic/chainIds'
 import { FragmentItemType } from '../items/types'
 import { CatalogQueryFilters, CollectionsItemDBResult } from './types'
-import {
-  addQuerySortAndPagination,
-  getCollectionsItemsCatalogQuery,
-} from './queries'
+import { addQuerySort, getCollectionsItemsCatalogQuery } from './queries'
 
 export const getSubgraphNameForNetwork = (
   network: Network,
@@ -79,14 +76,20 @@ const getMultiNetworkQuery = (
       network: network as Network,
     })
   )
-  const unionQuery = SQL``
+
+  // The following code wraps the UNION query in a subquery so we can get the total count of items before applying the limit and offset
+  const unionQuery = SQL`SELECT *, COUNT(*) OVER() as total FROM (\n`
   queries.forEach((query, index) => {
     unionQuery.append(query)
     if (queries[index + 1]) {
       unionQuery.append(SQL`\n UNION ALL \n`)
     }
   })
-  addQuerySortAndPagination(unionQuery, filters)
+  addQuerySort(unionQuery, filters)
+  unionQuery.append(SQL`\n) as temp \n`)
+  if (limit !== undefined && offset !== undefined) {
+    unionQuery.append(SQL`LIMIT ${limit} OFFSET ${offset}`)
+  }
   return unionQuery
 }
 

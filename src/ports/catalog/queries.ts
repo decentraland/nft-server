@@ -64,17 +64,23 @@ export function getOrderBy(filters: CatalogFilters) {
   return sortByQuery
 }
 
-export const addQuerySortAndPagination = (
+export const addQueryPagination = (
   query: SQLStatement,
   filters: CatalogQueryFilters
 ) => {
-  const { sortBy, sortDirection, limit, offset } = filters
-  if (sortBy && sortDirection) {
-    query.append(getOrderBy(filters))
-  }
-
+  const { limit, offset } = filters
   if (limit !== undefined && offset !== undefined) {
     query.append(SQL`LIMIT ${limit} OFFSET ${offset}`)
+  }
+}
+
+export const addQuerySort = (
+  query: SQLStatement,
+  filters: CatalogQueryFilters
+) => {
+  const { sortBy, sortDirection } = filters
+  if (sortBy && sortDirection) {
+    query.append(getOrderBy(filters))
   }
 }
 
@@ -351,6 +357,7 @@ export const getCollectionsItemsCatalogQuery = (
     )
     .append(getCollectionsQueryWhere(filters))
 
-  addQuerySortAndPagination(query, filters)
+  addQuerySort(query, filters)
+  addQueryPagination(query, filters)
   return query
 }

@@ -7,7 +7,8 @@ import {
 } from '@dcl/schemas'
 
 export type CollectionsItemDBResult = {
-  total_rows: number,
+  total?: number // for UNION queries, this field will be defined
+  total_rows: number
   id: string
   image: string
   collection: string
