@@ -234,7 +234,7 @@ test('catalog component', function () {
         })
       })
 
-      fit('should fetch the data from both subgraph using a UNION query and return the catalog items and their total', async () => {
+      it('should fetch the data from both subgraph using a UNION query and return the catalog items and their total', async () => {
         expect(await catalogComponent.fetch(filters)).toEqual({
           data: [
             {
