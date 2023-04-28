@@ -86,7 +86,7 @@ const getMultiNetworkQuery = (
     }
   })
   addQuerySort(unionQuery, filters)
-  unionQuery.append(SQL`\n) as tem \n`)
+  unionQuery.append(SQL`\n) as temp \n`)
   if (limit !== undefined && offset !== undefined) {
     unionQuery.append(SQL`LIMIT ${limit} OFFSET ${offset}`)
   }

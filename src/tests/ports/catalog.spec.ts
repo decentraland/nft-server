@@ -244,10 +244,6 @@ test('catalog component', function () {
           ],
           total: 1,
         })
-        console.log(
-          'dbClientQueryMock.mock.calls: ',
-          dbClientQueryMock.mock.calls
-        )
         expect(dbClientQueryMock.mock.calls.length).toEqual(3) // 2 for the schema name and 1 for the catalog query
         expect(dbClientQueryMock.mock.calls[0][0]).toEqual(
           getLatestSubgraphSchema(
