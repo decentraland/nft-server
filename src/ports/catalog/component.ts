@@ -64,7 +64,7 @@ export function createCatalogComponent(options: {
       catalogItems = results.rows.map((res) =>
         fromCollectionsItemDbResultToCatalogItem(res, network)
       )
-      total = results.rows[0]?.total ?? +results.rows[0]?.total_rows ?? 0
+      total = results.rows[0]?.total ?? results.rows[0]?.total_rows ?? 0
 
       if (isFavoritesEnabled) {
         const picksStats = await favoritesComponent.getPicksStatsOfItems(
