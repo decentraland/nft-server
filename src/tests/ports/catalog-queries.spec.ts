@@ -9,7 +9,8 @@ import {
   WearableGender,
 } from '@dcl/schemas'
 import {
-  addQuerySortAndPagination,
+  addQueryPagination,
+  addQuerySort,
   getCollectionsQueryWhere,
   getLatestSubgraphSchema,
   getOrderBy,
@@ -373,7 +374,8 @@ test('catalog utils', function () {
       query = SQL``
     })
     it('should add LIMIT and OFFSET to the query', () => {
-      addQuerySortAndPagination(query, { offset, limit })
+      addQuerySort(query, { offset, limit })
+      addQueryPagination(query, { offset, limit })
       expect(query.text).toBe(`LIMIT $1 OFFSET $2`)
       expect(query.values).toStrictEqual([limit, offset])
     })
