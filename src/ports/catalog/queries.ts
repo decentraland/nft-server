@@ -31,7 +31,7 @@ export const getLatestSubgraphSchema = (subgraphName: string) =>
     `
 
 export function getOrderBy(filters: CatalogFilters) {
-  const { sortBy, sortDirection, onlyListing, isOnSale } = filters
+  const { sortBy, sortDirection, isOnSale } = filters
   const sortByParam = sortBy ?? CatalogSortBy.NEWEST
   const sortDirectionParam = sortDirection ?? CatalogSortDirection.DESC
 
@@ -51,13 +51,13 @@ export function getOrderBy(filters: CatalogFilters) {
       sortByQuery = `ORDER BY max_price desc \n`
       break
     case CatalogSortBy.RECENTLY_LISTED:
-      sortByQuery = onlyListing ? `ORDER BY max_order_created_at desc \n` : ``
+      sortByQuery = `ORDER BY GREATEST(max_order_created_at, first_listed_at) desc \n`
       break
     case CatalogSortBy.RECENTLY_SOLD:
       sortByQuery = `ORDER BY sold_at desc \n`
       break
     case CatalogSortBy.CHEAPEST:
-      sortByQuery = `ORDER BY min_price asc \n`
+      sortByQuery = `ORDER BY min_price asc, first_listed_at desc \n`
       break
   }
 
@@ -138,8 +138,10 @@ export const getIsSoldOutWhere = () => {
   return SQL`items.available = 0`
 }
 
-export const getIsOnSale = () => {
-  return SQL`((search_is_store_minter = true AND available > 0) OR listings_count > 0)`
+export const getIsOnSale = (filters: CatalogFilters) => {
+  return filters.isOnSale
+    ? SQL`((search_is_store_minter = true AND available > 0) OR listings_count IS NOT NULL)`
+    : SQL`((search_is_store_minter = false OR available = 0) AND listings_count IS NULL)`
 }
 
 export const getisWearableHeadAccessoryWhere = () => {
@@ -200,7 +202,7 @@ export const getCollectionsQueryWhere = (filters: CatalogFilters) => {
     filters.rarities?.length ? getRaritiesWhere(filters) : undefined,
     filters.creator?.length ? getCreatorWhere(filters) : undefined,
     filters.isSoldOut ? getIsSoldOutWhere() : undefined,
-    filters.isOnSale ? getIsOnSale() : undefined,
+    filters.isOnSale !== undefined ? getIsOnSale(filters) : undefined,
     filters.search ? getSearchWhere(filters) : undefined,
     filters.isWearableHead ? getisWearableHeadAccessoryWhere() : undefined,
     filters.isWearableAccessory ? getWearableAccessoryWhere() : undefined,
@@ -269,23 +271,31 @@ export const getCollectionsItemsCatalogQuery = (
               items.sold_at,
               ${filters.network} as network,
               items.first_listed_at,
-              nfts.min_price AS min_listing_price,
-              nfts.max_price AS max_listing_price, 
-              nfts.listings_count as listings_count,
-              nfts.owners_count as owners_count,
-              nfts.max_order_created_at as max_order_created_at,
+              nfts_with_orders.min_price AS min_listing_price,
+              nfts_with_orders.max_price AS max_listing_price, 
+              COALESCE(nfts_with_orders.listings_count,0) as listings_count,
+              nfts.owners_count,
+              nfts_with_orders.max_order_created_at as max_order_created_at,
               CASE
-                WHEN items.available > 0 AND items.search_is_store_minter = true THEN LEAST(items.price, nfts.min_price) 
-                ELSE nfts.min_price 
+                WHEN items.available > 0 AND items.search_is_store_minter = true THEN LEAST(items.price, nfts_with_orders.min_price) 
+                ELSE nfts_with_orders.min_price 
               END AS min_price,
               CASE 
-                WHEN available > 0 AND items.search_is_store_minter = true THEN GREATEST(items.price, nfts.max_price) 
-                ELSE nfts.max_price END
+                WHEN available > 0 AND items.search_is_store_minter = true THEN GREATEST(items.price, nfts_with_orders.max_price) 
+                ELSE nfts_with_orders.max_price END
              AS max_price
             FROM `
     .append(schemaVersion)
     .append(
-      `.item_active AS items 
+      `.item_active AS items
+            LEFT JOIN (
+              SELECT item, COUNT(distinct owner) as owners_count FROM `
+    )
+    .append(schemaVersion)
+    .append(
+      `.nft_active as nfts GROUP BY nfts.item
+            ) AS nfts ON nfts.item = items.id
+
             LEFT JOIN (
               SELECT 
                 nft.item, 
@@ -314,7 +324,7 @@ export const getCollectionsItemsCatalogQuery = (
       ` 
                 AND to_timestamp(orders.expires_at / 100.0) > now() 
                 GROUP BY nft.item
-              ) AS nfts ON nfts.item = items.id 
+              ) AS nfts_with_orders ON nfts_with_orders.item = items.id 
               LEFT JOIN (
                 SELECT 
                 metadata.id, 
