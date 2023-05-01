@@ -111,16 +111,31 @@ test('catalog utils', function () {
 
     describe('and passing the "isOnSale" filter', () => {
       let isOnSale: boolean
-      beforeEach(() => {
-        isOnSale = true
-        filters = {
-          isOnSale,
-        }
+      describe('and is set to "true"', () => {
+        beforeEach(() => {
+          isOnSale = true
+          filters = {
+            isOnSale,
+          }
+        })
+        it('should add the is on sale definition to the WHERE', () => {
+          expect(getCollectionsQueryWhere(filters).text).toContain(
+            `((search_is_store_minter = true AND available > 0) OR listings_count IS NOT NULL)`
+          )
+        })
       })
-      it('should add the is on sale definition to the WHERE', () => {
-        expect(getCollectionsQueryWhere(filters).text).toContain(
-          `((search_is_store_minter = true AND available > 0) OR listings_count IS NOT NULL)`
-        )
+      describe('and is set to "false"', () => {
+        beforeEach(() => {
+          isOnSale = false
+          filters = {
+            isOnSale,
+          }
+        })
+        it('should add the is on sale definition to the WHERE', () => {
+          expect(getCollectionsQueryWhere(filters).text).toContain(
+            `items.search_is_collection_approved = true AND ((search_is_store_minter = false OR available = 0) AND listings_count IS NULL)`
+          )
+        })
       })
     })
 
@@ -351,7 +366,9 @@ test('catalog utils', function () {
         sortBy = CatalogSortBy.CHEAPEST
       })
       it('should ORDER BY min_price field', () => {
-        expect(getOrderBy({ sortBy })).toContain(`ORDER BY min_price asc`)
+        expect(getOrderBy({ sortBy })).toContain(
+          `ORDER BY min_price asc, first_listed_at desc`
+        )
       })
     })
   })
