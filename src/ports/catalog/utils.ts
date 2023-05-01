@@ -34,37 +34,6 @@ export const getSubgraphNameForNetwork = (
       }`
 }
 
-export function getOrderBy(
-  sortBy: CatalogSortBy | null,
-  sortDirection: CatalogSortDirection | null
-) {
-  const sortByParam = sortBy ?? CatalogSortBy.NEWEST
-  const sortDirectionParam = sortDirection ?? CatalogSortDirection.ASC
-
-  let sortByQuery:
-    | SQLStatement
-    | string = `ORDER BY created_at ${sortDirectionParam}\n`
-  switch (sortByParam) {
-    case CatalogSortBy.NEWEST:
-      sortByQuery = `ORDER BY created_at ${sortDirectionParam}\n`
-      break
-    case CatalogSortBy.MOST_EXPENSIVE:
-      sortByQuery = `ORDER BY max_price ${sortDirectionParam}\n`
-      break
-    case CatalogSortBy.RECENTLY_LISTED:
-      sortByQuery = `ORDER BY created_at ${sortDirectionParam}\n`
-      break
-    case CatalogSortBy.RECENTLY_SOLD:
-      sortByQuery = `ORDER BY sold_at ${sortDirectionParam}\n`
-      break
-    case CatalogSortBy.CHEAPEST:
-      sortByQuery = `ORDER BY min_price ${sortDirectionParam}\n`
-      break
-  }
-
-  return sortByQuery
-}
-
 const getMultiNetworkQuery = (
   schemas: Record<string, string>,
   filters: CatalogQueryFilters
@@ -85,8 +54,8 @@ const getMultiNetworkQuery = (
       unionQuery.append(SQL`\n UNION ALL \n`)
     }
   })
-  addQuerySort(unionQuery, filters)
   unionQuery.append(SQL`\n) as temp \n`)
+  addQuerySort(unionQuery, filters)
   if (limit !== undefined && offset !== undefined) {
     unionQuery.append(SQL`LIMIT ${limit} OFFSET ${offset}`)
   }

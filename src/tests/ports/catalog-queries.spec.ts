@@ -119,7 +119,7 @@ test('catalog utils', function () {
       })
       it('should add the is on sale definition to the WHERE', () => {
         expect(getCollectionsQueryWhere(filters).text).toContain(
-          `((search_is_store_minter = true AND available > 0) OR listings_count > 0)`
+          `((search_is_store_minter = true AND available > 0) OR listings_count IS NOT NULL)`
         )
       })
     })
@@ -331,20 +331,11 @@ test('catalog utils', function () {
       beforeEach(() => {
         sortBy = CatalogSortBy.RECENTLY_LISTED
       })
-      describe('and the onlyListing filter is ON', () => {
-        beforeEach(() => {
-          onlyListing = true
-        })
-        it('should ORDER BY created_at field', () => {
-          expect(getOrderBy({ sortBy, onlyListing })).toContain(
-            `ORDER BY max_order_created_at desc`
-          )
-        })
-      })
-      describe('and the onlyListing filter is ON', () => {
-        it('should not ORDER BY any field since the combination is not valid', () => {
-          expect(getOrderBy({ sortBy })).toBe('')
-        })
+
+      it('should ORDER BY created_at field', () => {
+        expect(getOrderBy({ sortBy, onlyListing })).toContain(
+          `ORDER BY GREATEST(max_order_created_at, first_listed_at) desc`
+        )
       })
     })
     describe('when sorting by RECENTLY_SOLD', () => {
