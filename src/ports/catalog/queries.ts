@@ -31,7 +31,7 @@ export const getLatestSubgraphSchema = (subgraphName: string) =>
     `
 
 export function getOrderBy(filters: CatalogFilters) {
-  const { sortBy, sortDirection, onlyListing, isOnSale } = filters
+  const { sortBy, sortDirection, isOnSale } = filters
   const sortByParam = sortBy ?? CatalogSortBy.NEWEST
   const sortDirectionParam = sortDirection ?? CatalogSortDirection.DESC
 

@@ -1,4 +1,4 @@
-import SQL, { SQLStatement } from 'sql-template-strings'
+import SQL from 'sql-template-strings'
 import {
   NFTCategory,
   Item,
@@ -10,8 +10,6 @@ import {
   ChainId,
   CatalogFilters,
   CatalogItem,
-  CatalogSortBy,
-  CatalogSortDirection,
 } from '@dcl/schemas'
 import {
   getCollectionsChainId,
