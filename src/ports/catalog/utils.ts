@@ -9,7 +9,6 @@ import {
   Network,
   ChainId,
   CatalogFilters,
-  CatalogItem,
 } from '@dcl/schemas'
 import {
   getCollectionsChainId,
@@ -73,7 +72,7 @@ export const getCatalogQuery = (
 export function fromCollectionsItemDbResultToCatalogItem(
   dbItem: CollectionsItemDBResult,
   network?: Network
-): CatalogItem {
+): Item {
   let name: string
   let category: NFTCategory
   let data: Item['data']
@@ -131,6 +130,7 @@ export function fromCollectionsItemDbResultToCatalogItem(
   const itemNetwork = dbItem.network ?? network ?? Network.MATIC
   return {
     id: dbItem.id,
+    beneficiary: dbItem.beneficiary,
     itemId: dbItem.blockchain_id,
     name,
     thumbnail: dbItem.image,
@@ -148,6 +148,12 @@ export function fromCollectionsItemDbResultToCatalogItem(
         ? getMarketplaceChainId()
         : getCollectionsChainId(),
     price: dbItem.price,
+    createdAt: Number(dbItem.created_at),
+    updatedAt: Number(dbItem.updated_at),
+    reviewedAt: Number(dbItem.reviewed_at),
+    firstListedAt: Number(dbItem.first_listed_at),
+    soldAt: Number(dbItem.sold_at),
+    // Catalog fields
     minPrice: dbItem.min_price,
     maxListingPrice: dbItem.max_listing_price,
     minListingPrice: dbItem.min_listing_price,

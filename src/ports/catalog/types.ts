@@ -1,8 +1,8 @@
 import {
   CatalogFilters,
-  CatalogItem,
   CatalogSortBy,
   CatalogSortDirection,
+  Item,
   Network,
 } from '@dcl/schemas'
 
@@ -56,7 +56,5 @@ export type CatalogQueryFilters = Omit<
 export type CatalogOptions = CatalogFilters & { pickedBy?: string }
 
 export interface ICatalogComponent {
-  fetch(
-    filters: CatalogOptions
-  ): Promise<{ data: CatalogItem[]; total: number }>
+  fetch(filters: CatalogOptions): Promise<{ data: Item[]; total: number }>
 }

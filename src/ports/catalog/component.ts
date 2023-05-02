@@ -1,5 +1,5 @@
 import { IPgComponent } from '@well-known-components/pg-component'
-import { CatalogItem, Network } from '@dcl/schemas'
+import { Item, Network } from '@dcl/schemas'
 import {
   getCollectionsChainId,
   getMarketplaceChainId,
@@ -30,7 +30,7 @@ export function createCatalogComponent(options: {
     const { network } = filters
     const marketplaceChainId = getMarketplaceChainId()
     const collectionsChainId = getCollectionsChainId()
-    let catalogItems: CatalogItem[] = []
+    let catalogItems: Item[] = []
     let total = 0
     const client = await database.getPool().connect()
     try {
