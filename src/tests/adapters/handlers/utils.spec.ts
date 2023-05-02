@@ -28,6 +28,7 @@ describe('getItemsParams', () => {
         emoteCategory: undefined,
         emoteGenders: [],
         emotePlayMode: [],
+        ids: [],
         isOnSale: undefined,
         isSoldOut: false,
         isWearableAccessory: false,
