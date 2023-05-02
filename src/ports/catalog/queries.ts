@@ -196,6 +196,10 @@ export const getOnlyMintingWhere = () => {
   return SQL`items.search_is_store_minter = true AND available > 0`
 }
 
+export const getIdsWhere = (filters: CatalogFilters) => {
+  return SQL`items.id = ANY(${filters.ids})`
+}
+
 export const getCollectionsQueryWhere = (filters: CatalogFilters) => {
   const conditions = [
     filters.category ? getCategoryWhere(filters) : undefined,
@@ -219,6 +223,7 @@ export const getCollectionsQueryWhere = (filters: CatalogFilters) => {
     filters.maxPrice ? getMaxPriceWhere(filters) : undefined,
     filters.onlyListing ? getOnlyListingsWhere() : undefined,
     filters.onlyMinting ? getOnlyMintingWhere() : undefined,
+    filters.ids?.length ? getIdsWhere(filters) : undefined,
   ].filter(Boolean)
 
   const result = SQL`WHERE items.search_is_collection_approved = true`
