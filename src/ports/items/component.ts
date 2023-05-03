@@ -1,9 +1,7 @@
 import { ChainId, ItemFilters, Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { IItemsComponent, ItemFragment } from './types'
-import { fromItemFragment, getItemsQuery } from './utils'
-import { getMarketplaceChainId } from '../../logic/chainIds'
-import { getMarketplaceContracts } from '../../logic/contracts'
+import { fromItemFragment, getItemsQuery, getSubgraph } from './utils'
 
 export function createItemsComponent(
   options: {
@@ -13,28 +11,7 @@ export function createItemsComponent(
   }[]
 ): IItemsComponent {
   async function fetch(filters: ItemFilters) {
-    // By default, we use the MATIC subgraph, unless we're asking for an item with a contractAddress that belongs to the Marketplace legacy contracts
-    let option = options.find((option) => option.network === Network.MATIC)
-    if (filters.contractAddresses?.length) {
-      const marketplaceContracts = getMarketplaceContracts(
-        getMarketplaceChainId()
-      )
-      const marketplaceContract = marketplaceContracts.find(
-        (marketplaceContract) =>
-          !!filters.contractAddresses &&
-          filters.contractAddresses[0] &&
-          marketplaceContract.address.toLocaleLowerCase() ===
-            filters.contractAddresses[0]
-      )
-      if (marketplaceContract) {
-        option = options.find(
-          (option) =>
-            option.network === marketplaceContract.network &&
-            option.chainId === marketplaceContract.chainId
-        )
-      }
-    }
-
+    const option = getSubgraph(filters, options)
     if (!option) return []
 
     const { subgraph, network, chainId } = option
@@ -54,17 +31,7 @@ export function createItemsComponent(
   }
 
   async function count(filters: ItemFilters) {
-    let option = options.find((option) => option.network === Network.MATIC)
-    if (
-      getMarketplaceContracts(getMarketplaceChainId()).find(
-        (marketplaceContract) =>
-          filters.contractAddresses &&
-          filters.contractAddresses[0] &&
-          marketplaceContract.address === filters.contractAddresses[0]
-      )
-    ) {
-      option = options.find((option) => option.network === Network.ETHEREUM)
-    }
+    const option = getSubgraph(filters, options)
 
     if (!option) return 0
 

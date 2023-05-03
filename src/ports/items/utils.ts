@@ -8,10 +8,13 @@ import {
   Network,
   NFTCategory,
 } from '@dcl/schemas'
+import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { ItemFragment, FragmentItemType } from './types'
 import { isAddressZero } from '../../logic/address'
 import { getGenderFilterQuery } from '../utils'
 import { SortDirection } from '../merger/types'
+import { getMarketplaceContracts } from '../../logic/contracts'
+import { getMarketplaceChainId } from '../../logic/chainIds'
 
 export const ITEM_DEFAULT_SORT_BY = ItemSortBy.NEWEST
 
@@ -216,11 +219,7 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
   }
 
   if (ids && ids.length > 0) {
-    where.push(
-      `id_in: [${ids
-        .map((id) => `"${id}"`)
-        .join(',')}]`
-    )
+    where.push(`id_in: [${ids.map((id) => `"${id}"`).join(',')}]`)
   }
 
   if (contractAddresses && contractAddresses.length > 0) {
@@ -373,6 +372,38 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
     ${query}
     ${isCount ? '' : getItemFragment()}
   `
+}
+
+export const getSubgraph = (
+  filters: ItemFilters,
+  options: {
+    subgraph: ISubgraphComponent
+    network: Network
+    chainId: ChainId
+  }[]
+) => {
+  // By default, we use the MATIC subgraph, unless we're asking for an item with a contractAddress that belongs to the Marketplace legacy contracts
+  let option = options.find((option) => option.network === Network.MATIC)
+  if (filters.contractAddresses?.length) {
+    const marketplaceContracts = getMarketplaceContracts(
+      getMarketplaceChainId()
+    )
+    const marketplaceContract = marketplaceContracts.find(
+      (marketplaceContract) =>
+        !!filters.contractAddresses &&
+        filters.contractAddresses[0] &&
+        marketplaceContract.address.toLocaleLowerCase() ===
+          filters.contractAddresses[0]
+    )
+    if (marketplaceContract) {
+      option = options.find(
+        (option) =>
+          option.network === marketplaceContract.network &&
+          option.chainId === marketplaceContract.chainId
+      )
+    }
+  }
+  return option
 }
 
 /**
