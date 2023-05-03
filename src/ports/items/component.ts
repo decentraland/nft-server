@@ -1,16 +1,21 @@
 import { ChainId, ItemFilters, Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { IItemsComponent, ItemFragment } from './types'
-import { fromItemFragment, getItemsQuery } from './utils'
+import { fromItemFragment, getItemsQuery, getSubgraph } from './utils'
 
-export function createItemsComponent(options: {
-  subgraph: ISubgraphComponent
-  network: Network
-  chainId: ChainId
-}): IItemsComponent {
-  const { subgraph, network, chainId } = options
-
+export function createItemsComponent(
+  options: {
+    subgraph: ISubgraphComponent
+    network: Network
+    chainId: ChainId
+  }[]
+): IItemsComponent {
   async function fetch(filters: ItemFilters) {
+    const option = getSubgraph(filters, options)
+    if (!option) return []
+
+    const { subgraph, network, chainId } = option
+
     if (filters.network && filters.network !== network) {
       return []
     }
@@ -26,6 +31,12 @@ export function createItemsComponent(options: {
   }
 
   async function count(filters: ItemFilters) {
+    const option = getSubgraph(filters, options)
+
+    if (!option) return 0
+
+    const { subgraph, network } = option
+
     if (filters.network && filters.network !== network) {
       return 0
     }

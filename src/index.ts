@@ -238,6 +238,11 @@ async function initComponents(): Promise<AppComponents> {
     await config.requireString('COLLECTIONS_SUBGRAPH_URL')
   )
 
+  const collectionsEthereumSubgraph = await createSubgraphComponent(
+    { logs, config, fetch, metrics },
+    await config.requireString('COLLECTIONS_ETHEREUM_SUBGRAPH_URL')
+  )
+
   const rentalsSubgraph = await createSubgraphComponent(
     { logs, config, fetch, metrics },
     await config.requireString('RENTALS_SUBGRAPH_URL')
@@ -431,11 +436,18 @@ async function initComponents(): Promise<AppComponents> {
   )
 
   // items
-  const collectionsItems = createItemsComponent({
-    subgraph: collectionsSubgraph,
-    network: Network.MATIC,
-    chainId: collectionsChainId,
-  })
+  const collectionsItems = createItemsComponent([
+    {
+      subgraph: collectionsSubgraph,
+      network: Network.MATIC,
+      chainId: collectionsChainId,
+    },
+    {
+      subgraph: collectionsEthereumSubgraph,
+      network: Network.ETHEREUM,
+      chainId: marketplaceChainId,
+    },
+  ])
 
   const items = createMergerComponent<Item, ItemOptions, ItemSortBy>({
     sources: [
