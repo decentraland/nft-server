@@ -14,9 +14,8 @@ export function createItemsHandler(
     const first = params.getNumber('first')
     const skip = params.getNumber('skip')
     const sortBy = params.getValue<ItemSortBy>('sortBy', ItemSortBy)
-    const { contractAddresses, itemId, urns, ...restOfFilters } =
+    const { ids, contractAddresses, itemId, urns, ...restOfFilters } =
       getItemsParams(params)
-    const ids = params.getList('id')
     const pickedBy: string | undefined =
       context.verification?.auth.toLowerCase()
 

@@ -234,7 +234,7 @@ test('catalog component', function () {
         })
       })
 
-      it('should fetch the data from one subgraph and return the catalog items', async () => {
+      it('should fetch the data from both subgraph using a UNION query and return the catalog items and their total', async () => {
         expect(await catalogComponent.fetch(filters)).toEqual({
           data: [
             {
@@ -254,6 +254,15 @@ test('catalog component', function () {
           getLatestSubgraphSchema(
             getSubgraphNameForNetwork(Network.MATIC, ChainId.MATIC_MAINNET)
           )
+        )
+        // The query string is expressed as an array of strings and values
+        // The first part of the query should contain the total_rows
+        expect(dbClientQueryMock.mock.calls[2][0].strings[0]).toContain(
+          'COUNT(*) OVER() as total_rows'
+        )
+        // The second part should contain the UNION ALL necessary to fetch both networks
+        expect(dbClientQueryMock.mock.calls[2][0].strings[1]).toContain(
+          'UNION ALL'
         )
       })
     })

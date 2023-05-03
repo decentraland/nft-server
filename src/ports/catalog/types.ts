@@ -1,13 +1,14 @@
 import {
   CatalogFilters,
-  CatalogItem,
   CatalogSortBy,
   CatalogSortDirection,
+  Item,
   Network,
 } from '@dcl/schemas'
 
 export type CollectionsItemDBResult = {
-  total_rows: number,
+  total?: number // for UNION queries, this field will be defined
+  total_rows: number
   id: string
   image: string
   collection: string
@@ -55,7 +56,5 @@ export type CatalogQueryFilters = Omit<
 export type CatalogOptions = CatalogFilters & { pickedBy?: string }
 
 export interface ICatalogComponent {
-  fetch(
-    filters: CatalogOptions
-  ): Promise<{ data: CatalogItem[]; total: number }>
+  fetch(filters: CatalogOptions): Promise<{ data: Item[]; total: number }>
 }

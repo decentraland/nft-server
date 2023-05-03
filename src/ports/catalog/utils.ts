@@ -1,4 +1,4 @@
-import SQL, { SQLStatement } from 'sql-template-strings'
+import SQL from 'sql-template-strings'
 import {
   NFTCategory,
   Item,
@@ -9,9 +9,6 @@ import {
   Network,
   ChainId,
   CatalogFilters,
-  CatalogItem,
-  CatalogSortBy,
-  CatalogSortDirection,
 } from '@dcl/schemas'
 import {
   getCollectionsChainId,
@@ -19,10 +16,7 @@ import {
 } from '../../logic/chainIds'
 import { FragmentItemType } from '../items/types'
 import { CatalogQueryFilters, CollectionsItemDBResult } from './types'
-import {
-  addQuerySortAndPagination,
-  getCollectionsItemsCatalogQuery,
-} from './queries'
+import { addQuerySort, getCollectionsItemsCatalogQuery } from './queries'
 
 export const getSubgraphNameForNetwork = (
   network: Network,
@@ -37,37 +31,6 @@ export const getSubgraphNameForNetwork = (
       }`
 }
 
-export function getOrderBy(
-  sortBy: CatalogSortBy | null,
-  sortDirection: CatalogSortDirection | null
-) {
-  const sortByParam = sortBy ?? CatalogSortBy.NEWEST
-  const sortDirectionParam = sortDirection ?? CatalogSortDirection.ASC
-
-  let sortByQuery:
-    | SQLStatement
-    | string = `ORDER BY created_at ${sortDirectionParam}\n`
-  switch (sortByParam) {
-    case CatalogSortBy.NEWEST:
-      sortByQuery = `ORDER BY created_at ${sortDirectionParam}\n`
-      break
-    case CatalogSortBy.MOST_EXPENSIVE:
-      sortByQuery = `ORDER BY max_price ${sortDirectionParam}\n`
-      break
-    case CatalogSortBy.RECENTLY_LISTED:
-      sortByQuery = `ORDER BY created_at ${sortDirectionParam}\n`
-      break
-    case CatalogSortBy.RECENTLY_SOLD:
-      sortByQuery = `ORDER BY sold_at ${sortDirectionParam}\n`
-      break
-    case CatalogSortBy.CHEAPEST:
-      sortByQuery = `ORDER BY min_price ${sortDirectionParam}\n`
-      break
-  }
-
-  return sortByQuery
-}
-
 const getMultiNetworkQuery = (
   schemas: Record<string, string>,
   filters: CatalogQueryFilters
@@ -79,14 +42,20 @@ const getMultiNetworkQuery = (
       network: network as Network,
     })
   )
-  const unionQuery = SQL``
+
+  // The following code wraps the UNION query in a subquery so we can get the total count of items before applying the limit and offset
+  const unionQuery = SQL`SELECT *, COUNT(*) OVER() as total FROM (\n`
   queries.forEach((query, index) => {
     unionQuery.append(query)
     if (queries[index + 1]) {
       unionQuery.append(SQL`\n UNION ALL \n`)
     }
   })
-  addQuerySortAndPagination(unionQuery, filters)
+  unionQuery.append(SQL`\n) as temp \n`)
+  addQuerySort(unionQuery, filters)
+  if (limit !== undefined && offset !== undefined) {
+    unionQuery.append(SQL`LIMIT ${limit} OFFSET ${offset}`)
+  }
   return unionQuery
 }
 
@@ -103,7 +72,7 @@ export const getCatalogQuery = (
 export function fromCollectionsItemDbResultToCatalogItem(
   dbItem: CollectionsItemDBResult,
   network?: Network
-): CatalogItem {
+): Item {
   let name: string
   let category: NFTCategory
   let data: Item['data']
@@ -161,6 +130,7 @@ export function fromCollectionsItemDbResultToCatalogItem(
   const itemNetwork = dbItem.network ?? network ?? Network.MATIC
   return {
     id: dbItem.id,
+    beneficiary: dbItem.beneficiary,
     itemId: dbItem.blockchain_id,
     name,
     thumbnail: dbItem.image,
@@ -178,6 +148,12 @@ export function fromCollectionsItemDbResultToCatalogItem(
         ? getMarketplaceChainId()
         : getCollectionsChainId(),
     price: dbItem.price,
+    createdAt: Number(dbItem.created_at),
+    updatedAt: Number(dbItem.updated_at),
+    reviewedAt: Number(dbItem.reviewed_at),
+    firstListedAt: Number(dbItem.first_listed_at),
+    soldAt: Number(dbItem.sold_at),
+    // Catalog fields
     minPrice: dbItem.min_price,
     maxListingPrice: dbItem.max_listing_price,
     minListingPrice: dbItem.min_listing_price,

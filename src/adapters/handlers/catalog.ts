@@ -2,9 +2,10 @@ import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { CatalogSortBy, CatalogSortDirection } from '@dcl/schemas'
 import { asJSON } from '../../logic/http/response'
 import { Params } from '../../logic/http/params'
-import { getPaginationParams } from '../../logic/http/pagination'
 import { AppComponents, AuthenticatedContext } from '../../types'
 import { getItemsParams } from './utils'
+
+const DEFAULT_PAGE_SIZE = 20
 
 export function createCatalogHandler(
   components: Pick<AppComponents, 'catalog'>
@@ -24,7 +25,8 @@ export function createCatalogHandler(
         CatalogSortDirection
       ) || CatalogSortDirection.ASC
 
-    const { limit, offset } = getPaginationParams(context.url.searchParams)
+    const limit = params.getNumber('first', DEFAULT_PAGE_SIZE)
+    const offset = params.getNumber('skip', 0)
     const pickedBy: string | undefined =
       context.verification?.auth.toLowerCase()
 

@@ -146,7 +146,7 @@ type Item = {
 **Type**:
 
 ```ts
-type CatalogItem = {
+type Item = {
   id: string
   name: string
   contractAddress: string
@@ -194,7 +194,6 @@ type CatalogItem = {
 - `network`: Filter results by `Network`. Possible values: `ETHEREUM`, `MATIC`.
 - `onlyMinting`: Only return results that are only available for minting. Type `boolean`.
 - `onlyListing`: Only return results that have opened listing and no minting. Type `boolean`.
-
 
 ## Orders
 

@@ -1,5 +1,5 @@
 import { IPgComponent } from '@well-known-components/pg-component'
-import { CatalogItem, Network } from '@dcl/schemas'
+import { Item, Network } from '@dcl/schemas'
 import {
   getCollectionsChainId,
   getMarketplaceChainId,
@@ -30,7 +30,7 @@ export function createCatalogComponent(options: {
     const { network } = filters
     const marketplaceChainId = getMarketplaceChainId()
     const collectionsChainId = getCollectionsChainId()
-    let catalogItems: CatalogItem[] = []
+    let catalogItems: Item[] = []
     let total = 0
     const client = await database.getPool().connect()
     try {
@@ -64,8 +64,7 @@ export function createCatalogComponent(options: {
       catalogItems = results.rows.map((res) =>
         fromCollectionsItemDbResultToCatalogItem(res, network)
       )
-      const totals = new Set(results.rows.map((res) => res.total_rows))
-      totals.forEach((t) => (total += +t))
+      total = results.rows[0]?.total ?? results.rows[0]?.total_rows ?? 0
 
       if (isFavoritesEnabled) {
         const picksStats = await favoritesComponent.getPicksStatsOfItems(
@@ -83,7 +82,7 @@ export function createCatalogComponent(options: {
     }
 
     client.release()
-    return { data: catalogItems, total }
+    return { data: catalogItems, total: +total }
   }
 
   return {

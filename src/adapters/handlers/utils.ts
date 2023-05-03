@@ -17,7 +17,9 @@ export const getItemsParams = (params: Params) => {
     category: params.getValue<NFTCategory>('category', NFTCategory),
     creator: params.getList('creator'),
     isSoldOut: params.getBoolean('isSoldOut'),
-    isOnSale: params.getBoolean('isOnSale'),
+    isOnSale: params.getBoolean('isOnSale')
+      ? params.getString('isOnSale') === 'true'
+      : undefined,
     search: params.getString('search'),
     isWearableHead: params.getBoolean('isWearableHead'),
     isWearableAccessory: params.getBoolean('isWearableAccessory'),
@@ -53,5 +55,6 @@ export const getItemsParams = (params: Params) => {
       ? ethers.utils.parseEther(minPrice).toString()
       : undefined,
     urns: params.getList('urn'),
+    ids: params.getList('id')
   }
 }
