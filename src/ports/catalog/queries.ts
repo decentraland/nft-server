@@ -306,7 +306,7 @@ export const getCollectionsItemsCatalogQuery = (
     .append(MAX_ORDER_TIMESTAMP)
     .append(
       ` 
-                AND to_timestamp(orders.expires_at / 100.0) > now() 
+                AND to_timestamp(orders.expires_at / 1000.0) > now() 
                 GROUP BY nft.item
               ) AS nfts ON nfts.item = items.id 
               LEFT JOIN (
