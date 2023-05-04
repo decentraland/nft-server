@@ -60,7 +60,7 @@
     "@well-known-components/test-helpers": "^1.4.0",
     "dcl-tslint-config-standard": "^2.0.0",
     "jest": "^27.0.6",
-    "nodemon": "^2.0.20",
+    "nodemon": "^2.0.22",
     "prettier": "^2.8.8",
     "ts-jest": "^27.0.3",
     "tslint": "^6.1.3",
