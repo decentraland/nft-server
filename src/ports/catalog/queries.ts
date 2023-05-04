@@ -244,6 +244,16 @@ export const getCollectionsQueryWhere = (filters: CatalogFilters) => {
   return result.append(` `)
 }
 
+/** At the moment, the UI just needs the Owners count when listing the NOT ON SALE items, so for optimize the query, let's JOIN only in that case since it's an expensive operation */
+const getOwnersJoin = (schemaVersion: string) => {
+  return SQL` LEFT JOIN (
+          SELECT item, COUNT(distinct owner) as owners_count FROM `
+    .append(schemaVersion)
+    .append(
+      `.nft_active as nfts GROUP BY nfts.item) AS nfts ON nfts.item = items.id`
+    )
+}
+
 export const getCollectionsItemsCatalogQuery = (
   schemaVersion: string,
   filters: CatalogQueryFilters
@@ -278,8 +288,10 @@ export const getCollectionsItemsCatalogQuery = (
               items.first_listed_at,
               nfts_with_orders.min_price AS min_listing_price,
               nfts_with_orders.max_price AS max_listing_price, 
-              COALESCE(nfts_with_orders.listings_count,0) as listings_count,
-              nfts.owners_count,
+              COALESCE(nfts_with_orders.listings_count,0) as listings_count,`
+    .append(filters.isOnSale === false ? SQL`nfts.owners_count,` : SQL``)
+    .append(
+      `
               nfts_with_orders.max_order_created_at as max_order_created_at,
               CASE
                 WHEN items.available > 0 AND items.search_is_store_minter = true THEN LEAST(items.price, nfts_with_orders.min_price) 
@@ -290,17 +302,12 @@ export const getCollectionsItemsCatalogQuery = (
                 ELSE nfts_with_orders.max_price END
              AS max_price
             FROM `
-    .append(schemaVersion)
-    .append(
-      `.item_active AS items
-            LEFT JOIN (
-              SELECT item, COUNT(distinct owner) as owners_count FROM `
     )
     .append(schemaVersion)
+    .append(`.item_active AS items`)
+    .append(filters.isOnSale === false ? getOwnersJoin(schemaVersion) : SQL``)
     .append(
-      `.nft_active as nfts GROUP BY nfts.item
-            ) AS nfts ON nfts.item = items.id
-
+      `
             LEFT JOIN (
               SELECT 
                 nft.item, 
