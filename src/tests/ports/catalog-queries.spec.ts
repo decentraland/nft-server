@@ -241,7 +241,7 @@ test('catalog utils', function () {
       })
       it('should add the only listing definition to the WHERE', () => {
         expect(getCollectionsQueryWhere(filters).text).toContain(
-          `(items.search_is_store_minter = false OR (items.search_is_store_minter = true AND available = 0)) AND listings_count > 1`
+          `(items.search_is_store_minter = false OR (items.search_is_store_minter = true AND available = 0)) AND listings_count > 0`
         )
       })
     })
