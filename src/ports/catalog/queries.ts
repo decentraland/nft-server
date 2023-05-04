@@ -189,7 +189,7 @@ export const getContractAddressWhere = (filters: CatalogFilters) => {
 }
 
 export const getOnlyListingsWhere = () => {
-  return SQL`(items.search_is_store_minter = false OR (items.search_is_store_minter = true AND available = 0)) AND listings_count > 1`
+  return SQL`(items.search_is_store_minter = false OR (items.search_is_store_minter = true AND available = 0)) AND listings_count > 0`
 }
 
 export const getOnlyMintingWhere = () => {
