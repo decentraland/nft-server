@@ -310,24 +310,17 @@ export const getCollectionsItemsCatalogQuery = (
       `
             LEFT JOIN (
               SELECT 
-                nft.item, 
+                orders.item, 
                 COUNT(orders.id) AS listings_count,
                 MIN(orders.price) AS min_price,
                 MAX(orders.price) AS max_price,
-                COUNT(DISTINCT nft.owner) as owners_count,
                 MAX(orders.created_at) AS max_order_created_at
               FROM `
     )
     .append(schemaVersion)
     .append(
-      `.nft_active AS nft 
-                JOIN 
-              `
-    )
-    .append(schemaVersion)
-    .append(
-      `.order_active AS orders ON orders.nft = nft.id 
-              WHERE 
+      `.order_active AS orders 
+            WHERE 
                 orders.status = 'open' 
                 AND orders.expires_at < `
     )
@@ -335,7 +328,7 @@ export const getCollectionsItemsCatalogQuery = (
     .append(
       ` 
                 AND to_timestamp(orders.expires_at / 1000.0) > now() 
-                GROUP BY nft.item
+                GROUP BY orders.item
               ) AS nfts_with_orders ON nfts_with_orders.item = items.id 
               LEFT JOIN (
                 SELECT 
