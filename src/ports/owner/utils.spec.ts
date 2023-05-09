@@ -22,16 +22,16 @@ describe('#getOwnersQuery', () => {
       isCount = true
     })
 
-    it('should have first value in 1000', () => {
+    it('should have first value', () => {
       const query = getOwnersQuery(queryFilters, isCount)
 
       expect(query).toContain('first: 1000')
     })
 
-    it('should have skip value as undefined', () => {
+    it('should have skip value', () => {
       const query = getOwnersQuery(queryFilters, isCount)
 
-      expect(query).not.toContain('skip')
+      expect(query).toContain(`skip: ${queryFilters.skip}`)
     })
 
     it('should contain id', () => {

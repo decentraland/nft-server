@@ -7,7 +7,7 @@ import {
   OwnersFilters,
   OwnersSortBy,
 } from './types'
-import { getOwnersQuery } from './utils'
+import { MAX_RESULTS, getOwnersQuery } from './utils'
 
 export function createOwnersComponent(options: {
   subgraph: ISubgraphComponent
@@ -33,19 +33,25 @@ export function createOwnersComponent(options: {
       getOwnersQuery(parsedFilters, false)
     )
 
-    const countData: { nfts: { id: string }[] } = await subgraph.query(
-      getOwnersQuery(parsedFilters, true)
-    )
+    let count = 0
+
+    while (true) {
+      const countData: { nfts: { id: string }[] } = await subgraph.query(
+        getOwnersQuery({ ...parsedFilters, skip: count }, true)
+      )
+      count += countData.nfts.length
+      if (countData.nfts.length < MAX_RESULTS) break
+    }
 
     const results = data.nfts.map((owner: OwnerFragment) => ({
       issuedId: owner.issuedId,
       ownerId: owner.owner.id,
       orderStatus: owner.searchOrderStatus,
       orderExpiresAt: owner.searchOrderExpiresAt,
-      tokenId: owner.tokenId
+      tokenId: owner.tokenId,
     }))
 
-    return { data: results, total: countData.nfts.length }
+    return { data: results, total: count }
   }
 
   return {
