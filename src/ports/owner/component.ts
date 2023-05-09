@@ -33,19 +33,25 @@ export function createOwnersComponent(options: {
       getOwnersQuery(parsedFilters, false)
     )
 
-    const countData: { nfts: { id: string }[] } = await subgraph.query(
-      getOwnersQuery(parsedFilters, true)
-    )
+    let count = 0
+
+    while (true) {
+      const countData: { nfts: { id: string }[] } = await subgraph.query(
+        getOwnersQuery({ ...parsedFilters, skip: count }, true)
+      )
+      count += countData.nfts.length
+      if (countData.nfts.length < 1000) break
+    }
 
     const results = data.nfts.map((owner: OwnerFragment) => ({
       issuedId: owner.issuedId,
       ownerId: owner.owner.id,
       orderStatus: owner.searchOrderStatus,
       orderExpiresAt: owner.searchOrderExpiresAt,
-      tokenId: owner.tokenId
+      tokenId: owner.tokenId,
     }))
 
-    return { data: results, total: countData.nfts.length }
+    return { data: results, total: count }
   }
 
   return {
