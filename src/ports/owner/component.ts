@@ -7,7 +7,7 @@ import {
   OwnersFilters,
   OwnersSortBy,
 } from './types'
-import { getOwnersQuery } from './utils'
+import { MAX_RESULTS, getOwnersQuery } from './utils'
 
 export function createOwnersComponent(options: {
   subgraph: ISubgraphComponent
@@ -40,7 +40,7 @@ export function createOwnersComponent(options: {
         getOwnersQuery({ ...parsedFilters, skip: count }, true)
       )
       count += countData.nfts.length
-      if (countData.nfts.length < 1000) break
+      if (countData.nfts.length < MAX_RESULTS) break
     }
 
     const results = data.nfts.map((owner: OwnerFragment) => ({

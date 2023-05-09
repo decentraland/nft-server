@@ -19,7 +19,7 @@ export function getOwnersQuery(
   filters: FetchOptions<OwnersFilters, OwnersSortBy>,
   isCount: boolean
 ) {
-  const first = isCount ? 1000 : filters.first
+  const first = isCount ? MAX_RESULTS : filters.first
   const skip = filters.skip
 
   return `
