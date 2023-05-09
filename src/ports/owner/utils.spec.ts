@@ -28,7 +28,7 @@ describe('#getOwnersQuery', () => {
       expect(query).toContain('first: 1000')
     })
 
-    it('should have skip value as 10', () => {
+    it('should have skip value', () => {
       const query = getOwnersQuery(queryFilters, isCount)
 
       expect(query).toContain(`skip: ${queryFilters.skip}`)
