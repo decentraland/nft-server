@@ -203,7 +203,7 @@ test('catalog utils', function () {
       })
       it('should add the min price definition to the WHERE', () => {
         expect(getCollectionsQueryWhere(filters).text).toContain(
-          `(min_price >= $1 OR (price >= $2 AND available > 0))`
+          `(min_price >= $1 OR (price >= $2 AND available > 0 AND search_is_store_minter = true))`
         )
         expect(getCollectionsQueryWhere(filters).values).toStrictEqual([
           filters.minPrice,
@@ -222,7 +222,7 @@ test('catalog utils', function () {
       })
       it('should add the max price definition to the WHERE', () => {
         expect(getCollectionsQueryWhere(filters).text).toContain(
-          `(max_price <= $1 OR (price <= $2 AND available > 0))`
+          `(max_price <= $1 OR (price <= $2 AND available > 0 AND search_is_store_minter = true))`
         )
         expect(getCollectionsQueryWhere(filters).values).toStrictEqual([
           filters.maxPrice,

@@ -177,11 +177,11 @@ export const getRaritiesWhere = (filters: CatalogFilters) => {
 }
 
 export const getMinPriceWhere = (filters: CatalogFilters) => {
-  return SQL`(min_price >= ${filters.minPrice} OR (price >= ${filters.minPrice} AND available > 0))`
+  return SQL`(min_price >= ${filters.minPrice} OR (price >= ${filters.minPrice} AND available > 0 AND search_is_store_minter = true))`
 }
 
 export const getMaxPriceWhere = (filters: CatalogFilters) => {
-  return SQL`(max_price <= ${filters.maxPrice} OR (price <= ${filters.maxPrice} AND available > 0))`
+  return SQL`(max_price <= ${filters.maxPrice} OR (price <= ${filters.maxPrice} AND available > 0 AND search_is_store_minter = true))`
 }
 
 export const getContractAddressWhere = (filters: CatalogFilters) => {
