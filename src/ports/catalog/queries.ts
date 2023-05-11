@@ -177,7 +177,6 @@ export const getRaritiesWhere = (filters: CatalogFilters) => {
 }
 
 export const getOrderRangePriceWhere = (filters: CatalogFilters) => {
-  console.log('filters: ', filters)
   if (filters.minPrice && !filters.maxPrice) {
     return SQL`AND orders.price >= ${filters.minPrice}`
   } else if (!filters.minPrice && filters.maxPrice) {
