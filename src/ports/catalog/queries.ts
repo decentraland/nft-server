@@ -176,6 +176,18 @@ export const getRaritiesWhere = (filters: CatalogFilters) => {
   return SQL`items.rarity = ANY(${filters.rarities})`
 }
 
+export const getOrderRangePriceWhere = (filters: CatalogFilters) => {
+  console.log('filters: ', filters)
+  if (filters.minPrice && !filters.maxPrice) {
+    return SQL`AND orders.price >= ${filters.minPrice}`
+  } else if (!filters.minPrice && filters.maxPrice) {
+    return SQL`AND orders.price <= ${filters.maxPrice}`
+  } else if (filters.minPrice && filters.maxPrice) {
+    return SQL`AND orders.price >= ${filters.minPrice} AND orders.price <= ${filters.maxPrice}`
+  }
+  return SQL``
+}
+
 export const getMinPriceWhere = (filters: CatalogFilters) => {
   return SQL`(min_price >= ${filters.minPrice} OR (price >= ${filters.minPrice} AND available > 0 AND search_is_store_minter = true))`
 }
@@ -327,7 +339,12 @@ export const getCollectionsItemsCatalogQuery = (
     .append(MAX_ORDER_TIMESTAMP)
     .append(
       ` 
-                AND to_timestamp(orders.expires_at / 1000.0) > now() 
+                AND to_timestamp(orders.expires_at / 1000.0) > now()
+                `
+    )
+    .append(getOrderRangePriceWhere(filters))
+    .append(
+      `
                 GROUP BY orders.item
               ) AS nfts_with_orders ON nfts_with_orders.item = items.id 
               LEFT JOIN (
