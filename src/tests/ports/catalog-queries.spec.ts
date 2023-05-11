@@ -11,6 +11,7 @@ import {
 import {
   addQueryPagination,
   addQuerySort,
+  getCollectionsItemsCatalogQuery,
   getCollectionsQueryWhere,
   getLatestSubgraphSchema,
   getOrderBy,
@@ -18,7 +19,7 @@ import {
 import { FragmentItemType } from '../../ports/items/types'
 import { test } from '../components'
 
-test('catalog utils', function () {
+test('catalog utils', () => {
   describe('when getting the latest subgraph schema by subgraph name', () => {
     let subgrahName = 'collections-matic'
     it('should contain the subgraph name asked as part of the query values', () => {
@@ -386,6 +387,58 @@ test('catalog utils', function () {
       addQueryPagination(query, { offset, limit })
       expect(query.text).toBe(`LIMIT $1 OFFSET $2`)
       expect(query.values).toStrictEqual([limit, offset])
+    })
+  })
+
+  describe('when there is a prince range applied', () => {
+    let query: SQLStatement
+    let filters: CatalogFilters
+    let minPrice: string
+    let maxPrice: string
+    describe('and there is only min price applied', () => {
+      beforeEach(() => {
+        minPrice = '10'
+        filters = {
+          minPrice,
+        }
+        query = getCollectionsItemsCatalogQuery('aSchemaVersion', filters)
+      })
+      it('should apply the range to the orders table JOIN', () => {
+        expect(query.text).toContain(`AND orders.price >= $`)
+        expect(query.text).not.toContain(`AND orders.price <= $`)
+        expect(query.values.includes(minPrice)).toBe(true)
+      })
+    })
+    describe('and there is only max price applied', () => {
+      beforeEach(() => {
+        maxPrice = '100'
+        filters = {
+          maxPrice,
+        }
+        query = getCollectionsItemsCatalogQuery('aSchemaVersion', filters)
+      })
+      it('should apply the range to the orders table JOIN', () => {
+        expect(query.text).toContain(`AND orders.price <= $`)
+        expect(query).not.toContain(`AND orders.price >= $`)
+        expect(query.values.includes(maxPrice)).toBe(true)
+      })
+    })
+    describe('and has both min and prices applied', () => {
+      beforeEach(() => {
+        minPrice = '10'
+        maxPrice = '100'
+        filters = {
+          minPrice,
+          maxPrice,
+        }
+        query = getCollectionsItemsCatalogQuery('aSchemaVersion', filters)
+      })
+      it('should apply the range to the orders table JOIN', () => {
+        expect(query.text).toContain(`AND orders.price <= $`)
+        expect(query.text).toContain(`AND orders.price >= $`)
+        expect(query.values.includes(minPrice)).toBe(true)
+        expect(query.values.includes(maxPrice)).toBe(true)
+      })
     })
   })
 })
