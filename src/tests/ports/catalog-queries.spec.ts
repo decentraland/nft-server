@@ -391,6 +391,7 @@ test('catalog utils', () => {
   })
 
   describe('when there is a prince range applied', () => {
+    let query: SQLStatement
     let filters: CatalogFilters
     let minPrice: string
     let maxPrice: string
@@ -400,20 +401,12 @@ test('catalog utils', () => {
         filters = {
           minPrice,
         }
+        query = getCollectionsItemsCatalogQuery('aSchemaVersion', filters)
       })
       it('should apply the range to the orders table JOIN', () => {
-        expect(
-          getCollectionsItemsCatalogQuery('aSchemaVersion', filters).text
-        ).toContain(`AND orders.price >= $`)
-        expect(
-          getCollectionsItemsCatalogQuery('aSchemaVersion', filters).text
-        ).not.toContain(`AND orders.price <= $`)
-        expect(
-          getCollectionsItemsCatalogQuery(
-            'aSchemaVersion',
-            filters
-          ).values.includes(minPrice)
-        ).toBe(true)
+        expect(query.text).toContain(`AND orders.price >= $`)
+        expect(query.text).not.toContain(`AND orders.price <= $`)
+        expect(query.values.includes(minPrice)).toBe(true)
       })
     })
     describe('and there is only max price applied', () => {
@@ -422,20 +415,12 @@ test('catalog utils', () => {
         filters = {
           maxPrice,
         }
+        query = getCollectionsItemsCatalogQuery('aSchemaVersion', filters)
       })
       it('should apply the range to the orders table JOIN', () => {
-        expect(
-          getCollectionsItemsCatalogQuery('aSchemaVersion', filters).text
-        ).toContain(`AND orders.price <= $`)
-        expect(
-          getCollectionsItemsCatalogQuery('aSchemaVersion', filters).text
-        ).not.toContain(`AND orders.price >= $`)
-        expect(
-          getCollectionsItemsCatalogQuery(
-            'aSchemaVersion',
-            filters
-          ).values.includes(maxPrice)
-        ).toBe(true)
+        expect(query.text).toContain(`AND orders.price <= $`)
+        expect(query).not.toContain(`AND orders.price >= $`)
+        expect(query.values.includes(maxPrice)).toBe(true)
       })
     })
     describe('and has both min and prices applied', () => {
@@ -446,26 +431,13 @@ test('catalog utils', () => {
           minPrice,
           maxPrice,
         }
+        query = getCollectionsItemsCatalogQuery('aSchemaVersion', filters)
       })
       it('should apply the range to the orders table JOIN', () => {
-        expect(
-          getCollectionsItemsCatalogQuery('aSchemaVersion', filters).text
-        ).toContain(`AND orders.price <= $`)
-        expect(
-          getCollectionsItemsCatalogQuery('aSchemaVersion', filters).text
-        ).toContain(`AND orders.price >= $`)
-        expect(
-          getCollectionsItemsCatalogQuery(
-            'aSchemaVersion',
-            filters
-          ).values.includes(minPrice)
-        ).toBe(true)
-        expect(
-          getCollectionsItemsCatalogQuery(
-            'aSchemaVersion',
-            filters
-          ).values.includes(maxPrice)
-        ).toBe(true)
+        expect(query.text).toContain(`AND orders.price <= $`)
+        expect(query.text).toContain(`AND orders.price >= $`)
+        expect(query.values.includes(minPrice)).toBe(true)
+        expect(query.values.includes(maxPrice)).toBe(true)
       })
     })
   })
