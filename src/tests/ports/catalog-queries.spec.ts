@@ -425,7 +425,7 @@ test('catalog utils', () => {
         const queryTextFormatted = query.text.replace(/\s+/g, ' ')
         expect(query.text).toContain(`AND orders.price <= $`)
         expect(queryTextFormatted).toContain(
-          `CASE WHEN available > 0 AND items.search_is_store_minter = true AND items.price <= $2 THEN GREATEST(items.price, nfts_with_orders.max_price) ELSE nfts_with_orders.max_price END AS max_price`
+          `CASE WHEN items.available > 0 AND items.search_is_store_minter = true AND items.price <= $2 THEN GREATEST(items.price, nfts_with_orders.max_price) ELSE nfts_with_orders.max_price END AS max_price`
         )
         expect(query).not.toContain(`AND orders.price >= $`)
         expect(query.values.includes(maxPrice)).toBe(true)

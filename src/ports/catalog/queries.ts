@@ -278,7 +278,7 @@ const getMinPriceCase = (filters: CatalogQueryFilters) => {
 
 const getMaxPriceCase = (filters: CatalogQueryFilters) => {
   return SQL`CASE
-                WHEN available > 0 AND items.search_is_store_minter = true 
+                WHEN items.available > 0 AND items.search_is_store_minter = true 
                 `.append(
     filters.maxPrice ? SQL`AND items.price <= ${filters.maxPrice}` : SQL``
   ).append(` THEN GREATEST(items.price, nfts_with_orders.max_price)
