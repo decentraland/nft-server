@@ -265,6 +265,28 @@ const getOwnersJoin = (schemaVersion: string) => {
     )
 }
 
+const getMinPriceCase = (filters: CatalogQueryFilters) => {
+  return SQL`CASE
+                WHEN items.available > 0 AND items.search_is_store_minter = true 
+                `.append(
+    filters.minPrice ? SQL`AND items.price >= ${filters.minPrice}` : SQL``
+  ).append(` THEN LEAST(items.price, nfts_with_orders.min_price) 
+                ELSE nfts_with_orders.min_price 
+              END AS min_price
+            `)
+}
+
+const getMaxPriceCase = (filters: CatalogQueryFilters) => {
+  return SQL`CASE
+                WHEN items.available > 0 AND items.search_is_store_minter = true 
+                `.append(
+    filters.maxPrice ? SQL`AND items.price <= ${filters.maxPrice}` : SQL``
+  ).append(` THEN GREATEST(items.price, nfts_with_orders.max_price)
+          ELSE nfts_with_orders.max_price 
+          END AS max_price
+          `)
+}
+
 export const getCollectionsItemsCatalogQuery = (
   schemaVersion: string,
   filters: CatalogQueryFilters
@@ -304,14 +326,16 @@ export const getCollectionsItemsCatalogQuery = (
     .append(
       `
               nfts_with_orders.max_order_created_at as max_order_created_at,
-              CASE
-                WHEN items.available > 0 AND items.search_is_store_minter = true THEN LEAST(items.price, nfts_with_orders.min_price) 
-                ELSE nfts_with_orders.min_price 
-              END AS min_price,
-              CASE 
-                WHEN available > 0 AND items.search_is_store_minter = true THEN GREATEST(items.price, nfts_with_orders.max_price) 
-                ELSE nfts_with_orders.max_price END
-             AS max_price
+              `
+    )
+    .append(getMinPriceCase(filters))
+    .append(
+      `,
+              `
+    )
+    .append(getMaxPriceCase(filters))
+    .append(
+      `
             FROM `
     )
     .append(schemaVersion)
