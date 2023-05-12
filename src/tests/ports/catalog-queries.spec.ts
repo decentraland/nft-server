@@ -404,7 +404,11 @@ test('catalog utils', () => {
         query = getCollectionsItemsCatalogQuery('aSchemaVersion', filters)
       })
       it('should apply the range to the orders table JOIN', () => {
+        const queryTextFormatted = query.text.replace(/\s+/g, ' ')
         expect(query.text).toContain(`AND orders.price >= $`)
+        expect(queryTextFormatted).toContain(
+          `CASE WHEN items.available > 0 AND items.search_is_store_minter = true AND items.price >= $2 THEN LEAST(items.price, nfts_with_orders.min_price) ELSE nfts_with_orders.min_price END AS min_price`
+        )
         expect(query.text).not.toContain(`AND orders.price <= $`)
         expect(query.values.includes(minPrice)).toBe(true)
       })
@@ -418,7 +422,11 @@ test('catalog utils', () => {
         query = getCollectionsItemsCatalogQuery('aSchemaVersion', filters)
       })
       it('should apply the range to the orders table JOIN', () => {
+        const queryTextFormatted = query.text.replace(/\s+/g, ' ')
         expect(query.text).toContain(`AND orders.price <= $`)
+        expect(queryTextFormatted).toContain(
+          `CASE WHEN available > 0 AND items.search_is_store_minter = true AND items.price <= $2 THEN GREATEST(items.price, nfts_with_orders.max_price) ELSE nfts_with_orders.max_price END AS max_price`
+        )
         expect(query).not.toContain(`AND orders.price >= $`)
         expect(query.values.includes(maxPrice)).toBe(true)
       })
