@@ -17,7 +17,7 @@ import {
   getCatalogQuery,
   fromCollectionsItemDbResultToCatalogItem,
 } from './utils'
-import { getLatestSubgraphSchema } from './queries'
+import { getItemIdsBySearchTextQuery, getLatestSubgraphSchema } from './queries'
 
 export function createCatalogComponent(options: {
   database: IPgComponent
@@ -55,11 +55,23 @@ export function createCatalogComponent(options: {
         })
 
       const schemas = await Promise.all(latestSchemasPromises)
+      const reducedSchemas = schemas.reduce(
+        (acc, curr) => ({ ...acc, ...curr }),
+        {}
+      )
+      if (filters.search) {
+        for (const schema of Object.values(reducedSchemas)) {
+          const filteredItemsById = await client.query<CollectionsItemDBResult>(
+            getItemIdsBySearchTextQuery(schema, filters.search)
+          )
+          filters.ids = [
+            ...(filters.ids ?? []),
+            ...filteredItemsById.rows.map(({ id }) => id),
+          ]
+        }
+      }
       const results = await client.query<CollectionsItemDBResult>(
-        getCatalogQuery(
-          schemas.reduce((acc, curr) => ({ ...acc, ...curr }), {}),
-          filters
-        )
+        getCatalogQuery(reducedSchemas, filters)
       )
       catalogItems = results.rows.map((res) =>
         fromCollectionsItemDbResultToCatalogItem(res, network)

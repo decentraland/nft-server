@@ -218,7 +218,6 @@ export const getCollectionsQueryWhere = (filters: CatalogFilters) => {
     filters.creator?.length ? getCreatorWhere(filters) : undefined,
     filters.isSoldOut ? getIsSoldOutWhere() : undefined,
     filters.isOnSale !== undefined ? getIsOnSale(filters) : undefined,
-    filters.search ? getSearchWhere(filters) : undefined,
     filters.isWearableHead ? getisWearableHeadAccessoryWhere() : undefined,
     filters.isWearableAccessory ? getWearableAccessoryWhere() : undefined,
     filters.wearableCategory ? getWearableCategoryWhere(filters) : undefined,
@@ -414,5 +413,18 @@ export const getCollectionsItemsCatalogQuery = (
 
   addQuerySort(query, filters)
   addQueryPagination(query, filters)
+  return query
+}
+
+export const getItemIdsBySearchTextQuery = (
+  schemaVersion: string,
+  search: CatalogQueryFilters['search']
+) => {
+  const query = SQL`SELECT items.id`
+    .append(` FROM `)
+    .append(schemaVersion)
+    .append(`.item_active AS items WHERE `)
+    .append(getSearchWhere({ search }))
+
   return query
 }
