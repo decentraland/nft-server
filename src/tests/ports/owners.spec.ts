@@ -88,7 +88,7 @@ describe('when fetching owners', () => {
     })
   })
 
-  describe('when the subgraph component resolves 4 owner db fragments', () => {
+  describe('when the database component resolves 4 owner db fragments', () => {
     let ownersDBRows: OwnerDBRow[]
     let ownersCountDbRows: OwnerCountDBRow[]
     let latestSubgraphSchemaResponse: {
