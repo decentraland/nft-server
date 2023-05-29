@@ -1,8 +1,5 @@
-import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { IPgComponent } from '@well-known-components/pg-component'
 import { FetchOptions } from '../../ports/merger/types'
-import { ICatalogComponent } from '../../ports/catalog/types'
-import { IFavoritesComponent } from '../../ports/favorites/types'
 import {
   BAD_REQUEST_ERROR_MESSAGE,
   createOwnersComponent,
