@@ -27,7 +27,7 @@ export function createCatalogComponent(options: {
   const { database, favoritesComponent, isFavoritesEnabled } = options
 
   async function fetch(filters: CatalogOptions) {
-    const { network } = filters
+    const { network, creator } = filters
     const marketplaceChainId = getMarketplaceChainId()
     const collectionsChainId = getCollectionsChainId()
     let catalogItems: Item[] = []
@@ -35,7 +35,11 @@ export function createCatalogComponent(options: {
     const client = await database.getPool().connect()
     try {
       const sources = (
-        network ? [network] : [Network.ETHEREUM, Network.MATIC]
+        network
+          ? [network]
+          : creator
+          ? [Network.MATIC]
+          : [Network.ETHEREUM, Network.MATIC]
       ).reduce((acc, curr) => {
         acc[curr] = getSubgraphNameForNetwork(
           curr,
