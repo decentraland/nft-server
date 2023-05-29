@@ -1,12 +1,18 @@
 import { FetchOptions } from '../merger/types'
 import { OwnersFilters, OwnersSortBy } from './types'
-import { getOwnersQuery } from './utils'
+import {
+  OWNERS_QUERY_DEFAULT_LIMIT,
+  OWNERS_QUERY_DEFAULT_OFFSET,
+  getOwnersSQLQuery,
+} from './utils'
 
-describe('#getOwnersQuery', () => {
+describe('#getOwnersSQLQuery', () => {
+  let schemaVersion: string
   let queryFilters: FetchOptions<OwnersFilters, OwnersSortBy>
   let isCount: boolean
 
   beforeEach(() => {
+    schemaVersion = 'sgd123'
     queryFilters = {
       contractAddress: 'contractAddress',
       itemId: 'itemId',
@@ -22,71 +28,107 @@ describe('#getOwnersQuery', () => {
       isCount = true
     })
 
-    it('should have first value', () => {
-      const query = getOwnersQuery(queryFilters, isCount)
+    it('should have COUNT(*) as part of the query', () => {
+      const query = getOwnersSQLQuery(schemaVersion, queryFilters, isCount)
 
-      expect(query).toContain('first: 1000')
+      expect(query.text).toContain('COUNT(*)')
     })
 
-    it('should have skip value', () => {
-      const query = getOwnersQuery(queryFilters, isCount)
+    it('should not have offset value', () => {
+      const query = getOwnersSQLQuery(schemaVersion, queryFilters, isCount)
 
-      expect(query).toContain(`skip: ${queryFilters.skip}`)
+      expect(query.text).not.toContain(`OFFSET ${queryFilters.skip}`)
     })
 
-    it('should contain id', () => {
-      const query = getOwnersQuery(queryFilters, isCount)
+    it('should not have limit value', () => {
+      const query = getOwnersSQLQuery(schemaVersion, queryFilters, isCount)
 
-      expect(query).toContain('id')
-      expect(query).not.toContain('...ownerFragment')
-      expect(query).not.toContain('fragment ownerFragment on NFT')
+      expect(query.text).not.toContain(`LIMIT ${queryFilters.first}`)
+    })
+
+    it('should the WHERE statement and have both contractAddress and itemId in the variables array', () => {
+      const query = getOwnersSQLQuery(schemaVersion, queryFilters, isCount)
+
+      expect(query.text).toContain('WHERE')
+      expect(query.values).toEqual([
+        queryFilters.contractAddress,
+        queryFilters.itemId,
+      ])
     })
   })
 
   describe('when isCount is false', () => {
-    it('should have first value as first prop', () => {
-      const query = getOwnersQuery(queryFilters, isCount)
+    it('should have the SELECT and main fields as part of the query', () => {
+      const query = getOwnersSQLQuery(schemaVersion, queryFilters)
 
-      expect(query).toContain(`first: ${queryFilters.first}`)
+      expect(query.text).toContain('nfts.owner, nfts.issued_id, nfts.token_id')
+    })
+    describe('and has first', () => {
+      it('should have LIMIT value ', () => {
+        const query = getOwnersSQLQuery(schemaVersion, queryFilters)
+
+        expect(query.text).toContain(`LIMIT $`)
+        expect(query.values.includes(queryFilters.first)).toBeTruthy()
+      })
+    })
+    describe('and has no first', () => {
+      beforeEach(() => {
+        queryFilters.first = undefined
+      })
+      it('should have LIMIT default value ', () => {
+        const query = getOwnersSQLQuery(schemaVersion, queryFilters)
+
+        expect(query.text).toContain(`LIMIT $`)
+        expect(query.values.includes(OWNERS_QUERY_DEFAULT_LIMIT)).toBeTruthy()
+      })
     })
 
-    it('should have skip value as skip prop', () => {
-      const query = getOwnersQuery(queryFilters, isCount)
+    describe('and has skip', () => {
+      it('should have OFFSET value ', () => {
+        const query = getOwnersSQLQuery(schemaVersion, queryFilters)
 
-      expect(query).toContain(`skip: ${queryFilters.skip}`)
+        expect(query.text).toContain(`OFFSET $`)
+        expect(query.values.includes(queryFilters.skip)).toBeTruthy()
+      })
     })
+    describe('and has no skip', () => {
+      beforeEach(() => {
+        queryFilters.skip = undefined
+      })
+      it('should have OFFSET default value ', () => {
+        const query = getOwnersSQLQuery(schemaVersion, queryFilters)
 
-    it('should contain ownerFragment', () => {
-      const query = getOwnersQuery(queryFilters, isCount)
-
-      expect(query).toContain('...ownerFragment')
-      expect(query).toContain('fragment ownerFragment on NFT')
+        expect(query.text).toContain(`OFFSET $`)
+        expect(query.values.includes(OWNERS_QUERY_DEFAULT_OFFSET)).toBeTruthy()
+      })
     })
   })
 
-  describe('when the sortby filter is undefined', () => {
+  describe('when the sortBy filter is undefined', () => {
     beforeEach(() => {
       delete queryFilters.sortBy
     })
 
     it('should not contain orderBy', () => {
-      const query = getOwnersQuery(queryFilters, isCount)
+      const query = getOwnersSQLQuery(schemaVersion, queryFilters)
 
-      expect(query).not.toContain(`orderBy`)
+      expect(query.text).not.toContain(`ORDER BY`)
     })
   })
 
   describe('when sortBy is not undefined', () => {
-    it('should have orderBy value as sortBy prop ', () => {
-      const query = getOwnersQuery(queryFilters, isCount)
+    describe('and is sorting by issued_id', () => {
+      it('should have orderBy value as sortBy prop ', () => {
+        const query = getOwnersSQLQuery(schemaVersion, queryFilters)
 
-      expect(query).toContain(`orderBy: ${queryFilters.sortBy}`)
+        expect(query.text).toContain('ORDER BY issued_id')
+      })
     })
   })
 
   describe('when orderDirection is undefined', () => {
     it('should not contain orderDirection', () => {
-      const query = getOwnersQuery(queryFilters, isCount)
+      const query = getOwnersSQLQuery(schemaVersion, queryFilters, isCount)
 
       expect(query).not.toContain(`orderDirection`)
     })
@@ -97,17 +139,12 @@ describe('#getOwnersQuery', () => {
       queryFilters = { ...queryFilters, orderDirection: 'desc' }
     })
 
-    it('should have orderDirection value as orderDirection ', () => {
-      const query = getOwnersQuery(queryFilters, isCount)
+    it('should have ORDER BY value and the direction set correctly ', () => {
+      const query = getOwnersSQLQuery(schemaVersion, queryFilters, isCount)
 
-      expect(query).toContain(`orderDirection: ${queryFilters.orderDirection}`)
+      expect(query.text).toContain(
+        `${queryFilters.orderDirection?.toUpperCase()}`
+      )
     })
-  })
-
-  it('should have contractAddress and itemId values as the ones passed by params', () => {
-    const query = getOwnersQuery(queryFilters, isCount)
-
-    expect(query).toContain(`${queryFilters.contractAddress}`)
-    expect(query).toContain(`${queryFilters.itemId}`)
   })
 })
