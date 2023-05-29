@@ -36,7 +36,6 @@ export const getDbSchema = async (
 ) => {
   const marketplaceChainId = getMarketplaceChainId()
   const collectionsChainId = getCollectionsChainId()
-  let schemaName
   let network = options.network || Network.MATIC // defaults to MATIC
 
   if (options.contractAddress) {
