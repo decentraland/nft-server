@@ -55,16 +55,13 @@ export const getDbSchema = async (
     }
   }
 
-  if (network) {
-    const source = getSubgraphNameForNetwork(
-      network,
-      network === Network.ETHEREUM ? marketplaceChainId : collectionsChainId
-    )
-    const schemaQueryResult = await client.query<{
-      entity_schema: string
-    }>(getLatestSubgraphSchema(source))
+  const source = getSubgraphNameForNetwork(
+    network,
+    network === Network.ETHEREUM ? marketplaceChainId : collectionsChainId
+  )
+  const schemaQueryResult = await client.query<{
+    entity_schema: string
+  }>(getLatestSubgraphSchema(source))
 
-    schemaName = schemaQueryResult.rows[0].entity_schema
-  }
-  return schemaName
+  return schemaQueryResult.rows[0].entity_schema
 }

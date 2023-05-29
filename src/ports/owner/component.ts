@@ -1,3 +1,4 @@
+import { PoolClient } from 'pg'
 import { IPgComponent } from '@well-known-components/pg-component'
 import { getDbSchema } from '../../logic/db/connection'
 import { HttpError } from '../../logic/http/response'
@@ -28,9 +29,9 @@ export function createOwnersComponent(options: {
         400
       )
     }
-
+    let client: PoolClient | undefined = undefined
     try {
-      const client = await database.getPool().connect()
+      client = await database.getPool().connect()
       const schemaName = await getDbSchema(client, {
         contractAddress: filters.contractAddress,
       })
@@ -68,6 +69,8 @@ export function createOwnersComponent(options: {
       }
     } catch (e) {
       throw new HttpError(BAD_REQUEST_ERROR_MESSAGE, 400)
+    } finally {
+      client?.release()
     }
   }
 
