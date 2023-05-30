@@ -68,6 +68,11 @@ export function createCatalogComponent(options: {
           const filteredItemsById = await client.query<CollectionsItemDBResult>(
             getItemIdsBySearchTextQuery(schema, filters.search)
           )
+          if (filteredItemsById.rowCount === 0) {
+            // if no items matched the search text, return empty result
+            client.release()
+            return { data: [], total: 0 }
+          }
           filters.ids = [
             ...(filters.ids ?? []),
             ...filteredItemsById.rows.map(({ id }) => id),
@@ -91,13 +96,15 @@ export function createCatalogComponent(options: {
         catalogItems = enhanceItemsWithPicksStats(catalogItems, picksStats)
       }
     } catch (e) {
+      console.error(e)
       throw new HttpError(
         "Couldn't fetch the catalog with the filters provided",
         400
       )
+    } finally {
+      client.release()
     }
 
-    client.release()
     return { data: catalogItems, total: +total }
   }
 
