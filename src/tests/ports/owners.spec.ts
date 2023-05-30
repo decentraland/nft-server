@@ -1,28 +1,46 @@
-import { ISubgraphComponent } from '@well-known-components/thegraph-component'
+import { IPgComponent } from '@well-known-components/pg-component'
 import { FetchOptions } from '../../ports/merger/types'
-import { createOwnersComponent } from '../../ports/owner/component'
+import {
+  BAD_REQUEST_ERROR_MESSAGE,
+  createOwnersComponent,
+} from '../../ports/owner/component'
 import {
   IOwnerDataComponent,
-  OwnerFragment,
+  OwnerCountDBRow,
+  OwnerDBRow,
   OwnersFilters,
   OwnersSortBy,
 } from '../../ports/owner/types'
+import { createTestDbComponent } from '../components'
 
-let collectionSubgraphMock: ISubgraphComponent
 let getOwnersQueryMock: jest.Mock
 let ownersComponent: IOwnerDataComponent
 let queryFilters: FetchOptions<OwnersFilters, OwnersSortBy>
 
+let dbQueryMock: jest.Mock
+let dbClientQueryMock: jest.Mock
+let dbClientReleaseMock: jest.Mock
+let database: IPgComponent
+
 describe('when fetching owners', () => {
   beforeEach(() => {
     getOwnersQueryMock = jest.fn()
+    dbQueryMock = jest.fn()
+    dbClientQueryMock = jest.fn()
+    dbClientReleaseMock = jest.fn()
 
-    collectionSubgraphMock = {
-      query: getOwnersQueryMock,
-    }
+    database = createTestDbComponent({
+      query: dbQueryMock,
+      getPool: jest.fn().mockReturnValue({
+        connect: () => ({
+          query: dbClientQueryMock,
+          release: dbClientReleaseMock,
+        }),
+      }),
+    })
 
     ownersComponent = createOwnersComponent({
-      subgraph: collectionSubgraphMock,
+      database,
     })
 
     queryFilters = {
@@ -58,7 +76,7 @@ describe('when fetching owners', () => {
     })
   })
 
-  describe('when the subgraph component throws an error', () => {
+  describe('when the database component throws an error', () => {
     beforeEach(() => {
       getOwnersQueryMock.mockRejectedValueOnce(new Error('An error occurred'))
     })
@@ -66,63 +84,68 @@ describe('when fetching owners', () => {
     it('should be propagated to fetchAndCount', () => {
       return expect(
         ownersComponent.fetchAndCount(queryFilters)
-      ).rejects.toThrowError('An error occurred')
+      ).rejects.toThrowError(BAD_REQUEST_ERROR_MESSAGE)
     })
   })
 
-  describe('when the subgraph component resolves 4 owner fragments', () => {
-    let ownersFragment: OwnerFragment[]
-    let countResponse: { id: string }[]
+  describe('when the database component resolves 4 owner db fragments', () => {
+    let ownersDBRows: OwnerDBRow[]
+    let ownersCountDbRows: OwnerCountDBRow[]
+    let latestSubgraphSchemaResponse: {
+      rows: { entity_schema: string }[]
+      rowCount: number
+    }
+    let latestSchema = 'sgd1234'
+    let total: string
 
     beforeEach(() => {
-      ownersFragment = [
+      latestSubgraphSchemaResponse = {
+        rows: [
+          {
+            entity_schema: latestSchema,
+          },
+        ],
+        rowCount: 0,
+      }
+      total = '4'
+      ownersDBRows = [
         {
-          issuedId: `issue1`,
-          owner: { id: `1` },
-          searchOrderStatus: 'null',
-          searchOrderExpiresAt: 'null',
-          tokenId: '1'
+          issued_id: 'issue1',
+          owner: '1',
+          token_id: '1',
         },
         {
-          issuedId: `issue2`,
-          owner: { id: `2` },
-          searchOrderStatus: 'open',
-          searchOrderExpiresAt: '1674604800000',
-          tokenId: '2'
+          issued_id: `issue2`,
+          owner: '2',
+          token_id: '2',
         },
         {
-          issuedId: `issue3`,
-          owner: { id: `3` },
-          searchOrderStatus: 'null',
-          searchOrderExpiresAt: 'null',
-          tokenId: '3'
+          issued_id: `issue3`,
+          owner: '3',
+          token_id: '3',
         },
         {
-          issuedId: `issue4`,
-          owner: { id: `4` },
-          searchOrderStatus: 'open',
-          searchOrderExpiresAt: '1674604800000',
-          tokenId: '4'
-        },
-      ]
-
-      countResponse = [
-        {
-          id: `issue1`,
-        },
-        {
-          id: `issue2`,
-        },
-        {
-          id: `issue3`,
-        },
-        {
-          id: `issue4`,
+          issued_id: `issue4`,
+          owner: '4',
+          token_id: '4',
         },
       ]
 
-      getOwnersQueryMock.mockResolvedValueOnce({ nfts: ownersFragment })
-      getOwnersQueryMock.mockResolvedValueOnce({ nfts: countResponse })
+      ownersCountDbRows = [
+        {
+          count: total,
+        },
+      ]
+
+      dbClientQueryMock.mockResolvedValueOnce(latestSubgraphSchemaResponse)
+      dbClientQueryMock.mockResolvedValueOnce({
+        rows: ownersDBRows,
+        rowCount: 4,
+      })
+      dbClientQueryMock.mockResolvedValueOnce({
+        rows: ownersCountDbRows,
+        rowCount: 1,
+      })
     })
 
     it('should be mapped to 4 owners', () => {
@@ -131,33 +154,25 @@ describe('when fetching owners', () => {
           {
             issuedId: `issue1`,
             ownerId: `1`,
-            orderStatus: 'null',
-            orderExpiresAt: 'null',
-            tokenId: '1'
+            tokenId: '1',
           },
           {
             issuedId: `issue2`,
             ownerId: `2`,
-            orderStatus: 'open',
-            orderExpiresAt: '1674604800000',
-            tokenId: '2'
+            tokenId: '2',
           },
           {
             issuedId: `issue3`,
             ownerId: `3`,
-            orderStatus: 'null',
-            orderExpiresAt: 'null',
-            tokenId: '3'
+            tokenId: '3',
           },
           {
             issuedId: `issue4`,
             ownerId: `4`,
-            orderStatus: 'open',
-            orderExpiresAt: '1674604800000',
-            tokenId: '4'
+            tokenId: '4',
           },
         ],
-        total: countResponse.length,
+        total: Number(total),
       }
 
       return expect(

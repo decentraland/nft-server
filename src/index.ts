@@ -470,9 +470,10 @@ async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
+  const satsumaDatabase = await createPgComponent({ config, logs, metrics })
   // owners
   const owners = createOwnersComponent({
-    subgraph: collectionsSubgraph,
+    database: satsumaDatabase,
   })
 
   // mints
@@ -697,7 +698,6 @@ async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
-  const satsumaDatabase = await createPgComponent({ config, logs, metrics })
   const catalog = await createCatalogComponent({
     favoritesComponent,
     isFavoritesEnabled,

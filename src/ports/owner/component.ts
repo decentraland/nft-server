@@ -1,18 +1,24 @@
-import { ISubgraphComponent } from '@well-known-components/thegraph-component'
+import { PoolClient } from 'pg'
+import { IPgComponent } from '@well-known-components/pg-component'
+import { getDbSchema } from '../../logic/db/connection'
 import { HttpError } from '../../logic/http/response'
 import { FetchOptions } from '../merger/types'
 import {
   IOwnerDataComponent,
-  OwnerFragment,
+  OwnerCountDBRow,
+  OwnerDBRow,
   OwnersFilters,
   OwnersSortBy,
 } from './types'
-import { MAX_RESULTS, getOwnersQuery } from './utils'
+import { getOwnersSQLQuery } from './utils'
+
+export const BAD_REQUEST_ERROR_MESSAGE =
+  "Couldn't fetch owners with the filters provided"
 
 export function createOwnersComponent(options: {
-  subgraph: ISubgraphComponent
+  database: IPgComponent
 }): IOwnerDataComponent {
-  const { subgraph } = options
+  const { database } = options
 
   async function fetchAndCount(
     filters: FetchOptions<OwnersFilters, OwnersSortBy>
@@ -23,35 +29,49 @@ export function createOwnersComponent(options: {
         400
       )
     }
+    let client: PoolClient | undefined = undefined
+    try {
+      client = await database.getPool().connect()
+      const schemaName = await getDbSchema(client, {
+        contractAddress: filters.contractAddress,
+      })
 
-    const parsedFilters: FetchOptions<OwnersFilters, OwnersSortBy> = {
-      ...filters,
-      sortBy: filters.sortBy as OwnersSortBy,
-    }
+      if (!schemaName) {
+        throw new HttpError('Contract not found', 404)
+      }
 
-    const data: { nfts: OwnerFragment[] } = await subgraph.query(
-      getOwnersQuery(parsedFilters, false)
-    )
+      const parsedFilters: FetchOptions<OwnersFilters, OwnersSortBy> = {
+        ...filters,
+        sortBy: filters.sortBy as OwnersSortBy,
+      }
 
-    let count = 0
-
-    while (true) {
-      const countData: { nfts: { id: string }[] } = await subgraph.query(
-        getOwnersQuery({ ...parsedFilters, skip: count }, true)
+      const ownersQuery = getOwnersSQLQuery(schemaName, parsedFilters)
+      const ownersCountQuery = getOwnersSQLQuery(
+        schemaName,
+        parsedFilters,
+        true
       )
-      count += countData.nfts.length
-      if (countData.nfts.length < MAX_RESULTS) break
+
+      const [owners, ownersCount] = await Promise.all([
+        client.query<OwnerDBRow>(ownersQuery),
+        client.query<OwnerCountDBRow>(ownersCountQuery),
+      ])
+
+      const results = owners.rows.map((owner: OwnerDBRow) => ({
+        issuedId: owner.issued_id,
+        ownerId: owner.owner,
+        tokenId: owner.token_id,
+      }))
+
+      return {
+        data: results,
+        total: Number(ownersCount.rows[0].count),
+      }
+    } catch (e) {
+      throw new HttpError(BAD_REQUEST_ERROR_MESSAGE, 400)
+    } finally {
+      client?.release()
     }
-
-    const results = data.nfts.map((owner: OwnerFragment) => ({
-      issuedId: owner.issuedId,
-      ownerId: owner.owner.id,
-      orderStatus: owner.searchOrderStatus,
-      orderExpiresAt: owner.searchOrderExpiresAt,
-      tokenId: owner.tokenId,
-    }))
-
-    return { data: results, total: count }
   }
 
   return {
