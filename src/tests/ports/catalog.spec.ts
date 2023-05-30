@@ -2,7 +2,10 @@ import { CatalogFilters, ChainId, Network } from '@dcl/schemas'
 import { IPgComponent } from '@well-known-components/pg-component'
 import { createTestDbComponent, test } from '../../../src/tests/components'
 import { createCatalogComponent } from '../../ports/catalog/component'
-import { getLatestSubgraphSchema } from '../../ports/catalog/queries'
+import {
+  getItemIdsBySearchTextQuery,
+  getLatestSubgraphSchema,
+} from '../../ports/catalog/queries'
 import {
   CollectionsItemDBResult,
   ICatalogComponent,
@@ -10,8 +13,46 @@ import {
 import {
   getSubgraphNameForNetwork,
   fromCollectionsItemDbResultToCatalogItem,
+  getCatalogQuery,
 } from '../../ports/catalog/utils'
 import { IFavoritesComponent, PickStats } from '../../ports/favorites/types'
+
+const mockedDBItemResponse: CollectionsItemDBResult = {
+  id: '0xe42257bb4aada439179d736a64a736be0693a4ec-2',
+  total_rows: 1,
+  metadata: {
+    id: '0xe42257bb4aada439179d736a64a736be0693a4ec-2',
+    description: 'Or will it make sense when we fall from grace?',
+    category: 'horror',
+    body_shapes: ['BaseMale', 'BaseFemale'],
+    rarity: 'legendary',
+    name: 'Descension',
+    loop: false,
+  },
+  image:
+    'https://peer-lb.decentraland.org/lambdas/collections/contents/urn:decentraland:matic:collections-v2:0xe42257bb4aada439179d736a64a736be0693a4ec:2/thumbnail',
+  blockchain_id: '2',
+  collection: '0xe42257bb4aada439179d736a64a736be0693a4ec',
+  rarity: 'legendary',
+  item_type: 'emote_v1',
+  price: '2000000000000000000',
+  available: '84',
+  search_is_store_minter: true,
+  creator: '0xc2877b05cfe462e585fe3de8046f7528998af6f1',
+  beneficiary: '0xc2877b05cfe462e585fe3de8046f7528998af6f1',
+  created_at: '1666157762',
+  updated_at: '1669312852',
+  reviewed_at: '1666250754',
+  sold_at: '1669312852',
+  network: Network.MATIC,
+  first_listed_at: '1666250996',
+  min_listing_price: null,
+  max_listing_price: null,
+  listings_count: null,
+  owners_count: null,
+  min_price: '2000000000000000000',
+  max_price: '2000000000000000000',
+}
 
 let dbQueryMock: jest.Mock
 let dbClientQueryMock: jest.Mock
@@ -154,7 +195,6 @@ test('catalog component', function () {
       let filters: CatalogFilters
       let latestSchemaMatic = 'sgd1234'
       let latestSchemaEthereum = 'sgd1234'
-      let dbItemResponse: CollectionsItemDBResult
       let pickStats: PickStats
 
       beforeEach(() => {
@@ -185,43 +225,6 @@ test('catalog component', function () {
           rowCount: 0,
         }
 
-        dbItemResponse = {
-          id: '0xe42257bb4aada439179d736a64a736be0693a4ec-2',
-          total_rows: 1,
-          metadata: {
-            id: '0xe42257bb4aada439179d736a64a736be0693a4ec-2',
-            description: 'Or will it make sense when we fall from grace?',
-            category: 'horror',
-            body_shapes: ['BaseMale', 'BaseFemale'],
-            rarity: 'legendary',
-            name: 'Descension',
-            loop: false,
-          },
-          image:
-            'https://peer-lb.decentraland.org/lambdas/collections/contents/urn:decentraland:matic:collections-v2:0xe42257bb4aada439179d736a64a736be0693a4ec:2/thumbnail',
-          blockchain_id: '2',
-          collection: '0xe42257bb4aada439179d736a64a736be0693a4ec',
-          rarity: 'legendary',
-          item_type: 'emote_v1',
-          price: '2000000000000000000',
-          available: '84',
-          search_is_store_minter: true,
-          creator: '0xc2877b05cfe462e585fe3de8046f7528998af6f1',
-          beneficiary: '0xc2877b05cfe462e585fe3de8046f7528998af6f1',
-          created_at: '1666157762',
-          updated_at: '1669312852',
-          reviewed_at: '1666250754',
-          sold_at: '1669312852',
-          network: Network.MATIC,
-          first_listed_at: '1666250996',
-          min_listing_price: null,
-          max_listing_price: null,
-          listings_count: null,
-          owners_count: null,
-          min_price: '2000000000000000000',
-          max_price: '2000000000000000000',
-        }
-
         dbClientQueryMock.mockResolvedValueOnce(
           latestSubgraphSchemaResponseForEthereum
         )
@@ -229,7 +232,7 @@ test('catalog component', function () {
           latestSubgraphSchemaResponseForMatic
         )
         dbClientQueryMock.mockResolvedValueOnce({
-          rows: [dbItemResponse],
+          rows: [mockedDBItemResponse],
           rowCount: 1,
         })
       })
@@ -238,7 +241,7 @@ test('catalog component', function () {
         expect(await catalogComponent.fetch(filters)).toEqual({
           data: [
             {
-              ...fromCollectionsItemDbResultToCatalogItem(dbItemResponse),
+              ...fromCollectionsItemDbResultToCatalogItem(mockedDBItemResponse),
               picks: pickStats,
             },
           ],
@@ -264,6 +267,109 @@ test('catalog component', function () {
         expect(dbClientQueryMock.mock.calls[2][0].strings[1]).toContain(
           'UNION ALL'
         )
+      })
+    })
+    describe('when fetching the catalog with a search text', () => {
+      let latestSubgraphSchemaResponse: {
+        rows: { entity_schema: string }[]
+        rowCount: number
+      }
+      let pickStats: PickStats
+      let network = Network.ETHEREUM
+      let filters: CatalogFilters
+      let latestSchema = 'sgd1234'
+      let search: string
+
+      beforeEach(() => {
+        search = 'aSearchTerm'
+        filters = {
+          network,
+          search,
+        }
+
+        latestSubgraphSchemaResponse = {
+          rows: [
+            {
+              entity_schema: latestSchema,
+            },
+          ],
+          rowCount: 1,
+        }
+        dbClientQueryMock.mockResolvedValueOnce(latestSubgraphSchemaResponse)
+      })
+
+      describe('and there are no matches for the search term', () => {
+        beforeEach(() => {
+          dbClientQueryMock.mockResolvedValueOnce({
+            rows: [],
+            rowCount: 0,
+          })
+        })
+        it('should return an empty array and a total count of 0', async () => {
+          expect(await catalogComponent.fetch(filters)).toEqual({
+            data: [],
+            total: 0,
+          })
+          expect(dbClientQueryMock.mock.calls.length).toEqual(2) // 1 for the schema name and 1 for the catalog search query
+          expect(dbClientQueryMock.mock.calls[0][0]).toEqual(
+            getLatestSubgraphSchema(
+              getSubgraphNameForNetwork(network, ChainId.ETHEREUM_GOERLI)
+            )
+          )
+          expect(dbClientQueryMock.mock.calls[1][0]).toEqual(
+            getItemIdsBySearchTextQuery(latestSchema, filters.search)
+          )
+          expect(dbClientQueryMock.mock.calls[1][0].values).toEqual([search])
+        })
+      })
+
+      describe('and there are matches for the search term', () => {
+        beforeEach(() => {
+          pickStats = {
+            itemId: '0xe42257bb4aada439179d736a64a736be0693a4ec-2',
+            count: 1,
+            pickedByUser: true,
+          }
+          getPicksStatsOfItemsMock.mockResolvedValue([pickStats])
+          dbClientQueryMock.mockResolvedValueOnce({
+            rows: [
+              {
+                id: mockedDBItemResponse.id,
+              },
+            ],
+            rowCount: 1,
+          })
+          dbClientQueryMock.mockResolvedValueOnce({
+            rows: [mockedDBItemResponse],
+            rowCount: 1,
+          })
+        })
+        it('should use the ids returned by the search query in the main catalog query', async () => {
+          expect(await catalogComponent.fetch(filters)).toEqual({
+            data: [
+              {
+                ...fromCollectionsItemDbResultToCatalogItem(
+                  mockedDBItemResponse
+                ),
+                picks: pickStats,
+              },
+            ],
+            total: 1,
+          })
+          expect(dbClientQueryMock.mock.calls.length).toEqual(3) // 1 for the schema name, 1 for the catalog search query and 1 for the main catalog query
+          expect(dbClientQueryMock.mock.calls[0][0]).toEqual(
+            getLatestSubgraphSchema(
+              getSubgraphNameForNetwork(network, ChainId.ETHEREUM_GOERLI)
+            )
+          )
+          expect(dbClientQueryMock.mock.calls[1][0]).toEqual(
+            getItemIdsBySearchTextQuery(latestSchema, filters.search)
+          )
+          expect(dbClientQueryMock.mock.calls[1][0].values).toEqual([search])
+          expect(dbClientQueryMock.mock.calls[2][0]).toEqual(
+            getCatalogQuery({ [network]: latestSchema }, filters)
+          )
+        })
       })
     })
   })
