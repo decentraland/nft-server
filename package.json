@@ -40,7 +40,7 @@
     "ajv": "^7.1.1",
     "bn.js": "^5.2.1",
     "decentraland-crypto-middleware": "^1.1.0",
-    "dotenv": "^8.2.0",
+    "dotenv": "^16.1.1",
     "etag": "^1.8.1",
     "ethers": "^5.7.2",
     "node-fetch": "^2.6.1",
