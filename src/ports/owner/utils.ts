@@ -24,7 +24,7 @@ export const getOwnersSQLQuery = (
 
   const where = [
     contractAddress
-      ? SQL`left(contract_address, 256) = ${contractAddress}`
+      ? SQL`left(nfts.contract_address, 256) = ${contractAddress}`
       : undefined,
     itemId ? SQL`nfts.item_blockchain_id = ${itemId}` : undefined,
   ].filter(Boolean)
