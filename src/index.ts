@@ -681,12 +681,21 @@ async function initComponents(): Promise<AppComponents> {
     chainId: collectionsChainId,
   })
 
+  // collections eth
+  const ethereumCollections = createCollectionsComponent({
+    subgraph: collectionsEthereumSubgraph,
+    network: Network.ETHEREUM,
+    chainId: marketplaceChainId,
+  })
+
   const collections = createMergerComponent<
     Collection,
     CollectionFilters,
     CollectionSortBy
   >({
-    sources: [createCollectionsSource(collectionsCollections)],
+    sources: [collectionsCollections, ethereumCollections].map(
+      createCollectionsSource
+    ),
     defaultSortBy: COLLECTION_DEFAULT_SORT_BY,
     directions: {
       [CollectionSortBy.NAME]: SortDirection.ASC,
