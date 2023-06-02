@@ -42,7 +42,7 @@
     "decentraland-crypto-middleware": "^1.1.0",
     "dotenv": "^8.2.0",
     "etag": "^1.8.1",
-    "ethers": "^5.7.2",
+    "ethers": "^6.4.1",
     "node-fetch": "^2.6.1",
     "p-limit": "^3.1.0",
     "seedrandom": "^3.0.5",
