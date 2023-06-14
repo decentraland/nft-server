@@ -70,7 +70,6 @@ export function createCatalogComponent(options: {
           )
           if (filteredItemsById.rowCount === 0) {
             // if no items matched the search text, return empty result
-            client.release()
             return { data: [], total: 0 }
           }
           filters.ids = [
