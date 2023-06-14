@@ -1,6 +1,6 @@
 ARG RUN
 
-FROM node:lts as builder
+FROM node:16 as builder
 
 WORKDIR /app
 
@@ -22,7 +22,7 @@ RUN npm run test
 RUN npm ci --only=production
 
 # build the release app
-FROM node:lts
+FROM node:16
 WORKDIR /app
 COPY --from=builder /app /app
 ENTRYPOINT [ "./entrypoint.sh" ]
