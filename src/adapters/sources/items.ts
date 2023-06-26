@@ -5,15 +5,10 @@ import { IFavoritesComponent } from '../../ports/favorites/types'
 import { enhanceItemsWithPicksStats } from '../../logic/favorites/utils'
 import { convertItemToSortableResult } from '../../logic/items/utils'
 
-export function createItemsSource(
-  components: {
-    itemsComponent: IItemsComponent
-    favoritesComponent: IFavoritesComponent
-  },
-  options?: {
-    isFavoritesEnabled?: boolean
-  }
-): IMergerComponent.Source<Item, ItemFilters, ItemSortBy> {
+export function createItemsSource(components: {
+  itemsComponent: IItemsComponent
+  favoritesComponent: IFavoritesComponent
+}): IMergerComponent.Source<Item, ItemFilters, ItemSortBy> {
   const { itemsComponent, favoritesComponent } = components
 
   async function fetch({
@@ -22,14 +17,12 @@ export function createItemsSource(
   }: FetchOptions<ItemOptions, ItemSortBy>) {
     let items = await itemsComponent.fetch(filters)
 
-    if (options && options.isFavoritesEnabled) {
-      const picksStats = await favoritesComponent.getPicksStatsOfItems(
-        items.map(({ id }) => id),
-        pickedBy
-      )
+    const picksStats = await favoritesComponent.getPicksStatsOfItems(
+      items.map(({ id }) => id),
+      pickedBy
+    )
 
-      items = enhanceItemsWithPicksStats(items, picksStats)
-    }
+    items = enhanceItemsWithPicksStats(items, picksStats)
 
     return items.map(convertItemToSortableResult)
   }

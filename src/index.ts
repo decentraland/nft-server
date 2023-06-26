@@ -199,9 +199,6 @@ async function initComponents(): Promise<AppComponents> {
     methods: await config.getString('CORS_METHOD'),
   }
 
-  // FF_FAVORITES
-  const isFavoritesEnabled = (await config.getNumber('FF_FAVORITES')) === 1
-
   const logs = await createLogComponent({ tracer })
 
   const server = await createServerComponent<GlobalContext>(
@@ -451,12 +448,10 @@ async function initComponents(): Promise<AppComponents> {
 
   const items = createMergerComponent<Item, ItemOptions, ItemSortBy>({
     sources: [
-      createItemsSource(
-        { itemsComponent: collectionsItems, favoritesComponent },
-        {
-          isFavoritesEnabled,
-        }
-      ),
+      createItemsSource({
+        itemsComponent: collectionsItems,
+        favoritesComponent,
+      }),
     ],
     defaultSortBy: ITEM_DEFAULT_SORT_BY,
     directions: {
@@ -520,16 +515,11 @@ async function initComponents(): Promise<AppComponents> {
   })
 
   // trendings
-  const trendings = createTrendingsComponent(
-    {
-      collectionsSubgraphComponent: collectionsSubgraph,
-      itemsComponent: items,
-      favoritesComponent,
-    },
-    {
-      isFavoritesEnabled,
-    }
-  )
+  const trendings = createTrendingsComponent({
+    collectionsSubgraphComponent: collectionsSubgraph,
+    itemsComponent: items,
+    favoritesComponent,
+  })
 
   // analytics day data for the marketplace subgraph
   const marketplaceAnalyticsDayData =
@@ -709,7 +699,6 @@ async function initComponents(): Promise<AppComponents> {
 
   const catalog = await createCatalogComponent({
     favoritesComponent,
-    isFavoritesEnabled,
     database: satsumaDatabase,
   })
 
