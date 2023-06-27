@@ -182,8 +182,6 @@ export async function initComponents(): Promise<AppComponents> {
   const collectionsChainId = getCollectionsChainId()
   const signaturesServer = await config.requireString('SIGNATURES_SERVER_URL')
 
-  const isFavoritesEnabled = (await config.getNumber('FF_FAVORITES')) === 1
-
   const cors = {
     origin: await config.getString('CORS_ORIGIN'),
     method: await config.getString('CORS_METHOD'),
@@ -387,13 +385,10 @@ export async function initComponents(): Promise<AppComponents> {
 
   const items = createMergerComponent<Item, ItemFilters, ItemSortBy>({
     sources: [
-      createItemsSource(
-        {
-          itemsComponent: collectionsItems,
-          favoritesComponent,
-        },
-        { isFavoritesEnabled }
-      ),
+      createItemsSource({
+        itemsComponent: collectionsItems,
+        favoritesComponent,
+      }),
     ],
     defaultSortBy: ITEM_DEFAULT_SORT_BY,
     directions: {
@@ -451,14 +446,11 @@ export async function initComponents(): Promise<AppComponents> {
   })
 
   // trendings
-  const trendings = createTrendingsComponent(
-    {
-      collectionsSubgraphComponent: collectionsSubgraph,
-      itemsComponent: items,
-      favoritesComponent,
-    },
-    { isFavoritesEnabled }
-  )
+  const trendings = createTrendingsComponent({
+    collectionsSubgraphComponent: collectionsSubgraph,
+    itemsComponent: items,
+    favoritesComponent,
+  })
 
   // analytics day data for the marketplace subgraph
   const marketplaceAnalyticsDayData = createAnalyticsDayDataComponent({
@@ -626,7 +618,6 @@ export async function initComponents(): Promise<AppComponents> {
   const catalog = await createCatalogComponent({
     database: satsumaDatabase,
     favoritesComponent,
-    isFavoritesEnabled,
   })
 
   return {

@@ -12,9 +12,6 @@ let components: {
   favoritesComponent: IFavoritesComponent
 }
 let itemSource: IMergerComponent.Source<Item, ItemOptions, ItemSortBy>
-let options: {
-  isFavoritesEnabled?: boolean
-}
 let fetchMock: jest.Mock
 let countMock: jest.Mock
 let getPicksStatsOfItemsMock: jest.Mock
@@ -38,12 +35,37 @@ beforeEach(() => {
     favoritesComponent: favoritesComponentMock,
   }
 
-  itemSource = createItemsSource(components, options)
+  itemSource = createItemsSource(components)
 })
 
 describe('when fetching items', () => {
   let items: Item[]
   let result: Sortable<Item, ItemSortBy>[]
+  let picksStats: PickStats[]
+  let pickedBy: string
+
+  beforeEach(() => {
+    itemSource = createItemsSource(components)
+
+    items = Array.from(
+      { length: 2 },
+      (_, i) =>
+        ({
+          id: `0x0-${i.toString()}`,
+          name: `item-name-${i}`,
+          contractAddress: '0x0',
+          itemId: i.toString(),
+        } as Item)
+    )
+    picksStats = items.map(
+      (item, i) =>
+        ({
+          itemId: item.id,
+          pickedByUser: i > 0,
+          count: i,
+        } as PickStats)
+    )
+  })
 
   describe('and fetching the items fails', () => {
     beforeEach(() => {
@@ -57,64 +79,8 @@ describe('when fetching items', () => {
     })
   })
 
-  describe('and the favorites feature is disabled', () => {
-    beforeEach(async () => {
-      options = {
-        isFavoritesEnabled: false,
-      }
-      itemSource = createItemsSource(components, options)
-
-      items = Array.from(
-        { length: 2 },
-        (_, i) =>
-          ({
-            id: `0x0-${i.toString()}`,
-            name: `item-name-${i}`,
-            contractAddress: '0x0',
-            itemId: i.toString(),
-          } as Item)
-      )
-      fetchMock.mockResolvedValueOnce(items)
-      result = await itemSource.fetch({})
-    })
-
-    it('should resolve to a list of items without enhancing them with their picks stats', () => {
-      expect(result).toEqual(items.map(convertItemToSortableResult))
-    })
-
-    it('should not have queried the picks stats', () => {
-      expect(getPicksStatsOfItemsMock).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('and the favorites feature is enabled', () => {
-    let picksStats: PickStats[]
-    let pickedBy: string
-
-    beforeEach(async () => {
-      options = {
-        isFavoritesEnabled: true,
-      }
-      itemSource = createItemsSource(components, options)
-
-      items = Array.from(
-        { length: 2 },
-        (_, i) =>
-          ({
-            id: `0x0-${i.toString()}`,
-            name: `item-name-${i}`,
-            contractAddress: '0x0',
-            itemId: i.toString(),
-          } as Item)
-      )
-      picksStats = items.map(
-        (item, i) =>
-          ({
-            itemId: item.id,
-            pickedByUser: i > 0,
-            count: i,
-          } as PickStats)
-      )
+  describe('and fetching the items does not fail', () => {
+    beforeEach(() => {
       fetchMock.mockResolvedValueOnce(items)
     })
 
@@ -190,20 +156,9 @@ describe('when fetching items', () => {
 })
 
 describe('when counting items', () => {
-  describe('and the favorites feature is disabled', () => {
+  describe('and the fetching the count of items succeeds', () => {
     beforeEach(() => {
-      itemSource = createItemsSource(components, { isFavoritesEnabled: false })
-      countMock.mockResolvedValueOnce(15)
-    })
-
-    it('should resolve to the number of items', () => {
-      return expect(itemSource.count({})).resolves.toBe(15)
-    })
-  })
-
-  describe('and the favorites feature is enabled', () => {
-    beforeEach(() => {
-      itemSource = createItemsSource(components, { isFavoritesEnabled: true })
+      itemSource = createItemsSource(components)
       countMock.mockResolvedValueOnce(10)
     })
 

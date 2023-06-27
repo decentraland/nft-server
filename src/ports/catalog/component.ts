@@ -22,9 +22,8 @@ import { getItemIdsBySearchTextQuery, getLatestSubgraphSchema } from './queries'
 export function createCatalogComponent(options: {
   database: IPgComponent
   favoritesComponent: IFavoritesComponent
-  isFavoritesEnabled: boolean
 }): ICatalogComponent {
-  const { database, favoritesComponent, isFavoritesEnabled } = options
+  const { database, favoritesComponent } = options
 
   async function fetch(filters: CatalogOptions) {
     const { network, creator } = filters
@@ -86,14 +85,12 @@ export function createCatalogComponent(options: {
       )
       total = results.rows[0]?.total ?? results.rows[0]?.total_rows ?? 0
 
-      if (isFavoritesEnabled) {
-        const picksStats = await favoritesComponent.getPicksStatsOfItems(
-          catalogItems.map(({ id }) => id),
-          filters.pickedBy
-        )
+      const picksStats = await favoritesComponent.getPicksStatsOfItems(
+        catalogItems.map(({ id }) => id),
+        filters.pickedBy
+      )
 
-        catalogItems = enhanceItemsWithPicksStats(catalogItems, picksStats)
-      }
+      catalogItems = enhanceItemsWithPicksStats(catalogItems, picksStats)
     } catch (e) {
       console.error(e)
       throw new HttpError(

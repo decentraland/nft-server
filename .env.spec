@@ -11,5 +11,3 @@ COLLECTIONS_CHAIN_ID=137
 API_VERSION=v1
 HTTP_SERVER_PORT=5005
 HTTP_SERVER_HOST=0.0.0.0
-
-FF_FAVORITES=1 # TODO (lists): remove after the release of the feature

@@ -84,7 +84,6 @@ test('catalog component', function () {
     catalogComponent = createCatalogComponent({
       database,
       favoritesComponent: favoritesComponentMock,
-      isFavoritesEnabled: true,
     })
   })
 
