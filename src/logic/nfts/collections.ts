@@ -55,6 +55,7 @@ export const getCollectionsFields = () => `
     searchOrderCreatedAt
     itemBlockchainId
     issuedId
+    urn
   }
 `
 
@@ -115,6 +116,7 @@ export type CollectionsFields = Omit<
   searchText?: string
   itemBlockchainId: string
   issuedId: string | null
+  urn: string
 }
 
 export type CollectionsFragment = CollectionsFields & {
