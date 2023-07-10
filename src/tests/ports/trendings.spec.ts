@@ -54,6 +54,7 @@ const getItem = (contractAddress: string, itemId: string) => ({
   reviewedAt: 1631882258000,
   soldAt: 1653899245000,
   firstListedAt: null,
+  urn: 'urn:decentraland:mumbai:collections-v2:0x5c8bf33e673dc712ba62c5459e59dd9a15d458ff:6',
 })
 
 const getPickStats = (itemId: string): PickStats => {

@@ -318,6 +318,7 @@ export const getCollectionsItemsCatalogQuery = (
               items.sold_at,
               ${filters.network} as network,
               items.first_listed_at,
+              items.urn,
               nfts_with_orders.min_price AS min_listing_price,
               nfts_with_orders.max_price AS max_listing_price, 
               COALESCE(nfts_with_orders.listings_count,0) as listings_count,`
