@@ -93,6 +93,7 @@ export function fromItemFragment(
     firstListedAt: fragment.firstListedAt
       ? +fragment.firstListedAt * 1000
       : null,
+    urn: fragment.urn,
   }
 
   return item
@@ -133,6 +134,7 @@ export const getItemFragment = () => `
     reviewedAt
     soldAt
     firstListedAt
+    urn
   }
 `
 
