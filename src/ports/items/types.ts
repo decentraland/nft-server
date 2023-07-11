@@ -48,6 +48,7 @@ export type ItemFragment = {
   soldAt: string
   beneficiary: string
   firstListedAt: string | null
+  urn: string
 }
 
 export type ItemOptions = ItemFilters & { pickedBy?: string }

@@ -52,6 +52,7 @@ const mockedDBItemResponse: CollectionsItemDBResult = {
   owners_count: null,
   min_price: '2000000000000000000',
   max_price: '2000000000000000000',
+  urn: 'urn:decentraland:matic:collections-v2:0xe42257bb4aada439179d736a64a736be0693a4ec:2',
 }
 
 let dbQueryMock: jest.Mock
@@ -154,6 +155,7 @@ test('catalog component', function () {
           owners_count: 1,
           min_price: '2000000000000000000',
           max_price: '2000000000000000000',
+          urn: 'urn:decentraland:matic:collections-v2:0xe42257bb4aada439179d736a64a736be0693a4ec:2',
         }
 
         dbClientQueryMock.mockResolvedValueOnce(latestSubgraphSchemaResponse)

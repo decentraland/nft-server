@@ -159,5 +159,6 @@ export function fromCollectionsItemDbResultToCatalogItem(
     minListingPrice: dbItem.min_listing_price,
     listings: Number(dbItem.listings_count),
     owners: Number(dbItem.owners_count),
+    urn: dbItem.urn,
   }
 }

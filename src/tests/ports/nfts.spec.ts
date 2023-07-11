@@ -163,6 +163,7 @@ describe('when fetching emotes', () => {
       issuedId: i.toString(),
       activeOrder: null,
       openRentalId: null,
+      urn: `urn:decentraland:mumbai:collections-v2:${contractAddress}:${i}`,
     }))
   })
 

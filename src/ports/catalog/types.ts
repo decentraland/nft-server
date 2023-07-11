@@ -41,6 +41,7 @@ export type CollectionsItemDBResult = {
     name: string
     loop?: boolean
   }
+  urn: string
 }
 
 export type CatalogQueryFilters = Omit<

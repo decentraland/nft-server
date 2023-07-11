@@ -38,6 +38,7 @@ describe('when building a result from the collections subgraph fragment', () => 
       issuedId: '1',
       activeOrder: null,
       openRentalId: null,
+      urn: 'urn:decentraland:mumbai:collections-v2:0x52c98c80a5aad12056596d3b2dd4139c327bc501:1',
     }
   })
 
@@ -80,7 +81,7 @@ describe('when building a result from the collections subgraph fragment', () => 
         category: EmoteCategory.DANCE,
         bodyShapes: [BodyShape.MALE, BodyShape.FEMALE],
         rarity: Rarity.LEGENDARY,
-        loop: false
+        loop: false,
       })
     })
   })
