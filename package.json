@@ -58,7 +58,7 @@
     "@types/node": "^14.14.28",
     "@types/seedrandom": "^3.0.2",
     "@well-known-components/test-helpers": "^1.4.0",
-    "dcl-tslint-config-standard": "^2.0.0",
+    "dcl-tslint-config-standard": "^3.0.0",
     "jest": "^27.0.6",
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8",
