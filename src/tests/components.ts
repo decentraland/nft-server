@@ -128,6 +128,7 @@ import {
   collectionsShouldFetch as collectionsShouldFetchPrices,
 } from '../logic/prices/collections'
 import {
+  getMarketplacePriceFiltersValidation,
   getMarketplacePricesQuery,
   marketplaceShouldFetch as marketplaceShouldFetchPrices,
 } from '../logic/prices/marketplace'
@@ -578,6 +579,7 @@ export async function initComponents(): Promise<AppComponents> {
   const marketplacePrices = createPricesComponent({
     subgraph: marketplaceSubgraph,
     queryGetter: getMarketplacePricesQuery,
+    customValidation: getMarketplacePriceFiltersValidation
   })
 
   const collectionsPrices = createPricesComponent({

@@ -14,12 +14,13 @@ import { consolidatePrices, getPricesQuery, MAX_RESULTS } from './utils'
 
 export function createPricesComponent(options: {
   subgraph: ISubgraphComponent
+  customValidation?: (filters: PriceFilters) => boolean
   queryGetter: (
     id: string,
     filters: PriceFilters
   ) => (filters: PriceFilters) => string
 }): IPricesComponent {
-  const { subgraph, queryGetter } = options
+  const { subgraph, queryGetter, customValidation } = options
 
   function isValid(filters: PriceFilters) {
     const { category, assetType } = filters
@@ -33,7 +34,7 @@ export function createPricesComponent(options: {
   }
 
   async function fetch(filters: PriceFilters) {
-    if (!isValid(filters)) {
+    if (!isValid(filters) || (customValidation && !customValidation(filters))) {
       return []
     }
 

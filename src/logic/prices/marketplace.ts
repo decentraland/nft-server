@@ -1,4 +1,9 @@
-import { Network, NFTCategory, NFTFilters } from '@dcl/schemas'
+import {
+  Network,
+  NFTCategory,
+  NFTFilters,
+  WearableCategory,
+} from '@dcl/schemas'
 import {
   addLandFilters,
   addWearableCategoryAndRaritiesFilters,
@@ -45,6 +50,14 @@ export const getNFTCategoryFromPriceCategory = (
     default:
       return [category]
   }
+}
+
+export const getMarketplacePriceFiltersValidation = (filters: PriceFilters) => {
+  const { wearableCategory } = filters
+  // There aren't any HANDS_WEAR wearables in the marketplace subgraph as its only available
+  // for new versions of wearables. If the wearableCategory filter is hands_wear we shouldn't
+  // fetch marketplace graph
+  return wearableCategory !== WearableCategory.HANDS_WEAR
 }
 
 export function getMarketplacePricesQuery(id: string) {
