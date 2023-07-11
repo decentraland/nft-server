@@ -106,4 +106,25 @@ describe('when getting prices', () => {
       ).rejects.toThrowError(error)
     })
   })
+
+  describe('and price component custom validation returns false', () => {
+    beforeEach(() => {
+      collectionsPriceComponent = createPricesComponent({
+        subgraph: collectionsSubgraph,
+        queryGetter: getCollectionPricesQuery,
+        customValidation: () => false
+      })
+    })
+
+    it('should retrurn empty array as a result', () => {
+      return expect(
+        collectionsPriceComponent.fetch(filters)
+      ).resolves.toEqual([])
+    })
+
+    it('should not have called the get query method', () => {
+      expect(collectionsSubgraphQueryMock).not.toHaveBeenCalled()
+    })
+  })
 })
+

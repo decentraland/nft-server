@@ -77,6 +77,7 @@ import {
   getCollectionsOrderBy,
 } from './logic/nfts/collections'
 import {
+  getMarketplacePriceFiltersValidation,
   getMarketplacePricesQuery,
   marketplaceShouldFetch as marketplaceShouldFetchPrices,
 } from './logic/prices/marketplace'
@@ -599,6 +600,7 @@ async function initComponents(): Promise<AppComponents> {
   const marketplacePrices = createPricesComponent({
     subgraph: marketplaceSubgraph,
     queryGetter: getMarketplacePricesQuery,
+    customValidation: getMarketplacePriceFiltersValidation,
   })
 
   const collectionsPrices = createPricesComponent({
