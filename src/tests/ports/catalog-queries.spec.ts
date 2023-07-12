@@ -14,11 +14,11 @@ import {
   getCollectionsItemsCatalogQuery,
   getCollectionsQueryWhere,
   getItemIdsBySearchTextQuery,
-  getLatestSubgraphSchema,
   getOrderBy,
 } from '../../ports/catalog/queries'
 import { FragmentItemType } from '../../ports/items/types'
 import { test } from '../components'
+import { getLatestSubgraphSchema } from '../../subgraphUtils'
 
 test('catalog utils', () => {
   describe('getCatalogQuery', () => {

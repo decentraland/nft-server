@@ -13,11 +13,11 @@ import {
   CatalogOptions,
 } from './types'
 import {
-  getSubgraphNameForNetwork,
   getCatalogQuery,
   fromCollectionsItemDbResultToCatalogItem,
 } from './utils'
-import { getItemIdsBySearchTextQuery, getLatestSubgraphSchema } from './queries'
+import { getItemIdsBySearchTextQuery } from './queries'
+import { getLatestSubgraphSchema, getSubgraphNameForNetwork } from '../../subgraphUtils'
 
 export function createCatalogComponent(options: {
   database: IPgComponent
