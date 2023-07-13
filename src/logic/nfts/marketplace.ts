@@ -154,6 +154,14 @@ export function getMarketplaceOrderBy(
   }
 }
 
+export const getMarketplaceFiltersValidation = (filters: NFTFilters) => {
+  const { wearableCategory } = filters
+  // There aren't any HANDS_WEAR wearables in the marketplace subgraph as its only available
+  // for new versions of wearables. If the wearableCategory filter is hands_wear we shouldn't
+  // fetch marketplace graph
+  return wearableCategory !== WearableCategory.HANDS_WEAR
+}
+
 export function fromMarketplaceNFTFragment(
   fragment: MarketplaceNFTFragment
 ): NFTResult {
