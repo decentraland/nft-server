@@ -64,6 +64,7 @@ import {
   fromMarketplaceNFTFragment,
   getMarketplaceExtraVariables,
   getMarketplaceExtraWhere,
+  getMarketplaceFiltersValidation,
   getMarketplaceFragment,
   getMarketplaceOrderBy,
   marketplaceShouldFetch,
@@ -360,6 +361,7 @@ async function initComponents(): Promise<AppComponents> {
     getSortByProp: getMarketplaceOrderBy,
     getExtraVariables: getMarketplaceExtraVariables,
     getExtraWhere: getMarketplaceExtraWhere,
+    getShouldFetch: getMarketplaceFiltersValidation
   })
 
   const collectionsNFTs = createNFTComponent({

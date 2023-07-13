@@ -16,6 +16,7 @@ export function createNFTComponent<T extends { id: string }>(options: {
   getSortByProp(sortBy?: NFTSortBy): keyof T
   getExtraVariables?: (options: NFTFilters) => string[]
   getExtraWhere?: (options: NFTFilters) => string[]
+  getShouldFetch?: (options: NFTFilters) => boolean 
 }): INFTsComponent {
   const {
     subgraph,
@@ -25,6 +26,7 @@ export function createNFTComponent<T extends { id: string }>(options: {
     getExtraWhere,
     getExtraVariables,
     fromFragment,
+    getShouldFetch,
   } = options
 
   function getFragmentFetcher(filters: NFTFilters) {
@@ -46,6 +48,9 @@ export function createNFTComponent<T extends { id: string }>(options: {
   }
 
   async function fetch(options: NFTFilters): Promise<NFTResult[]> {
+    if (getShouldFetch && !getShouldFetch(options)) {
+      return []
+    }
     if (
       options.tokenId &&
       options.contractAddresses &&
@@ -66,6 +71,9 @@ export function createNFTComponent<T extends { id: string }>(options: {
   }
 
   async function count(options: NFTFilters): Promise<number> {
+    if (getShouldFetch && !getShouldFetch(options)) {
+      return 0
+    }
     const fetchFragments = getFragmentFetcher(options)
     const fragments = await fetchFragments(true)
     return fragments.length
