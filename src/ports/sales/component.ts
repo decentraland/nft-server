@@ -7,8 +7,9 @@ export function createSalesComponent(options: {
   subgraph: ISubgraphComponent
   network: Network
   chainId: ChainId
+  shouldFetch?: (filters: SaleFilters) => boolean
 }): ISalesComponent {
-  const { subgraph, network, chainId } = options
+  const { subgraph, network, chainId, shouldFetch } = options
 
   function isValid(network: Network, filters: SaleFilters) {
     return (
@@ -20,7 +21,7 @@ export function createSalesComponent(options: {
   }
 
   async function fetch(filters: SaleFilters) {
-    if (!isValid(network, filters)) {
+    if (!isValid(network, filters) || (shouldFetch && !shouldFetch(filters))) {
       return []
     }
 
@@ -37,7 +38,7 @@ export function createSalesComponent(options: {
   }
 
   async function count(filters: SaleFilters) {
-    if (!isValid(network, filters)) {
+    if (!isValid(network, filters) || (shouldFetch && !shouldFetch(filters))) {
       return 0
     }
 
