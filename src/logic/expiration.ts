@@ -1,3 +1,3 @@
 export function isExpired(expiresAt: string) {
-  return +expiresAt < Date.now()
+  return BigInt(expiresAt) * 1000n < Date.now()
 }

@@ -1,6 +1,7 @@
-import { NFTCategory, RentalStatus } from '@dcl/schemas'
+import { ListingStatus, NFTCategory, RentalStatus } from '@dcl/schemas'
 import {
   fromMarketplaceNFTFragment,
+  fromMarketplaceOrderFragment,
   MarketplaceNFTFragment,
   marketplaceShouldFetch,
   PROHIBITED_SORT_BYS,
@@ -105,6 +106,65 @@ describe('when building a result from the marketplace fragment', () => {
       const parcelEstate = result.nft.data.parcel!.estate
 
       expect(parcelEstate).toBeNull()
+    })
+  })
+
+  describe('when the nft contains an order', () => {
+    beforeEach(() => {
+      marketplaceFragment.activeOrder = {
+        id: 'anId',
+        marketplaceAddress: '0xeAeD941633b992602326650221bbe92F561A157A',
+        owner: '0xCAdFbeDfc7B719BB9f2542F0E810a7C1d6c1F977',
+        buyer: '0x999999cf1046e68e36E1aA2E0E07105eDDD1f08E',
+        nftAddress: '0xc0ffee254729296a45a3885639AC7E10F9d54979',
+        price: '0',
+        status: ListingStatus.OPEN,
+        expiresAt: '0',
+        createdAt: '0',
+        updatedAt: '0',
+        nft: {
+          tokenId: 'aTokenId',
+          issuedId: null,
+          tokenURI: '',
+        },
+      }
+    })
+
+    describe('and the order is expired', () => {
+      beforeEach(() => {
+        marketplaceFragment.activeOrder!.expiresAt = Math.floor(
+          Date.now() / 1000
+        ).toString()
+      })
+
+      it('should not contain an order', () => {
+        console.log(fromMarketplaceNFTFragment(marketplaceFragment).nft)
+        expect(fromMarketplaceNFTFragment(marketplaceFragment)).toMatchObject({
+          nft: {
+            activeOrderId: null,
+          },
+          order: null,
+        })
+      })
+    })
+
+    describe('and the order is not expired', () => {
+      beforeEach(() => {
+        marketplaceFragment.activeOrder!.expiresAt = Math.floor(
+          (Date.now() + 60 * 1000 * 60) / 1000
+        ).toString()
+      })
+
+      it('should contain an order', () => {
+        expect(fromMarketplaceNFTFragment(marketplaceFragment)).toMatchObject({
+          nft: {
+            activeOrderId: marketplaceFragment.activeOrder?.id ?? null,
+          },
+          order: marketplaceFragment.activeOrder
+            ? fromMarketplaceOrderFragment(marketplaceFragment.activeOrder)
+            : null,
+        })
+      })
     })
   })
 })
