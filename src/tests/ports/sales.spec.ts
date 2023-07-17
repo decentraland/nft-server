@@ -151,6 +151,56 @@ describe('when fetching the sales', () => {
       })
     })
   })
+
+  describe('and useLegacySchema is true', () => {
+    fit('should not include searchItemId field in the query', async () => {
+      // Create the sales component with the shouldFetch function
+      salesComponent = createSalesComponent({
+        subgraph: subgraphMock,
+        network: Network.ETHEREUM,
+        chainId: 1,
+        useLegacySchema: true,
+      })
+      ;(subgraphMock.query as jest.Mock).mockResolvedValue({
+        sales: mockSalesFragments,
+      })
+
+      const filters = {
+        contractAddress: '0x1234567890',
+      }
+
+      await salesComponent.fetch(filters)
+      // Expect the subgraph query to be called with the correct arguments
+      expect(subgraphMock.query).toHaveBeenCalledWith(
+        expect.not.stringContaining('searchItemId')
+      )
+    })
+  })
+
+  describe('and useLegacySchema is false', () => {
+    fit('should include searchItemId field in the query', async () => {
+      // Create the sales component with the shouldFetch function
+      salesComponent = createSalesComponent({
+        subgraph: subgraphMock,
+        network: Network.ETHEREUM,
+        chainId: 1,
+      })
+      ;(subgraphMock.query as jest.Mock).mockResolvedValue({
+        sales: mockSalesFragments,
+      })
+
+      const filters = {
+        contractAddress: '0x1234567890',
+      }
+
+      await salesComponent.fetch(filters)
+      // Expect the subgraph query to be called with the correct arguments
+      expect(subgraphMock.query).toHaveBeenCalledWith(
+        expect.stringContaining('searchItemId')
+      )
+    })
+  })
+
   describe('and the request is valid and shouldFetch is not provided', () => {
     it('should fetch the sales', async () => {
       ;(subgraphMock.query as jest.Mock).mockResolvedValue({

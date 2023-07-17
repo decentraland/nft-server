@@ -496,6 +496,7 @@ async function initComponents(): Promise<AppComponents> {
     subgraph: marketplaceSubgraph,
     network: Network.ETHEREUM,
     chainId: marketplaceChainId,
+    useLegacySchema: true,
     shouldFetch: (filters: SaleFilters) => {
       return (
         !filters.contractAddress ||
