@@ -26,7 +26,7 @@ export function fromSaleFragment(
   return sale
 }
 
-export const getSaleFragment = (network: Network) => `
+export const getSaleFragment = (useLegacySchema: boolean) => `
   fragment saleFragment on Sale {
     id
     type
@@ -35,7 +35,7 @@ export const getSaleFragment = (network: Network) => `
     price
     timestamp
     txHash
-    ${network === Network.MATIC ? 'searchItemId' : ''}
+    ${useLegacySchema ? '' : 'searchItemId'}
     searchTokenId
     searchContractAddress
   }
@@ -44,7 +44,7 @@ export const getSaleFragment = (network: Network) => `
 export function getSalesQuery(
   filters: SaleFilters,
   isCount = false,
-  network: Network
+  useLegacySchema: boolean
 ) {
   const {
     first,
@@ -69,7 +69,7 @@ export function getSalesQuery(
     where.push(`searchTokenId: "${tokenId}"`)
   }
 
-  if (itemId && network === Network.MATIC) {
+  if (itemId && !useLegacySchema) {
     where.push(`searchItemId: "${itemId}"`)
   }
 
@@ -149,6 +149,6 @@ export function getSalesQuery(
         }) 
         { ${isCount ? 'id' : `...saleFragment`} }
     }
-    ${isCount ? '' : getSaleFragment(network)}
+    ${isCount ? '' : getSaleFragment(useLegacySchema)}
   `
 }

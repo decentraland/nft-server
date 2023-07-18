@@ -7,8 +7,16 @@ export function createSalesComponent(options: {
   subgraph: ISubgraphComponent
   network: Network
   chainId: ChainId
+  useLegacySchema?: boolean
+  shouldFetch?: (filters: SaleFilters) => boolean
 }): ISalesComponent {
-  const { subgraph, network, chainId } = options
+  const {
+    subgraph,
+    network,
+    chainId,
+    shouldFetch,
+    useLegacySchema = false,
+  } = options
 
   function isValid(network: Network, filters: SaleFilters) {
     return (
@@ -20,11 +28,11 @@ export function createSalesComponent(options: {
   }
 
   async function fetch(filters: SaleFilters) {
-    if (!isValid(network, filters)) {
+    if (!isValid(network, filters) || (shouldFetch && !shouldFetch(filters))) {
       return []
     }
 
-    const query = getSalesQuery(filters, false, network)
+    const query = getSalesQuery(filters, false, useLegacySchema)
     const { sales: fragments } = await subgraph.query<{
       sales: SaleFragment[]
     }>(query)
@@ -37,11 +45,11 @@ export function createSalesComponent(options: {
   }
 
   async function count(filters: SaleFilters) {
-    if (!isValid(network, filters)) {
+    if (!isValid(network, filters) || (shouldFetch && !shouldFetch(filters))) {
       return 0
     }
 
-    const query = getSalesQuery(filters, true, network)
+    const query = getSalesQuery(filters, true, useLegacySchema)
     const { sales: fragments } = await subgraph.query<{
       sales: SaleFragment[]
     }>(query)

@@ -5,6 +5,7 @@ import {
   CollectionSortBy,
   Network,
 } from '@dcl/schemas'
+import { getMarketplaceContracts } from '../../logic/contracts'
 import { SortDirection } from '../merger/types'
 import { CollectionFragment } from './types'
 
@@ -149,4 +150,17 @@ export function getCollectionsQuery(
     }
     ${isCount ? '' : getCollectionFragment()}
   `
+}
+
+export function getIsEthereumCollection(
+  contractAddress: string,
+  chainId: ChainId
+) {
+  const contracts = getMarketplaceContracts(chainId)
+  const contract = contracts.find(
+    (contract) =>
+      contract.address.toLocaleLowerCase() ===
+      contractAddress.toLocaleLowerCase()
+  )
+  return !!contract
 }

@@ -114,7 +114,10 @@ import { SALE_DEFAULT_SORT_BY } from './ports/sales/utils'
 import { createSalesComponent } from './ports/sales/component'
 import { createCollectionsComponent } from './ports/collections/component'
 import { createCollectionsSource } from './adapters/sources/collections'
-import { COLLECTION_DEFAULT_SORT_BY } from './ports/collections/utils'
+import {
+  COLLECTION_DEFAULT_SORT_BY,
+  getIsEthereumCollection,
+} from './ports/collections/utils'
 import { createAccountsComponent } from './ports/accounts/component'
 import { createAccountsSource } from './adapters/sources/accounts'
 import { ACCOUNT_DEFAULT_SORT_BY } from './ports/accounts/utils'
@@ -496,6 +499,14 @@ async function initComponents(): Promise<AppComponents> {
     subgraph: marketplaceSubgraph,
     network: Network.ETHEREUM,
     chainId: marketplaceChainId,
+    useLegacySchema: true,
+    shouldFetch: (filters: SaleFilters) => {
+      return (
+        !filters.contractAddress ||
+        (!!filters.contractAddress &&
+          !getIsEthereumCollection(filters.contractAddress, marketplaceChainId))
+      )
+    },
   })
 
   const collectionsSales = createSalesComponent({
@@ -504,10 +515,17 @@ async function initComponents(): Promise<AppComponents> {
     chainId: collectionsChainId,
   })
 
+  const collectionsEthereumSales = createSalesComponent({
+    subgraph: collectionsEthereumSubgraph,
+    network: Network.MATIC, // we'use MATIC here so it uses the right fragment when querying
+    chainId: marketplaceChainId,
+  })
+
   const sales = createMergerComponent<Sale, SaleFilters, SaleSortBy>({
     sources: [
       createSalesSource(marketplaceSales),
       createSalesSource(collectionsSales),
+      createSalesSource(collectionsEthereumSales),
     ],
     defaultSortBy: SALE_DEFAULT_SORT_BY,
     directions: {
