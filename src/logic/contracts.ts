@@ -425,6 +425,38 @@ export function getMarketplaceContracts(chainId: ChainId): Contract[] {
         },
       ]
     }
+    case ChainId.ETHEREUM_SEPOLIA: {
+      return [
+        {
+          name: 'LAND',
+          address: '0x42f4ba48791e2de32f5fbf553441c2672864bb33',
+          category: NFTCategory.PARCEL,
+          network: Network.ETHEREUM,
+          chainId: ChainId.ETHEREUM_SEPOLIA,
+        },
+        {
+          name: 'Estates',
+          address: '0x369a7fbe718c870c79f99fb423882e8dd8b20486',
+          category: NFTCategory.ESTATE,
+          network: Network.ETHEREUM,
+          chainId: ChainId.ETHEREUM_SEPOLIA,
+        },
+        {
+          name: 'Names',
+          address: '0x7518456ae93eb98f3e64571b689c626616bb7f30',
+          category: NFTCategory.ENS,
+          network: Network.ETHEREUM,
+          chainId: ChainId.ETHEREUM_SEPOLIA,
+        },
+        {
+          name: 'Exclusive Masks',
+          address: '0x11a970e744ff69db8f461c2d0fc91d4293914301',
+          network: Network.ETHEREUM,
+          chainId: ChainId.ETHEREUM_SEPOLIA,
+          category: NFTCategory.WEARABLE,
+        },
+      ]
+    }
     default:
       return []
   }

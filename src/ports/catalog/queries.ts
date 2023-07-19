@@ -20,16 +20,6 @@ const WEARABLE_ITEM_TYPES = [
 
 const MAX_ORDER_TIMESTAMP = 253378408747000 // some orders have a timestmap that can't be cast by Postgres, this is the max possible value
 
-export const getLatestSubgraphSchema = (subgraphName: string) =>
-  SQL`
-    SELECT 
-        entity_schema 
-    FROM 
-        satsuma.subgraph_schema 
-    WHERE 
-        satsuma_subgraph_name = ${subgraphName}
-    `
-
 export function getOrderBy(filters: CatalogFilters) {
   const { sortBy, sortDirection, isOnSale } = filters
   const sortByParam = sortBy ?? CatalogSortBy.NEWEST

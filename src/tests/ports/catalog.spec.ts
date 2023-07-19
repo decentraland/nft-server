@@ -4,18 +4,17 @@ import { createTestDbComponent, test } from '../../../src/tests/components'
 import { createCatalogComponent } from '../../ports/catalog/component'
 import {
   getItemIdsBySearchTextQuery,
-  getLatestSubgraphSchema,
 } from '../../ports/catalog/queries'
 import {
   CollectionsItemDBResult,
   ICatalogComponent,
 } from '../../ports/catalog/types'
 import {
-  getSubgraphNameForNetwork,
   fromCollectionsItemDbResultToCatalogItem,
   getCatalogQuery,
 } from '../../ports/catalog/utils'
 import { IFavoritesComponent, PickStats } from '../../ports/favorites/types'
+import { getLatestSubgraphSchema, getSubgraphNameForNetwork } from '../../subgraphUtils'
 
 const mockedDBItemResponse: CollectionsItemDBResult = {
   id: '0xe42257bb4aada439179d736a64a736be0693a4ec-2',
@@ -181,7 +180,7 @@ test('catalog component', function () {
         expect(dbClientQueryMock.mock.calls.length).toEqual(2)
         expect(dbClientQueryMock.mock.calls[0][0]).toEqual(
           getLatestSubgraphSchema(
-            getSubgraphNameForNetwork(network, ChainId.ETHEREUM_GOERLI)
+            getSubgraphNameForNetwork(network, ChainId.ETHEREUM_SEPOLIA)
           )
         )
       })
@@ -251,7 +250,7 @@ test('catalog component', function () {
         expect(dbClientQueryMock.mock.calls.length).toEqual(3) // 2 for the schema name and 1 for the catalog query
         expect(dbClientQueryMock.mock.calls[0][0]).toEqual(
           getLatestSubgraphSchema(
-            getSubgraphNameForNetwork(Network.ETHEREUM, ChainId.ETHEREUM_GOERLI)
+            getSubgraphNameForNetwork(Network.ETHEREUM, ChainId.ETHEREUM_SEPOLIA)
           )
         )
         expect(dbClientQueryMock.mock.calls[1][0]).toEqual(
@@ -314,7 +313,7 @@ test('catalog component', function () {
           expect(dbClientQueryMock.mock.calls.length).toEqual(2) // 1 for the schema name and 1 for the catalog search query
           expect(dbClientQueryMock.mock.calls[0][0]).toEqual(
             getLatestSubgraphSchema(
-              getSubgraphNameForNetwork(network, ChainId.ETHEREUM_GOERLI)
+              getSubgraphNameForNetwork(network, ChainId.ETHEREUM_SEPOLIA)
             )
           )
           expect(dbClientQueryMock.mock.calls[1][0]).toEqual(
@@ -360,7 +359,7 @@ test('catalog component', function () {
           expect(dbClientQueryMock.mock.calls.length).toEqual(3) // 1 for the schema name, 1 for the catalog search query and 1 for the main catalog query
           expect(dbClientQueryMock.mock.calls[0][0]).toEqual(
             getLatestSubgraphSchema(
-              getSubgraphNameForNetwork(network, ChainId.ETHEREUM_GOERLI)
+              getSubgraphNameForNetwork(network, ChainId.ETHEREUM_SEPOLIA)
             )
           )
           expect(dbClientQueryMock.mock.calls[1][0]).toEqual(
