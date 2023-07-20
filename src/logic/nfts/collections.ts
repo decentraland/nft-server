@@ -19,7 +19,7 @@ import {
   getCollectionsOrderFields,
 } from '../../ports/orders/utils'
 import { getCollectionsChainId } from '../chainIds'
-import { isExpired } from '../expiration'
+import { isOrderExpired } from '../expiration'
 
 export const getCollectionsFields = () => `
   fragment collectionsFields on NFT {
@@ -192,7 +192,7 @@ export function fromCollectionsFragment(
       contractAddress: fragment.contractAddress,
       category,
       activeOrderId:
-        fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
+        fragment.activeOrder && !isOrderExpired(fragment.activeOrder.expiresAt)
           ? fragment.activeOrder.id
           : null,
       openRentalId: null,
@@ -211,7 +211,7 @@ export function fromCollectionsFragment(
       soldAt: +fragment.soldAt * 1000,
     },
     order:
-      fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
+      fragment.activeOrder && !isOrderExpired(fragment.activeOrder.expiresAt)
         ? fromCollectionsOrderFragment(fragment.activeOrder)
         : null,
     rental: null,

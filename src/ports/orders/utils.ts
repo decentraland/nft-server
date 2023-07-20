@@ -122,7 +122,7 @@ export const getOrdersQuery = (
 
   if (status) {
     if (status === ListingStatus.OPEN) {
-      where.push(`expiresAt_gt: "${Date.now()}"`)
+      where.push(`expiresAt_gt: "${Math.round(Date.now() / 1000)}"`)
     }
     where.push(`status: ${status}`)
   }
