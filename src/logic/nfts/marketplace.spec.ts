@@ -151,7 +151,7 @@ describe('when building a result from the marketplace fragment', () => {
     describe('and the order is not expired', () => {
       beforeEach(() => {
         marketplaceFragment.activeOrder!.expiresAt = Math.floor(
-          (Date.now() + 60 * 1000 * 60) / 1000
+          Date.now() + 60 * 1000 * 60
         ).toString()
       })
 
