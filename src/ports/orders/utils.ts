@@ -89,6 +89,7 @@ export const getOrdersQuery = (
   } = filters
 
   const where: string[] = []
+  let wrapWhere = false
 
   if (marketplaceAddress) {
     where.push(`marketplaceAddress : "${marketplaceAddress}"`)
@@ -122,7 +123,7 @@ export const getOrdersQuery = (
 
   if (status) {
     if (status === ListingStatus.OPEN) {
-      where.push(`expiresAt_gt: "${Math.round(Date.now() / 1000)}"`)
+      wrapWhere = true
     }
     where.push(`status: ${status}`)
   }
@@ -169,15 +170,38 @@ export const getOrdersQuery = (
       orderDirection = 'desc'
   }
 
+  let wrappedWhere = `{
+    ${where.join('\n')}
+  }`
+
+  if (wrapWhere) {
+    const expiresAt = Date.now()
+    const expiresAtSec = Math.trunc(expiresAt / 1000)
+
+    wrappedWhere = `{
+      or:[
+        {
+          ${[
+            ...where,
+            `expiresAt_gt: "${expiresAtSec}"`,
+            `expiresAt_lt: "1000000000000"`,
+          ].join('\n')}
+        },
+        {
+          ${[...where, `expiresAt_gt: "${expiresAt}"`].join('\n')}
+        }
+      ]
+    }`
+  }
+
   return `
     query Orders {
       orders(
         first: ${total},
         orderBy: ${orderBy},
         orderDirection: ${orderDirection},
-        where: {
-          ${where.join('\n')}
-        })
+        where: ${wrappedWhere}
+      )
       { ${isCount ? 'id' : `...orderFragment`} }
     }
     ${isCount ? '' : getOrderFragment(getOrderFields)}

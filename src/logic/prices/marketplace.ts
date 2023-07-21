@@ -88,8 +88,17 @@ export function marketplacePricesQuery(filters: PriceFilters) {
     category: filters.category as NFTCategory,
   })
   const categories = getNFTCategoryFromPriceCategory(filters.category)
+
+  const innerWhere = `
+    searchOrderPrice_gt:0, 
+    searchOrderStatus: open,
+    category_in: [${categories}],
+    searchEstateSize_gt: 0,
+    ${additionalWheres.join('\n')}
+  `
   return `query NFTPrices(
       $expiresAt: String
+      $expiresAtSec: String
       $wearableCategory: String
       $isWearableHead: Boolean
       $isWearableAccessory: Boolean
@@ -98,13 +107,18 @@ export function marketplacePricesQuery(filters: PriceFilters) {
         first: ${MAX_RESULTS},
         orderBy: tokenId,
         orderDirection: asc, 
-        where: { 
-          searchOrderPrice_gt:0, 
-          searchOrderStatus: open,
-          searchOrderExpiresAt_gt: $expiresAt,
-          category_in: [${categories}],
-          searchEstateSize_gt: 0,
-          ${additionalWheres.join('\n')}
+        where: {
+          or:[
+            {
+              ${innerWhere}
+              searchOrderExpiresAt_gt: $expiresAtSec
+              searchOrderExpiresAt_lt: "1000000000000"
+            },
+            {
+              ${innerWhere}
+              searchOrderExpiresAt_gt: $expiresAt
+            }
+          ]
         }) {
         ...priceFragment
       }

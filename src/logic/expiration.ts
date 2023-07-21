@@ -1,3 +1,6 @@
 export function isOrderExpired(expiresAt: string) {
-  return BigInt(expiresAt) * 1000n < Date.now()
+  let expiresAtNum =
+    expiresAt.length === 13 ? Number(expiresAt) : Number(expiresAt) * 1000
+
+  return expiresAtNum < Date.now()
 }

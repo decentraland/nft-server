@@ -5,9 +5,11 @@ export const MAX_RESULTS = 1000
 
 export function getEstatesSizesQuery(filters: StatsEstateFilters) {
   const extraWhere = []
+  let wrapWhere = false
+
   if (filters.isOnSale) {
     extraWhere.push('searchOrderStatus: open')
-    extraWhere.push('searchOrderExpiresAt_gt: $expiresAt')
+    wrapWhere = true
   }
   if (filters.maxPrice) {
     extraWhere.push(`searchOrderPrice_lte: "${filters.maxPrice}"`)
@@ -16,16 +18,37 @@ export function getEstatesSizesQuery(filters: StatsEstateFilters) {
   if (filters.minPrice) {
     extraWhere.push(`searchOrderPrice_gte: "${filters.minPrice}"`)
   }
+
   addLandFilters(filters, extraWhere)
+
+  let wrappedWhere = `
+    category: estate, 
+    searchEstateSize_gt:0, 
+    id_gt: $lastId, 
+    ${extraWhere.join('\n')} 
+  `
+
+  if (wrapWhere) {
+    wrappedWhere = `
+      or:[
+        {
+          ${wrappedWhere}
+          searchOrderExpiresAt_gt: $expiresAtSec
+          searchOrderExpiresAt_lt: "1000000000000"
+        },
+        {
+          ${wrappedWhere}
+          searchOrderExpiresAt_gt: $expiresAt
+        }
+      ]`
+  }
+
   return `
-    query EstateSizesQuery($lastId: ID, $expiresAt: String ) {
+    query EstateSizesQuery($lastId: ID, $expiresAt: String, $expiresAtSec: String) {
       nfts (
         first: ${MAX_RESULTS}, 
-        where: { 
-          category: estate, 
-          searchEstateSize_gt:0, 
-          id_gt: $lastId, 
-          ${extraWhere.join('\n')} 
+        where: {
+          ${wrappedWhere}
         }, 
         orderBy: id, 
         orderDirection: asc) 

@@ -24,9 +24,12 @@ export function createStatsComponent(options: {
     let sizes: FetchEstateSizesQueryFragment[] = []
     while (true) {
       const query = getEstatesSizesQuery(filters)
+      const expiresAt = Date.now()
+      const expiresAtSec = Math.trunc(expiresAt / 1000)
       const queryVariables = {
         lastId,
-        expiresAt: Date.now().toString(),
+        expiresAt: expiresAt.toString(),
+        expiresAtSec: expiresAtSec.toString(),
       }
       const { nfts: fragments } = await subgraph.query<{
         nfts: FetchEstateSizesQueryFragment[]

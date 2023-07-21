@@ -10,6 +10,7 @@ const NFTS_FILTERS = `
   $orderBy: String
   $orderDirection: String
   $expiresAt: String
+  $expiresAtSec: String
   $owner: String
   $wearableCategory: String
   $isWearableHead: Boolean
@@ -44,11 +45,14 @@ export function getQueryVariables<T>(
   const { sortBy, ...variables } = options
   const orderBy = getOrderBy(sortBy) as string
   const orderDirection = getOrderDirection(sortBy)
+  const expiresAt = Date.now()
+  const expiresAtSec = Math.trunc(expiresAt / 1000)
   return {
     ...variables,
     orderBy,
     orderDirection,
-    expiresAt: Date.now().toString(),
+    expiresAt: expiresAt.toString(),
+    expiresAtSec: expiresAtSec.toString(),
   }
 }
 
@@ -183,6 +187,7 @@ export function getFetchQuery(
   isCount = false
 ) {
   const where: string[] = []
+  let wrapWhere = false
 
   if (filters.owner) {
     where.push('owner: $owner')
@@ -194,7 +199,7 @@ export function getFetchQuery(
     filters.sortBy === NFTSortBy.RECENTLY_LISTED
   ) {
     where.push('searchOrderStatus: open')
-    where.push('searchOrderExpiresAt_gt: $expiresAt')
+    wrapWhere = true
   }
 
   if (filters.search) {
@@ -247,15 +252,36 @@ export function getFetchQuery(
       : filters.first
     : max
 
+  let wrappedWhere = `{
+      ${where.join('\n')}
+      ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
+    }`
+
+  if (wrapWhere) {
+    wrappedWhere = `{
+      or:[
+        {
+          ${[
+            ...where,
+            `searchOrderExpiresAt_gt: $expiresAtSec`,
+            `searchOrderExpiresAt_lt: "1000000000000"`,
+          ].join('\n')}
+          ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
+        },
+        {
+          ${[...where, `searchOrderExpiresAt_gt: $expiresAt`].join('\n')}
+          ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
+        }
+      ]
+    }`
+  }
+
   const query = `query NFTs(
     ${NFTS_FILTERS}
     ${getExtraVariables ? getExtraVariables(filters).join('\n') : ''}
     ) {
     nfts(
-      where: {
-        ${where.join('\n')}
-        ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
-      }${getArguments(total)})
+      where: ${wrappedWhere}${getArguments(total)})
     {
       ${isCount ? 'id' : `...${fragmentName}`}
     }
