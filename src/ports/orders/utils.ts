@@ -217,6 +217,12 @@ export function fromOrderFragment(
     ? fragment.nft.issuedId
     : fragment.nft.tokenURI?.split('/').pop() ?? ''
 
+  let expiresAt = fragment.expiresAt
+
+  if (expiresAt.length < 13) {
+    expiresAt = `${expiresAt}000`
+  }
+
   const order: Order = {
     id: fragment.id,
     marketplaceAddress: fragment.marketplaceAddress,
@@ -228,7 +234,7 @@ export function fromOrderFragment(
     status: fragment.status,
     network,
     chainId,
-    expiresAt: +fragment.expiresAt,
+    expiresAt: +expiresAt,
     createdAt: +fragment.createdAt * 1000,
     updatedAt: +fragment.updatedAt * 1000,
     issuedId,
