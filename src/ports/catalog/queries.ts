@@ -352,7 +352,9 @@ export const getCollectionsItemsCatalogQuery = (
     .append(MAX_ORDER_TIMESTAMP)
     .append(
       ` 
-                AND to_timestamp(orders.expires_at / 1000.0) > now()
+                AND ((LENGTH(orders.expires_at::text) = 13 AND TO_TIMESTAMP(orders.expires_at / 1000.0) > NOW())
+                      OR
+                    (LENGTH(orders.expires_at::text) = 10 AND TO_TIMESTAMP(orders.expires_at) > NOW()))
                 `
     )
     .append(getOrderRangePriceWhere(filters))

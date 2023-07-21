@@ -15,7 +15,7 @@ import {
   getMarketplaceOrderFields,
 } from '../../ports/orders/utils'
 import { getMarketplaceChainId } from '../chainIds'
-import { isExpired } from '../expiration'
+import { isOrderExpired } from '../expiration'
 import { capitalize } from '../string'
 
 export const PROHIBITED_SORT_BYS = [
@@ -171,7 +171,7 @@ export function fromMarketplaceNFTFragment(
       tokenId: fragment.tokenId,
       contractAddress: fragment.contractAddress,
       activeOrderId:
-        fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
+        fragment.activeOrder && !isOrderExpired(fragment.activeOrder.expiresAt)
           ? fragment.activeOrder.id
           : null,
       openRentalId: null,
@@ -231,7 +231,7 @@ export function fromMarketplaceNFTFragment(
       soldAt: +fragment.soldAt * 1000,
     },
     order:
-      fragment.activeOrder && !isExpired(fragment.activeOrder.expiresAt)
+      fragment.activeOrder && !isOrderExpired(fragment.activeOrder.expiresAt)
         ? fromMarketplaceOrderFragment(fragment.activeOrder)
         : null,
     rental: null,
