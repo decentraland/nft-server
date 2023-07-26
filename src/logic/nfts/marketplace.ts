@@ -163,7 +163,8 @@ export const getMarketplaceFiltersValidation = (filters: NFTFilters) => {
 }
 
 export function fromMarketplaceNFTFragment(
-  fragment: MarketplaceNFTFragment
+  fragment: MarketplaceNFTFragment,
+  caller?: string
 ): NFTResult {
   const result: NFTResult = {
     nft: {
@@ -171,7 +172,11 @@ export function fromMarketplaceNFTFragment(
       tokenId: fragment.tokenId,
       contractAddress: fragment.contractAddress,
       activeOrderId:
-        fragment.activeOrder && !isOrderExpired(fragment.activeOrder.expiresAt)
+        fragment.activeOrder &&
+        ((caller &&
+          caller === fragment.owner.address.toLowerCase() &&
+          fragment.activeOrder.expiresAt.length === 13) ||
+          !isOrderExpired(fragment.activeOrder.expiresAt))
           ? fragment.activeOrder.id
           : null,
       openRentalId: null,
@@ -231,7 +236,11 @@ export function fromMarketplaceNFTFragment(
       soldAt: +fragment.soldAt * 1000,
     },
     order:
-      fragment.activeOrder && !isOrderExpired(fragment.activeOrder.expiresAt)
+      fragment.activeOrder &&
+      ((caller &&
+        caller === fragment.owner.address.toLowerCase() &&
+        fragment.activeOrder.expiresAt.length === 13) ||
+        !isOrderExpired(fragment.activeOrder.expiresAt))
         ? fromMarketplaceOrderFragment(fragment.activeOrder)
         : null,
     rental: null,

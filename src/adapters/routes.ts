@@ -33,7 +33,14 @@ export async function setupRoutes(globalContext: GlobalContext) {
 
   router.get('/bids', createBidsHandler(components))
   router.get('/orders', createOrdersHandler(components))
-  router.get('/nfts', createNFTsHandler(components))
+  router.get(
+    '/nfts',
+    authorizationMiddleware.wellKnownComponents({
+      optional: true,
+      expiration: FIVE_MINUTES,
+    }),
+    createNFTsHandler(components)
+  )
   router.get(
     '/items',
     authorizationMiddleware.wellKnownComponents({

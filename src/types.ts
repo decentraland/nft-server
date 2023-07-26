@@ -72,7 +72,7 @@ export type AppComponents = {
   orders: IMergerComponent<Order, OrderFilters, OrderSortBy>
   bids: IMergerComponent<Bid, BidFilters, BidSortBy>
   contracts: IMergerComponent<Contract, ContractFilters, ContractSortBy>
-  nfts: IMergerComponent<NFTResult, NFTFilters, NFTSortBy>
+  nfts: IMergerComponent<NFTResult, NFTFilters & { caller?: string }, NFTSortBy>
   items: IMergerComponent<Item, ItemOptions, ItemSortBy>
   mints: IMergerComponent<Mint, MintFilters, MintSortBy>
   sales: IMergerComponent<Sale, SaleFilters, SaleSortBy>

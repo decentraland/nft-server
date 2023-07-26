@@ -123,7 +123,7 @@ describe('when fetching tokens by ids', () => {
     it('should return the converted fragment of nfts', () => {
       return expect(
         marketplaceNFTsMock.fetchByTokenIds(tokenIds)
-      ).resolves.toEqual(nftFragments.map(fromMarketplaceNFTFragment))
+      ).resolves.toEqual(nftFragments.map((f) => fromMarketplaceNFTFragment(f)))
     })
   })
 })
@@ -191,7 +191,7 @@ describe('when fetching emotes', () => {
             getCollectionsOrderBy
           )
           expect(collectionsNFTsMock.fetch(filters)).resolves.toEqual(
-            nftFragments.map(fromCollectionsFragment)
+            nftFragments.map((f) => fromCollectionsFragment(f))
           )
           return expect(queryMock).toBeCalledWith(fetchQuery, variableQuery)
         })
@@ -221,7 +221,7 @@ describe('when fetching emotes', () => {
             getCollectionsOrderBy
           )
           expect(collectionsNFTsMock.fetch(filters)).resolves.toEqual(
-            nftFragments.map(fromCollectionsFragment)
+            nftFragments.map((f) => fromCollectionsFragment(f))
           )
           return expect(queryMock).toBeCalledWith(fetchQuery, variableQuery)
         })

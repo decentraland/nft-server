@@ -11,13 +11,13 @@ import {
   WearableCategory,
 } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
-import { AppComponents, Context } from '../../types'
+import { AppComponents, AuthenticatedContext, Context } from '../../types'
 import { Params } from '../../logic/http/params'
 import { HttpError, asJSON } from '../../logic/http/response'
 
 export function createNFTsHandler(
   components: Pick<AppComponents, 'nfts'>
-): IHttpServerComponent.IRequestHandler<Context<'/nfts'>> {
+): IHttpServerComponent.IRequestHandler<AuthenticatedContext<'/nfts'>> {
   const { nfts } = components
   return async (context) => {
     const params = new Params(context.url.searchParams)
@@ -76,6 +76,7 @@ export function createNFTsHandler(
       .getList('rentalDays')
       .map((days) => Number.parseInt(days))
       .filter((number) => !Number.isNaN(number))
+    const caller: string | undefined = context.verification?.auth.toLowerCase()
 
     return asJSON(() => {
       if (owner && tenant) {
@@ -131,6 +132,7 @@ export function createNFTsHandler(
         minEstateSize,
         maxEstateSize,
         rentalDays,
+        caller,
       })
     })
   }

@@ -143,7 +143,8 @@ export function getCollectionsOrderBy(
 }
 
 export function fromCollectionsFragment(
-  fragment: CollectionsFragment
+  fragment: CollectionsFragment,
+  caller?: string
 ): NFTResult {
   let name: string
   let category: NFTCategory
@@ -192,7 +193,11 @@ export function fromCollectionsFragment(
       contractAddress: fragment.contractAddress,
       category,
       activeOrderId:
-        fragment.activeOrder && !isOrderExpired(fragment.activeOrder.expiresAt)
+        fragment.activeOrder &&
+        ((caller &&
+          caller === fragment.owner.address.toLowerCase() &&
+          fragment.activeOrder.expiresAt.length === 13) ||
+          !isOrderExpired(fragment.activeOrder.expiresAt))
           ? fragment.activeOrder.id
           : null,
       openRentalId: null,
@@ -211,7 +216,11 @@ export function fromCollectionsFragment(
       soldAt: +fragment.soldAt * 1000,
     },
     order:
-      fragment.activeOrder && !isOrderExpired(fragment.activeOrder.expiresAt)
+      fragment.activeOrder &&
+      ((caller &&
+        caller === fragment.owner.address.toLowerCase() &&
+        fragment.activeOrder.expiresAt.length === 13) ||
+        !isOrderExpired(fragment.activeOrder.expiresAt))
         ? fromCollectionsOrderFragment(fragment.activeOrder)
         : null,
     rental: null,

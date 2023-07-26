@@ -179,7 +179,7 @@ export function addLandFilters(
 }
 
 export function getFetchQuery(
-  filters: NFTFilters,
+  filters: NFTFilters & { caller?: string },
   fragmentName: string,
   getNFTFragment: () => string,
   getExtraVariables?: (options: NFTFilters) => string[],
@@ -258,22 +258,29 @@ export function getFetchQuery(
     }`
 
   if (wrapWhere) {
-    wrappedWhere = `{
-      or:[
-        {
-          ${[
-            ...where,
-            `searchOrderExpiresAt_gt: $expiresAtSec`,
-            `searchOrderExpiresAt_lt: "1000000000000"`,
-          ].join('\n')}
-          ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
-        },
-        {
-          ${[...where, `searchOrderExpiresAt_gt: $expiresAt`].join('\n')}
-          ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
-        }
-      ]
-    }`
+    if (filters.caller && filters.caller === filters.owner) {
+      wrappedWhere = `{
+        ${[...where, `searchOrderExpiresAt_gt: $expiresAtSec`].join('\n')}
+        ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
+      },`
+    } else {
+      wrappedWhere = `{
+        or:[
+          {
+            ${[
+              ...where,
+              `searchOrderExpiresAt_gt: $expiresAtSec`,
+              `searchOrderExpiresAt_lt: "1000000000000"`,
+            ].join('\n')}
+            ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
+          },
+          {
+            ${[...where, `searchOrderExpiresAt_gt: $expiresAt`].join('\n')}
+            ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
+          }
+        ]
+      }`
+    }
   }
 
   const query = `query NFTs(

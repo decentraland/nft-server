@@ -219,10 +219,6 @@ export function fromOrderFragment(
 
   let expiresAt = fragment.expiresAt
 
-  if (expiresAt.length < 13) {
-    expiresAt = `${expiresAt}000`
-  }
-
   const order: Order = {
     id: fragment.id,
     marketplaceAddress: fragment.marketplaceAddress,
