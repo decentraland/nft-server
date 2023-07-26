@@ -257,23 +257,30 @@ export function getFetchQuery(
       ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
     }`
 
-  if (wrapWhere && filters.caller !== filters.owner) {
-    wrappedWhere = `{
-      or:[
-        {
-          ${[
-            ...where,
-            `searchOrderExpiresAt_gt: $expiresAtSec`,
-            `searchOrderExpiresAt_lt: "1000000000000"`,
-          ].join('\n')}
-          ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
-        },
-        {
-          ${[...where, `searchOrderExpiresAt_gt: $expiresAt`].join('\n')}
-          ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
-        }
-      ]
-    }`
+  if (wrapWhere) {
+    if (filters.caller && filters.caller === filters.owner) {
+      wrappedWhere = `{
+        ${[...where, `searchOrderExpiresAt_gt: $expiresAtSec`].join('\n')}
+        ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
+      },`
+    } else {
+      wrappedWhere = `{
+        or:[
+          {
+            ${[
+              ...where,
+              `searchOrderExpiresAt_gt: $expiresAtSec`,
+              `searchOrderExpiresAt_lt: "1000000000000"`,
+            ].join('\n')}
+            ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
+          },
+          {
+            ${[...where, `searchOrderExpiresAt_gt: $expiresAt`].join('\n')}
+            ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
+          }
+        ]
+      }`
+    }
   }
 
   const query = `query NFTs(
