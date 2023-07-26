@@ -179,7 +179,7 @@ export function addLandFilters(
 }
 
 export function getFetchQuery(
-  filters: NFTFilters,
+  filters: NFTFilters & { caller?: string },
   fragmentName: string,
   getNFTFragment: () => string,
   getExtraVariables?: (options: NFTFilters) => string[],
@@ -257,7 +257,7 @@ export function getFetchQuery(
       ${getExtraWhere ? getExtraWhere(filters).join('\n') : ''}
     }`
 
-  if (wrapWhere) {
+  if (wrapWhere && filters.caller !== filters.owner) {
     wrappedWhere = `{
       or:[
         {

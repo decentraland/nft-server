@@ -12,11 +12,11 @@ export function createNFTComponent<T extends { id: string }>(options: {
   subgraph: ISubgraphComponent
   fragmentName: string
   getFragment: () => string
-  fromFragment(fragment: T): NFTResult
+  fromFragment(fragment: T, caller?: string): NFTResult
   getSortByProp(sortBy?: NFTSortBy): keyof T
   getExtraVariables?: (options: NFTFilters) => string[]
   getExtraWhere?: (options: NFTFilters) => string[]
-  getShouldFetch?: (options: NFTFilters) => boolean 
+  getShouldFetch?: (options: NFTFilters) => boolean
 }): INFTsComponent {
   const {
     subgraph,
@@ -29,7 +29,7 @@ export function createNFTComponent<T extends { id: string }>(options: {
     getShouldFetch,
   } = options
 
-  function getFragmentFetcher(filters: NFTFilters) {
+  function getFragmentFetcher(filters: NFTFilters & { caller?: string }) {
     return async (isCount?: boolean) => {
       const query = getFetchQuery(
         filters,
@@ -47,7 +47,9 @@ export function createNFTComponent<T extends { id: string }>(options: {
     }
   }
 
-  async function fetch(options: NFTFilters): Promise<NFTResult[]> {
+  async function fetch(
+    options: NFTFilters & { caller?: string }
+  ): Promise<NFTResult[]> {
     if (getShouldFetch && !getShouldFetch(options)) {
       return []
     }
@@ -56,7 +58,11 @@ export function createNFTComponent<T extends { id: string }>(options: {
       options.contractAddresses &&
       options.contractAddresses.length > 0
     ) {
-      const nft = await fetchOne(options.contractAddresses[0], options.tokenId)
+      const nft = await fetchOne(
+        options.contractAddresses[0],
+        options.tokenId,
+        options.caller
+      )
       return nft ? [nft] : []
     } else if (options.tokenId) {
       throw new Error(
@@ -66,7 +72,9 @@ export function createNFTComponent<T extends { id: string }>(options: {
 
     const fetchFragments = getFragmentFetcher(options)
     const fragments = await fetchFragments()
-    const nfts = fragments.map(fromFragment)
+    const nfts = fragments.map((fragment) =>
+      fromFragment(fragment, options.caller)
+    )
     return nfts
   }
 
@@ -81,7 +89,8 @@ export function createNFTComponent<T extends { id: string }>(options: {
 
   async function fetchOne(
     contractAddress: string,
-    tokenId: string
+    tokenId: string,
+    caller?: string
   ): Promise<NFTResult | null> {
     const query = getFetchOneQuery(fragmentName, getFragment)
     const variables = {
@@ -94,7 +103,7 @@ export function createNFTComponent<T extends { id: string }>(options: {
     if (fragments.length === 0) {
       return null
     } else {
-      return fromFragment(fragments[0])
+      return fromFragment(fragments[0], caller)
     }
   }
 
@@ -110,7 +119,7 @@ export function createNFTComponent<T extends { id: string }>(options: {
       nfts: T[]
     }>(query, variables)
 
-    return nfts.map(fromFragment)
+    return nfts.map((f) => fromFragment(f))
   }
 
   return {
