@@ -23,7 +23,7 @@ export function createCatalogComponent(options: {
   const { database, favoritesComponent } = options
 
   async function fetch(filters: CatalogOptions) {
-    const { network, creator } = filters
+    const { network } = filters
     let catalogItems: Item[] = []
     let total = 0
     const client = await database.getPool().connect()
