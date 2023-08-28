@@ -50,14 +50,15 @@ export function createCatalogComponent(options: {
           const filteredItemsById = await client.query<CollectionsItemDBResult>(
             getItemIdsBySearchTextQuery(schema, filters.search)
           )
-          if (filteredItemsById.rowCount === 0) {
-            // if no items matched the search text, return empty result
-            return { data: [], total: 0 }
-          }
           filters.ids = [
             ...(filters.ids ?? []),
             ...filteredItemsById.rows.map(({ id }) => id),
           ]
+        }
+
+        if (filters.ids?.length === 0) {
+          // if no items matched the search text, return empty result
+          return { data: [], total: 0 }
         }
       }
       const results = await client.query<CollectionsItemDBResult>(
