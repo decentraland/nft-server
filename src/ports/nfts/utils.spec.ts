@@ -2,6 +2,26 @@ import { EmotePlayMode, GenderFilterOption, NFTCategory } from '@dcl/schemas'
 import { getFetchQuery } from './utils'
 
 describe('#getFetchQuery', () => {
+  let bannedNames = ['aBannedName']
+  describe('when the array of banned list is passed', () => {
+    fit('should add the name_not_in filter to the query', () => {
+      expect(
+        getFetchQuery(
+          {},
+          '',
+          () => '',
+          undefined,
+          undefined,
+          false,
+          bannedNames
+        )
+      ).toEqual(
+        expect.stringContaining(
+          `name_not_in: [${bannedNames.map((name) => `"${name}"`).join(', ')}]`
+        )
+      )
+    })
+  })
   describe('when emotePlayMode is defined', () => {
     describe('and it only has one property', () => {
       it('should add loop as true to the query for LOOP mode', () => {

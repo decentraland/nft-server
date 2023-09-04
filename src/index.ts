@@ -358,6 +358,7 @@ async function initComponents(): Promise<AppComponents> {
   // nfts
   const marketplaceNFTs = createNFTComponent({
     subgraph: marketplaceSubgraph,
+    listsServer: await config.requireString('DCL_LISTS_SERVER'),
     fragmentName: 'marketplaceFragment',
     getFragment: getMarketplaceFragment,
     fromFragment: fromMarketplaceNFTFragment,

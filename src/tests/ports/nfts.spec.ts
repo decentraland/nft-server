@@ -1,3 +1,4 @@
+import * as nodeFetch from 'node-fetch'
 import {
   BodyShape,
   EmoteCategory,
@@ -26,6 +27,8 @@ import { createNFTComponent } from '../../../src/ports/nfts/component'
 import { INFTsComponent } from '../../ports/nfts/types'
 import { FragmentItemType } from '../../ports/items/types'
 import { getFetchQuery, getQueryVariables } from '../../ports/nfts/utils'
+
+jest.mock('node-fetch')
 
 let marketplaceSubgraphMock: ISubgraphComponent
 let collectionSubgraphMock: ISubgraphComponent
@@ -226,6 +229,85 @@ describe('when fetching emotes', () => {
           return expect(queryMock).toBeCalledWith(fetchQuery, variableQuery)
         })
       })
+    })
+  })
+})
+
+describe('when fetching nfts', () => {
+  let nftFragments: CollectionsFragment[]
+  let filters: NFTFilters = {
+    category: NFTCategory.EMOTE,
+  }
+
+  beforeEach(() => {
+    const contractAddress = `0x0`
+    nftFragments = Array.from({ length: 2 }, (_, i) => ({
+      id: `${contractAddress}-${i}`,
+      itemType: FragmentItemType.EMOTE_V1,
+      image: `https://peer.decentraland.zone/lambdas/collections/contents/urn:decentraland:mumbai:collections-v2:${contractAddress}:${i}/thumbnail`,
+      contractAddress,
+      tokenId: i.toString(),
+      owner: { address: '0x0' },
+      metadata: {
+        wearable: null,
+        emote: {
+          name: 'emote',
+          description: '',
+          category: EmoteCategory.DANCE,
+          rarity: Rarity.COMMON,
+          bodyShapes: [BodyShape.MALE, BodyShape.FEMALE],
+          loop: false,
+        },
+      },
+      createdAt: Date.now().toString(),
+      updatedAt: Date.now().toString(),
+      soldAt: '',
+      searchOrderPrice: null,
+      searchOrderCreatedAt: null,
+      itemBlockchainId: i.toString(),
+      issuedId: i.toString(),
+      activeOrder: null,
+      openRentalId: null,
+      urn: `urn:decentraland:mumbai:collections-v2:${contractAddress}:${i}`,
+    }))
+  })
+
+  describe('and fetching ENS', () => {
+    let bannedNames: string[]
+    beforeEach(() => {
+      bannedNames = ['bannedName1', 'bannedName1']
+      const mockedResponse = {
+        json: async () => ({
+          data: bannedNames,
+        }),
+      }
+
+      ;(nodeFetch as unknown as jest.Mock).mockResolvedValue(mockedResponse)
+
+      filters = {
+        ...filters,
+        category: NFTCategory.ENS,
+      }
+      queryMock.mockResolvedValue({ nfts: nftFragments })
+    })
+
+    it('should fetch the banned names and filter the query based on them', async () => {
+      const fetchQuery = getFetchQuery(
+        filters,
+        collectionsFragment,
+        getCollectionsFragment,
+        getCollectionsExtraVariables,
+        getCollectionsExtraWhere,
+        false,
+        bannedNames
+      )
+      const variableQuery = getQueryVariables(filters, getCollectionsOrderBy)
+      const result = await collectionsNFTsMock.fetch(filters)
+      expect(result).toEqual(
+        nftFragments.map((f) => fromCollectionsFragment(f))
+      )
+      expect(nodeFetch).toHaveBeenCalled()
+      return expect(queryMock).toBeCalledWith(fetchQuery, variableQuery)
     })
   })
 })
