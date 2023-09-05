@@ -209,6 +209,10 @@ export const getHasGeometryWhere = () => {
   return SQL`items.search_emote_has_geometry = true`
 }
 
+export const getUrnsWhere = (filters: CatalogFilters) => {
+  return SQL`items.urn = ANY(${filters.urns})`
+}
+
 export const getCollectionsQueryWhere = (filters: CatalogFilters) => {
   const conditions = [
     filters.category ? getCategoryWhere(filters) : undefined,
@@ -234,6 +238,7 @@ export const getCollectionsQueryWhere = (filters: CatalogFilters) => {
     filters.ids?.length ? getIdsWhere(filters) : undefined,
     filters.emoteHasSound ? getHasSoundWhere() : undefined,
     filters.emoteHasGeometry ? getHasGeometryWhere() : undefined,
+    filters.urns?.length ? getUrnsWhere(filters) : undefined,
   ].filter(Boolean)
 
   const result = SQL`WHERE items.search_is_collection_approved = true`

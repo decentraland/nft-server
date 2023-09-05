@@ -220,6 +220,7 @@ export function fromCollectionsFragment(
       updatedAt: +fragment.updatedAt * 1000,
       //@ts-ignore
       soldAt: +fragment.soldAt * 1000,
+      urn: fragment.urn,
     },
     order:
       fragment.activeOrder &&

@@ -247,6 +247,22 @@ test('catalog utils', () => {
         })
       })
 
+      describe('and passing the "urns" filter', () => {
+        beforeEach(() => {
+          filters = {
+            urns: ['anUrn'],
+          }
+        })
+        it('should add the urns definition to the WHERE', () => {
+          expect(getCollectionsQueryWhere(filters).text).toContain(
+            `items.urn = ANY($1)`
+          )
+          expect(getCollectionsQueryWhere(filters).values).toStrictEqual([
+            filters.urns,
+          ])
+        })
+      })
+
       describe('and passing the wearable related filters', () => {
         let isWearableHead: boolean, isWearableAccessory: boolean
         beforeEach(() => {

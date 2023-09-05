@@ -1,10 +1,7 @@
 import { IPgComponent } from '@well-known-components/pg-component'
-import { Item, Network } from '@dcl/schemas'
-import {
-  getCollectionsChainId,
-  getMarketplaceChainId,
-} from '../../logic/chainIds'
+import { Item } from '@dcl/schemas'
 import { HttpError } from '../../logic/http/response'
+import { getLatestSubgraphSchema } from '../../subgraphUtils'
 import { enhanceItemsWithPicksStats } from '../../logic/favorites/utils'
 import { IFavoritesComponent } from '../favorites/types'
 import {
@@ -15,9 +12,9 @@ import {
 import {
   getCatalogQuery,
   fromCollectionsItemDbResultToCatalogItem,
+  getQuerySources,
 } from './utils'
 import { getItemIdsBySearchTextQuery } from './queries'
-import { getLatestSubgraphSchema, getSubgraphNameForNetwork } from '../../subgraphUtils'
 
 export function createCatalogComponent(options: {
   database: IPgComponent
@@ -26,26 +23,12 @@ export function createCatalogComponent(options: {
   const { database, favoritesComponent } = options
 
   async function fetch(filters: CatalogOptions) {
-    const { network, creator } = filters
-    const marketplaceChainId = getMarketplaceChainId()
-    const collectionsChainId = getCollectionsChainId()
+    const { network } = filters
     let catalogItems: Item[] = []
     let total = 0
     const client = await database.getPool().connect()
     try {
-      const sources = (
-        network
-          ? [network]
-          : creator
-          ? [Network.MATIC]
-          : [Network.ETHEREUM, Network.MATIC]
-      ).reduce((acc, curr) => {
-        acc[curr] = getSubgraphNameForNetwork(
-          curr,
-          curr === Network.ETHEREUM ? marketplaceChainId : collectionsChainId
-        )
-        return acc
-      }, {} as Record<string, string>)
+      const sources = getQuerySources(filters)
 
       const latestSchemasPromises: Promise<Record<string, string>>[] =
         Object.entries(sources).map(async ([network, subgraphName]) => {
@@ -67,14 +50,15 @@ export function createCatalogComponent(options: {
           const filteredItemsById = await client.query<CollectionsItemDBResult>(
             getItemIdsBySearchTextQuery(schema, filters.search)
           )
-          if (filteredItemsById.rowCount === 0) {
-            // if no items matched the search text, return empty result
-            return { data: [], total: 0 }
-          }
           filters.ids = [
             ...(filters.ids ?? []),
             ...filteredItemsById.rows.map(({ id }) => id),
           ]
+        }
+
+        if (filters.ids?.length === 0) {
+          // if no items matched the search text, return empty result
+          return { data: [], total: 0 }
         }
       }
       const results = await client.query<CollectionsItemDBResult>(

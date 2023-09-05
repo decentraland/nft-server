@@ -13,8 +13,13 @@ import {
   getCollectionsChainId,
   getMarketplaceChainId,
 } from '../../logic/chainIds'
+import { getSubgraphNameForNetwork } from '../../subgraphUtils'
 import { FragmentItemType } from '../items/types'
-import { CatalogQueryFilters, CollectionsItemDBResult } from './types'
+import {
+  CatalogOptions,
+  CatalogQueryFilters,
+  CollectionsItemDBResult,
+} from './types'
 import { addQuerySort, getCollectionsItemsCatalogQuery } from './queries'
 
 const getMultiNetworkQuery = (
@@ -151,4 +156,25 @@ export function fromCollectionsItemDbResultToCatalogItem(
     owners: Number(dbItem.owners_count),
     urn: dbItem.urn,
   }
+}
+
+export const getQuerySources = (filters: CatalogOptions) => {
+  const { network, creator } = filters
+  const sources = (
+    network
+      ? [network]
+      : creator?.length
+      ? [Network.MATIC]
+      : [Network.ETHEREUM, Network.MATIC]
+  ).reduce((acc, curr) => {
+    acc[curr] = getSubgraphNameForNetwork(
+      curr,
+      curr === Network.ETHEREUM
+        ? getMarketplaceChainId()
+        : getCollectionsChainId()
+    )
+    return acc
+  }, {} as Record<string, string>)
+
+  return sources
 }
