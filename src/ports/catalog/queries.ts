@@ -201,6 +201,14 @@ export const getIdsWhere = (filters: CatalogFilters) => {
   return SQL`items.id = ANY(${filters.ids})`
 }
 
+export const getHasSoundWhere = () => {
+  return SQL`items.search_emote_has_sound = true`
+}
+
+export const getHasGeometryWhere = () => {
+  return SQL`items.search_emote_has_geometry = true`
+}
+
 export const getCollectionsQueryWhere = (filters: CatalogFilters) => {
   const conditions = [
     filters.category ? getCategoryWhere(filters) : undefined,
@@ -224,6 +232,8 @@ export const getCollectionsQueryWhere = (filters: CatalogFilters) => {
     filters.onlyListing ? getOnlyListingsWhere() : undefined,
     filters.onlyMinting ? getOnlyMintingWhere() : undefined,
     filters.ids?.length ? getIdsWhere(filters) : undefined,
+    filters.emoteHasSound ? getHasSoundWhere() : undefined,
+    filters.emoteHasGeometry ? getHasGeometryWhere() : undefined,
   ].filter(Boolean)
 
   const result = SQL`WHERE items.search_is_collection_approved = true`
@@ -389,7 +399,9 @@ export const getCollectionsItemsCatalogQuery = (
                 emote.body_shapes, 
                 emote.rarity, 
                 emote.name, 
-                emote.loop
+                emote.loop,
+                emote.has_sound,
+                emote.has_geometry
               FROM `
     )
     .append(schemaVersion)

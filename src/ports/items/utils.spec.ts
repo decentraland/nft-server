@@ -228,6 +228,8 @@ describe('#fromItemFragment', () => {
           description: 'description',
           loop: false,
           name: 'name',
+          hasGeometry: false,
+          hasSound: false
         },
       },
       searchWearableBodyShapes: null,
