@@ -395,7 +395,8 @@ export const getCollectionsItemsCatalogQuery = (
                 emote.rarity, 
                 emote.name, 
                 emote.loop
-              FROM `
+              FROM 
+              `
     )
     .append(schemaVersion)
     .append(
