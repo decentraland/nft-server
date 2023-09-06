@@ -184,10 +184,17 @@ export function getFetchQuery(
   getNFTFragment: () => string,
   getExtraVariables?: (options: NFTFilters) => string[],
   getExtraWhere?: (options: NFTFilters) => string[],
-  isCount = false
+  isCount = false,
+  bannedNames: string[] = []
 ) {
   const where: string[] = []
   let wrapWhere = false
+
+  if (bannedNames.length) {
+    where.push(
+      `name_not_in: [${bannedNames.map((name) => `"${name}"`).join(', ')}]`
+    )
+  }
 
   if (filters.owner) {
     where.push('owner: $owner')

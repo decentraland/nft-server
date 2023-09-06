@@ -1,4 +1,5 @@
-import { NFTFilters, NFTSortBy } from '@dcl/schemas'
+import nodeFetch from 'node-fetch'
+import { NFTCategory, NFTFilters, NFTSortBy } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { INFTsComponent, NFTResult } from './types'
 import {
@@ -10,6 +11,7 @@ import {
 
 export function createNFTComponent<T extends { id: string }>(options: {
   subgraph: ISubgraphComponent
+  listsServer?: string
   fragmentName: string
   getFragment: () => string
   fromFragment(fragment: T, caller?: string): NFTResult
@@ -27,6 +29,7 @@ export function createNFTComponent<T extends { id: string }>(options: {
     getExtraVariables,
     fromFragment,
     getShouldFetch,
+    listsServer,
   } = options
 
   function getFragmentFetcher(filters: NFTFilters & { caller?: string }) {
@@ -37,13 +40,28 @@ export function createNFTComponent<T extends { id: string }>(options: {
         getFragment,
         getExtraVariables,
         getExtraWhere,
-        isCount
+        isCount,
+        filters.category === NFTCategory.ENS ? await getBannedNames() : []
       )
       const variables = getQueryVariables(filters, getSortByProp)
       const { nfts: fragments } = await subgraph.query<{
         nfts: T[]
       }>(query, variables)
       return fragments
+    }
+  }
+
+  async function getBannedNames() {
+    try {
+      const bannedNames = await nodeFetch(`${listsServer}/banned-names`, {
+        method: 'POST',
+      })
+
+      const data: { data: string[] } = await bannedNames.json()
+      return data.data
+    } catch (error) {
+      // if there was an error fetching the lists server, return an empty array
+      return []
     }
   }
 
