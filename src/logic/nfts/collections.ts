@@ -46,8 +46,6 @@ export const getCollectionsFields = () => `
         rarity
         bodyShapes
         loop
-        hasSound
-        hasGeometry
       }
     }
     createdAt
@@ -107,9 +105,7 @@ export type CollectionsFields = Omit<
       category: EmoteCategory
       rarity: Rarity
       bodyShapes: BodyShape[]
-      loop: boolean,
-      hasSound: boolean,
-      hasGeometry: boolean
+      loop: boolean
     } | null
   }
   createdAt: string
@@ -181,8 +177,6 @@ export function fromCollectionsFragment(
           description: fragment.metadata.emote!.description,
           rarity: fragment.metadata.emote!.rarity,
           loop: fragment.metadata.emote!.loop,
-          hasSound: fragment.metadata.emote!.hasSound,
-          hasGeometry: fragment.metadata.emote!.hasGeometry
         },
       }
       break

@@ -58,8 +58,6 @@ export function fromItemFragment(
           bodyShapes: fragment.searchEmoteBodyShapes!,
           rarity: fragment.rarity,
           loop: fragment.metadata.emote!.loop,
-          hasGeometry: fragment.metadata.emote!.hasGeometry,
-          hasSound: fragment.metadata.emote!.hasSound
         },
       }
       break
@@ -125,8 +123,6 @@ export const getItemFragment = () => `
         description
         category
         loop
-        hasSound
-        hasGeometry
       }
     }
     searchWearableBodyShapes

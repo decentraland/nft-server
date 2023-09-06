@@ -201,14 +201,6 @@ export const getIdsWhere = (filters: CatalogFilters) => {
   return SQL`items.id = ANY(${filters.ids})`
 }
 
-export const getHasSoundWhere = () => {
-  return SQL`items.search_emote_has_sound = true`
-}
-
-export const getHasGeometryWhere = () => {
-  return SQL`items.search_emote_has_geometry = true`
-}
-
 export const getUrnsWhere = (filters: CatalogFilters) => {
   return SQL`items.urn = ANY(${filters.urns})`
 }
@@ -236,8 +228,6 @@ export const getCollectionsQueryWhere = (filters: CatalogFilters) => {
     filters.onlyListing ? getOnlyListingsWhere() : undefined,
     filters.onlyMinting ? getOnlyMintingWhere() : undefined,
     filters.ids?.length ? getIdsWhere(filters) : undefined,
-    filters.emoteHasSound ? getHasSoundWhere() : undefined,
-    filters.emoteHasGeometry ? getHasGeometryWhere() : undefined,
     filters.urns?.length ? getUrnsWhere(filters) : undefined,
   ].filter(Boolean)
 
@@ -404,10 +394,9 @@ export const getCollectionsItemsCatalogQuery = (
                 emote.body_shapes, 
                 emote.rarity, 
                 emote.name, 
-                emote.loop,
-                emote.has_sound,
-                emote.has_geometry
-              FROM `
+                emote.loop
+              FROM 
+              `
     )
     .append(schemaVersion)
     .append(

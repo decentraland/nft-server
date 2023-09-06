@@ -27,8 +27,6 @@ const mockedDBItemResponse: CollectionsItemDBResult = {
     rarity: 'legendary',
     name: 'Descension',
     loop: false,
-    has_geometry: false,
-    has_sound: false
   },
   image:
     'https://peer-lb.decentraland.org/lambdas/collections/contents/urn:decentraland:matic:collections-v2:0xe42257bb4aada439179d736a64a736be0693a4ec:2/thumbnail',
@@ -132,8 +130,6 @@ test('catalog component', function () {
             rarity: 'legendary',
             name: 'Descension',
             loop: false,
-            has_geometry: false,
-            has_sound: false
           },
           image:
             'https://peer-lb.decentraland.org/lambdas/collections/contents/urn:decentraland:matic:collections-v2:0xe42257bb4aada439179d736a64a736be0693a4ec:2/thumbnail',
