@@ -259,6 +259,8 @@ describe('when fetching nfts', () => {
           rarity: Rarity.COMMON,
           bodyShapes: [BodyShape.MALE, BodyShape.FEMALE],
           loop: false,
+          hasGeometry: false,
+          hasSound: false
         },
       },
       createdAt: Date.now().toString(),
