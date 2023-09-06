@@ -322,6 +322,36 @@ test('catalog utils', () => {
             ])
           })
         })
+
+        describe('and passing emoteHasSound as true', () => {
+          beforeEach(() => {
+            filters = {
+              emoteCategory,
+              emoteHasSound: true,
+            }
+          })
+
+          it('should add the sound related definition to the WHERE', () => {
+            expect(getCollectionsQueryWhere(filters).text).toContain(
+              'items.search_emote_has_sound = true'
+            )
+          })
+        })
+
+        describe('and passing emoteHasGeometry as true', () => {
+          beforeEach(() => {
+            filters = {
+              emoteCategory,
+              emoteHasGeometry: true,
+            }
+          })
+
+          it('should add the geometry related definition to the WHERE', () => {
+            expect(getCollectionsQueryWhere(filters).text).toContain(
+              'items.search_emote_has_geometry = true'
+            )
+          })
+        })
       })
     })
 

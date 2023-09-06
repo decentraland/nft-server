@@ -43,6 +43,8 @@ describe('getItemsParams', () => {
         urns: [],
         wearableCategory: undefined,
         wearableGenders: [],
+        emoteHasSound: false,
+        emoteHasGeometry: false,
       })
     })
   })
