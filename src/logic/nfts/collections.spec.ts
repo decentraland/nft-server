@@ -69,8 +69,6 @@ describe('when building a result from the collections subgraph fragment', () => 
           rarity: Rarity.LEGENDARY,
           bodyShapes: [BodyShape.MALE, BodyShape.FEMALE],
           loop: false,
-          hasSound: false,
-          hasGeometry: false,
         },
       }
     })
@@ -84,8 +82,6 @@ describe('when building a result from the collections subgraph fragment', () => 
         bodyShapes: [BodyShape.MALE, BodyShape.FEMALE],
         rarity: Rarity.LEGENDARY,
         loop: false,
-        hasGeometry: false,
-        hasSound: false
       })
     })
   })

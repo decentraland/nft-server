@@ -55,8 +55,6 @@ export const getItemsParams = (params: Params) => {
       ? ethers.utils.parseEther(minPrice).toString()
       : undefined,
     urns: params.getList('urn'),
-    ids: params.getList('id'),
-    emoteHasSound: params.getBoolean('emoteHasSound'),
-    emoteHasGeometry: params.getBoolean('emoteHasGeometry'),
+    ids: params.getList('id')
   }
 }

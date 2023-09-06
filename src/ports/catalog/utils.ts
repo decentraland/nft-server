@@ -100,8 +100,6 @@ export function fromCollectionsItemDbResultToCatalogItem(
         rarity,
         loop,
         category: emoteCategory,
-        has_sound,
-        has_geometry
       } = dbItem.metadata
       ;(name = emoteName), (category = NFTCategory.EMOTE)
       data = {
@@ -111,8 +109,6 @@ export function fromCollectionsItemDbResultToCatalogItem(
           bodyShapes: body_shapes as BodyShape[],
           rarity: rarity as Rarity,
           loop: !!loop,
-          hasSound: !!has_sound,
-          hasGeometry: !!has_geometry
         },
       }
       break
