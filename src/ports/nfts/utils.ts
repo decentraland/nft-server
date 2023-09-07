@@ -191,6 +191,7 @@ export function getFetchQuery(
   let wrapWhere = false
 
   if (bannedNames.length) {
+    console.log('bannedNames inside getFetchQuery: ', bannedNames);
     where.push(
       `name_not_in: [${bannedNames.map((name) => `"${name}"`).join(', ')}]`
     )
