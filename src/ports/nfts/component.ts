@@ -58,7 +58,6 @@ export function createNFTComponent<T extends { id: string }>(options: {
       })
 
       const data: { data: string[] } = await bannedNames.json()
-      console.log('banned names: ', data)
       return data.data
     } catch (error) {
       console.error('Error fetching banned names: ', error)
