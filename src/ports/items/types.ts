@@ -37,6 +37,8 @@ export type ItemFragment = {
       description: string
       category: EmoteCategory
       loop: boolean
+      hasSound: boolean
+      hasGeometry: boolean
     } | null
   }
   searchWearableBodyShapes: BodyShape[] | null
