@@ -32,6 +32,8 @@ export type PriceFilters = {
   | 'maxDistanceToPlaza'
   | 'minEstateSize'
   | 'maxEstateSize'
+  | 'emoteHasGeometry'
+  | 'emoteHasSound'
 >
 
 export type PriceFragment = {

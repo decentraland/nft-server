@@ -56,6 +56,8 @@ export function createPricesHandler(
     const maxDistanceToPlaza = params.getNumber('maxDistanceToPlaza')
     const maxEstateSize = params.getNumber('maxEstateSize')
     const minEstateSize = params.getNumber('minEstateSize')
+    const emoteHasSound = params.getBoolean('emoteHasSound')
+    const emoteHasGeometry = params.getBoolean('emoteHasGeometry')
 
     return asJSON(
       async () => ({
@@ -78,6 +80,8 @@ export function createPricesHandler(
           maxDistanceToPlaza,
           maxEstateSize,
           minEstateSize,
+          emoteHasGeometry,
+          emoteHasSound
         }),
       }),
       {
