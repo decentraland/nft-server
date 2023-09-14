@@ -104,6 +104,8 @@ export function addEmoteCategoryAndRaritiesFilters(
     | 'emoteGenders'
     | 'emotePlayMode'
     | 'itemRarities'
+    | 'emoteHasGeometry'
+    | 'emoteHasSound'
   >,
   where: string[]
 ) {
@@ -136,6 +138,14 @@ export function addEmoteCategoryAndRaritiesFilters(
           .map((rarity) => `"${rarity}"`)
           .join(',')}]`
       )
+    }
+
+    if (filters.emoteHasSound) {
+      where.push('searchEmoteHasSound: true')
+    }
+
+    if (filters.emoteHasGeometry) {
+      where.push('searchEmoteHasGeometry: true')
     }
   }
 }

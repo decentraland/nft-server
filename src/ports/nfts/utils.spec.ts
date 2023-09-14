@@ -288,4 +288,40 @@ describe('#getFetchQuery', () => {
       })
     })
   })
+
+  describe('when emoteHasSound is true', () => {
+    describe('and category is emote', () => {
+      it('should search for emotes with sound', () => {
+        expect(
+          getFetchQuery({ category: NFTCategory.EMOTE, emoteHasSound: true }, '', () => '')
+        ).toEqual(expect.stringContaining('searchEmoteHasSound: true'))
+      })
+    })
+
+    describe('and category is not emote', () => {
+      it('should not add the has sound filter', () => {
+        expect(
+          getFetchQuery({ category: NFTCategory.ENS, emoteHasSound: true }, '', () => '')
+        ).toEqual(expect.not.stringContaining('searchEmoteHasSound: true'))
+      })
+    })
+  })
+
+  describe('when emoteHasGeometry is true', () => {
+    describe('and category is emote', () => {
+      it('should search for emotes with geometry', () => {
+        expect(
+          getFetchQuery({ category: NFTCategory.EMOTE, emoteHasGeometry: true }, '', () => '')
+        ).toEqual(expect.stringContaining('searchEmoteHasGeometry: true'))
+      })
+    })
+
+    describe('and category is not emote', () => {
+      it('should not add the has geometry filter', () => {
+        expect(
+          getFetchQuery({ category: NFTCategory.ENS, emoteHasGeometry: true }, '', () => '')
+        ).toEqual(expect.not.stringContaining('searchEmoteHasGeometry: true'))
+      })
+    })
+  })
 })
