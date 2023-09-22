@@ -30,6 +30,10 @@ export function getOrderBy(filters: CatalogFilters) {
     return ''
   }
 
+  if (filters.search) {
+    return SQL`ORDER BY array_position(${filters.ids}::text[], id) `
+  }
+
   let sortByQuery:
     | SQLStatement
     | string = `ORDER BY first_listed_at ${sortDirectionParam}\n`
@@ -121,7 +125,13 @@ export const getEmotePlayModeWhere = (filters: CatalogFilters) => {
 }
 
 export const getSearchWhere = (filters: CatalogFilters) => {
-  return SQL`items.search_text ILIKE '%' || ${filters.search} || '%'`
+  console.log('filters.category: ', filters.category)
+  if (filters.category === NFTCategory.EMOTE) {
+    return SQL`word % ${filters.search}`
+  } else if (filters.category === NFTCategory.WEARABLE) {
+    return SQL`word % ${filters.search}`
+  }
+  return SQL`word_wearable % ${filters.search} OR word_emote % ${filters.search}`
 }
 
 export const getIsSoldOutWhere = () => {
@@ -291,6 +301,62 @@ const getMaxPriceCase = (filters: CatalogQueryFilters) => {
           `)
 }
 
+const getWhereWordsJoin = (category: CatalogQueryFilters['category']) => {
+  if (category === NFTCategory.EMOTE) {
+    return SQL`JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE `
+  } else if (category === NFTCategory.WEARABLE) {
+    return SQL`JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word ON TRUE `
+  }
+  return SQL` LEFT JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word_wearable ON TRUE 
+              LEFT JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word_emote ON TRUE 
+  `
+  // return SQL`JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word ON TRUE `
+}
+
+const getMetadataJoins = (schemaVersion: string) => {
+  return SQL` LEFT JOIN (
+    SELECT 
+    metadata.id, 
+    wearable.description, 
+    wearable.category, 
+    wearable.body_shapes, 
+    wearable.rarity, 
+    wearable.name
+  FROM `
+    .append(schemaVersion)
+    .append(
+      SQL`.wearable_active AS wearable
+JOIN `
+    )
+    .append(schemaVersion)
+    .append(
+      `.metadata_active AS metadata ON metadata.wearable = wearable.id
+) AS metadata_wearable ON metadata_wearable.id = items.metadata AND (items.item_type = 'wearable_v1' OR items.item_type = 'wearable_v2' OR items.item_type = 'smart_wearable_v1')
+LEFT JOIN (
+  SELECT 
+    metadata.id, 
+    emote.description, 
+    emote.category, 
+    emote.body_shapes, 
+    emote.rarity, 
+    emote.name, 
+    emote.loop,
+    emote.has_sound,
+    emote.has_geometry
+  FROM `
+    )
+    .append(schemaVersion)
+    .append(
+      `.emote_active AS emote
+JOIN `
+    )
+    .append(schemaVersion)
+    .append(
+      `.metadata_active AS metadata ON metadata.emote = emote.id
+) AS metadata_emote ON metadata_emote.id = items.metadata AND items.item_type = 'emote_v1' `
+    )
+}
+
 export const getCollectionsItemsCatalogQuery = (
   schemaVersion: string,
   filters: CatalogQueryFilters
@@ -377,48 +443,9 @@ export const getCollectionsItemsCatalogQuery = (
       `
                 GROUP BY orders.item
               ) AS nfts_with_orders ON nfts_with_orders.item = items.id 
-              LEFT JOIN (
-                SELECT 
-                metadata.id, 
-                wearable.description, 
-                wearable.category, 
-                wearable.body_shapes, 
-                wearable.rarity, 
-                wearable.name
-              FROM `
+              `
     )
-    .append(schemaVersion)
-    .append(
-      `.wearable_active AS wearable
-            JOIN `
-    )
-    .append(schemaVersion)
-    .append(
-      `.metadata_active AS metadata ON metadata.wearable = wearable.id
-      ) AS metadata_wearable ON metadata_wearable.id = items.metadata AND (items.item_type = 'wearable_v1' OR items.item_type = 'wearable_v2' OR items.item_type = 'smart_wearable_v1')
-            LEFT JOIN (
-              SELECT 
-                metadata.id, 
-                emote.description, 
-                emote.category, 
-                emote.body_shapes, 
-                emote.rarity, 
-                emote.name, 
-                emote.loop,
-                emote.has_sound,
-                emote.has_geometry
-              FROM `
-    )
-    .append(schemaVersion)
-    .append(
-      `.emote_active AS emote
-            JOIN `
-    )
-    .append(schemaVersion)
-    .append(
-      `.metadata_active AS metadata ON metadata.emote = emote.id
-            ) AS metadata_emote ON metadata_emote.id = items.metadata AND items.item_type = 'emote_v1' `
-    )
+    .append(getMetadataJoins(schemaVersion))
     .append(getCollectionsQueryWhere(filters))
 
   addQuerySort(query, filters)
@@ -428,13 +455,24 @@ export const getCollectionsItemsCatalogQuery = (
 
 export const getItemIdsBySearchTextQuery = (
   schemaVersion: string,
-  search: CatalogQueryFilters['search']
+  search: CatalogQueryFilters['search'],
+  category: CatalogQueryFilters['category']
 ) => {
   const query = SQL`SELECT items.id`
     .append(` FROM `)
     .append(schemaVersion)
-    .append(`.item_active AS items WHERE `)
-    .append(getSearchWhere({ search }))
+    .append(`.item_active AS items `)
+    .append(getMetadataJoins(schemaVersion))
+    .append(getWhereWordsJoin(category))
+    .append(`WHERE `)
+    .append(getSearchWhere({ search, category }))
+    .append(
+      category
+        ? SQL` ORDER BY GREATEST(similarity(word, ${search})) DESC;`
+        : SQL` ORDER BY GREATEST(similarity(word_wearable, ${search}), similarity(word_emote, ${search})) DESC;`
+    )
 
+  console.log('query: ', query.text)
+  console.log('query: ', query.values)
   return query
 }
