@@ -98,6 +98,7 @@ export function createNFTComponent<T extends { id: string }>(options: {
       )
     }
 
+    // In order to support fuzzy search for ENS names, we're going to first fetch the ids matching the search text in the db using trigram matching and then pass those ids down to the graphql query
     if (options.category === NFTCategory.ENS && options.search && db) {
       try {
         const client = await db.getPool().connect()
