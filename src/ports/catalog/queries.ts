@@ -21,7 +21,7 @@ const WEARABLE_ITEM_TYPES = [
 const MAX_ORDER_TIMESTAMP = 253378408747000 // some orders have a timestmap that can't be cast by Postgres, this is the max possible value
 
 export function getOrderBy(filters: CatalogFilters) {
-  const { sortBy, sortDirection, isOnSale } = filters
+  const { sortBy, sortDirection, isOnSale, search } = filters
   const sortByParam = sortBy ?? CatalogSortBy.NEWEST
   const sortDirectionParam = sortDirection ?? CatalogSortDirection.DESC
 
@@ -30,7 +30,8 @@ export function getOrderBy(filters: CatalogFilters) {
     return ''
   }
 
-  if (filters.search) {
+  if (search) {
+    // If the filters have a search term, we need to order by the position of the item in the search results that is pre-computed and passed in the ids filter.
     return SQL`ORDER BY array_position(${filters.ids}::text[], id) `
   }
 
@@ -125,7 +126,6 @@ export const getEmotePlayModeWhere = (filters: CatalogFilters) => {
 }
 
 export const getSearchWhere = (filters: CatalogFilters) => {
-  console.log('filters.category: ', filters.category)
   if (filters.category === NFTCategory.EMOTE) {
     return SQL`word % ${filters.search}`
   } else if (filters.category === NFTCategory.WEARABLE) {
@@ -310,7 +310,6 @@ const getWhereWordsJoin = (category: CatalogQueryFilters['category']) => {
   return SQL` LEFT JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word_wearable ON TRUE 
               LEFT JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word_emote ON TRUE 
   `
-  // return SQL`JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word ON TRUE `
 }
 
 const getMetadataJoins = (schemaVersion: string) => {
@@ -472,7 +471,5 @@ export const getItemIdsBySearchTextQuery = (
         : SQL` ORDER BY GREATEST(similarity(word_wearable, ${search}), similarity(word_emote, ${search})) DESC;`
     )
 
-  console.log('query: ', query.text)
-  console.log('query: ', query.values)
   return query
 }

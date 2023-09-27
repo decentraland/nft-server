@@ -1,16 +1,24 @@
 import nodeFetch from 'node-fetch'
 import { NFTCategory, NFTFilters, NFTSortBy } from '@dcl/schemas'
+import { IPgComponent } from '@well-known-components/pg-component'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { INFTsComponent, NFTResult } from './types'
 import {
   getByTokenIdQuery,
   getFetchOneQuery,
   getFetchQuery,
+  getFuzzySearchQueryForENS,
   getQueryVariables,
 } from './utils'
+import { getMarketplaceChainId } from '../../logic/chainIds'
+import {
+  getLatestSubgraphSchema,
+  getMarketplaceSubgraphNameChain,
+} from '../../subgraphUtils'
 
 export function createNFTComponent<T extends { id: string }>(options: {
   subgraph: ISubgraphComponent
+  db?: IPgComponent
   listsServer?: string
   fragmentName: string
   getFragment: () => string
@@ -22,6 +30,7 @@ export function createNFTComponent<T extends { id: string }>(options: {
 }): INFTsComponent {
   const {
     subgraph,
+    db,
     fragmentName,
     getFragment,
     getSortByProp,
@@ -87,6 +96,27 @@ export function createNFTComponent<T extends { id: string }>(options: {
       throw new Error(
         'You need to provide a "contractAddress" as well when filtering by "tokenId"'
       )
+    }
+
+    if (options.category === NFTCategory.ENS && options.search && db) {
+      try {
+        const client = await db.getPool().connect()
+        const schemaName = await client.query<{
+          entity_schema: string
+        }>(
+          getLatestSubgraphSchema(
+            getMarketplaceSubgraphNameChain(getMarketplaceChainId())
+          )
+        )
+        const ids = await client.query<{ id: string }>(
+          getFuzzySearchQueryForENS(
+            schemaName.rows[0].entity_schema,
+            options.search
+          )
+        )
+        options.ids = ids.rows.map(({ id }) => id)
+        options.search = undefined
+      } catch (error) {}
     }
 
     const fetchFragments = getFragmentFetcher(options)

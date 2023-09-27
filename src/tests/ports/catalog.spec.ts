@@ -2,9 +2,7 @@ import { CatalogFilters, ChainId, Network } from '@dcl/schemas'
 import { IPgComponent } from '@well-known-components/pg-component'
 import { createTestDbComponent, test } from '../../../src/tests/components'
 import { createCatalogComponent } from '../../ports/catalog/component'
-import {
-  getItemIdsBySearchTextQuery,
-} from '../../ports/catalog/queries'
+import { getItemIdsBySearchTextQuery } from '../../ports/catalog/queries'
 import {
   CollectionsItemDBResult,
   ICatalogComponent,
@@ -14,7 +12,10 @@ import {
   getCatalogQuery,
 } from '../../ports/catalog/utils'
 import { IFavoritesComponent, PickStats } from '../../ports/favorites/types'
-import { getLatestSubgraphSchema, getSubgraphNameForNetwork } from '../../subgraphUtils'
+import {
+  getLatestSubgraphSchema,
+  getSubgraphNameForNetwork,
+} from '../../subgraphUtils'
 
 const mockedDBItemResponse: CollectionsItemDBResult = {
   id: '0xe42257bb4aada439179d736a64a736be0693a4ec-2',
@@ -28,7 +29,7 @@ const mockedDBItemResponse: CollectionsItemDBResult = {
     name: 'Descension',
     loop: false,
     has_geometry: false,
-    has_sound: false
+    has_sound: false,
   },
   image:
     'https://peer-lb.decentraland.org/lambdas/collections/contents/urn:decentraland:matic:collections-v2:0xe42257bb4aada439179d736a64a736be0693a4ec:2/thumbnail',
@@ -133,7 +134,7 @@ test('catalog component', function () {
             name: 'Descension',
             loop: false,
             has_geometry: false,
-            has_sound: false
+            has_sound: false,
           },
           image:
             'https://peer-lb.decentraland.org/lambdas/collections/contents/urn:decentraland:matic:collections-v2:0xe42257bb4aada439179d736a64a736be0693a4ec:2/thumbnail',
@@ -254,7 +255,10 @@ test('catalog component', function () {
         expect(dbClientQueryMock.mock.calls.length).toEqual(3) // 2 for the schema name and 1 for the catalog query
         expect(dbClientQueryMock.mock.calls[0][0]).toEqual(
           getLatestSubgraphSchema(
-            getSubgraphNameForNetwork(Network.ETHEREUM, ChainId.ETHEREUM_SEPOLIA)
+            getSubgraphNameForNetwork(
+              Network.ETHEREUM,
+              ChainId.ETHEREUM_SEPOLIA
+            )
           )
         )
         expect(dbClientQueryMock.mock.calls[1][0]).toEqual(
@@ -289,6 +293,7 @@ test('catalog component', function () {
         filters = {
           network,
           search,
+          // ids: ['id1', 'id2'],
         }
 
         latestSubgraphSchemaResponse = {
@@ -321,9 +326,16 @@ test('catalog component', function () {
             )
           )
           expect(dbClientQueryMock.mock.calls[1][0]).toEqual(
-            getItemIdsBySearchTextQuery(latestSchema, filters.search)
+            getItemIdsBySearchTextQuery(
+              latestSchema,
+              filters.search,
+              filters.category
+            )
           )
-          expect(dbClientQueryMock.mock.calls[1][0].values).toEqual([search])
+          // It's repeated 4 times due to this WHERE statement: `WHERE word_wearable % $1 OR word_emote % $2 ORDER BY GREATEST(similarity(word_wearable, $3), similarity(word_emote, $4)) DESC;`
+          expect(dbClientQueryMock.mock.calls[1][0].values).toEqual(
+            Array(4).fill(search)
+          )
         })
       })
 
@@ -348,7 +360,7 @@ test('catalog component', function () {
             rowCount: 1,
           })
         })
-        it('should use the ids returned by the search query in the main catalog query', async () => {
+        it('should use the ids returned by the search query in the main catalog query and be sorted by them', async () => {
           expect(await catalogComponent.fetch(filters)).toEqual({
             data: [
               {
@@ -367,9 +379,16 @@ test('catalog component', function () {
             )
           )
           expect(dbClientQueryMock.mock.calls[1][0]).toEqual(
-            getItemIdsBySearchTextQuery(latestSchema, filters.search)
+            getItemIdsBySearchTextQuery(
+              latestSchema,
+              filters.search,
+              filters.category
+            )
           )
-          expect(dbClientQueryMock.mock.calls[1][0].values).toEqual([search])
+          // It's repeated 4 times due to this WHERE statement: `WHERE word_wearable % $1 OR word_emote % $2 ORDER BY GREATEST(similarity(word_wearable, $3), similarity(word_emote, $4)) DESC;`
+          expect(dbClientQueryMock.mock.calls[1][0].values).toEqual(
+            Array(4).fill(search)
+          )
           expect(dbClientQueryMock.mock.calls[2][0]).toEqual(
             getCatalogQuery({ [network]: latestSchema }, filters)
           )

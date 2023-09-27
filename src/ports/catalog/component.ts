@@ -54,7 +54,6 @@ export function createCatalogComponent(options: {
               filters.category
             )
           )
-          console.log('filteredItemsById: ', filteredItemsById)
           filters.ids = [
             ...(filters.ids ?? []),
             ...filteredItemsById.rows.map(({ id }) => id),
@@ -67,10 +66,7 @@ export function createCatalogComponent(options: {
         }
       }
       const query = getCatalogQuery(reducedSchemas, filters)
-      console.log('query: ', query.text)
-      console.log('query: ', query.values)
       const results = await client.query<CollectionsItemDBResult>(query)
-      console.log('results: ', results)
       catalogItems = results.rows.map((res) =>
         fromCollectionsItemDbResultToCatalogItem(res, network)
       )

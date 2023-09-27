@@ -405,6 +405,21 @@ test('catalog utils', () => {
           )
         })
       })
+      describe('when the `search` filter is passed in the filter object', () => {
+        let ids: string[]
+        let search: string
+        beforeEach(() => {
+          ids = ['anId', 'anotherId']
+          search = 'a search string'
+        })
+        it('should ORDER BY the ids order in the array', () => {
+          const orderBy = getOrderBy({ search, ids }) as SQLStatement
+          expect(orderBy.text).toContain(
+            `ORDER BY array_position($1::text[], id) `
+          )
+          expect(orderBy.values).toContain(ids)
+        })
+      })
     })
 
     describe('when adding the catalog "LIMIT" and "OFFSET" statements to the query', () => {
@@ -487,17 +502,61 @@ test('catalog utils', () => {
     describe('and passing the "search" filter', () => {
       let search: string
       let schema: string
+      let category: NFTCategory
       beforeEach(() => {
         schema = 'aSchema'
         search = 'a search string'
       })
-      it('should add the is search definition to the WHERE', () => {
-        expect(getItemIdsBySearchTextQuery(schema, search).text).toContain(
-          `items.search_text ILIKE '%' || $1 || '%'`
-        )
-        expect(
-          getItemIdsBySearchTextQuery(schema, search).values
-        ).toStrictEqual([search])
+
+      describe('and there is no category', () => {
+        it('should both JOINs with metadata_wearable and metadata_emote and trigram matching operator', () => {
+          const query = getItemIdsBySearchTextQuery(schema, search, category)
+          expect(query.text).toContain(
+            `LEFT JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word_wearable ON TRUE `
+          )
+          expect(query.text).toContain(
+            `LEFT JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word_emote ON TRUE `
+          )
+          expect(query.text).toContain(
+            `word_wearable % $1 OR word_emote % $2 `
+          )
+          // it appears four times `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2))`
+          expect(query.values).toStrictEqual(Array(4).fill(search))
+        })
+      })
+
+      describe('and the category is Wearable', () => {
+        beforeEach(() => {
+          category = NFTCategory.WEARABLE
+        })
+        it('should add JOIN with the metadata_wearable and trigram matching operator', () => {
+          const query = getItemIdsBySearchTextQuery(schema, search, category)
+          expect(query.text).toContain(
+            `JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word ON TRUE `
+          )
+          expect(query.text).toContain(
+            `word % $1 `
+          )
+          // it appears twice `JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2))`
+          expect(query.values).toStrictEqual(Array(2).fill(search))
+        })
+      })
+
+      describe('and the category is Emote', () => {
+        beforeEach(() => {
+          category = NFTCategory.EMOTE
+        })
+        it('should add JOIN with the metadata_emote', () => {
+          const query = getItemIdsBySearchTextQuery(schema, search, category)
+          expect(query.text).toContain(
+            `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE `
+          )
+          expect(query.text).toContain(
+            `word % $1 `
+          )
+          // it appears twice `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2))`
+          expect(query.values).toStrictEqual(Array(2).fill(search))
+        })
       })
     })
   })
