@@ -126,9 +126,10 @@ export const getEmotePlayModeWhere = (filters: CatalogFilters) => {
 }
 
 export const getSearchWhere = (filters: CatalogFilters) => {
-  if (filters.category === NFTCategory.EMOTE) {
-    return SQL`word % ${filters.search}`
-  } else if (filters.category === NFTCategory.WEARABLE) {
+  if (
+    filters.category === NFTCategory.EMOTE ||
+    filters.category === NFTCategory.WEARABLE
+  ) {
     return SQL`word % ${filters.search}`
   }
   return SQL`word_wearable % ${filters.search} OR word_emote % ${filters.search}`
