@@ -115,8 +115,12 @@ export function createNFTComponent<T extends { id: string }>(options: {
             options.search
           )
         )
-        options.ids = ids.rows.map(({ id }) => id)
-        options.search = undefined
+        // if there are no ids matching the search text, return empty result
+        if (!ids.rows.length) {
+          return []
+        }
+        options.ids = ids.rows.map(({ id }) => id) // adds the ids to the main `ids` filter
+        options.search = undefined // cleans the search text since it's already filtered
       } catch (error) {}
     }
 
