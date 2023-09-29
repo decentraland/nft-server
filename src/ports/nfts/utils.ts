@@ -1,3 +1,4 @@
+import SQL from 'sql-template-strings'
 import { EmotePlayMode, NFTCategory, NFTFilters, NFTSortBy } from '@dcl/schemas'
 import { getGenderFilterQuery } from '../utils'
 import { QueryVariables } from './types'
@@ -201,7 +202,6 @@ export function getFetchQuery(
   let wrapWhere = false
 
   if (bannedNames.length) {
-    console.log('bannedNames inside getFetchQuery: ', bannedNames);
     where.push(
       `name_not_in: [${bannedNames.map((name) => `"${name}"`).join(', ')}]`
     )
@@ -354,4 +354,10 @@ export function getByTokenIdQuery(
 
 export function getId(contractAddress: string, tokenId: string) {
   return `${contractAddress}-${tokenId}`
+}
+
+export function getFuzzySearchQueryForENS(schema: string, searchTerm: string) {
+  return SQL`SELECT id from `
+    .append(schema)
+    .append(SQL`.ens_active WHERE subdomain % ${searchTerm}`)
 }

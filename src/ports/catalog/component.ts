@@ -48,7 +48,11 @@ export function createCatalogComponent(options: {
       if (filters.search) {
         for (const schema of Object.values(reducedSchemas)) {
           const filteredItemsById = await client.query<CollectionsItemDBResult>(
-            getItemIdsBySearchTextQuery(schema, filters.search)
+            getItemIdsBySearchTextQuery(
+              schema,
+              filters.search,
+              filters.category
+            )
           )
           filters.ids = [
             ...(filters.ids ?? []),
@@ -61,9 +65,8 @@ export function createCatalogComponent(options: {
           return { data: [], total: 0 }
         }
       }
-      const results = await client.query<CollectionsItemDBResult>(
-        getCatalogQuery(reducedSchemas, filters)
-      )
+      const query = getCatalogQuery(reducedSchemas, filters)
+      const results = await client.query<CollectionsItemDBResult>(query)
       catalogItems = results.rows.map((res) =>
         fromCollectionsItemDbResultToCatalogItem(res, network)
       )

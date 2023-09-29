@@ -1,7 +1,6 @@
 import SQL from 'sql-template-strings'
 import { ChainId, Network } from '@dcl/schemas'
 
-
 export const getLatestSubgraphSchema = (subgraphName: string) =>
   SQL`
     SELECT 
@@ -23,4 +22,18 @@ export const getSubgraphNameForNetwork = (
     : `collections-matic-${
         chainId === ChainId.MATIC_MAINNET ? 'mainnet' : 'mumbai'
       }`
+}
+
+export const getMarketplaceSubgraphNameChain = (chainId: ChainId) => {
+  switch (chainId) {
+    case ChainId.ETHEREUM_MAINNET:
+      return 'marketplace'
+    case ChainId.ETHEREUM_GOERLI:
+      return 'marketplace-goerli'
+    case ChainId.ETHEREUM_SEPOLIA:
+      return 'marketplace-sepolia'
+
+    default:
+      return 'marketplace'
+  }
 }
