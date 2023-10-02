@@ -250,6 +250,9 @@ async function initComponents(): Promise<AppComponents> {
     await config.requireString('RENTALS_SUBGRAPH_URL')
   )
 
+  // dbs
+  const satsumaDatabase = await createPgComponent({ config, logs, metrics })
+
   // orders
   const marketplaceOrders = createOrdersComponent({
     subgraph: marketplaceSubgraph,
@@ -358,6 +361,7 @@ async function initComponents(): Promise<AppComponents> {
   // nfts
   const marketplaceNFTs = createNFTComponent({
     subgraph: marketplaceSubgraph,
+    db: satsumaDatabase,
     listsServer: await config.requireString('DCL_LISTS_SERVER'),
     fragmentName: 'marketplaceFragment',
     getFragment: getMarketplaceFragment,
@@ -472,7 +476,6 @@ async function initComponents(): Promise<AppComponents> {
     maxCount: 1000,
   })
 
-  const satsumaDatabase = await createPgComponent({ config, logs, metrics })
   // owners
   const owners = createOwnersComponent({
     database: satsumaDatabase,
