@@ -32,7 +32,7 @@ export function getOrderBy(filters: CatalogFilters) {
 
   if (search) {
     // If the filters have a search term, we need to order by the position of the item in the search results that is pre-computed and passed in the ids filter.
-    return SQL`ORDER BY array_position(${filters.ids}::text[], items.id) `
+    return SQL`ORDER BY array_position(${filters.ids}::text[], id) `
   }
 
   let sortByQuery:
@@ -316,7 +316,7 @@ const getWhereWordsJoin = (category: CatalogQueryFilters['category']) => {
 const getMetadataJoins = (schemaVersion: string) => {
   return SQL` LEFT JOIN (
     SELECT 
-    metadata.id, 
+    metadata.id as metadata_id, 
     wearable.description, 
     wearable.category, 
     wearable.body_shapes, 
@@ -331,10 +331,10 @@ JOIN `
     .append(schemaVersion)
     .append(
       `.metadata_active AS metadata ON metadata.wearable = wearable.id
-) AS metadata_wearable ON metadata_wearable.id = items.metadata AND (items.item_type = 'wearable_v1' OR items.item_type = 'wearable_v2' OR items.item_type = 'smart_wearable_v1')
+) AS metadata_wearable ON metadata_wearable.metadata_id = items.metadata AND (items.item_type = 'wearable_v1' OR items.item_type = 'wearable_v2' OR items.item_type = 'smart_wearable_v1')
 LEFT JOIN (
   SELECT 
-    metadata.id, 
+    metadata.id as metadata_id, 
     emote.description, 
     emote.category, 
     emote.body_shapes, 
@@ -353,7 +353,7 @@ JOIN `
     .append(schemaVersion)
     .append(
       `.metadata_active AS metadata ON metadata.emote = emote.id
-) AS metadata_emote ON metadata_emote.id = items.metadata AND items.item_type = 'emote_v1' `
+) AS metadata_emote ON metadata_emote.metadata_id = items.metadata AND items.item_type = 'emote_v1' `
     )
 }
 
