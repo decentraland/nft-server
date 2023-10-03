@@ -60,6 +60,7 @@ export function createCatalogComponent(options: {
           ]
         }
 
+        filters.search = undefined // resets the search text since it's already filtered by the query
         if (filters.ids?.length === 0) {
           // if no items matched the search text, return empty result
           return { data: [], total: 0 }
