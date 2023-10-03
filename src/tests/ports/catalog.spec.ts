@@ -314,8 +314,7 @@ test('catalog component', function () {
           })
         })
         it('should return an empty array and a total count of 0', async () => {
-          // destructuring filters here since the `fetch` logic will reset the search so it's not used in the main `getCatalogQuery` query
-          expect(await catalogComponent.fetch({ ...filters })).toEqual({
+          expect(await catalogComponent.fetch(filters)).toEqual({
             data: [],
             total: 0,
           })
@@ -362,8 +361,7 @@ test('catalog component', function () {
           })
         })
         it('should use the ids returned by the search query in the main catalog query and be sorted by them', async () => {
-          // destructuring filters here since the `fetch` logic will reset the search so it's not used in the main `getCatalogQuery` query
-          expect(await catalogComponent.fetch({ ...filters })).toEqual({
+          expect(await catalogComponent.fetch(filters)).toEqual({
             data: [
               {
                 ...fromCollectionsItemDbResultToCatalogItem(
