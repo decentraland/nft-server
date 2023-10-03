@@ -415,7 +415,7 @@ test('catalog utils', () => {
         it('should ORDER BY the ids order in the array', () => {
           const orderBy = getOrderBy({ search, ids }) as SQLStatement
           expect(orderBy.text).toContain(
-            `ORDER BY array_position($1::text[], id) `
+            `ORDER BY array_position($1::text[], items.id) `
           )
           expect(orderBy.values).toContain(ids)
         })

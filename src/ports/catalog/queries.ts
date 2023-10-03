@@ -32,7 +32,7 @@ export function getOrderBy(filters: CatalogFilters) {
 
   if (search) {
     // If the filters have a search term, we need to order by the position of the item in the search results that is pre-computed and passed in the ids filter.
-    return SQL`ORDER BY array_position(${filters.ids}::text[], id) `
+    return SQL`ORDER BY array_position(${filters.ids}::text[], items.id) `
   }
 
   let sortByQuery:
