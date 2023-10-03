@@ -16,9 +16,7 @@ export function createCatalogHandler(
     const params = new Params(context.url.searchParams)
     const onlyListing = params.getBoolean('onlyListing')
     const onlyMinting = params.getBoolean('onlyMinting')
-    const sortBy =
-      params.getValue<CatalogSortBy>('sortBy', CatalogSortBy) ||
-      CatalogSortBy.CHEAPEST
+    const sortBy = params.getValue<CatalogSortBy>('sortBy', CatalogSortBy)
     const sortDirection =
       params.getValue<CatalogSortDirection>(
         'sortDirection',

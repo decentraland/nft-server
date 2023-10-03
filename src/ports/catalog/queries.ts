@@ -21,7 +21,7 @@ const WEARABLE_ITEM_TYPES = [
 const MAX_ORDER_TIMESTAMP = 253378408747000 // some orders have a timestmap that can't be cast by Postgres, this is the max possible value
 
 export function getOrderBy(filters: CatalogFilters) {
-  const { sortBy, sortDirection, isOnSale, search } = filters
+  const { sortBy, sortDirection, isOnSale, search, ids } = filters
   const sortByParam = sortBy ?? CatalogSortBy.NEWEST
   const sortDirectionParam = sortDirection ?? CatalogSortDirection.DESC
 
@@ -30,8 +30,9 @@ export function getOrderBy(filters: CatalogFilters) {
     return ''
   }
 
-  if (search) {
-    // If the filters have a search term, we need to order by the position of the item in the search results that is pre-computed and passed in the ids filter.
+  if (search && !sortBy && ids?.length) {
+    // If the filters have a search term, there's no other Sort applied and ids matching the search were returned, then
+    // we need to order by the position of the item in the search results that is pre-computed and passed in the ids filter.
     return SQL`ORDER BY array_position(${filters.ids}::text[], id) `
   }
 
