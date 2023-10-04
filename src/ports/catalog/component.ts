@@ -48,11 +48,7 @@ export function createCatalogComponent(options: {
       if (filters.search) {
         for (const schema of Object.values(reducedSchemas)) {
           const filteredItemsById = await client.query<CollectionsItemDBResult>(
-            getItemIdsBySearchTextQuery(
-              schema,
-              filters.search,
-              filters.category
-            )
+            getItemIdsBySearchTextQuery(schema, filters)
           )
           filters.ids = [
             ...(filters.ids ?? []),

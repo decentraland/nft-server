@@ -503,25 +503,36 @@ test('catalog utils', () => {
       let search: string
       let schema: string
       let category: NFTCategory
+      let limit: number
+      let offset: number
       beforeEach(() => {
         schema = 'aSchema'
         search = 'a search string'
+        limit = 10
+        offset = 0
       })
 
       describe('and there is no category', () => {
         it('should both JOINs with metadata_wearable and metadata_emote and trigram matching operator', () => {
-          const query = getItemIdsBySearchTextQuery(schema, search, category)
+          const query = getItemIdsBySearchTextQuery(schema, {
+            search,
+            category,
+            limit,
+            offset,
+          })
           expect(query.text).toContain(
             `LEFT JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word_wearable ON TRUE `
           )
           expect(query.text).toContain(
             `LEFT JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word_emote ON TRUE `
           )
-          expect(query.text).toContain(
-            `word_wearable % $1 OR word_emote % $2 `
-          )
+          expect(query.text).toContain(`word_wearable % $1 OR word_emote % $2 `)
           // it appears four times `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2))`
-          expect(query.values).toStrictEqual(Array(4).fill(search))
+          expect(query.values).toStrictEqual([
+            ...Array(4).fill(search),
+            limit,
+            offset,
+          ])
         })
       })
 
@@ -530,15 +541,22 @@ test('catalog utils', () => {
           category = NFTCategory.WEARABLE
         })
         it('should add JOIN with the metadata_wearable and trigram matching operator', () => {
-          const query = getItemIdsBySearchTextQuery(schema, search, category)
+          const query = getItemIdsBySearchTextQuery(schema, {
+            search,
+            category,
+            limit,
+            offset,
+          })
           expect(query.text).toContain(
             `JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word ON TRUE `
           )
-          expect(query.text).toContain(
-            `word % $1 `
-          )
+          expect(query.text).toContain(`word % $1 `)
           // it appears twice `JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2))`
-          expect(query.values).toStrictEqual(Array(2).fill(search))
+          expect(query.values).toStrictEqual([
+            ...Array(2).fill(search),
+            limit,
+            offset,
+          ])
         })
       })
 
@@ -547,15 +565,22 @@ test('catalog utils', () => {
           category = NFTCategory.EMOTE
         })
         it('should add JOIN with the metadata_emote', () => {
-          const query = getItemIdsBySearchTextQuery(schema, search, category)
+          const query = getItemIdsBySearchTextQuery(schema, {
+            search,
+            category,
+            limit,
+            offset,
+          })
           expect(query.text).toContain(
             `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE `
           )
-          expect(query.text).toContain(
-            `word % $1 `
-          )
+          expect(query.text).toContain(`word % $1 `)
           // it appears twice `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2))`
-          expect(query.values).toStrictEqual(Array(2).fill(search))
+          expect(query.values).toStrictEqual([
+            ...Array(2).fill(search),
+            limit,
+            offset,
+          ])
         })
       })
     })
