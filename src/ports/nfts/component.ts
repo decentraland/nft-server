@@ -1,4 +1,5 @@
 import nodeFetch from 'node-fetch'
+import { PoolClient } from 'pg'
 import { NFTCategory, NFTFilters, NFTSortBy } from '@dcl/schemas'
 import { IPgComponent } from '@well-known-components/pg-component'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
@@ -100,8 +101,9 @@ export function createNFTComponent<T extends { id: string }>(options: {
 
     // In order to support fuzzy search for ENS names, we're going to first fetch the ids matching the search text in the db using trigram matching and then pass those ids down to the graphql query
     if (options.category === NFTCategory.ENS && options.search && db) {
+      let client: PoolClient | undefined = undefined
       try {
-        const client = await db.getPool().connect()
+        client = await db.getPool().connect()
         const schemaName = await client.query<{
           entity_schema: string
         }>(
@@ -121,7 +123,11 @@ export function createNFTComponent<T extends { id: string }>(options: {
         }
         options.ids = ids.rows.map(({ id }) => id) // adds the ids to the main `ids` filter
         options.search = undefined // cleans the search text since it's already filtered
-      } catch (error) {}
+      } catch (error) {
+        console.error('Error filtering ENS by name: ', error)
+      } finally {
+        client?.release()
+      }
     }
 
     const fetchFragments = getFragmentFetcher(options)
