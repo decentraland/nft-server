@@ -20,7 +20,7 @@ import {
   CatalogQueryFilters,
   CollectionsItemDBResult,
 } from './types'
-import { addQuerySort, getCollectionsItemsCatalogQuery } from './queries'
+import { getCollectionsItemsCatalogQuery, getOrderBy } from './queries'
 
 const getMultiNetworkQuery = (
   schemas: Record<string, string>,
@@ -43,7 +43,7 @@ const getMultiNetworkQuery = (
     }
   })
   unionQuery.append(SQL`\n) as temp \n`)
-  addQuerySort(unionQuery, filters)
+  unionQuery.append(getOrderBy(filters))
   if (limit !== undefined && offset !== undefined) {
     unionQuery.append(SQL`LIMIT ${limit} OFFSET ${offset}`)
   }
@@ -101,7 +101,7 @@ export function fromCollectionsItemDbResultToCatalogItem(
         loop,
         category: emoteCategory,
         has_sound,
-        has_geometry
+        has_geometry,
       } = dbItem.metadata
       ;(name = emoteName), (category = NFTCategory.EMOTE)
       data = {
@@ -112,7 +112,7 @@ export function fromCollectionsItemDbResultToCatalogItem(
           rarity: rarity as Rarity,
           loop: !!loop,
           hasSound: !!has_sound,
-          hasGeometry: !!has_geometry
+          hasGeometry: !!has_geometry,
         },
       }
       break

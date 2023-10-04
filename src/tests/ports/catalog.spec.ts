@@ -293,7 +293,6 @@ test('catalog component', function () {
         filters = {
           network,
           search,
-          // ids: ['id1', 'id2'],
         }
 
         latestSubgraphSchemaResponse = {
@@ -325,12 +324,13 @@ test('catalog component', function () {
               getSubgraphNameForNetwork(network, ChainId.ETHEREUM_SEPOLIA)
             )
           )
+          const itemIdsBySearchTextQuery = getItemIdsBySearchTextQuery(
+            latestSchema,
+            filters.search,
+            filters.category
+          )
           expect(dbClientQueryMock.mock.calls[1][0]).toEqual(
-            getItemIdsBySearchTextQuery(
-              latestSchema,
-              filters.search,
-              filters.category
-            )
+            itemIdsBySearchTextQuery
           )
           // It's repeated 4 times due to this WHERE statement: `WHERE word_wearable % $1 OR word_emote % $2 ORDER BY GREATEST(similarity(word_wearable, $3), similarity(word_emote, $4)) DESC;`
           expect(dbClientQueryMock.mock.calls[1][0].values).toEqual(
@@ -389,9 +389,11 @@ test('catalog component', function () {
           expect(dbClientQueryMock.mock.calls[1][0].values).toEqual(
             Array(4).fill(search)
           )
-          expect(dbClientQueryMock.mock.calls[2][0]).toEqual(
-            getCatalogQuery({ [network]: latestSchema }, filters)
+          const mainCatalogQuery = getCatalogQuery(
+            { [network]: latestSchema },
+            { ...filters, ids: [mockedDBItemResponse.id] } // the main query should have the ids returned by the search query
           )
+          expect(dbClientQueryMock.mock.calls[2][0]).toEqual(mainCatalogQuery)
         })
       })
     })
