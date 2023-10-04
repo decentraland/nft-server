@@ -285,16 +285,20 @@ test('catalog component', function () {
       let pickStats: PickStats
       let network = Network.ETHEREUM
       let filters: CatalogFilters
+      let limit: number, offset: number
       let latestSchema = 'sgd1234'
       let search: string
 
       beforeEach(() => {
         search = 'aSearchTerm'
+        limit = 10
+        offset = 0
         filters = {
           network,
           search,
+          limit,
+          offset,
         }
-
         latestSubgraphSchemaResponse = {
           rows: [
             {
@@ -326,16 +330,17 @@ test('catalog component', function () {
           )
           const itemIdsBySearchTextQuery = getItemIdsBySearchTextQuery(
             latestSchema,
-            filters.search,
-            filters.category
+            filters
           )
           expect(dbClientQueryMock.mock.calls[1][0]).toEqual(
             itemIdsBySearchTextQuery
           )
           // It's repeated 4 times due to this WHERE statement: `WHERE word_wearable % $1 OR word_emote % $2 ORDER BY GREATEST(similarity(word_wearable, $3), similarity(word_emote, $4)) DESC;`
-          expect(dbClientQueryMock.mock.calls[1][0].values).toEqual(
-            Array(4).fill(search)
-          )
+          expect(dbClientQueryMock.mock.calls[1][0].values).toEqual([
+            ...Array(4).fill(search),
+            limit,
+            offset,
+          ])
         })
       })
 
@@ -379,16 +384,14 @@ test('catalog component', function () {
             )
           )
           expect(dbClientQueryMock.mock.calls[1][0]).toEqual(
-            getItemIdsBySearchTextQuery(
-              latestSchema,
-              filters.search,
-              filters.category
-            )
+            getItemIdsBySearchTextQuery(latestSchema, filters)
           )
           // It's repeated 4 times due to this WHERE statement: `WHERE word_wearable % $1 OR word_emote % $2 ORDER BY GREATEST(similarity(word_wearable, $3), similarity(word_emote, $4)) DESC;`
-          expect(dbClientQueryMock.mock.calls[1][0].values).toEqual(
-            Array(4).fill(search)
-          )
+          expect(dbClientQueryMock.mock.calls[1][0].values).toEqual([
+            ...Array(4).fill(search),
+            limit,
+            offset,
+          ])
           const mainCatalogQuery = getCatalogQuery(
             { [network]: latestSchema },
             { ...filters, ids: [mockedDBItemResponse.id] } // the main query should have the ids returned by the search query
