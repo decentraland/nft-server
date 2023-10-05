@@ -335,9 +335,9 @@ test('catalog component', function () {
           expect(dbClientQueryMock.mock.calls[1][0]).toEqual(
             itemIdsBySearchTextQuery
           )
-          // It's repeated 4 times due to this WHERE statement: `WHERE word_wearable % $1 OR word_emote % $2 ORDER BY GREATEST(similarity(word_wearable, $3), similarity(word_emote, $4)) DESC;`
+          // It's repeated 7 times due to the SELECT + WHERE statements: `WHERE word_wearable % $1 OR word_emote % $2 ORDER BY GREATEST(similarity(word_wearable, $3), similarity(word_emote, $4)) DESC;`
           expect(dbClientQueryMock.mock.calls[1][0].values).toEqual([
-            ...Array(4).fill(search),
+            ...Array(7).fill(search),
             limit,
             offset,
           ])
@@ -388,7 +388,7 @@ test('catalog component', function () {
           )
           // It's repeated 4 times due to this WHERE statement: `WHERE word_wearable % $1 OR word_emote % $2 ORDER BY GREATEST(similarity(word_wearable, $3), similarity(word_emote, $4)) DESC;`
           expect(dbClientQueryMock.mock.calls[1][0].values).toEqual([
-            ...Array(4).fill(search),
+            ...Array(7).fill(search),
             limit,
             offset,
           ])

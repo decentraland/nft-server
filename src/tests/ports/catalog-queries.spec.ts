@@ -526,10 +526,10 @@ test('catalog utils', () => {
           expect(query.text).toContain(
             `LEFT JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word_emote ON TRUE `
           )
-          expect(query.text).toContain(`word_wearable % $1 OR word_emote % $2 `)
+          expect(query.text).toContain(`word_wearable % $4 OR word_emote % $5 `)
           // it appears four times `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2))`
           expect(query.values).toStrictEqual([
-            ...Array(4).fill(search),
+            ...Array(7).fill(search),
             limit,
             offset,
           ])
@@ -550,10 +550,10 @@ test('catalog utils', () => {
           expect(query.text).toContain(
             `JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word ON TRUE `
           )
-          expect(query.text).toContain(`word % $1 `)
+          expect(query.text).toContain(`word % $4 `)
           // it appears twice `JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2))`
           expect(query.values).toStrictEqual([
-            ...Array(2).fill(search),
+            ...Array(7).fill(search),
             limit,
             offset,
           ])
@@ -574,10 +574,10 @@ test('catalog utils', () => {
           expect(query.text).toContain(
             `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE `
           )
-          expect(query.text).toContain(`word % $1 `)
-          // it appears twice `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2))`
+          expect(query.text).toContain(`word % $4 `)
+          // it appears twice `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2), similarity(metadata_wearable.name, $3), similarity(metadata_emote.name, $4))`
           expect(query.values).toStrictEqual([
-            ...Array(2).fill(search),
+            ...Array(7).fill(search),
             limit,
             offset,
           ])
