@@ -46,15 +46,19 @@ export function createCatalogComponent(options: {
         {}
       )
       if (filters.search) {
+        const filteredItems = []
         for (const schema of Object.values(reducedSchemas)) {
-          const filteredItemsById = await client.query<CollectionsItemDBResult>(
-            getItemIdsBySearchTextQuery(schema, filters)
-          )
-          filters.ids = [
-            ...(filters.ids ?? []),
-            ...filteredItemsById.rows.map(({ id }) => id),
-          ]
+          const filteredItemsById = await client.query<{
+            id: string
+            similarity: number
+          }>(getItemIdsBySearchTextQuery(schema, filters))
+          filteredItems.push(...filteredItemsById.rows)
         }
+        filteredItems?.sort((a, b) => b.similarity - a.similarity)
+        filters.ids = [
+          ...(filters.ids ?? []),
+          ...filteredItems.map(({ id }) => id),
+        ]
 
         if (filters.ids?.length === 0) {
           // if no items matched the search text, return empty result

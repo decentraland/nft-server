@@ -553,7 +553,7 @@ test('catalog utils', () => {
           expect(query.text).toContain(`word % $1 `)
           // it appears twice `JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2))`
           expect(query.values).toStrictEqual([
-            ...Array(2).fill(search),
+            ...Array(4).fill(search),
             limit,
             offset,
           ])
@@ -575,9 +575,9 @@ test('catalog utils', () => {
             `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE `
           )
           expect(query.text).toContain(`word % $1 `)
-          // it appears twice `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2))`
+          // it appears twice `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2), similarity(metadata_wearable.name, $3), similarity(metadata_emote.name, $4))`
           expect(query.values).toStrictEqual([
-            ...Array(2).fill(search),
+            ...Array(4).fill(search),
             limit,
             offset,
           ])

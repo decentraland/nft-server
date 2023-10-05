@@ -459,7 +459,10 @@ export const getItemIdsBySearchTextQuery = (
   filters: CatalogQueryFilters
 ) => {
   const { category, search, limit, offset } = filters
-  const query = SQL`SELECT items.id`
+  const query = SQL`SELECT 
+      items.id, 
+      GREATEST(similarity(word, ${search}), similarity(metadata_wearable.name, ${search}), 
+      similarity(metadata_emote.name, ${search})) as similarity`
     .append(` FROM `)
     .append(schemaVersion)
     .append(`.item_active AS items `)
@@ -469,7 +472,7 @@ export const getItemIdsBySearchTextQuery = (
     .append(getSearchWhere({ search, category }))
     .append(
       category
-        ? SQL` ORDER BY GREATEST(similarity(word, ${search})) DESC`
+        ? SQL` ORDER BY GREATEST(similarity(word, ${search}), similarity(metadata_wearable.name, ${search}), similarity(metadata_emote.name, ${search})) DESC`
         : SQL` ORDER BY GREATEST(similarity(word_wearable, ${search}), similarity(word_emote, ${search})) DESC`
     )
     .append(SQL` LIMIT ${limit} OFFSET ${offset};`)
