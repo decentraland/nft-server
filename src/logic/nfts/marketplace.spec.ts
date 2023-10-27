@@ -138,7 +138,6 @@ describe('when building a result from the marketplace fragment', () => {
       })
 
       it('should not contain an order', () => {
-        console.log(fromMarketplaceNFTFragment(marketplaceFragment).nft)
         expect(fromMarketplaceNFTFragment(marketplaceFragment)).toMatchObject({
           nft: {
             activeOrderId: null,
