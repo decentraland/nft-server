@@ -528,11 +528,7 @@ test('catalog utils', () => {
           )
           expect(query.text).toContain(`word_wearable % $4 OR word_emote % $5 `)
           // it appears four times `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2))`
-          expect(query.values).toStrictEqual([
-            ...Array(7).fill(search),
-            limit,
-            offset,
-          ])
+          expect(query.values).toStrictEqual(Array(7).fill(search))
         })
       })
 
@@ -552,11 +548,7 @@ test('catalog utils', () => {
           )
           expect(query.text).toContain(`word % $4 `)
           // it appears twice `JOIN LATERAL unnest(string_to_array(metadata_wearable.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2))`
-          expect(query.values).toStrictEqual([
-            ...Array(7).fill(search),
-            limit,
-            offset,
-          ])
+          expect(query.values).toStrictEqual(Array(7).fill(search))
         })
       })
 
@@ -576,12 +568,20 @@ test('catalog utils', () => {
           )
           expect(query.text).toContain(`word % $4 `)
           // it appears twice `JOIN LATERAL unnest(string_to_array(metadata_emote.name, ' ')) AS word ON TRUE WHERE word % $1 ORDER BY GREATEST(similarity(word, $2), similarity(metadata_wearable.name, $3), similarity(metadata_emote.name, $4))`
-          expect(query.values).toStrictEqual([
-            ...Array(7).fill(search),
-            limit,
-            offset,
-          ])
+          expect(query.values).toStrictEqual(Array(7).fill(search))
         })
+      })
+
+      it('should search for all ids without limit', () => {
+        const query = getItemIdsBySearchTextQuery(schema, {
+          search,
+          category,
+          limit,
+          offset,
+        })
+
+        expect(query.text).not.toContain('LIMIT')
+        expect(query.text).not.toContain('OFFSET')
       })
     })
   })
