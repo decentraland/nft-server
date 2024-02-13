@@ -595,3 +595,4 @@ Record<string, number>
 - `maxEstateSize`: Filter results by maximum amount of parcels in the Estate. Type: `number`
 - `minPrice`: Filter results by minimun price. Type: `number`
 - `maxPrice`: Filter results by max price. Type: `number`
+
