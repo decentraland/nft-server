@@ -12,7 +12,7 @@ RUN apk add --no-cache py3-setuptools python3-dev build-base
 COPY package.json /app/package.json
 COPY package-lock.json /app/package-lock.json
 # --maxsockets=5 is used to avoid "EMFILE: too many open files" error
-RUN npm ci --maxsockets=5
+RUN npm install --maxsockets=5
 
 # build the app
 COPY . /app
@@ -21,7 +21,7 @@ RUN npm run test
 
 # remove devDependencies, keep only used dependencies
 # --maxsockets=5 is used to avoid "EMFILE: too many open files" error
-RUN npm ci --only=production --maxsockets=5
+RUN npm install --only=production --maxsockets=5
 
 FROM node:18-alpine
 
