@@ -19,3 +19,5 @@ jobs:
         run: npm run build
       - name: test
         run: npm run test
+      - name: build image
+        run: docker build . -t nft-server
