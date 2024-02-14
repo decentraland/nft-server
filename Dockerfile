@@ -1,6 +1,6 @@
 ARG RUN
 
-FROM node:18 as builderenv
+FROM node:18-alpine as builderenv
 
 WORKDIR /app
 
@@ -11,7 +11,7 @@ RUN apk add --no-cache py3-setuptools python3-dev build-base
 # install dependencies
 COPY package.json /app/package.json
 COPY package-lock.json /app/package-lock.json
-RUN npm install --maxsockets=5
+RUN npm ci
 
 # build the app
 COPY . /app
@@ -19,9 +19,9 @@ RUN npm run build
 RUN npm run test
 
 # remove devDependencies, keep only used dependencies
-RUN npm install --only=production --maxsockets=5
+RUN npm ci --only=production
 
-FROM node:18
+FROM node:18-alpine
 
 RUN apk update
 RUN apk add --no-cache tini
