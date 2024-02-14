@@ -1,6 +1,6 @@
 ARG RUN
 
-FROM node:18 as builderenv
+FROM node:18-alpine as builderenv
 
 WORKDIR /app
 
@@ -21,7 +21,7 @@ RUN npm run test
 # remove devDependencies, keep only used dependencies
 RUN npm install --only=production --maxsockets=5
 
-FROM node:18
+FROM node:18-alpine
 
 RUN apk update
 RUN apk add --no-cache tini
