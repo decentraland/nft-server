@@ -96,7 +96,7 @@ test('catalog component', function () {
         rows: { entity_schema: string }[]
         rowCount: number
       }
-      let network = Network.ETHEREUM
+      let network: Network.ETHEREUM = Network.ETHEREUM
       let filters: CatalogFilters
       let latestSchema = 'sgd1234'
       let dbItemResponse: CollectionsItemDBResult
@@ -336,7 +336,9 @@ test('catalog component', function () {
             itemIdsBySearchTextQuery
           )
           // It's repeated 7 times due to the SELECT + WHERE statements: `WHERE word_wearable % $1 OR word_emote % $2 ORDER BY GREATEST(similarity(word_wearable, $3), similarity(word_emote, $4)) DESC;`
-          expect(dbClientQueryMock.mock.calls[1][0].values).toEqual(Array(7).fill(search))
+          expect(dbClientQueryMock.mock.calls[1][0].values).toEqual(
+            Array(7).fill(search)
+          )
         })
       })
 
@@ -383,7 +385,9 @@ test('catalog component', function () {
             getItemIdsBySearchTextQuery(latestSchema, filters)
           )
           // It's repeated 4 times due to this WHERE statement: `WHERE word_wearable % $1 OR word_emote % $2 ORDER BY GREATEST(similarity(word_wearable, $3), similarity(word_emote, $4)) DESC;`
-          expect(dbClientQueryMock.mock.calls[1][0].values).toEqual(Array(7).fill(search))
+          expect(dbClientQueryMock.mock.calls[1][0].values).toEqual(
+            Array(7).fill(search)
+          )
           const mainCatalogQuery = getCatalogQuery(
             { [network]: latestSchema },
             { ...filters, ids: [mockedDBItemResponse.id] } // the main query should have the ids returned by the search query

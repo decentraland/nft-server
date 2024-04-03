@@ -31,7 +31,7 @@ const getSalesOfSameItem = (qty: number, isOnSale = true) =>
     searchContractAddress: `0xsameItemSale${qty}${isOnSale ? 'onSale' : ''}`,
   }))
 
-const getItem = (contractAddress: string, itemId: string) => ({
+const getItem = (contractAddress: string, itemId: string): Item => ({
   id: `${contractAddress}-${itemId}`,
   name: 'mockdItem',
   thumbnail:
