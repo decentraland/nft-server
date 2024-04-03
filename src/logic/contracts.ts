@@ -1,6 +1,7 @@
 import { ChainId, Contract, Network, NFTCategory } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
 import { FragmentItemType, ItemFragment } from '../ports/items/types'
+import { AssetsNetworks } from '../types'
 
 const MAX_RESULTS = 1000
 
@@ -20,7 +21,7 @@ const getCollectionsQuery = (page: number) => `
 
 export async function getCollectionsContracts(
   subgraph: ISubgraphComponent,
-  network: Network,
+  network: AssetsNetworks,
   chainId: ChainId
 ): Promise<Contract[]> {
   let page = 0

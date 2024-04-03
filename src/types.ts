@@ -21,6 +21,7 @@ import {
   MintSortBy,
   NFTFilters,
   NFTSortBy,
+  Network,
   Order,
   OrderFilters,
   OrderSortBy,
@@ -51,6 +52,8 @@ import { IOwnerDataComponent } from './ports/owner/types'
 import { ItemOptions } from './ports/items/types'
 import { IFavoritesComponent } from './ports/favorites/types'
 import { ICatalogComponent } from './ports/catalog/types'
+
+export type AssetsNetworks = Network.MATIC | Network.ETHEREUM
 
 export type AppConfig = {
   HTTP_SERVER_PORT: string

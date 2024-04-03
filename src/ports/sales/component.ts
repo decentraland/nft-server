@@ -1,11 +1,12 @@
 import { ChainId, Network, SaleFilters, SaleType } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
+import { AssetsNetworks } from '../../types'
 import { SaleFragment, ISalesComponent } from './types'
 import { fromSaleFragment, getSalesQuery } from './utils'
 
 export function createSalesComponent(options: {
   subgraph: ISubgraphComponent
-  network: Network
+  network: AssetsNetworks
   chainId: ChainId
   useLegacySchema?: boolean
   shouldFetch?: (filters: SaleFilters) => boolean

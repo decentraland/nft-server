@@ -8,13 +8,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Use Node.js 16.x
+      - name: Use Node.js 18.x
         uses: actions/setup-node@v1
         with:
-          node-version: 16.x
+          node-version: 18.x
           cache: npm
       - name: install
-        run: npm ci
+        run: npm install
       - name: build
         run: npm run build
       - name: test

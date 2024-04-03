@@ -6,13 +6,14 @@ import {
   ListingStatus,
   Network,
 } from '@dcl/schemas'
+import { AssetsNetworks } from '../../types'
 import { BidFragment } from './types'
 
 export const BID_DEFAULT_SORT_BY = BidSortBy.RECENTLY_OFFERED
 
 export function fromBidFragment(
   fragment: BidFragment,
-  network: Network,
+  network: AssetsNetworks,
   chainId: ChainId
 ): Bid {
   const bid: Bid = {

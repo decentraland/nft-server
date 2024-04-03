@@ -14,6 +14,7 @@ import {
   getMarketplaceChainId,
 } from '../../logic/chainIds'
 import { getSubgraphNameForNetwork } from '../../subgraphUtils'
+import { AssetsNetworks } from '../../types'
 import { FragmentItemType } from '../items/types'
 import {
   CatalogOptions,
@@ -62,7 +63,7 @@ export const getCatalogQuery = (
 
 export function fromCollectionsItemDbResultToCatalogItem(
   dbItem: CollectionsItemDBResult,
-  network?: Network
+  network?: AssetsNetworks
 ): Item {
   let name: string
   let category: NFTCategory

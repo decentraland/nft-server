@@ -1,11 +1,11 @@
 import {
   ChainId,
   ListingStatus,
-  Network,
   Order,
   OrderFilters,
   OrderSortBy,
 } from '@dcl/schemas'
+import { AssetsNetworks } from '../../types'
 import { OrderFragment } from './types'
 
 export const ORDER_DEFAULT_SORT_BY = OrderSortBy.RECENTLY_LISTED
@@ -210,7 +210,7 @@ export const getOrdersQuery = (
 
 export function fromOrderFragment(
   fragment: OrderFragment,
-  network: Network,
+  network: AssetsNetworks,
   chainId: ChainId
 ): Order {
   const issuedId = fragment.nft.issuedId

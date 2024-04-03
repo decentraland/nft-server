@@ -1,11 +1,12 @@
-import { BidFilters, ChainId, Network } from '@dcl/schemas'
+import { BidFilters, ChainId } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
+import { AssetsNetworks } from '../../types'
 import { BidFragment, IBidsComponent } from './types'
 import { fromBidFragment, getBidsQuery } from './utils'
 
 export function createBidsComponent(options: {
   subgraph: ISubgraphComponent
-  network: Network
+  network: AssetsNetworks
   chainId: ChainId
 }): IBidsComponent {
   const { subgraph, network, chainId } = options

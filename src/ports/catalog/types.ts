@@ -3,8 +3,8 @@ import {
   CatalogSortBy,
   CatalogSortDirection,
   Item,
-  Network,
 } from '@dcl/schemas'
+import { AssetsNetworks } from '../../types'
 
 export type CollectionsItemDBResult = {
   total?: number // for UNION queries, this field will be defined
@@ -31,7 +31,7 @@ export type CollectionsItemDBResult = {
   owners_count: number | null
   min_price: string
   max_price: string
-  network?: Network
+  network?: AssetsNetworks
   metadata: {
     id: string
     description: string
@@ -40,7 +40,7 @@ export type CollectionsItemDBResult = {
     rarity: string
     name: string
     loop?: boolean
-    has_sound: boolean,
+    has_sound: boolean
     has_geometry: boolean
   }
   urn: string

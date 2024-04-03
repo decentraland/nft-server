@@ -9,6 +9,7 @@ import {
   WearableCategory,
 } from '@dcl/schemas'
 import { Params } from '../../logic/http/params'
+import { AssetsNetworks } from '../../types'
 
 export const getItemsParams = (params: Params) => {
   const maxPrice = params.getString('maxPrice')
@@ -47,7 +48,10 @@ export const getItemsParams = (params: Params) => {
     ),
     contractAddresses: params.getList('contractAddress'),
     itemId: params.getString('itemId'),
-    network: params.getValue<Network>('network', Network),
+    network: params.getValue<AssetsNetworks>('network', {
+      [Network.MATIC]: Network.MATIC,
+      [Network.ETHEREUM]: Network.ETHEREUM,
+    }),
     maxPrice: maxPrice
       ? ethers.utils.parseEther(maxPrice).toString()
       : undefined,

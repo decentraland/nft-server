@@ -1,12 +1,13 @@
 import { ChainId, ItemFilters, Network } from '@dcl/schemas'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
+import { AssetsNetworks } from '../../types'
 import { IItemsComponent, ItemFragment } from './types'
 import { fromItemFragment, getItemsQuery, getSubgraph } from './utils'
 
 export function createItemsComponent(
   options: {
     subgraph: ISubgraphComponent
-    network: Network
+    network: AssetsNetworks
     chainId: ChainId
   }[]
 ): IItemsComponent {
@@ -25,7 +26,11 @@ export function createItemsComponent(
       items: ItemFragment[]
     }>(query)
     const items = fragments.map((fragment) =>
-      fromItemFragment(fragment, network, chainId)
+      fromItemFragment(
+        fragment,
+        network as Network.ETHEREUM | Network.MATIC,
+        chainId
+      )
     )
     return items
   }
