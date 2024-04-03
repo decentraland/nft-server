@@ -15,6 +15,7 @@ import { getGenderFilterQuery } from '../utils'
 import { SortDirection } from '../merger/types'
 import { getMarketplaceContracts } from '../../logic/contracts'
 import { getMarketplaceChainId } from '../../logic/chainIds'
+import { AssetsNetworks } from '../../types'
 
 export const ITEM_DEFAULT_SORT_BY = ItemSortBy.NEWEST
 
@@ -24,7 +25,7 @@ const MAX_ITEM_PRICE =
 
 export function fromItemFragment(
   fragment: ItemFragment,
-  network: Network,
+  network: AssetsNetworks,
   chainId: ChainId
 ): Item {
   let name: string
@@ -59,7 +60,7 @@ export function fromItemFragment(
           rarity: fragment.rarity,
           loop: fragment.metadata.emote!.loop,
           hasGeometry: fragment.metadata.emote!.hasGeometry,
-          hasSound: fragment.metadata.emote!.hasSound
+          hasSound: fragment.metadata.emote!.hasSound,
         },
       }
       break

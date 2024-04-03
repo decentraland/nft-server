@@ -1,11 +1,12 @@
-import { ChainId, Mint, MintFilters, MintSortBy, Network } from '@dcl/schemas'
+import { ChainId, Mint, MintFilters, MintSortBy } from '@dcl/schemas'
 import { MintFragment } from './types'
+import { AssetsNetworks } from '../../types'
 
 export const MINT_DEFAULT_SORT_BY = MintSortBy.RECENTLY_MINTED
 
 export function fromMintFragment(
   fragment: MintFragment,
-  network: Network,
+  network: AssetsNetworks,
   chainId: ChainId
 ): Mint {
   const mint: Mint = {

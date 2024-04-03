@@ -20,7 +20,7 @@ const getCollectionsQuery = (page: number) => `
 
 export async function getCollectionsContracts(
   subgraph: ISubgraphComponent,
-  network: Network,
+  network: Network.MATIC | Network.ETHEREUM,
   chainId: ChainId
 ): Promise<Contract[]> {
   let page = 0

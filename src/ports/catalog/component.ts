@@ -1,5 +1,5 @@
 import { IPgComponent } from '@well-known-components/pg-component'
-import { Item } from '@dcl/schemas'
+import { Item, Network } from '@dcl/schemas'
 import { HttpError } from '../../logic/http/response'
 import { getLatestSubgraphSchema } from '../../subgraphUtils'
 import { enhanceItemsWithPicksStats } from '../../logic/favorites/utils'
@@ -68,7 +68,10 @@ export function createCatalogComponent(options: {
       const query = getCatalogQuery(reducedSchemas, filters)
       const results = await client.query<CollectionsItemDBResult>(query)
       catalogItems = results.rows.map((res) =>
-        fromCollectionsItemDbResultToCatalogItem(res, network)
+        fromCollectionsItemDbResultToCatalogItem(
+          res,
+          network as Network.ETHEREUM | Network.MATIC
+        )
       )
       total = results.rows[0]?.total ?? results.rows[0]?.total_rows ?? 0
 

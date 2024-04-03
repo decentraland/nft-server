@@ -1,11 +1,12 @@
-import { ChainId, Network, Sale, SaleFilters, SaleSortBy } from '@dcl/schemas'
+import { ChainId, Sale, SaleFilters, SaleSortBy } from '@dcl/schemas'
+import { AssetsNetworks } from '../../types'
 import { SaleFragment } from './types'
 
 export const SALE_DEFAULT_SORT_BY = SaleSortBy.RECENTLY_SOLD
 
 export function fromSaleFragment(
   fragment: SaleFragment,
-  network: Network,
+  network: AssetsNetworks,
   chainId: ChainId
 ): Sale {
   const sale: Sale = {

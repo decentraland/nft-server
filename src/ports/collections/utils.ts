@@ -13,7 +13,7 @@ export const COLLECTION_DEFAULT_SORT_BY = CollectionSortBy.NAME
 
 export function fromCollectionFragment(
   fragment: CollectionFragment,
-  network: Network,
+  network: Network.MATIC | Network.ETHEREUM,
   chainId: ChainId
 ): Collection {
   const collection: Collection = {

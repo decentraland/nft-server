@@ -210,7 +210,7 @@ export const getOrdersQuery = (
 
 export function fromOrderFragment(
   fragment: OrderFragment,
-  network: Network,
+  network: Network.MATIC | Network.ETHEREUM,
   chainId: ChainId
 ): Order {
   const issuedId = fragment.nft.issuedId
