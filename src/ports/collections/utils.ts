@@ -3,9 +3,9 @@ import {
   Collection,
   CollectionFilters,
   CollectionSortBy,
-  Network,
 } from '@dcl/schemas'
 import { getMarketplaceContracts } from '../../logic/contracts'
+import { AssetsNetworks } from '../../types'
 import { SortDirection } from '../merger/types'
 import { CollectionFragment } from './types'
 
@@ -13,7 +13,7 @@ export const COLLECTION_DEFAULT_SORT_BY = CollectionSortBy.NAME
 
 export function fromCollectionFragment(
   fragment: CollectionFragment,
-  network: Network.MATIC | Network.ETHEREUM,
+  network: AssetsNetworks,
   chainId: ChainId
 ): Collection {
   const collection: Collection = {
