@@ -11,6 +11,7 @@ RUN apk add --no-cache py3-setuptools python3-dev build-base
 # install dependencies
 COPY package.json /app/package.json
 COPY package-lock.json /app/package-lock.json
+RUN npm cache clean --force
 RUN npm install
 
 # build the app
@@ -19,6 +20,7 @@ RUN npm run build
 RUN npm run test
 
 # remove devDependencies, keep only used dependencies
+RUN npm cache clean --force
 RUN npm install --only=production
 
 FROM node:18-alpine
