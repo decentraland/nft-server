@@ -20,7 +20,7 @@ export const getSubgraphNameForNetwork = (
         chainId === ChainId.ETHEREUM_MAINNET ? 'mainnet' : 'sepolia'
       }`
     : `collections-matic-${
-        chainId === ChainId.MATIC_MAINNET ? 'mainnet' : 'mumbai'
+        chainId === ChainId.MATIC_MAINNET ? 'mainnet' : 'amoy'
       }`
 }
 
