@@ -35,6 +35,7 @@ export function createItemsHandler(
         skip,
         sortBy,
         ids,
+        urns,
         contractAddresses,
         itemId,
         pickedBy,
