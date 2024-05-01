@@ -170,6 +170,7 @@ import { createOwnersComponent } from './ports/owner/component'
 import { createFavoritesComponent } from './ports/favorites/components'
 import { ItemOptions } from './ports/items/types'
 import { createCatalogComponent } from './ports/catalog/component'
+import { createBuilderComponent } from './ports/builder'
 
 async function initComponents(): Promise<AppComponents> {
   // Default config
@@ -230,6 +231,13 @@ async function initComponents(): Promise<AppComponents> {
   // chain ids
   const marketplaceChainId = getMarketplaceChainId()
   const collectionsChainId = getCollectionsChainId()
+
+  // Builder component
+  const builder = createBuilderComponent({
+    url: await config.requireString('BUILDER_SERVER_URL'),
+    logs,
+    fetcher: fetch,
+  })
 
   // subgraphs
   const marketplaceSubgraph = await createSubgraphComponent(
@@ -375,6 +383,7 @@ async function initComponents(): Promise<AppComponents> {
   })
 
   const collectionsNFTs = createNFTComponent({
+    builder,
     subgraph: collectionsSubgraph,
     fragmentName: 'collectionsFragment',
     getFragment: getCollectionsFragment,
@@ -446,7 +455,7 @@ async function initComponents(): Promise<AppComponents> {
   )
 
   // items
-  const collectionsItems = createItemsComponent([
+  const collectionsItems = createItemsComponent({ builder }, [
     {
       subgraph: collectionsSubgraph,
       network: Network.MATIC,
@@ -732,6 +741,7 @@ async function initComponents(): Promise<AppComponents> {
 
   return {
     config,
+    builder,
     logs,
     server,
     statusChecks,
