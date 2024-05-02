@@ -52,6 +52,7 @@ import { IOwnerDataComponent } from './ports/owner/types'
 import { ItemOptions } from './ports/items/types'
 import { IFavoritesComponent } from './ports/favorites/types'
 import { ICatalogComponent } from './ports/catalog/types'
+import { IBuilderComponent } from './ports/builder'
 
 export type AssetsNetworks = Network.MATIC | Network.ETHEREUM
 
@@ -97,6 +98,7 @@ export type AppComponents = {
   favorites: IFavoritesComponent
   satsumaDatabase: IPgComponent
   catalog: ICatalogComponent
+  builder: IBuilderComponent
 }
 
 export type Context<Path extends string = any> = RoutedContext<

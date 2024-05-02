@@ -3,6 +3,12 @@ import { PoolClient } from 'pg'
 import { NFTCategory, NFTFilters, NFTSortBy } from '@dcl/schemas'
 import { IPgComponent } from '@well-known-components/pg-component'
 import { ISubgraphComponent } from '@well-known-components/thegraph-component'
+import { getMarketplaceChainId } from '../../logic/chainIds'
+import {
+  getLatestSubgraphSchema,
+  getMarketplaceSubgraphNameChain,
+} from '../../subgraphUtils'
+import { IBuilderComponent } from '../builder'
 import { INFTsComponent, NFTResult } from './types'
 import {
   getByTokenIdQuery,
@@ -11,14 +17,10 @@ import {
   getFuzzySearchQueryForENS,
   getQueryVariables,
 } from './utils'
-import { getMarketplaceChainId } from '../../logic/chainIds'
-import {
-  getLatestSubgraphSchema,
-  getMarketplaceSubgraphNameChain,
-} from '../../subgraphUtils'
 
 export function createNFTComponent<T extends { id: string }>(options: {
   subgraph: ISubgraphComponent
+  builder?: IBuilderComponent
   db?: IPgComponent
   listsServer?: string
   fragmentName: string
@@ -31,6 +33,7 @@ export function createNFTComponent<T extends { id: string }>(options: {
 }): INFTsComponent {
   const {
     subgraph,
+    builder,
     db,
     fragmentName,
     getFragment,
@@ -163,7 +166,14 @@ export function createNFTComponent<T extends { id: string }>(options: {
     if (fragments.length === 0) {
       return null
     } else {
-      return fromFragment(fragments[0], caller)
+      const nftResult = fromFragment(fragments[0], caller)
+      if (builder && nftResult.nft.itemId) {
+        nftResult.nft.utility = await builder.getItemUtility(
+          contractAddress,
+          nftResult.nft.itemId
+        )
+      }
+      return nftResult
     }
   }
 

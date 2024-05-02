@@ -149,6 +149,7 @@ import {
 import { createOwnersComponent } from '../ports/owner/component'
 import { createFavoritesComponent } from '../ports/favorites/components'
 import { createCatalogComponent } from '../ports/catalog/component'
+import { createBuilderComponent } from '../ports/builder'
 
 // start TCP port for listeners
 let lastUsedPort = 19000 + parseInt(process.env.JEST_WORKER_ID || '1') * 1000
@@ -375,14 +376,27 @@ export async function initComponents(): Promise<AppComponents> {
     MARKETPLACE_FAVORITES_SERVER_URL
   )
 
+  // Builder component
+  const BUILDER_SERVER_URL = await config.requireString('BUILDER_SERVER_URL')
+  const builder = createBuilderComponent({
+    fetcher: fetchComponent,
+    logs,
+    url: BUILDER_SERVER_URL,
+  })
+
   // items
-  const collectionsItems = createItemsComponent([
+  const collectionsItems = createItemsComponent(
     {
-      subgraph: collectionsSubgraph,
-      network: Network.MATIC,
-      chainId: collectionsChainId,
+      builder,
     },
-  ])
+    [
+      {
+        subgraph: collectionsSubgraph,
+        network: Network.MATIC,
+        chainId: collectionsChainId,
+      },
+    ]
+  )
 
   const items = createMergerComponent<Item, ItemFilters, ItemSortBy>({
     sources: [
@@ -579,7 +593,7 @@ export async function initComponents(): Promise<AppComponents> {
   const marketplacePrices = createPricesComponent({
     subgraph: marketplaceSubgraph,
     queryGetter: getMarketplacePricesQuery,
-    customValidation: getMarketplacePriceFiltersValidation
+    customValidation: getMarketplacePriceFiltersValidation,
   })
 
   const collectionsPrices = createPricesComponent({
@@ -625,6 +639,7 @@ export async function initComponents(): Promise<AppComponents> {
   return {
     config,
     logs,
+    builder,
     tracer,
     server,
     statusChecks,
