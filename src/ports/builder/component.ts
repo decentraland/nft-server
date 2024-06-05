@@ -1,16 +1,13 @@
-import { URL } from 'url'
-import {
-  IFetchComponent,
-  ILoggerComponent,
-} from '@well-known-components/interfaces'
+import SQL from 'sql-template-strings'
+import { ILoggerComponent } from '@well-known-components/interfaces'
 import { IBuilderComponent } from './types'
+import { IPgComponent } from '@well-known-components/pg-component'
 
 export function createBuilderComponent(options: {
-  url: string
   logs: ILoggerComponent
-  fetcher: IFetchComponent
+  database: IPgComponent
 }): IBuilderComponent {
-  const { fetcher, url, logs } = options
+  const { database, logs } = options
   const logger = logs.getLogger('builder-component')
 
   return {
@@ -19,18 +16,18 @@ export function createBuilderComponent(options: {
       itemId: string
     ): Promise<string | undefined> {
       try {
-        const baseUrl = new URL(url)
-        baseUrl.pathname = `/v1/published-collections/${collectionAddress}/items/${itemId}/utility`
-        const response = await fetcher.fetch(baseUrl.toString())
-        if (!response.ok) {
+        const query = SQL`SELECT items.utility
+          FROM items
+          INNER JOIN collections ON items.collection_id = collections.id
+          WHERE items.blockchain_item_id = ${itemId} AND collections.contract_address = ${collectionAddress}`
+
+        const result = await database.query<{ utility: string | null }>(query)
+        if (!result.rowCount) {
           throw new Error(
-            `Failed to fetch utility for item: ${response.status}`
+            'Failed getting the utility for the item: the item was not found in the DB'
           )
         }
-        const utility = (await response.json()) as {
-          data: { utility: string | null }
-        }
-        return utility.data.utility ?? undefined
+        return result.rows[0].utility ?? undefined
       } catch (_e) {
         logger.info(
           `Failed looking for the utility of the item: ${collectionAddress} - ${itemId}.`

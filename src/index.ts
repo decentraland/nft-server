@@ -232,13 +232,6 @@ async function initComponents(): Promise<AppComponents> {
   const marketplaceChainId = getMarketplaceChainId()
   const collectionsChainId = getCollectionsChainId()
 
-  // Builder component
-  const builder = createBuilderComponent({
-    url: await config.requireString('BUILDER_SERVER_URL'),
-    logs,
-    fetcher: fetch,
-  })
-
   // subgraphs
   const marketplaceSubgraph = await createSubgraphComponent(
     { logs, config, fetch, metrics },
@@ -260,8 +253,41 @@ async function initComponents(): Promise<AppComponents> {
     await config.requireString('RENTALS_SUBGRAPH_URL')
   )
 
+  // Builder the Builder's DB connection string
+
+  const builderDbName = await config.requireString(
+    'BUILDER_PG_COMPONENT_PSQL_DATABASE'
+  )
+  const builderDbPort = await config.requireString(
+    'BUILDER_PG_COMPONENT_PSQL_PORT'
+  )
+  const builderDbHost = await config.requireString(
+    'BUILDER_PG_COMPONENT_PSQL_HOST'
+  )
+  const builderDbUser = await config.requireString(
+    'BUILDER_PG_COMPONENT_PSQL_USER'
+  )
+  const builderDbPassword = await config.requireString(
+    'BUILDER_PG_COMPONENT_PSQL_PASSWORD'
+  )
+  const builderDbConnectionString = `postgresql://${builderDbUser}:${builderDbPassword}@${builderDbHost}:${builderDbPort}/${builderDbName}`
+
   // dbs
   const satsumaDatabase = await createPgComponent({ config, logs, metrics })
+  const builderDatabase = await createPgComponent(
+    { config, logs, metrics },
+    {
+      pool: {
+        connectionString: builderDbConnectionString,
+      },
+    }
+  )
+
+  // Builder component
+  const builder = createBuilderComponent({
+    database: builderDatabase,
+    logs,
+  })
 
   // orders
   const marketplaceOrders = createOrdersComponent({
