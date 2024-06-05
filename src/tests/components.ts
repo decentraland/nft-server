@@ -377,11 +377,10 @@ export async function initComponents(): Promise<AppComponents> {
   )
 
   // Builder component
-  const BUILDER_SERVER_URL = await config.requireString('BUILDER_SERVER_URL')
+
   const builder = createBuilderComponent({
-    fetcher: fetchComponent,
-    logs,
-    url: BUILDER_SERVER_URL,
+    database: createTestDbComponent(),
+    logs: logs,
   })
 
   // items
