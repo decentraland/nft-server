@@ -1,5 +1,6 @@
 import { Router } from '@well-known-components/http-server'
 import * as authorizationMiddleware from 'decentraland-crypto-middleware'
+import { withSignerValidation } from '../middlewares/withSignerValidation'
 import { GlobalContext } from '../types'
 import { createBidsHandler } from './handlers/bids'
 import { createOrdersHandler } from './handlers/orders'
@@ -39,6 +40,7 @@ export async function setupRoutes(globalContext: GlobalContext) {
       optional: true,
       expiration: FIVE_MINUTES,
     }),
+    withSignerValidation,
     createNFTsHandler(components)
   )
   router.get(
@@ -47,6 +49,7 @@ export async function setupRoutes(globalContext: GlobalContext) {
       optional: true,
       expiration: FIVE_MINUTES,
     }),
+    withSignerValidation,
     createItemsHandler(components)
   )
   router.get('/contracts', createContractsHandler(components))
@@ -71,6 +74,7 @@ export async function setupRoutes(globalContext: GlobalContext) {
       optional: true,
       expiration: FIVE_MINUTES,
     }),
+    withSignerValidation,
     createCatalogHandler(components)
   )
 
