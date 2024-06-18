@@ -39,7 +39,7 @@
     "@well-known-components/tracer-component": "^1.2.0",
     "ajv": "^8.12.0",
     "bn.js": "^5.2.1",
-    "decentraland-crypto-middleware": "^1.1.0",
+    "decentraland-crypto-middleware": "^1.3.0",
     "dotenv": "^8.2.0",
     "etag": "^1.8.1",
     "ethers": "^5.7.2",
