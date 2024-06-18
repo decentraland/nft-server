@@ -1,6 +1,5 @@
 import { Router } from '@well-known-components/http-server'
 import * as authorizationMiddleware from 'decentraland-crypto-middleware'
-import { withSignerValidation } from '../middlewares/withSignerValidation'
 import { GlobalContext } from '../types'
 import { createBidsHandler } from './handlers/bids'
 import { createOrdersHandler } from './handlers/orders'
@@ -19,6 +18,7 @@ import { createPricesHandler } from './handlers/prices'
 import { createStatsHandler } from './handlers/stats'
 import { createOwnersHandler } from './handlers/owners'
 import { createCatalogHandler } from './handlers/catalog'
+import { validateAuthMetadataSigner } from './utils'
 
 const FIVE_MINUTES = 5 * 60 * 1000
 
@@ -38,18 +38,18 @@ export async function setupRoutes(globalContext: GlobalContext) {
     '/nfts',
     authorizationMiddleware.wellKnownComponents({
       optional: true,
+      verifyMetadataContent: validateAuthMetadataSigner,
       expiration: FIVE_MINUTES,
     }),
-    withSignerValidation,
     createNFTsHandler(components)
   )
   router.get(
     '/items',
     authorizationMiddleware.wellKnownComponents({
       optional: true,
+      verifyMetadataContent: validateAuthMetadataSigner,
       expiration: FIVE_MINUTES,
     }),
-    withSignerValidation,
     createItemsHandler(components)
   )
   router.get('/contracts', createContractsHandler(components))
@@ -72,9 +72,9 @@ export async function setupRoutes(globalContext: GlobalContext) {
     '/catalog',
     authorizationMiddleware.wellKnownComponents({
       optional: true,
+      verifyMetadataContent: validateAuthMetadataSigner,
       expiration: FIVE_MINUTES,
     }),
-    withSignerValidation,
     createCatalogHandler(components)
   )
 
