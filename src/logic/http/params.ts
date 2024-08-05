@@ -37,11 +37,6 @@ export class Params {
     return value !== null
   }
 
-  getBooleanValue(key: string) {
-    const value = this.params.get(key)
-    return value !== null ? value === 'true' : undefined
-  }
-
   getValue<T extends string>(
     key: string,
     values: Values = {},
