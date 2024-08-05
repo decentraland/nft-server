@@ -24,9 +24,9 @@ export function createPricesHandler(
     const params = new Params(context.url.searchParams)
     const category = params.getString('category') as PriceFilterCategory
     const assetType = params.getString('assetType') as AssetType
-    const isWearableHead = params.getBoolean('isWearableHead')
-    const isWearableAccessory = params.getBoolean('isWearableAccessory')
-    const isWearableSmart = params.getBoolean('isWearableSmart')
+    const isWearableHead = params.getBooleanValue('isWearableHead')
+    const isWearableAccessory = params.getBooleanValue('isWearableAccessory')
+    const isWearableSmart = params.getBooleanValue('isWearableSmart')
     const wearableCategory = params.getValue<WearableCategory>(
       'wearableCategory',
       WearableCategory
@@ -51,13 +51,13 @@ export function createPricesHandler(
     const itemRarities = params.getList<Rarity>('itemRarity', Rarity)
     const network = params.getValue<Network>('network', Network)
 
-    const adjacentToRoad = params.getBoolean('adjacentToRoad')
+    const adjacentToRoad = params.getBooleanValue('adjacentToRoad')
     const minDistanceToPlaza = params.getNumber('minDistanceToPlaza')
     const maxDistanceToPlaza = params.getNumber('maxDistanceToPlaza')
     const maxEstateSize = params.getNumber('maxEstateSize')
     const minEstateSize = params.getNumber('minEstateSize')
-    const emoteHasSound = params.getBoolean('emoteHasSound')
-    const emoteHasGeometry = params.getBoolean('emoteHasGeometry')
+    const emoteHasSound = params.getBooleanValue('emoteHasSound')
+    const emoteHasGeometry = params.getBooleanValue('emoteHasGeometry')
 
     return asJSON(
       async () => ({
@@ -81,7 +81,7 @@ export function createPricesHandler(
           maxEstateSize,
           minEstateSize,
           emoteHasGeometry,
-          emoteHasSound
+          emoteHasSound,
         }),
       }),
       {

@@ -43,8 +43,12 @@ export function getEstatesSizesQuery(filters: StatsEstateFilters) {
       ]`
   }
 
+  const variables = wrapWhere
+    ? `$lastId: String, $expiresAt: BigInt, $expiresAtSec: BigInt`
+    : `$lastId: String`
+
   return `
-    query EstateSizesQuery($lastId: ID, $expiresAt: String, $expiresAtSec: String) {
+    query EstateSizesQuery(${variables}) {
       nfts (
         first: ${MAX_RESULTS}, 
         where: {

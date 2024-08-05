@@ -5,18 +5,16 @@ import { QueryVariables } from './types'
 
 export const NFT_DEFAULT_SORT_BY = NFTSortBy.NEWEST
 
-const NFTS_FILTERS = `
-  $first: Int
-  $skip: Int
-  $orderBy: String
-  $orderDirection: String
-  $expiresAt: String
-  $expiresAtSec: String
-  $owner: String
-  $wearableCategory: String
-  $isWearableHead: Boolean
-  $isWearableAccessory: Boolean
-`
+const NFT_FILTERS_DICT: Record<string, string> = {
+  orderBy: '$orderBy: NFT_orderBy',
+  orderDirection: '$orderDirection: OrderDirection',
+  expiresAt: '$expiresAt: BigInt',
+  expiresAtSec: '$expiresAtSec: BigInt',
+  owner: '$owner: String',
+  wearableCategory: '$wearableCategory: String',
+  isWearableHead: '$isWearableHead: Boolean',
+  isWearableAccessory: '$isWearableAccessory: Boolean',
+}
 
 const getArguments = (total: number) => `
   first: ${total}
@@ -46,14 +44,21 @@ export function getQueryVariables<T>(
   const { sortBy, ...variables } = options
   const orderBy = getOrderBy(sortBy) as string
   const orderDirection = getOrderDirection(sortBy)
-  const expiresAt = Date.now()
-  const expiresAtSec = Math.trunc(expiresAt / 1000)
+  if (options.isOnSale) {
+    const expiresAt = Date.now()
+    const expiresAtSec = Math.trunc(expiresAt / 1000)
+    return {
+      ...variables,
+      orderBy,
+      orderDirection,
+      expiresAt: expiresAt.toString(),
+      expiresAtSec: expiresAtSec.toString(),
+    }
+  }
   return {
     ...variables,
     orderBy,
     orderDirection,
-    expiresAt: expiresAt.toString(),
-    expiresAtSec: expiresAtSec.toString(),
   }
 }
 
@@ -208,7 +213,7 @@ export function getFetchQuery(
   }
 
   if (filters.owner) {
-    where.push('owner: $owner')
+    where.push('owner_: {address: $owner}')
   }
 
   if (
@@ -302,7 +307,10 @@ export function getFetchQuery(
   }
 
   const query = `query NFTs(
-    ${NFTS_FILTERS}
+    ${Object.entries(filters)
+      .filter(([key, value]) => value !== undefined && key in NFT_FILTERS_DICT)
+      .map(([key]) => (NFT_FILTERS_DICT[key] ? NFT_FILTERS_DICT[key] : ''))
+      .join('\n')}
     ${getExtraVariables ? getExtraVariables(filters).join('\n') : ''}
     ) {
     nfts(
@@ -312,10 +320,11 @@ export function getFetchQuery(
     }
   }`
 
-  return `
+  const result = `
     ${query}
     ${isCount ? '' : getNFTFragment()}
   `
+  return result
 }
 
 export function getFetchOneQuery(
@@ -323,7 +332,7 @@ export function getFetchOneQuery(
   getFragment: () => string
 ) {
   return `
-  query NFTByTokenId($contractAddress: String, $tokenId: String) {
+  query NFTByTokenId($contractAddress: String, $tokenId: BigInt) {
     nfts(
       where: { contractAddress: $contractAddress, tokenId: $tokenId }
       first: 1
@@ -340,7 +349,7 @@ export function getByTokenIdQuery(
   getFragment: () => string
 ) {
   return `
-  query NFTByTokenId($tokenIds: [String!]) {
+  query NFTByTokenId($tokenIds: [BigInt!]) {
     nfts(
       where: { id_in: $tokenIds }
       first: 1000
@@ -357,7 +366,11 @@ export function getId(contractAddress: string, tokenId: string) {
 }
 
 export function getFuzzySearchQueryForENS(schema: string, searchTerm: string) {
-  return SQL`SELECT id from `
-    .append(schema)
-    .append(SQL`.ens_active WHERE subdomain % ${searchTerm}`)
+  const query =
+    SQL`SELECT subdomain, id, similarity(subdomain, ${searchTerm}) AS match_similarity from `
+      .append(schema)
+      .append(
+        SQL`.ens_active WHERE subdomain % ${searchTerm} ORDER BY match_similarity DESC;`
+      )
+  return query
 }

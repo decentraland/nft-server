@@ -16,6 +16,14 @@ import {
 
 const MAX_RESULTS = 1000
 
+const PRICES_FILTERS_DICT: Record<string, string> = {
+  expiresAt: '$expiresAt: BigInt',
+  wearableCategory: '$wearableCategory: String',
+  emoteCategory: '$emoteCategory: String',
+  isWearableHead: '$isWearableHead: Boolean',
+  isWearableAccessory: '$isWearableAccessory: Boolean',
+}
+
 export function marketplaceShouldFetch(filters: PriceFilters) {
   const isCorrectNetworkFilter =
     !filters.network ||
@@ -96,13 +104,18 @@ export function marketplacePricesQuery(filters: PriceFilters) {
     searchEstateSize_gt: 0,
     ${additionalWheres.join('\n')}
   `
-  return `query NFTPrices(
-      $expiresAt: String
-      $expiresAtSec: String
-      $wearableCategory: String
-      $isWearableHead: Boolean
-      $isWearableAccessory: Boolean
-      ) {
+
+  const variablesBasedOnFilters = Object.entries(filters)
+    .filter(([key, value]) => value !== undefined && key in PRICES_FILTERS_DICT)
+    .map(([key]) => (PRICES_FILTERS_DICT[key] ? PRICES_FILTERS_DICT[key] : ''))
+
+  const variablesDefinition = variablesBasedOnFilters.length
+    ? `query NFTPrices($expiresAtSec: BigInt, ${variablesBasedOnFilters.join(
+        '\n'
+      )})`
+    : `query NFTPrices($expiresAtSec: BigInt, $expiresAt: BigInt)`
+
+  return `${variablesDefinition} {
       prices: nfts(
         first: ${MAX_RESULTS},
         orderBy: tokenId,
@@ -130,13 +143,16 @@ export function marketplacePricesQueryById(filters: PriceFilters) {
   const { category, ...rest } = filters
   const additionalWheres: string[] = getExtraWheres(rest)
   const categories = getNFTCategoryFromPriceCategory(category)
-  return `query NFTPrices(
-      $lastId: ID,
-      $expiresAt: String
-      $wearableCategory: String
-      $isWearableHead: Boolean
-      $isWearableAccessory: Boolean
-     ) {
+  const variablesBasedOnFilters = Object.entries(filters)
+    .filter(([key, value]) => value !== undefined && key in PRICES_FILTERS_DICT)
+    .map(([key]) => (PRICES_FILTERS_DICT[key] ? PRICES_FILTERS_DICT[key] : ''))
+
+  const variablesDefinition = variablesBasedOnFilters.length
+    ? `query NFTPrices($lastId: BigInt, ${variablesBasedOnFilters.join('\n')})`
+    : `query NFTPrices($lastId: BigInt)`
+
+  return `
+    ${variablesDefinition} {
       prices: nfts(
         orderBy: tokenId,
         orderDirection: asc, 

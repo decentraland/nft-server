@@ -33,7 +33,11 @@ export function createNFTsHandler(
     const isLand = params.getBoolean('isLand')
     const isOnRent = params.getBoolean('isOnRent')
     const isWearableHead = params.getBoolean('isWearableHead')
+      ? params.getString('isWearableHead') === 'true'
+      : undefined
     const isWearableAccessory = params.getBoolean('isWearableAccessory')
+      ? params.getString('isWearableAccessory') === 'true'
+      : undefined
     const isWearableSmart = params.getBoolean('isWearableSmart')
     const wearableCategory = params.getValue<WearableCategory>(
       'wearableCategory',

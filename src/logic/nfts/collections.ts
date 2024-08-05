@@ -188,7 +188,7 @@ export function fromCollectionsFragment(
       break
     }
     default: {
-      throw new Error(`Uknown itemType=${fragment.itemType}`)
+      throw new Error(`Unknown itemType=${fragment.itemType}`)
     }
   }
 
