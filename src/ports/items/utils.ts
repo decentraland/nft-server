@@ -231,9 +231,9 @@ export function getItemsQuery(filters: ItemFilters, isCount = false) {
 
   if (contractAddresses && contractAddresses.length > 0) {
     where.push(
-      `collection_in: [${contractAddresses
+      `collection_: { id_in: [${contractAddresses
         .map((contractAddress) => `"${contractAddress}"`)
-        .join(',')}]`
+        .join(',')}]}`
     )
   }
 
