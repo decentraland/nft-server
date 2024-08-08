@@ -47,8 +47,9 @@ export function createNFTComponent<T extends { id: string }>(options: {
 
   function getFragmentFetcher(filters: NFTFilters & { caller?: string }) {
     return async (isCount?: boolean) => {
+      const variables = getQueryVariables(filters, getSortByProp)
       const query = getFetchQuery(
-        filters,
+        variables,
         fragmentName,
         getFragment,
         getExtraVariables,
@@ -56,7 +57,7 @@ export function createNFTComponent<T extends { id: string }>(options: {
         isCount,
         filters.category === NFTCategory.ENS ? await getBannedNames() : []
       )
-      const variables = getQueryVariables(filters, getSortByProp)
+
       const { nfts: fragments } = await subgraph.query<{
         nfts: T[]
       }>(query, variables)
@@ -114,7 +115,7 @@ export function createNFTComponent<T extends { id: string }>(options: {
             getMarketplaceSubgraphNameChain(getMarketplaceChainId())
           )
         )
-        const ids = await client.query<{ id: string }>(
+        const ids = await client.query<{ id: string; subdomain: string }>(
           getFuzzySearchQueryForENS(
             schemaName.rows[0].entity_schema,
             options.search
