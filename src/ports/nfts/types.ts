@@ -9,8 +9,8 @@ export type NFTResult = {
 export type QueryVariables = Omit<NFTFilters, 'sortBy' | 'rentalDays'> & {
   orderBy: string
   orderDirection: 'asc' | 'desc'
-  expiresAt: string
-  expiresAtSec: string
+  expiresAt?: string
+  expiresAtSec?: string
 }
 
 export interface INFTsComponent {

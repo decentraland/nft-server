@@ -7,6 +7,18 @@ import { AssetType, PriceFilters } from '../../ports/prices/types'
 
 const MAX_RESULTS = 1000
 
+const PRICES_ITEMS_FILTERS_DICT: Record<string, string> = {
+  wearableCategory: '$wearableCategory: String',
+  emoteCategory: '$emoteCategory: String',
+  isWearableHead: '$isWearableHead: Boolean',
+  isWearableAccessory: '$isWearableAccessory: Boolean',
+}
+
+const PRICES_FILTERS_DICT: Record<string, string> = {
+  expiresAt: '$expiresAt: BigInt',
+  ...PRICES_ITEMS_FILTERS_DICT,
+}
+
 export function collectionsShouldFetch(filters: PriceFilters) {
   const isCorrectNetworkFilter =
     !filters.network || !!(filters.network && filters.network === Network.MATIC)
@@ -72,12 +84,17 @@ export function collectionsNFTsPricesQuery(filters: PriceFilters) {
     },
     AssetType.NFT
   )
-  return `query NFTPrices(
-    $expiresAt: String, 
-    $wearableCategory: String
-    $emoteCategory: String
-    $isWearableHead: Boolean
-    $isWearableAccessory: Boolean) {
+
+  const variablesBasedOnFilters = Object.entries(filters)
+    .filter(([key, value]) => value !== undefined && key in PRICES_FILTERS_DICT)
+    .map(([key]) => (PRICES_FILTERS_DICT[key] ? PRICES_FILTERS_DICT[key] : ''))
+
+  const variablesDefinition = variablesBasedOnFilters.length
+    ? `query NFTPrices(${variablesBasedOnFilters.join('\n')})`
+    : `query NFTPrices`
+
+  return `
+    ${variablesDefinition} {
       prices: nfts (
         first: ${MAX_RESULTS},
         orderBy: id,
@@ -103,12 +120,15 @@ export function collectionsNFTsPricesQueryById(filters: PriceFilters) {
     AssetType.NFT
   )
   return `query NFTPrices(
-      $lastId: ID, 
-      $expiresAt: String
-      $wearableCategory: String
-      $emoteCategory: String
-      $isWearableHead: Boolean
-      $isWearableAccessory: Boolean
+      $lastId: String, 
+      ${Object.entries(filters)
+        .filter(
+          ([key, value]) => value !== undefined && key in PRICES_FILTERS_DICT
+        )
+        .map(([key]) =>
+          PRICES_FILTERS_DICT[key] ? PRICES_FILTERS_DICT[key] : ''
+        )
+        .join('\n')}
       ) {
       prices: nfts(
         first: ${MAX_RESULTS},
@@ -141,12 +161,18 @@ export function collectionsItemsPricesQuery(filters: PriceFilters) {
       ? '[wearable_v1, wearable_v2, smart_wearable_v1]'
       : '[emote_v1]'
 
-  return `query ItemPrices(
-      $wearableCategory: String
-      $emoteCategory: String
-      $isWearableHead: Boolean
-      $isWearableAccessory: Boolean
-  ) {
+  const variablesBasedOnFilters = Object.entries(filters)
+    .filter(
+      ([key, value]) => value !== undefined && key in PRICES_ITEMS_FILTERS_DICT
+    )
+    .map(([key]) => (PRICES_FILTERS_DICT[key] ? PRICES_FILTERS_DICT[key] : ''))
+
+  const variablesDefinition = variablesBasedOnFilters.length
+    ? `query ItemPrices(${variablesBasedOnFilters.join('\n')})`
+    : `query ItemPrices`
+
+  return `
+    ${variablesDefinition} {
       prices: items (
         first: ${MAX_RESULTS},
         orderBy: id,
@@ -179,11 +205,15 @@ export function collectionsItemsPricesQueryById(filters: PriceFilters) {
       : '[emote_v1]'
 
   return `query ItemPrices(
-    $lastId: ID, 
-    $wearableCategory: String
-    $emoteCategory: String
-    $isWearableHead: Boolean
-    $isWearableAccessory: Boolean
+    $lastId: String, 
+    ${Object.entries(filters)
+      .filter(
+        ([key, value]) => value !== undefined && key in PRICES_FILTERS_DICT
+      )
+      .map(([key]) =>
+        PRICES_FILTERS_DICT[key] ? PRICES_FILTERS_DICT[key] : ''
+      )
+      .join('\n')}
     ) {
       prices: items (
         first: ${MAX_RESULTS},

@@ -25,7 +25,11 @@ export function createPricesHandler(
     const category = params.getString('category') as PriceFilterCategory
     const assetType = params.getString('assetType') as AssetType
     const isWearableHead = params.getBoolean('isWearableHead')
+      ? params.getString('isWearableAccessory') === 'true'
+      : undefined
     const isWearableAccessory = params.getBoolean('isWearableAccessory')
+      ? params.getString('isWearableAccessory') === 'true'
+      : undefined
     const isWearableSmart = params.getBoolean('isWearableSmart')
     const wearableCategory = params.getValue<WearableCategory>(
       'wearableCategory',
@@ -81,7 +85,7 @@ export function createPricesHandler(
           maxEstateSize,
           minEstateSize,
           emoteHasGeometry,
-          emoteHasSound
+          emoteHasSound,
         }),
       }),
       {

@@ -1,4 +1,4 @@
-import { ChainId, Sale, SaleFilters, SaleSortBy } from '@dcl/schemas'
+import { ChainId, Network, Sale, SaleFilters, SaleSortBy } from '@dcl/schemas'
 import { AssetsNetworks } from '../../types'
 import { SaleFragment } from './types'
 
@@ -10,7 +10,11 @@ export function fromSaleFragment(
   chainId: ChainId
 ): Sale {
   const sale: Sale = {
-    id: 'sale-' + network.toLowerCase() + '-' + fragment.id,
+    id:
+      // squid fragments will already have the network as part of the id
+      fragment.id.includes(Network.ETHEREUM) || fragment.id.includes('POLYGON')
+        ? `sale-${fragment.id.toLowerCase()}`
+        : 'sale-' + network.toLowerCase() + '-' + fragment.id,
     type: fragment.type,
     buyer: fragment.buyer,
     seller: fragment.seller,
