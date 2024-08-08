@@ -192,16 +192,16 @@ describe('when fetching emotes', () => {
         })
 
         it('should return the converted fragment of nfts', async () => {
-          const fetchQuery = getFetchQuery(
+          const variableQuery = getQueryVariables(
             filters,
+            getCollectionsOrderBy
+          )
+          const fetchQuery = getFetchQuery(
+            variableQuery,
             collectionsFragment,
             getCollectionsFragment,
             getCollectionsExtraVariables,
             getCollectionsExtraWhere
-          )
-          const variableQuery = getQueryVariables(
-            filters,
-            getCollectionsOrderBy
           )
           expect(collectionsNFTsMock.fetch(filters)).resolves.toEqual(
             nftFragments.map((f) => fromCollectionsFragment(f))
@@ -222,16 +222,16 @@ describe('when fetching emotes', () => {
         })
 
         it('should return the converted fragment of nfts', () => {
-          const fetchQuery = getFetchQuery(
+          const variableQuery = getQueryVariables(
             filters,
+            getCollectionsOrderBy
+          )
+          const fetchQuery = getFetchQuery(
+            variableQuery,
             collectionsFragment,
             getCollectionsFragment,
             getCollectionsExtraVariables,
             getCollectionsExtraWhere
-          )
-          const variableQuery = getQueryVariables(
-            filters,
-            getCollectionsOrderBy
           )
           expect(collectionsNFTsMock.fetch(filters)).resolves.toEqual(
             nftFragments.map((f) => fromCollectionsFragment(f))
@@ -304,8 +304,9 @@ describe('when fetching nfts', () => {
     })
 
     it('should fetch the banned names and filter the query based on them', async () => {
+      const variableQuery = getQueryVariables(filters, getCollectionsOrderBy)
       const fetchQuery = getFetchQuery(
-        filters,
+        variableQuery,
         collectionsFragment,
         getCollectionsFragment,
         getCollectionsExtraVariables,
@@ -313,7 +314,6 @@ describe('when fetching nfts', () => {
         false,
         bannedNames
       )
-      const variableQuery = getQueryVariables(filters, getCollectionsOrderBy)
       const result = await collectionsNFTsMock.fetch(filters)
       expect(result).toEqual(
         nftFragments.map((f) => fromCollectionsFragment(f))
