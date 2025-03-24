@@ -2,7 +2,7 @@ import { ListingStatus, Network, OrderSortBy } from '@dcl/schemas'
 import { IHttpServerComponent } from '@well-known-components/interfaces'
 import { AppComponents, Context } from '../../types'
 import { Params } from '../../logic/http/params'
-import { asJSON } from '../../logic/http/response'
+import { asJSON, HttpError } from '../../logic/http/response'
 
 export function createOrdersHandler(
   components: Pick<AppComponents, 'orders'>
@@ -23,6 +23,15 @@ export function createOrdersHandler(
     const network = params.getValue<Network>('network', Network)
     const itemId = params.getString('itemId')
     const nftName = params.getString('nftName')
+
+    try {
+      if (itemId) {
+        // Try to parse the itemId as a bigint, if it fails, it means it's not a valid itemId
+        BigInt(itemId)
+      }
+    } catch (error) {
+      throw new HttpError('Invalid itemId', 400)
+    }
 
     return asJSON(() =>
       orders.fetchAndCount({
