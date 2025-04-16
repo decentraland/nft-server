@@ -4,6 +4,11 @@ import { AppComponents, AuthenticatedContext } from '../../types'
 import { Params } from '../../logic/http/params'
 import { HttpError, asJSON } from '../../logic/http/response'
 import { getItemsParams } from './utils'
+import {
+  validateItemsParams,
+  InvalidContractAddressError,
+  InvalidItemIdError,
+} from '../../logic/items/utils'
 
 export function createItemsHandler(
   components: Pick<AppComponents, 'items'>
@@ -28,6 +33,19 @@ export function createItemsHandler(
           'Ids cannot be set with contractAddress, itemId, or urn.',
           400
         )
+      }
+
+      try {
+        // Validate contract addresses and itemId
+        validateItemsParams(contractAddresses || [], itemId)
+      } catch (error) {
+        if (
+          error instanceof InvalidContractAddressError ||
+          error instanceof InvalidItemIdError
+        ) {
+          throw new HttpError(error.message, 400)
+        }
+        throw error // Rethrow if it's another type of error
       }
 
       return items.fetchAndCount({
